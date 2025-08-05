@@ -144,7 +144,7 @@
             const pathParts = window.location.pathname.split('/');
             const celebrityId = pathParts[2];
 
-            fetch(`/celebrity/celebrity_response/${celebrityId}/`, {
+            fetch(`/celebrity/${celebrityId}/response/`, {
                 method: "POST",
                 body: formData,
             })
