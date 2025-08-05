@@ -11,8 +11,8 @@ from user_auth.models import Celebrity
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-
-load_dotenv(r"C:\AI2502\ProjectChung/.env")
+from django.conf import settings
+load_dotenv(os.path.join(settings.BASE_DIR, ".env"))
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
@@ -150,7 +150,7 @@ Emotion:
             }
         )
 
-        audio_dir = os.path.join('media', 'audio')
+        audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
         os.makedirs(audio_dir, exist_ok=True)
         audio_path = os.path.join(audio_dir, 'response.mp3')
 

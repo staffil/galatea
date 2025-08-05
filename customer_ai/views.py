@@ -346,6 +346,8 @@ def generate_response(request):
 
 
 
+import base64
+from django.shortcuts import render, redirect
 
 def input_ai_name(request):
     if request.method == 'POST':
@@ -357,8 +359,12 @@ def input_ai_name(request):
 
         # 이미지와 이름을 세션에 저장
         request.session['llm_name'] = llm_name
-        request.session['llm_image'] = user_image.name  # 파일 자체는 따로 처리 필요
-        request.session['user_image_content'] = user_image.read()  # binary 저장
+        request.session['llm_image'] = user_image.name  # 파일명만 저장
+
+        # user_image 읽고 base64로 인코딩하여 문자열로 변환 후 저장
+        user_image_content = user_image.read()  # bytes
+        user_image_base64 = base64.b64encode(user_image_content).decode('utf-8')
+        request.session['user_image_content'] = user_image_base64
 
         return redirect('customer_ai:make_ai')  # 다음 스텝으로 이동
     else:
