@@ -1,0 +1,178 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'css/celebrity/celebrity.css' %}">
+
+    <title>Celebrity Voice Chat</title>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <div class="container">
+        <!-- 메인 채팅 영역 -->
+        <main class="chat-container">
+            <!-- Celebrity 이미지 영역 -->
+            <div class="celebrity-image-container">
+            {% if celebrity.celebrity_image %}
+                <img src="{{ celebrity.celebrity_image.url }}" alt="AI 이미지" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;" />
+            {% else %}
+                <p>생성된 이미지가 없습니다.</p>
+            {% endif %}
+            </div>
+
+            <div class="chat-header">
+                <div class="ai-avatar">🎭</div>
+                <h1 class="chat-title">{{ celebrity.celebrity_name }}</h1>
+            </div>
+            
+            <p class="chat-subtitle">텍스트나 음성으로 대화해보세요</p>
+            
+            <!-- 메시지 영역 -->
+            <div class="message-area" id="message-area">
+                <!-- 메시지들이 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 오디오 플레이어 -->
+            <div class="audio-player" id="audio-container">
+                <audio id="tts-audio" controls></audio>
+            </div>
+            
+            <!-- 텍스트 입력창 -->
+            <input type="text" class="text-input" id="text-input" placeholder="텍스트 입력" onkeydown="if(event.key === 'Enter'){ sendText(); }">
+            
+            <!-- 인식된 텍스트 표시 -->
+            <p id="recognized-text" class="recognized-text"></p>
+            
+            <!-- 마이크 -->
+            <div class="record-container">
+                <button class="record-button" id="record-btn" onclick="toggleRecording()">
+                    <span class="record-icon" id="record-icon">🎤</span>
+                </button>
+            </div>
+            <div class="record-status" id="record-status">🎙 녹음 시작</div>
+        </main>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let stream;
+
+        function toggleRecording() {
+            const recordBtn = document.getElementById("record-btn");
+            const recordStatus = document.getElementById("record-status");
+
+            if (!isRecording) {
+                navigator.mediaDevices
+                    .getUserMedia({ audio: true })
+                    .then((s) => {
+                        stream = s;
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+                        mediaRecorder.start();
+                        isRecording = true;
+
+                        recordBtn.querySelector(".record-icon").textContent = "⏹";
+                        recordBtn.classList.add("recording");
+                        recordStatus.textContent = "⏹ 녹음 종료";
+
+                        mediaRecorder.addEventListener("dataavailable", (event) => {
+                            audioChunks.push(event.data);
+                        });
+
+                        mediaRecorder.addEventListener("stop", () => {
+                            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+                            const formData = new FormData();
+                            formData.append("audio", audioBlob, "recorded.wav");
+
+                            fetch("/celebrity/celebrity_audio/", {
+                                method: "POST",
+                                body: formData,
+                            })
+                                .then((res) => res.json())
+                                .then((data) => {
+                                    document.getElementById("recognized-text").textContent = "인식된 텍스트: " + data.text;
+                                    sendText(data.text);
+                                });
+
+                            // 마이크 스트림 해제
+                            stream.getTracks().forEach((track) => track.stop());
+                        });
+                    })
+                    .catch((err) => {
+                        alert("마이크 권한을 허용해주세요.");
+                        console.error(err);
+                    });
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.querySelector(".record-icon").textContent = "🎤";
+                recordBtn.classList.remove("recording");
+                recordStatus.textContent = "🎙 녹음 시작";
+            }
+        }
+
+        function sendText(text = null) {
+            const userText = text || document.getElementById("text-input").value;
+            if (!userText.trim()) return;
+
+            const messageArea = document.getElementById("message-area");
+            
+            // 사용자 메시지 추가
+            const userMessage = document.createElement("div");
+            userMessage.className = "user-message";
+            userMessage.textContent = userText;
+            messageArea.appendChild(userMessage);
+
+            // 입력창 초기화
+            document.getElementById("text-input").value = "";
+
+            const formData = new FormData();
+            formData.append("text", userText);
+            const pathParts = window.location.pathname.split('/');
+            const celebrityId = pathParts[2];
+
+            fetch(`/celebrity/celebrity_response/${celebrityId}/`, {
+                method: "POST",
+                body: formData,
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    // AI 메시지 추가
+                    const aiMessage = document.createElement("div");
+                    aiMessage.className = "ai-message";
+                    aiMessage.textContent = data.ai_text + " (emotion: " + data.emotion + ")";
+                    messageArea.appendChild(aiMessage);
+                    
+                    // 오디오 설정
+                    document.getElementById("tts-audio").src = data.audio_url;
+
+                    // 텍스트 입력창으로 스크롤
+                    setTimeout(() => {
+                        const textInput = document.getElementById("text-input");
+                        textInput.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 100);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("오류가 발생했습니다.");
+                });
+        }
+    </script>
+</body>
+</html>

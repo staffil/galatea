@@ -1,0 +1,73 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - GALATEA</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/make_voice.css' %}">
+
+</head>
+<body>
+    <div class="sidebar">
+   
+    <div class="main-content">
+       <div class="payment-section">
+            <div class="payment-header">
+                <h3>MY voice</h3>
+                <div class="calendar-icon">🎶</div>
+            </div>
+            
+            <table class="payment-table">
+                <thead>
+                    <tr>
+                        <th>{{ voice_list.voice_id }}</th>
+                        <th>생성 날짜</th>
+                        <th>voice 이름</th>
+                        <th>voice id</th>
+                          <th>샘플 재생</th>
+                        <th>복사하기</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if voice_list %}
+                    {% for voice in voice_list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td> 
+                        <td>{{ voice.created_at }}</td>  
+                        <td>{{ voice.voice_name }}</td>  
+                        <td>{{ voice.voice_id }}</td>       
+                           <td>
+                            {% if voice.sample_url %}
+                            <audio controls style="width:150px;">
+                                <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                                지원하지 않는 브라우저입니다.
+                            </audio>
+                            {% else %}
+                            샘플 없음
+                            {% endif %}
+                        </td>
+                        <td>
+                        <button onclick="copyToClipboard('{{ voice.voice_id }}')">☑️</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                    <td colspan="4" class="empty-state">저장된 음성이 없습니다.</td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+ 
+    </div>
+
+     <script src="{% static 'js/customer_ai/make_voice.js' %}"></script>
+
+</body>
+</html>
+
+
+        

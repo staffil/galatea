@@ -1,0 +1,99 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/register/signup.css' %}">
+
+    <title>Sign In UI</title>
+
+</head>
+<body>
+    <div class="container">
+        <div class="circle-bg circle-1"></div>
+        <div class="circle-bg circle-2"></div>
+        <div class="circle-bg circle-3"></div>
+        <div class="circle-bg circle-4"></div>
+        <div class="circle-bg circle-5"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="text-section">
+            <h1>안녕하세요</h1>
+            <p>
+                저희 GALATEA에 오신 피그말리온 분들을 환영합니다. 회원가입 및 로그인시 AI 를 커스텀할 수 있습니다. voice 와 프롬프트를 만들어 원하는 AI 모델을 생성해 보세요. 
+            </p>
+        </div>
+
+        <div class="signin-box" role="main" aria-label="회원가입 폼">
+            <div class="img-wapper">
+                <img src="/static/img/Group 31.png" alt="Galatea Logo">
+                <h1>GALATEA</h1>
+            </div>
+            <div style="text-align: center; border-bottom: 1px solid #ccc; line-height: 0; margin: 20px 0;">
+  <span style="background:#fff; padding:0 10px;">SIGN UP</span>
+</div>
+
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+
+
+<form method="post" action="{% url 'register:signup' %}">
+    {% csrf_token %}
+
+    <div>
+        {{ form.username }}
+        {% if form.username.errors %}
+            <div style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ form.username.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.nickname }}
+        {% if form.nickname.errors %}
+            <div style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ form.nickname.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+            <div style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;" >{{ form.password1.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+            <div style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ form.password2.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.email }}
+        {% if form.email.errors %}
+            <div style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ form.email.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.phone }}
+        {% if form.phone.errors %}
+            <div style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ form.phone.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit" aria-label="회원가입 버튼">SIGN IN</button>
+</form>
+
+</body>
+</html>

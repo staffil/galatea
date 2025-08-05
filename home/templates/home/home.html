@@ -1,0 +1,43 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+
+</head>
+<body>
+<div class="wrapper">
+    <div class="logo">        
+        <img src="/static/img/Group 31.png" alt="Galatea Logo" style="width: 100px; height: 100px;">
+        <h1>GALATEA</h1>
+    </div>
+
+    <div class="container">
+        <div class="circle-bg circle-1"></div>
+        <div class="circle-bg circle-2"></div>
+        <div class="circle-bg circle-3"></div>
+        <div class="circle-bg circle-4"></div>
+        <div class="circle-bg circle-5">
+            <img src="/static/img/Group 31.png" alt="Galatea Logo">
+        </div>
+
+        <div class="welcome-text">welcome to</div>
+        <div class="galatea-text">GALATEA</div>
+    </div>
+
+    <div class="button-container">
+        <button class="btn btn-main" onclick="handleClick('main')">MAIN</button>
+        <button class="btn btn-signup" onclick="handleClick('signup')">SIGN UP</button>
+        <button class="btn btn-login" onclick="handleClick('login')">LOGIN</button>
+    </div>
+</div>
+
+ <script src="{% static 'js/home/home.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+    @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+
+        :root {
+            --main-pink: #F359DE;
+            --pink-light-1: rgba(243, 89, 222, 0.12);
+            --pink-light-2: rgba(243, 89, 222, 0.28);
+            --pink-light-3: rgba(243, 89, 222, 0.51);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Black Han Sans', sans-serif;
+        }
+
+        /* Background Circles - Corrected to be truly centered */
+        .circle-bg {
+            position: absolute;
+            border-radius: 50%;
+            left: 50%; /* Center horizontally */
+            top: 50%; /* Center vertically */
+            transform: translate(-50%, -50%); /* Ensures the center of the circle is at 50%, 50% */
+            z-index: -1;
+        }
+
+        .circle-1 {
+            width: 3000px; /* Larger to cover more area */
+            height: 3000px;
+            background: var(--pink-light-1);
+        }
+
+        .circle-2 {
+            width: 2400px;
+            height: 2400px;
+            background: var(--pink-light-2);
+        }
+
+        .circle-3 {
+            width: 1800px;
+            height: 1800px;
+            background: var(--pink-light-3);
+        }
+
+        .circle-4 {
+            width: 1200px;
+            height: 1200px;
+            background: var(--pink-light-2);
+        }
+
+        .circle-5 {
+            width: 800px;
+            height: 800px;
+            background: var(--main-pink);
+        }
+
+        /* Main Content Container */
+        .main-container {
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            width: 1200px; /* Increased width to match image content spread */
+            max-width: 95%; /* Responsive safety */
+            gap: 80px; /* Increased space between the two sections */
+            z-index: 1;
+            padding: 30px 0; /* Add some vertical padding */
+        }
+
+        /* Left Text Section */
+        .text-section {
+            flex: 1;
+            padding-left: 20px; /* Adjusted padding for alignment */
+            color: #333;
+            text-align: left;
+            max-width: 450px; /* Limit width to match image */
+        }
+
+        .text-section h1 {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 50px; /* Matches image */
+            margin-bottom: 20px;
+            line-height: 1.2;
+            color: var(--main-pink);
+            font-weight: 900;
+        }
+
+        .text-section p {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 16px; /* Matches image */
+            line-height: 1.6;
+            color: #555;
+            word-break: keep-all; /* Prevents word breaking in Korean text */
+        }
+
+        /* Sign-in Box */
+        .signin-box {
+            background: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
+            border-radius: 20px;
+            padding: 30px 40px 50px;
+            width: 700px; /* Adjusted width to match image */
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 18px; /* Adjusted gap between elements */
+        }
+
+        .signin-box .title {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 40px;
+            font-weight: 900;
+            color: #333;
+            margin-bottom: 25px;
+            letter-spacing: -2px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"] {
+            width: 86%;
+            padding: 15px 18px; /* Adjusted padding for better visual match */
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 18px;
+            outline-offset: 2px;
+            outline-color: var(--main-pink);
+            font-family: 'Noto Sans KR', sans-serif;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        input::placeholder {
+            color: #bbb;
+            opacity: 1;
+        }
+
+        /* Sign In Button */
+        button {
+            margin-top: 30px; /* Space above button */
+            width: 100%;
+            background: var(--main-pink);
+            color: white;
+            font-weight: 900;
+            font-size: 20px;
+            border: none;
+            padding: 18px 0; /* Adjusted padding */
+            border-radius: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 10px rgba(243, 89, 222, 0.4); /* Added subtle shadow to button */
+        }
+
+        button:hover {
+            background: #d43bcf;
+        }
+
+        /* Footer Text */
+        .footer-text {
+            margin-top: 40px; /* Space above footer text */
+            font-family: 'Black Han Sans', sans-serif;
+            font-weight: 900;
+            font-size: 24px;
+            color: #333;
+            user-select: none;
+        }
+        .container{
+            position: relative;
+            left: 300px;
+        }
+        .text-section h1{
+            color: white;
+        }
+        .text-section p{
+            color: white;
+        }
+        
+        form div{
+            margin-bottom: 20px
+        }
+            .img-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+        }
+
+        .img-wrapper img {
+            width: 60px;
+            height: 60px;
+        }
+        img{
+            width: 80px;
+            height: 80px;
+        }
+        h1{
+            margin-top: -10px;
+            font-family: "Darker Grotesque";
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            letter-spacing: 2.04px;
+        }

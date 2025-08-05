@@ -1,0 +1,13 @@
+{# templates/admin/home/users/change_list.html #}
+{% extends "admin/change_list.html" %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_admin.css' %}">
+
+{% block content %}
+  <h1 style="color: #2c3e50;">👤 사용자 관리 페이지</h1>
+  <p>이 페이지는 사용자 목록 페이지 입니다.</p>
+  <hr>
+
+
+  {{ block.super }} {# 기존 목록 테이블을 그대로 유지 #}
+{% endblock %}

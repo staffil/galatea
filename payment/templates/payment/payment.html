@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>아임포트 결제 테스트</title>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+</head>
+<body>
+    <h2>아임포트 테스트 결제</h2>
+
+    <!-- 전화번호 입력 -->
+    <input type="text" id="phoneNumber" placeholder="휴대폰 번호 입력">
+    <br><br>
+
+    <!-- 카카오페이 -->
+    <button onclick="requestPay('kakaopay')">카카오페이 결제</button>
+    <!-- 토스페이먼츠 -->
+    <button onclick="requestPay('tosspayments')">토스 결제</button>
+    <!-- 페이팔 -->
+    <button onclick="requestPay('paypal')">페이팔 결제</button>
+
+    <script>
+        const IMP = window.IMP;
+        IMP.init("imp28654630"); // 가맹점 식별코드 (테스트용)
+
+        function requestPay(pg) {
+            const phone = document.getElementById("phoneNumber").value || "010-0000-0000";
+            const merchant_uid = "order_" + new Date().getTime();
+
+            const data = {
+                pg: pg,
+                pay_method: "card",
+                merchant_uid: merchant_uid,
+                name: "테스트 상품",
+                amount: pg === "tosspayments" || pg === "paypal" ? 0 : 100,
+                buyer_email: "test@example.com",
+                buyer_name: "테스터",
+                buyer_tel: phone
+            };
+
+            // toss와 paypal은 빌링키 테스트 위해 customer_uid 추가
+            if (pg === "tosspayments" || pg === "paypal") {
+                data.customer_uid = "test_user_001";
+            }
+
+            IMP.request_pay(data, function(rsp) {
+                if (rsp.success) {
+                    fetch(`/verify_payment/?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}`)
+                        .then(res => res.json())
+                        .then(data => alert(JSON.stringify(data)));
+                } else {
+                    alert("결제 실패: " + rsp.error_msg);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

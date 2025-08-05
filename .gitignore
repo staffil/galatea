@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Database files
+db.sqlite3  # <-- 이 파일이 가장 유력한 용의자입니다!
+*.sqlite3
+
+# Python virtual environment directories
+.venv/
+venv/
+env/
+
+# Python compiled files
+__pycache__/
+*.pyc
+*.mypy_cache/
+
+# Media files (uploaded user content, if not stored externally)
+media/ # 만약 사용자 업로드 파일이 media 폴더에 저장되고, Git에 불필요하게 커밋되었다면 문제가 됨.
+uploads/ # image_ea265d.png에 uploads 폴더가 보입니다. 확인 필요.
+
+# OS generated files
+.DS_Store
+.idea/ # IDE specific files
+*.log

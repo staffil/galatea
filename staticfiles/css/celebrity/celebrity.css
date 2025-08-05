@@ -1,0 +1,396 @@
+ * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            padding-top: 10px;
+        }
+
+        .container {
+            margin: 0 auto;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            height: 100%;
+            background-color: white;
+            margin-top: 140px;
+            display: flex;
+            flex-direction: column;
+            min-height: 300vh;
+        }
+
+        header {
+            height: 60px;
+            position: fixed;
+            top: 90px;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        /* 메인 채팅 영역 */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+            align-items: center;
+            justify-content: flex-start;
+            background: linear-gradient(135deg, #8B5CF6, #A855F7, #9333EA);
+            margin: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Celebrity 이미지 영역 */
+        .celebrity-image-container {
+            margin-top: 50px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 700px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+        }
+
+        .celebrity-image {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+        }
+
+        .image-placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .ai-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-title {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .chat-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* 텍스트 입력 */
+        .text-input {
+            width: 100%;
+            max-width: 800px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            outline: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-input::placeholder {
+            color: #999;
+        }
+
+        /* 오디오 플레이어 */
+        .audio-player {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px 0;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            outline: none;
+        }
+
+        /* 녹음 버튼 */
+        .record-container {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            width: 440px;
+            height: 440px;
+            justify-content: center;
+        }
+
+        .record-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            z-index: 5;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .record-button::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.28);
+            z-index: -1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .record-button::after {
+            content: '';
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: rgba(113, 60, 237, 0.51);
+            z-index: -2;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .record-container::before {
+            content: '';
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.28);
+            z-index: -3;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .record-container::after {
+            content: '';
+            position: absolute;
+            width: 440px;
+            height: 440px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.12);
+            z-index: -4;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .record-button:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 12px 25px rgba(139, 92, 246, 0.6);
+        }
+
+        .record-button.recording {
+            background: linear-gradient(135deg, #DC2626, #EF4444);
+        }
+
+        .record-button.recording::after {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: ripple 1.5s infinite ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .record-icon {
+            font-size: 32px;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .record-button.recording .record-icon {
+            transform: rotate(180deg);
+        }
+
+        .record-status {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* 인식된 텍스트 */
+        .recognized-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* 메시지 영역 */
+        .message-area {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px 0;
+            min-height: 200px;
+        }
+
+        .user-message {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 20px 20px 5px 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            text-align: left;
+        }
+
+        .ai-message {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 20px 20px 20px 5px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+
+        /* 응답 표시 영역 - 제거됨 */
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .chat-container {
+                padding: 20px;
+            }
+            
+            .record-button {
+                width: 100px;
+                height: 100px;
+            }
+
+            .record-button::before {
+                width: 160px;
+                height: 160px;
+            }
+
+            .record-button::after {
+                width: 220px;
+                height: 220px;
+            }
+
+            .record-container::before {
+                width: 280px;
+                height: 280px;
+            }
+
+            .record-container::after {
+                width: 340px;
+                height: 340px;
+            }
+
+            .record-icon {
+                font-size: 24px;
+            }
+
+            .celebrity-image-container {
+                height: 300px;
+            }
+        }

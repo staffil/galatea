@@ -1,0 +1,166 @@
+from django.contrib import admin
+from django.contrib.auth import get_user_model
+from .models import Users, LLM, Voice
+from makeVoice.models import VoiceList
+from user_auth.models import Authority, UserAuth, Conversation, Celebrity
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+User = get_user_model()
+
+
+class ConversationInline(admin.TabularInline):
+    model= Conversation
+    extra=0
+    readonly_fields= ('created_at',)
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+
+    list_display = ('사용자_번호', '사용자_아이디', '이메일_주소') 
+  
+    @admin.display(description='사용자 번호') # 여기에 원하는 헤더 이름을 적습니다.
+    def 사용자_번호(self, obj):
+        return obj.id # 실제 객체의 id 값을 반환합니다.
+
+    # 'username' 필드의 헤더를 '사용자 아이디'로 변경
+    @admin.display(description='사용자 아이디') # 여기에 원하는 헤더 이름을 적습니다.
+    def 사용자_아이디(self, obj):
+        return obj.username # 실제 객체의 username 값을 반환합니다.
+
+    # 'email' 필드의 헤더를 '이메일 주소'로 변경
+    @admin.display(description='이메일 주소') # 여기에 원하는 헤더 이름을 적습니다.
+    def 이메일_주소(self, obj):
+        return obj.email
+    inlines = [ConversationInline]
+    fieldsets = BaseUserAdmin.fieldsets
+    add_fieldsets = BaseUserAdmin.add_fieldsets
+
+
+
+
+class LLMConversationInline(admin.TabularInline):
+    model = Conversation
+    extra =0 
+    fields = ('created_at', 'user', 'user_message', 'llm_response',)
+    readonly_fields = ('created_at', 'user', 'user_message', 'llm_response',)
+@admin.register(LLM)
+class LLMAdmin(admin.ModelAdmin):
+    # list_display에는 정의한 @admin.display 메서드들의 이름이 들어가야 합니다.
+    # 만약 커스텀 메서드를 사용한다면 그 메서드 이름을 여기에 넣어주세요.
+    # 예를 들어, 메서드 이름을 'get_id_display' 등으로 명확히 하는 것이 좋습니다.
+    list_display= ('get_id_display', 'get_name_display', 'get_created_at_display', 'get_update_at_display') # <-- 수정된 부분
+
+    search_fields = ('name', 'prompt',) # LLM 모델의 필드이므로 'name', 'prompt'로 접근하는 것이 맞습니다.
+
+    # === 아래 @admin.display 메서드들을 수정합니다. ===
+    @admin.display(description="LLM 번호")
+    def get_id_display(self, obj): # 메서드 이름 변경 권장: 'id'는 필드 이름과 겹쳐 혼동 가능
+        return obj.id # obj는 LLM 인스턴스이므로 obj.id로 직접 접근
+
+    @admin.display(description="LLM 이름")
+    def get_name_display(self, obj): # 메서드 이름 변경 권장
+        return obj.name # obj는 LLM 인스턴스이므로 obj.name으로 직접 접근
+
+    @admin.display(description="생성날짜")
+    def get_created_at_display(self, obj): # 메서드 이름 변경 권장
+        return obj.created_at # obj는 LLM 인스턴스이므로 obj.created_at으로 직접 접근
+
+    @admin.display(description="수정날짜")
+    def get_update_at_display(self, obj): # 메서드 이름 변경 권장
+        return obj.update_at # obj는 LLM 인스턴스이므로 obj.update_at으로 직접 접근
+    # =================================================
+
+    inlines = [LLMConversationInline]
+
+
+@admin.register(VoiceList)
+class VoiceListAdmin(admin.ModelAdmin): 
+    list_display=("get_user_id_display", "get_user_username_display", "get_voice_id_display", "get_voice_name_display", ) # 메서드 이름으로 변경
+
+    @admin.display(description="사용자 번호") # 컬럼 헤더 이름
+    def get_user_id_display(self, obj): # 메서드 이름
+        return obj.user.id if obj.user else None 
+
+    @admin.display(description='사용자 이름') # 컬럼 헤더 이름 (사용자 아이디가 아니라 '이름'으로 가정)
+    def get_user_username_display(self, obj): # 메서드 이름
+        return obj.user.username if obj.user else 'N/A' # VoiceList의 user 필드에서 username을 가져옴.
+
+    @admin.display(description="목소리 ID") # 컬럼 헤더 이름
+    def get_voice_id_display(self, obj): # 메서드 이름
+        return obj.voice_id # VoiceList 모델에 voice_id 필드가 있다고 가정
+
+    @admin.display(description="목소리 이름") # 컬럼 헤더 이름
+    def get_voice_name_display(self, obj): # 메서드 이름
+        # VoiceList 모델에 'voice_name' 필드가 있다고 가정합니다.
+        # 만약 'Voice' 모델에 이름이 있고, VoiceList가 Voice를 ForeignKey로 참조한다면
+        # return obj.voice.name if obj.voice else None
+        # 현재 VoiceList 모델에 voice_name 필드가 없으면 오류가 발생합니다.
+        # VoiceList 모델에 직접 'name' 필드나 Voice 모델의 'name' 필드를 참조하는 방식이 필요합니다.
+        return obj.voice_name # 'voice_name' 필드가 VoiceList 모델에 있다고 가정
+
+
+    # list_filter와 search_fields는 VoiceList 모델의 실제 필드를 참조해야 합니다.
+    # VoiceList 모델에 'user' 필드가 ForeignKey로 연결되어 있다면 'user'로 필터링 가능
+    list_filter = ('user',)
+    # 검색 필드도 VoiceList 모델의 실제 필드를 참조
+    # user__username (user 모델의 username), voice_id, voice_name (만약 있다면)
+    search_fields = ('user__username', 'voice_id', 'voice_name',)
+    
+
+
+
+
+
+@admin.register(Conversation)
+class converstationAdmin(admin.ModelAdmin):
+    list_display=('get_id_display', 'get_llm_display','get_user_display', 'get_created_at_display', 'get_user_message_display',)
+    list_filter = ('created_at', 'user','llm',)
+    search_fields = ('user__username', 'llms__name', 'user_message', 'llm_response',) # user_message, llm_response 검색 추가
+    
+    
+    @admin.display(description="id")
+    def get_id_display(self, obj):
+        return obj.user.id
+    @admin.display(description="LLM 이름")
+    def get_llm_display(self, obj):
+        return obj.llm.name
+    @admin.display(description="사용자 이름")
+    def get_user_display(self, obj):
+        return obj.user.username
+
+  
+
+    @admin.display(description="생성날짜")
+    def get_created_at_display(self, obj):
+        return obj.created_at
+
+    @admin.display(description="사용자 메시지")
+    def get_user_message_display(self, obj):
+        return obj.user_message
+
+
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'llm', 'created_at', 'user_message', 'llm_response',)
+        }),
+    )
+    readonly_fields = ('created_at',)
+    list_filter = ('user', 'llm',)
+
+
+
+@admin.register(Celebrity)
+class CelebrityAdmin(admin.ModelAdmin):
+    list_display = ('get_celebrity_name_display', 'get_description_display') # 목록에 표시할 필드
+    search_fields = ('celebrity_name', 'celebrity_prompt') # 검색 기능에 사용할 필드
+    list_filter = ('celebrity_voice_id',) # 사이드바에 필터로 사용할 필드
+
+    @admin.display(description="celebrity 이름")
+    def get_celebrity_name_display(self, obj):
+        return obj.celebrity_name
+    
+    @admin.display(description="설명")
+    def get_description_display(self, obj):
+        return obj.description
+
+    
+

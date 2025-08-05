@@ -1,0 +1,52 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator</title>
+    <link rel="stylesheet" href="{% static 'css/makeImage/image.css' %}">
+
+</head>
+<body>
+      <header>
+    {% if not user.is_authenticated %}
+      {% include "common/notLoginHeader.html" %}
+    {% else %}
+      {% include "common/loginHeader.html" %}
+    {% endif %}
+  </header>
+
+    <div class="container-flex">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <h2>Prompt</h2>
+            <form id="generateForm">
+                <textarea name="prompt" id="imagePrompt" placeholder="이미지를 생성할 프롬프트를 넣어주세요. 되도록 자세한 프롬프트를 넣어주세요"></textarea>
+                <button type="button" class="generate-btn generate_image">생성하기</button>
+                <div class="loading" id="loadingText">이미지를 생성하고 있습니다...</div>
+            </form>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <h2>Your Image</h2>
+            <div class="image-preview">
+                <div class="image-container">
+                    <img id="generatedImage" name="image_url" src="" alt="Generated Image" style="display: none;">
+                    <div class="image-placeholder" id="imagePlaceholder">생성된 이미지가 여기에 표시됩니다</div>
+                </div>
+                <a id="downloadBtn" href="#" download="generated_image.png" style="display: none;">
+                    <button type="button" class="download-btn">다운로드</button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+ <script src="{% static 'js/makeImage/image.js' %}"></script>
+
+
+</body>
+</html>

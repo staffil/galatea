@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+     .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+</style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+<p class="errornote">
+{% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+        {{ error }}
+    {% endfor %}
+{% else %}
+{% translate "지금은 관리자 창입니다.." %}
+{% endif %}
+</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+<p class="errornote">
+{% blocktrans with username=user.get_username %}You are authenticated as {{ username }} but are not authorized to access this page. Would you like to login to a different account?{% endblocktrans %}
+</p>
+{% endif %}
+
+<div id="content-main">
+<div class="logo-container">
+            <div class="img-wrapper">
+                <a href="{% url 'main' %}">
+                <img src="/static/img/Group 31.png" alt="Galatea Logo">
+                </a>
+            </div>
+        </div>
+        
+<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+  <div class="form-row">
+    {{ form.username.errors }}
+    <label for="{{ form.username.id_for_label }}" class="required" >아이디</label>
+    {{ form.username }}
+  </div>
+  <div class="form-row">
+    {{ form.password.errors }}
+    <label for="{{ form.password.id_for_label }}" class="required">비밀번호</label>
+    {{ form.password }}
+    <input type="hidden" name="next" value="{{ next }}">
+  </div>
+  {% url 'admin:password_reset' as password_reset_url %}
+  {% if password_reset_url %}
+  <div class="password-reset-link">
+    <a href="{{ password_reset_url }}">{% translate "아이디가 기억 안나세요?" %}</a>
+  </div>
+  {% endif %}
+  <div class="submit-row">
+    <input type="submit" value="{% translate 'login' %}">
+  </div>
+</form>
+
+</div>
+{% endblock %}

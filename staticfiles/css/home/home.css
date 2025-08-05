@@ -1,0 +1,237 @@
+  * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        h1{
+            color: #000;
+            font-family: "Darker Grotesque";
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            letter-spacing: 2.04px;
+            
+
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            overflow: hidden; /* 스크롤바 방지 */
+            position: relative; /* 하단 버튼 컨테이너의 absolute 기준점 */
+        }
+
+        /* ✅ 전체 감싸는 래퍼 */
+        .wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%; /* body의 min-height: 100vh를 따라감 */
+            /* margin-top: 200px; /* 이 부분을 제거하세요 */
+        }
+        .logo{
+            position: absolute; /* body를 기준으로 절대 위치 * /* 상단에서 20px 떨어짐 */
+            left:10px; /* 왼쪽에서 20px 떨어짐 */
+            z-index: 20; /* 다른 요소들 위에 보이도록 */
+            padding-left: 30px;
+            padding-top: 30px;
+            
+        }
+        .container {
+            width: 100vw;
+            height: 100vh; /* 이 높이 때문에 내부 콘텐츠가 화면 전체에 걸쳐 수직 중앙 정렬됩니다. */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 내부 텍스트 및 원들을 수직 중앙 정렬 */
+            align-items: flex-start;
+            left: 14%;
+            padding-left: 8%;
+
+            /* ✅ 이 부분을 추가하여 전체 UI (텍스트와 동심원)를 아래로 내립니다. */
+            transform: translateY(80px); /* 원하는 만큼 아래로 이동 (예: 80px) */
+            /* 이 값으로 중앙에 위치한 콘텐츠의 시작점을 조절할 수 있습니다. */
+        }
+
+        /* 배경 동심원 */
+        .circle-bg {
+            position: absolute;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* .container 중앙에 배치 */
+        }
+
+        .circle-1 {
+            width: 1800px;
+            height: 1800px;
+            background: rgba(243, 89, 222, 0.12);
+            z-index: 1;
+        }
+
+        .circle-2 {
+            width: 1400px;
+            height: 1400px;
+            background: rgba(243, 89, 222, 0.28);
+            z-index: 2;
+        }
+
+        .circle-3 {
+            width: 1000px;
+            height: 1000px;
+            background: rgba(243, 89, 222, 0.51);
+            z-index: 3;
+        }
+
+        .circle-4 {
+            width: 600px;
+            height: 600px;
+            background: rgba(243, 89, 222, 0.28);
+            z-index: 4;
+        }
+
+        .circle-5 {
+            width: 300px;
+            height: 300px;
+            background: #F359DE;
+            z-index: 5;
+        }
+
+        /* 메인 텍스트 */
+        .welcome-text {
+            font-size: 4rem;
+            font-weight: 400;
+            color: #000000;
+            text-align: left;
+            margin-bottom: 50px;
+            z-index: 10;
+            position: relative;
+            line-height: 1;
+            font-family: "Bungee", sans-serif;
+        }
+
+        .galatea-text {
+            font-size: 6.5rem;
+            font-weight: 900;
+            color: #000000;
+            text-align: left;
+            margin-bottom: 4rem;
+            z-index: 10;
+            position: relative;
+            letter-spacing: 0.02em;
+            line-height: 0.9;
+            font-family: "Bungee", sans-serif;
+        }
+
+        /* 버튼 컨테이너 */
+        .button-container {
+            position: absolute; /* body를 기준으로 절대 위치 */
+            bottom: 5%; /* 화면 하단에서 5% 위 */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2rem;
+            z-index: 10;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            min-width: 120px;
+        }
+
+        .btn-main {
+            background: rgba(255, 182, 193, 0.9);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
+        }
+
+        .btn-signup {
+            background: rgba(173, 216, 230, 0.9);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(173, 216, 230, 0.4);
+        }
+
+        .btn-login {
+            background: rgba(221, 160, 221, 0.9);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(221, 160, 221, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 최상단 로고 이미지에 대한 스타일 (wrapper 바로 아래 있는 img) */
+        /* 이 이미지를 화면 왼쪽 상단에 고정하려면 absolute 또는 fixed position을 줍니다. */
+        .wrapper > img:first-child {
+            position: absolute; /* 또는 fixed */
+            top: 20px; /* 상단에서 20px 떨어짐 */
+            left: 20px; /* 왼쪽에서 20px 떨어짐 */
+            width: 320px;
+            height: auto;
+            z-index: 20; /* 다른 요소들 위에 보이도록 */
+        }
+        /* .circle-5 안의 img는 circle-bg 스타일의 영향을 받습니다. */
+        /* 따라서 일반 img 태그 스타일은 이 최상단 로고에만 적용되도록 변경하거나 구체화해야 합니다. */
+        img { /* 이 일반적인 img 스타일은 .circle-5 안의 img에도 영향을 주므로 주의 */
+            /* width: 320px; /* 이 값은 위 .wrapper > img:first-child 에서 명시해줬습니다. */
+            height: auto;
+            /* 나머지 정렬 관련 속성들은 이 img가 아니라 .container나 .circle-5에서 제어되어야 합니다. */
+            /* position: relative; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; */
+        }
+        /* .circle-5 내부에 있는 img 태그에 대한 스타일을 명확히 하고 싶다면: */
+        .circle-5 img {
+            width: 100%; /* 부모 원에 꽉 차게 */
+            height: 100%;
+            object-fit: contain; /* 비율 유지하며 꽉 차게 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: none; /* circle-bg의 transform과 겹치지 않게 */
+        }
+
+
+        /* 애니메이션 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-text, .galatea-text {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .button-container {
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .circle-bg {
+            animation: pulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.02);
+                opacity: 0.9;
+            }
+        }

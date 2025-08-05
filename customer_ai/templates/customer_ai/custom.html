@@ -1,0 +1,220 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Chat UI</title>
+        <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
+</head>
+<body>
+    <!-- 헤더 -->
+      <header>
+    {% if not user.is_authenticated %}
+      {% include "common/notLoginHeader.html" %}
+    {% else %}
+      {% include "common/loginHeader.html" %}
+    {% endif %}
+  </header>
+
+    <div class="container">
+        <!-- 사이드바 -->
+      <aside class="sidebar">
+    <h3>🎯 모드 선택</h3>
+    <div class="mode-option active">
+        <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
+        <label>💬 TEXT MODE</label>
+    </div>
+    <div class="mode-option">
+        <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+        <label>👁️ VISION MODE</label>
+    </div>
+  </aside>
+
+        <!-- 메인 채팅 영역 -->
+        <main class="chat-container">
+
+            {% if llm.llm_image %}
+                <img src="{{ llm.llm_image.url }}" alt="AI 이미지" style="max-width: 700px; max-height: 400px; border-radius: 15px; margin-top: 50px;" />
+            {% else %}
+                <p>생성된 이미지가 없습니다.</p>
+            {% endif %}
+
+            <div class="chat-header">
+                <div class="ai-avatar">🗨️</div>
+                <h1 class="chat-title">{{ llm.name }} 텍스트 대화하기</h1>
+            </div>
+            
+            <p class="chat-subtitle">하고 싶은 말을 입력하세요</p>
+            
+            <!-- 메시지 영역을 텍스트 입력창 위로 이동 -->
+            <div class="message-area" id="message-area">
+                <!-- 메시지들이 여기에 표시됩니다 -->
+            </div>
+            
+            <!-- 오디오 플레이어를 텍스트 입력창 위로 이동 -->
+            <div class="audio-player" id="audio-container" style="display: none;">
+                <audio id="tts-audio" controls></audio>
+            </div>
+            
+            <!-- 텍스트 입력창을 메시지 영역 아래로 이동 -->
+            <input type="text" class="text-input" id="text-input" placeholder="메시지를 입력하세요..." onkeydown="if(event.key === 'Enter'){ sendText(); }">
+            
+            <!-- 마이크를 텍스트 입력창 아래로 이동 -->
+            <div class="record-container">
+                <button class="record-button" id="record-btn" onclick="toggleRecording()">
+                    <span class="record-icon" id="record-icon">🎤</span>
+                </button>
+            </div>
+            <div class="record-status" id="record-status">녹음을 시작하려면 버튼을 누르세요</div>
+            
+            <div class="recognized-text" id="recognized-text"></div>
+        </main>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let stream;
+
+        function toggleRecording() {
+            const recordBtn = document.getElementById("record-btn");
+            const recordStatus = document.getElementById("record-status");
+
+            if (!isRecording) {
+                navigator.mediaDevices
+                    .getUserMedia({ audio: true })
+                    .then((s) => {
+                        stream = s;
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+                        mediaRecorder.start();
+                        isRecording = true;
+
+                        recordBtn.querySelector(".record-icon").textContent = "⏹";
+                        recordBtn.classList.add("recording");
+                        recordBtn.parentElement.classList.add("recording");
+                        recordStatus.textContent = "녹음 중... 다시 누르면 종료됩니다";
+
+                        mediaRecorder.addEventListener("dataavailable", (event) => {
+                            audioChunks.push(event.data);
+                        });
+
+                        mediaRecorder.addEventListener("stop", () => {
+                            const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+                            const formData = new FormData();
+                            formData.append("audio", audioBlob, "recorded.wav");
+
+                            // 실제 환경에서는 이 부분을 활성화하세요
+                          
+                            fetch("/customer_ai/upload_audio/", {
+                                method: "POST",
+                                body: formData,
+                            })
+                                .then((res) => res.json())
+                                .then((data) => {
+                                    document.getElementById("recognized-text").textContent = "인식된 텍스트: " + data.text;
+                                    sendText(data.text);
+                                });
+                         
+
+                        });
+                    })
+                    .catch((err) => {
+                        alert("마이크 권한을 허용해주세요.");
+                        console.error(err);
+                    });
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.querySelector(".record-icon").textContent = "🎤";
+                recordBtn.classList.remove("recording");
+                recordBtn.parentElement.classList.remove("recording");
+                recordStatus.textContent = "녹음을 시작하려면 버튼을 누르세요";
+            }
+        }
+
+        function sendText(text = null) {
+            const currentLlmId = "{{ llm_id }}";
+            const userText = text || document.getElementById("text-input").value;
+            if (!userText.trim()) return;
+
+            const messageArea = document.getElementById("message-area");
+            
+            // 사용자 메시지 추가
+            const userMessage = document.createElement("div");
+            userMessage.className = "user-message";
+            userMessage.textContent = userText;
+            messageArea.appendChild(userMessage);
+
+            // 입력창 초기화
+            document.getElementById("text-input").value = "";
+
+            // 메시지 추가 후 텍스트 입력창으로 부드럽게 스크롤
+            setTimeout(() => {
+                const textInput = document.getElementById("text-input");
+                textInput.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 100);
+
+            const formData = new FormData();
+            formData.append("text", userText);
+            formData.append("llm_id", currentLlmId);
+
+          
+            fetch("/customer_ai/generate_response/", {
+                method: "POST",
+                body: formData,
+            })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(err => { throw new Error(err.error || "Unknown error"); });
+                }
+                return res.json();
+            })
+            .then(data => {
+                const aiMessage = document.createElement("div");
+                aiMessage.className = "ai-message";
+                aiMessage.textContent = data.ai_text + " (emotion: " + data.emotion + ")";
+                messageArea.appendChild(aiMessage);
+
+                document.getElementById("tts-audio").src = data.audio_url;
+                document.getElementById("audio-container").style.display = "block";
+
+                // AI 응답 후에도 텍스트 입력창으로 스크롤
+                setTimeout(() => {
+                    const textInput = document.getElementById("text-input");
+                    textInput.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 100);
+            })
+            .catch(error => {
+                alert("오류 발생: " + error.message);
+            });
+
+          
+
+            setTimeout(() => {
+                const aiMessage = document.createElement("div");
+              
+                messageArea.appendChild(aiMessage);
+                
+                // 텍스트 입력창으로 스크롤 이동
+                setTimeout(() => {
+                    const textInput = document.getElementById("text-input");
+                    textInput.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }, 100);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

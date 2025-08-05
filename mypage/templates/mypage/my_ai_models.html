@@ -1,0 +1,301 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - GALATEA</title>
+    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_models.css' %}">
+
+</head>
+<body>
+    <div class="sidebar">
+        <h1>마이페이지</h1>
+        <div class="sidebar-profile">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;" />
+            {% else %}
+                <p>프로필 이미지 없음</p>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">로그아웃</a></li>
+            <li><a href="{% url 'mypage:mypage' %}">프로필</a></li>
+            {% if llm %}
+                <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:my_ai_models' llm.id %}">My AI models</a></li>
+            {% else %}
+                <li><a href="#" onclick="return alert('현재 커스터한 AI 가 없습니다.')">My AI models</a></li>
+            {% endif %}
+            <li><a href="{% url 'mypage:my_voice' %}">voice id 목록</a></li>
+            <li><a href="{% url 'main' %}">main 으로</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="ai-config-container">
+            <!-- AI 모델 선택 -->
+            <div class="form-group">
+                <label for="llmSelect">AI 모델 선택</label>
+                <div class="sidebar-profile">
+                    <img id="llmImage" 
+                         src="{% if llm_list|length > 0 and llm_list.0.llm_image %}{{ llm_list.0.llm_image.url }}{% endif %}" 
+                         alt="AI 이미지" 
+                         style="max-width: 700px; max-height: 400px; border-radius: 15px;" />
+                    <p id="noImageText" style="display: none; color: white;">생성된 이미지가 없습니다.</p>
+                </div>
+                <select id="llmSelect" name="llm_id" onchange="updatePromptAndVoice()">
+                    {% for llm in llm_list %}
+                    <option
+                        value="{{ llm.id }}"
+                        data-prompt="{{ llm.prompt|escape }}"
+                        data-voice-id="{{ llm.voice.voice_id }}"
+                        data-language="{{ llm.language }}"
+                        data-stability="{{ llm.stability }}"
+                        data-speed="{{ llm.speed }}"
+                        data-style="{{ llm.style }}"
+                        data-temperature="{{ llm.temperature }}"
+                        data-model="{{ llm.model }}"
+                        {% if llm.llm_image %}data-llm-image="{{ llm.llm_image.url }}"{% endif %}
+                    >
+                        {{ llm.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="config-grid">
+                <div class="prompt-section">
+                    <label>Prompt</label>
+                    <textarea class="prompt-textarea" id="promptDisplay" readonly></textarea>
+                </div>
+
+                <div class="controls-section">
+                    <div class="language-group">
+                        <label>Language</label>
+                        <div class="language-description">언어를 선택할 수 있습니다.</div>
+                        <div class="language-selector" id="languageDisplay">US-en</div>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">Stability</div>
+                        <div class="slider-description">
+                            생성된 음성이 얼마나 안정적인지 조절합니다.<br>
+                            값이 높을수록 더 일관된 음성이 생성됩니다.
+                        </div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="stabilityValue">0.5</span>
+                        </div>
+                        <input class="text" id="stabilitySlider" />
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">Speed</div>
+                        <div class="slider-description">AI 답변 속도를 조절합니다.</div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="speedValue">0.5</span>
+                        </div>
+                        <input class="text"  id="speedSlider" />
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">Style</div>
+                        <div class="slider-description">스타일을 설정할 수 있습니다.</div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="styleValue">0.5</span>
+                        </div>
+                        <input class="text" id="styleSlider" />
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">Temperature</div>
+                        <div class="slider-description">AI의 창의성과 랜덤성을 조절합니다.</div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="temperatureValue">0.5</span>
+                        </div>
+                        <input class="text"  id="temperatureSlider" />
+                    </div>
+                </div>
+
+                <div class="voice-section">
+                    <label>Voice id</label>
+                    <input type="text" class="voice-id-input" id="voiceIdDisplay" readonly />
+                </div>
+
+                <div class="bottom-section">
+                    <div class="model-section">
+                        <label>Select Model</label>
+                        <div class="model-description"></div>
+                        <div class="model-selector" id="modelDisplay">GPT 3 turbo</div>
+                    </div>
+
+
+                </div>
+                
+
+            </div>
+        <div style="display: flex; gap: 10px; margin-top: 30px;">
+            <a href="{% url 'customer_ai:chat_view' llm.id %}" class="action-button">대화하기</a>
+            <a href="{% url 'mypage:my_ai_models_update' llm.id %}" class="action-button">수정하기</a>
+            <a href="{% url 'mypage:my_ai_models_delete' llm.id %}" class="action-button delete-button" onclick="return confirm('해당 AI를 삭제하시겠습니까?')">삭제하기</a>
+        </div>
+
+
+            <!-- 기존 hidden inputs - DB 연동용 -->
+            <div class="form-group">
+                <input type="hidden" id="promptInput" readonly />
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="voiceIdInput" readonly />
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="languageInput" readonly />
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="stabilityInput" readonly />
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="speedInput" readonly />
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="styleInput" readonly />
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="temperatureInput" readonly />
+            </div>
+            <div class="form-group">
+                <input type="hidden" id="modelInput" readonly />
+            </div>
+        </div>
+    </div>
+ <script>
+    // 페이지 로드 시 현재 선택된 llm 객체의 데이터로 UI를 초기화하는 함수
+    function initializeUIWithCurrentLlm() {
+        // Django 템플릿 변수를 사용하여 초기값 설정
+        // {{ llm }} 객체가 context에 잘 넘어왔다고 가정합니다.
+        // JavaScript에서 사용할 수 있도록 escapejs 필터를 적용하여 안전하게 문자열을 삽입합니다.
+        const initialLlm = {
+            id: "{{ llm.id|default:''|escapejs }}", // 현재 LLM의 ID
+            prompt: "{{ llm.prompt|default:''|escapejs }}",
+            voiceId: "{% if llm.voice %}{{ llm.voice.voice_id|default:''|escapejs }}{% else %}{% endif %}", // llm.voice가 없을 경우 대비
+            language: "{{ llm.language|default:''|escapejs }}",
+            stability: "{{ llm.stability|default:0.5|escapejs }}", // 기본값 0.5 설정
+            speed: "{{ llm.speed|default:0.5|escapejs }}",
+            style: "{{ llm.style|default:0.5|escapejs }}",
+            temperature: "{{ llm.temperature|default:0.5|escapejs }}",
+            model: "{{ llm.model|default:''|escapejs }}",
+            llmImage: "{% if llm.llm_image %}{{ llm.llm_image.url }}{% else %}{% endif %}"
+        };
+
+        // 초기 로드 시 이미지 설정
+        const llmImageElem = document.getElementById("llmImage");
+        const noImageText = document.getElementById("noImageText");
+
+        if (initialLlm.llmImage) {
+            llmImageElem.src = initialLlm.llmImage;
+            llmImageElem.style.display = "block";
+            noImageText.style.display = "none";
+        } else {
+            llmImageElem.style.display = "none";
+            noImageText.style.display = "block";
+        }
+
+        // 초기 로드 시 프롬프트 및 기타 설정
+        document.getElementById("promptInput").value = initialLlm.prompt;
+        document.getElementById("promptDisplay").value = initialLlm.prompt;
+        document.getElementById("voiceIdInput").value = initialLlm.voiceId;
+        document.getElementById("voiceIdDisplay").value = initialLlm.voiceId;
+        document.getElementById("languageInput").value = initialLlm.language;
+        document.getElementById("languageDisplay").textContent = initialLlm.language;
+        document.getElementById("stabilityInput").value = initialLlm.stability;
+        document.getElementById("stabilitySlider").value = initialLlm.stability;
+        document.getElementById("stabilityValue").textContent = initialLlm.stability;
+        document.getElementById("speedInput").value = initialLlm.speed;
+        document.getElementById("speedSlider").value = initialLlm.speed;
+        document.getElementById("speedValue").textContent = initialLlm.speed;
+        document.getElementById("styleInput").value = initialLlm.style;
+        document.getElementById("styleSlider").value = initialLlm.style;
+        document.getElementById("styleValue").textContent = initialLlm.style;
+        document.getElementById("temperatureInput").value = initialLlm.temperature;
+        document.getElementById("temperatureSlider").value = initialLlm.temperature;
+        document.getElementById("temperatureValue").textContent = initialLlm.temperature;
+        document.getElementById("modelInput").value = initialLlm.model;
+        document.getElementById("modelDisplay").textContent = initialLlm.model;
+
+        // 드롭다운의 초기 선택값 설정
+        const llmSelect = document.getElementById("llmSelect");
+        if (llmSelect && initialLlm.id) { // llmSelect가 존재하고 initialLlm.id 값이 있을 때만
+            for (let i = 0; i < llmSelect.options.length; i++) {
+                if (llmSelect.options[i].value === initialLlm.id) {
+                    llmSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+
+
+    // 드롭다운 선택 변경 시 호출되는 함수
+    function updatePromptAndVoice() {
+        const llmSelect = document.getElementById("llmSelect");
+        const selectedOption = llmSelect.options[llmSelect.selectedIndex];
+        const selectedLlmId = selectedOption.value; // 선택된 LLM의 ID
+
+        // 현재 페이지의 URL 경로를 변경하고 페이지를 새로 로드합니다.
+        // /mypage/my_ai_models/1/ 에서 /mypage/my_ai_models/2/ 로 변경
+        const currentPath = window.location.pathname;
+        // 정규식을 사용하여 마지막 llm_id 부분을 교체하거나 새로 추가
+        const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
+
+        // URL이 변경되는 경우에만 페이지를 이동하여 불필요한 리로드를 방지
+        if (window.location.pathname !== newUrl) {
+            window.location.href = newUrl;
+        }
+
+        // ---------- 중요: 페이지가 새로 로드되므로, 이 이후의 DOM 업데이트 로직은
+        //            실행되지 않거나 실행되더라도 새로 로드된 페이지에서 덮어씌워집니다.
+        //            따라서 페이지 로드 시 initializeUIWithCurrentLlm() 함수가
+        //            모든 초기화를 담당하도록 하는 것이 올바른 패턴입니다.
+    }
+
+
+    // 슬라이더 이벤트 리스너 설정
+    function setupSliderListeners() {
+        document.getElementById("stabilitySlider").oninput = function () {
+            const value = this.value;
+            document.getElementById("stabilityValue").textContent = value;
+            document.getElementById("stabilityInput").value = value;
+        };
+
+        document.getElementById("speedSlider").oninput = function () {
+            const value = this.value;
+            document.getElementById("speedValue").textContent = value;
+            document.getElementById("speedInput").value = value;
+        };
+
+        document.getElementById("styleSlider").oninput = function () {
+            const value = this.value;
+            document.getElementById("styleValue").textContent = value;
+            document.getElementById("styleInput").value = value;
+        };
+
+        document.getElementById("temperatureSlider").oninput = function () {
+            const value = this.value;
+            document.getElementById("temperatureValue").textContent = value;
+            document.getElementById("temperatureInput").value = value;
+        };
+    }
+
+    // 페이지 로드가 완료되면 초기 UI 설정 및 슬라이더 리스너 등록
+    window.onload = function () {
+        initializeUIWithCurrentLlm(); // 현재 LLM 데이터로 UI 초기화
+        setupSliderListeners();      // 슬라이더 이벤트 리스너 등록
+    };
+</script>
+</body>
+</html>

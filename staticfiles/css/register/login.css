@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap'); /* Added Noto Sans KR for input fields */
+
+    :root {
+      --main-pink: #F359DE;
+      --pink-light-1: rgba(243, 89, 222, 0.12);
+      --pink-light-2: rgba(243, 89, 222, 0.28);
+      --pink-light-3: rgba(243, 89, 222, 0.51);
+    }
+
+    /* 배경에 원들 */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Black Han Sans', sans-serif;
+    }
+
+        header {
+            height: 60px;  /* 고정 높이 지정 */
+            position: fixed;
+            top: 90px;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            }
+
+    .circle-bg {
+      position: absolute;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+
+    .container{
+        position: relative;
+        left: 700px ;
+        top: 400px
+    }
+    .circle-1 {
+      width: 3000px;
+      height: 3000px;
+      background: var(--pink-light-1);
+    }
+
+    .circle-2 {
+      width: 2400px;
+      height: 2400px;
+      background: var(--pink-light-2);
+    }
+
+    .circle-3 {
+      width: 1800px;
+      height: 1800px;
+      background: var(--pink-light-3);
+    }
+
+    .circle-4 {
+      width: 1200px;
+      height: 1200px;
+      background: var(--pink-light-2); /* Changed to match image */
+    }
+
+    .circle-5 {
+      width: 800px;
+      height: 800px;
+      background: var(--main-pink);
+    }
+       header {
+  height: 60px;  /* 고정 높이 지정 */
+  position: fixed;
+  top: 90px;
+  left: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+    /* 로그인 박스 */
+    .login-box {
+      background: rgba(255, 255, 255, 0.9); /* Changed background to white with slight opacity for image match */
+      border-radius: 20px;
+      padding: 40px 50px 60px;
+      width: 600px;
+      height: 700px;
+      box-sizing: border-box;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Changed shadow for image match */
+      display: flex;
+      flex-direction: column;
+      gap: 20px; /* Adjusted gap for closer match */
+      margin-top: 100px;
+    }
+
+    /* 상단 로고 + 텍스트 */
+    .logo {
+      font-size: 40px; /* Adjusted font size for image match */
+      font-weight: 900;
+      color: #333; /* Changed color to black for image match */
+      position: relative;
+      user-select: none;
+      margin-bottom: 0px; /* Adjusted margin */
+      letter-spacing: -2px; /* Adjusted letter spacing */
+    }
+    .logo::before {
+      content: 'G';
+      position: absolute;
+      left: 20px; /* Adjusted position */
+      top: -15px; /* Adjusted position */
+      font-size: 60px;
+      color: var(--main-pink); /* Kept main pink as per image */
+      font-weight: 900;
+      transform: rotate(-15deg);
+      opacity: 1; /* Removed opacity to make it solid as per image */
+      user-select: none;
+      z-index: 1; /* Ensure it's above other elements */
+    }
+
+    .logo-syringe {
+      position: absolute;
+      left: 45px; /* Adjusted position */
+      top: 5px; /* Adjusted position */
+      width: 18px;
+      height: 20px;
+      background: #333; /* Changed to black for image match */
+      clip-path: polygon(
+        50% 0%, 55% 10%, 70% 10%, 70% 40%, 50% 40%, 50% 90%, 45% 90%, 45% 40%, 30% 40%, 30% 10%, 45% 10%
+      );
+      transform: rotate(-30deg);
+      opacity: 1; /* Removed opacity to make it solid as per image */
+      z-index: 2; /* Ensure it's above the G */
+    }
+
+    .logo-container {
+      position: relative;
+      width: 100%; /* Make container full width to center text */
+      margin: 0 auto 10px; /* Adjusted margin */
+      text-align: center; /* Center the text */
+      padding-top: 20px; /* Added padding to give space for the 'G' */
+      height: 50px; /* Set a fixed height */
+    }
+
+    /* 구분선 */
+    .divider {
+      border: none;
+      height: 2px; /* Adjusted thickness */
+      background: var(--main-pink); /* Changed color for image match */
+      margin-bottom: 30px;
+      opacity: 1; /* Removed opacity */
+    }
+
+    /* 레이블 스타일 */
+    label {
+      display: block;
+      font-weight: 900;
+      font-size: 20px; /* Adjusted font size */
+      color: #333; /* Changed color to black for image match */
+      margin-bottom: 8px;
+      user-select: none;
+      text-align: left;
+    }
+
+    /* 입력창 컨테이너 */
+    .input-group {
+      position: relative;
+    }
+
+    /* 아이콘 스타일 */
+    .input-group svg {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      fill: #bbb; /* Adjusted icon color for image match */
+      width: 24px; /* Adjusted icon size */
+      height: 24px; /* Adjusted icon size */
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    /* 텍스트 필드 */
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 10px 12px 45px; /* Adjusted padding for icon */
+      border: 2px solid #ddd; /* Adjusted border for image match */
+      border-radius: 8px; /* Adjusted border-radius */
+      font-size: 18px; /* Adjusted font size */
+      outline-offset: 2px;
+      outline-color: var(--main-pink);
+      font-family: 'Noto Sans KR', sans-serif;
+      box-sizing: border-box;
+      color: #333;
+    }
+
+    input::placeholder {
+      color: #bbb; /* Adjusted placeholder color for image match */
+      opacity: 1;
+    }
+
+    /* 버튼 */
+    button {
+      margin-top: 30px;
+      width: 100%;
+      background: var(--main-pink);
+      color: white; /* Changed font color to white for image match */
+      font-weight: 900;
+      font-size: 20px; /* Adjusted font size */
+      border: none;
+      padding: 15px 0; /* Adjusted padding */
+      border-radius: 10px; /* Adjusted border-radius */
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .signup{
+      width: 92%;
+      color: white; /* Changed font color to white for image match */
+      font-weight: 900;
+      font-size: 20px; /* Adjusted font size */
+      border: none;
+      border-radius: 10px; /* Adjusted border-radius */
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      background-color: rgb(188, 31, 194); 
+      padding: 10px 20px; 
+ 
+    }
+    button:hover {
+      background: #d43bcf;
+    }
+
+    /* 하단 텍스트 */
+    .footer-text {
+      margin-top: 40px;
+      font-weight: 900;
+      font-size: 24px; /* Adjusted font size */
+      color: #333; /* Changed color to black for image match */
+      user-select: none;
+    }
+          .img-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+        }
+
+        .img-wrapper img {
+            width: 80px;
+            height: 80px;
+        }
+        h1{
+            margin-top: -10px;
+            font-family: "Darker Grotesque";
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            letter-spacing: 2.04px;
+            margin-bottom: -20px;
+        }
+        

@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAKE AI: AI 만들기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/make_ai.css' %}">
+
+</head>
+<body>
+    <!-- Voice List Section -->
+    <div class="voice-list-container">
+    <h2>저장된 음성 목록</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>생성 날짜</th>
+                <th>voice 이름</th>
+                <th>voice id</th>
+                <th>샘플 재생</th>
+                <th>복사하기</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if voice_list %}
+                {% for voice in voice_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{{ voice.voice_name }}</td>
+                    <td>{{ voice.voice_id }}</td>
+                    <td>
+                        {% if voice.sample_url %}
+                        <audio controls style="width:150px;">
+                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                            지원하지 않는 브라우저입니다.
+                        </audio>
+                        {% else %}
+                        샘플 없음
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">선택하기</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="6" class="empty-state">저장된 음성이 없습니다.</td>
+                <button><a href="{% url 'makeVoice:make_voice' %}">voice 만들기-></a></button>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+
+    {% if voice_list.has_other_pages %}
+    <div class="pagination">
+        {% if voice_list.has_previous %}
+            <a href="?page={{ voice_list.previous_page_number }}">&laquo; 이전</a>
+        {% else %}
+            <span class="disabled">&laquo; 이전</span>
+        {% endif %}
+
+        {% for page_num in voice_list.paginator.page_range %}
+            {% if page_num == voice_list.number %}
+                <span class="current">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if voice_list.has_next %}
+            <a href="?page={{ voice_list.next_page_number }}">다음 &raquo;</a>
+        {% else %}
+            <span class="disabled">다음 &raquo;</span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+    <!-- AI Generation Form -->
+    <form action="" method="post">
+            {% csrf_token %}
+        <div class="container">
+            <div class="left-panel">
+                <div class="form-group">
+                    <h2>Prompt</h2>
+                    <textarea placeholder="최대한 자세히 쓰세요. 프롬프트에 따라 원하는 대답을 얻을 수 있습니다." name="prompt" id="prompt"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <h2>Voice id</h2>
+                    <input type="text" placeholder="" name="voice_id" id="voice_id" readonly>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="form-group">
+                    <h2>Language</h2>
+                    <label for="language">언어를 선택해주세요</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select">
+                            <select name="language" id="language">
+                                <option value="en" selected>US-en</option>
+                                <option value="ko">Korea</option>
+                                <option value="hi">Hindi</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="zh">Chinese</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="ja">Japanese</option>
+                                <option value="ar">Arabic</option>
+                                <option value="ru">Russian</option>
+                                <option value="id">Indonesian</option>
+                                <option value="it">Italian</option>
+                                <option value="nl">Dutch</option>
+                                <option value="tr">Turkish</option>
+                                <option value="pl">Polish</option>
+                                <option value="sv">Swedish</option>
+                                <option value="fil">Filipino</option>
+                                <option value="ms">Malay</option>
+                                <option value="ro">Romanian</option>
+                                <option value="uk">Ukrainian</option>
+                                <option value="el">Greek</option>
+                                <option value="cs">Czech</option>
+                                <option value="da">Danish</option>
+                                <option value="fi">Finnish</option>
+                                <option value="bg">Bulgarian</option>
+                                <option value="hr">Croatian</option>
+                                <option value="sk">Slovak</option>
+                                <option value="ta">Tamil</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="range-container">
+                    <label for="stability">Stability <span id="stabilityValue">0.5</span></label>
+                    <input type="range" id="stability" name="stability" min="0" max="1" step="0.01" value="0.5">
+                    <p>음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다.</p>
+                </div>
+
+                <div class="range-container">
+                    <label for="speed">Speed <span id="speedValue">1</span></label>
+                    <input type="range" id="speed" name="speed" min="0.7" max="1.2" step="0.01" value="1">
+                    <p>해당 AI의 음성 속도를 조절할 수 있습니다.</p>
+                </div>
+
+                <div class="range-container">
+                    <label for="style">Style <span id="styleValue">0.5</span></label>
+                    <input type="range" id="style" name="style" min="0" max="1" step="0.01" value="0.5">
+                    <p>값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다.</p>
+                </div>
+
+                <div class="range-container">
+                    <label for="temperature">Temperature <span id="temperatureValue">1</span></label>
+                    <input type="range" id="temperature" name="temperature" min="0" max="2" step="0.01" value="1">
+                    <p>AI의 창의성을 정합니다</p>
+                </div>
+
+                <div class="form-group">
+                    <h2>Select Model</h2>
+                    <label for="model">모델을 선택해 주세요</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select">
+                            <select name="model" id="model">
+                                <option value="gpt-3.5-turbo" selected>GPT3 turbo</option>
+                                <option value="gpt-4o-mini">GPT4o-mini</option>
+                                <option value="gpt-4o">GPT4o</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" onclick="return check()">AI 생성하기</button>
+            </div>
+        </div>
+    </form>
+
+<script src="{% static 'js/customer_ai/make_ai.js' %}"></script>
+
+</body>
+</html>
