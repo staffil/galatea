@@ -1,3 +1,5 @@
+
+
 """
 
 Django settings for galatea project.
@@ -319,3 +321,7 @@ CACHES = {
 AUTH_USER_MODEL = 'home.Users'
 
 LOGIN_URL = '/register/login/'
+
+
+
+
