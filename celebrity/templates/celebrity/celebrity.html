@@ -157,7 +157,7 @@
                     messageArea.appendChild(aiMessage);
                     
                     // 오디오 설정
-                    document.getElementById("tts-audio").src = data.audio_url;
+                    document.getElementById("tts-audio").src = data.audio_url + `?t=${Date.now()}`;
 
                     // 텍스트 입력창으로 스크롤
                     setTimeout(() => {

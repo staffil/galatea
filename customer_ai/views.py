@@ -198,10 +198,14 @@ def upload_audio(request):
         )
         logger.info(f"Converted WebM to WAV: {wav_path}")
     except subprocess.CalledProcessError as e:
-        logger.error(f"FFmpeg conversion failed: {e.stderr.decode()}")
+        error_msg = e.stderr.decode() if e.stderr else str(e)
+        logger.error(f"FFmpeg conversion failed: {error_msg}")
         return JsonResponse({'error': 'Audio format conversion failed'}, status=500)
-
-    # 3) Whisper API 호출
+    
+    mp3_filename = wav_filename.replace('.wav', '.mp3')
+    mp3_path = os.path.join(audio_dir, mp3_filename)
+    
+    # 4) Whisper API 호출 (wav 파일로)
     try:
         with open(wav_path, 'rb') as f:
             transcription = openai_client.audio.transcriptions.create(
@@ -213,10 +217,12 @@ def upload_audio(request):
         logger.error(f"Whisper API error: {e}")
         return JsonResponse({'error': 'Transcription failed'}, status=500)
 
-    return JsonResponse({'text': transcription.text})
+    # 5) 결과에 mp3 파일 경로도 포함해서 반환
+    return JsonResponse({
+        'text': transcription.text,
+        'mp3_file': mp3_path  # 필요에 따라 URL 경로로 변경할 것
+    })
 
-import logging
-logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @login_required
@@ -249,6 +255,7 @@ def generate_response(request):
         custom_language = llm.language
         custom_speed = llm.speed
         custom_model = llm.model
+        print("voice id", custom_voice_id)
 
         if not custom_voice_id or not not_in_voice_id(custom_voice_id, ELEVEN_API_KEY):
             return JsonResponse({
@@ -324,7 +331,12 @@ def generate_response(request):
         audio_dir = os.path.join('media', 'audio')
         os.makedirs(audio_dir, exist_ok=True)
         audio_filename = f"response_{int(time.time())}.mp3"
-        audio_path = os.path.join(audio_dir, audio_filename)
+        from uuid import uuid4
+
+        filename = f"response_{uuid4().hex}.mp3"
+        audio_path = os.path.join(audio_dir, filename)
+
+    
 
         audio_stream = eleven_client.text_to_speech.convert(
             voice_id=custom_voice_id,
@@ -337,12 +349,13 @@ def generate_response(request):
         with open(audio_path, "wb") as f:
             for chunk in audio_stream:
                 f.write(chunk)
-
+    
         return JsonResponse({"ai_text": ai_text,"audio_url": f"/media/audio/{audio_filename}"})
     else:
         return JsonResponse({
             "error": "이 뷰는 POST 요청만 받습니다. 유효한 데이터와 함께 요청해주세요."
         }, status=405)
+    
 
 
 

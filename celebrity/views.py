@@ -10,6 +10,7 @@ import base64
 from user_auth.models import Celebrity
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+import uuid
 
 from django.conf import settings
 load_dotenv(os.path.join(settings.BASE_DIR, ".env"))
@@ -39,8 +40,8 @@ def celebrity_audio(request):
     if request.method == 'POST':
         file = request.FILES['audio']
         path = default_storage.save('audio/' + file.name, file)
-        full_path = os.path.join('media', path)
-
+        full_path = default_storage.path(path) 
+        
         with open(full_path, 'rb') as audio_file:
             transcription = openai_client.audio.transcriptions.create(
                 file=audio_file,
@@ -150,9 +151,12 @@ Emotion:
             }
         )
 
+
         audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
         os.makedirs(audio_dir, exist_ok=True)
-        audio_path = os.path.join(audio_dir, 'response.mp3')
+
+        filename = f"{uuid.uuid4().hex}.mp3"
+        audio_path = os.path.join(audio_dir, filename)
 
         with open(audio_path, "wb") as f:
             for chunk in audio_stream:
@@ -161,7 +165,7 @@ Emotion:
         return JsonResponse({
             "ai_text": ai_text,
             "emotion": emotion,
-            "audio_url": f"/media/audio/response.mp3"
+            "audio_url": f"/media/audio/{filename}"
         })
 
     return JsonResponse({"error": "Invalid request"}, status=400)
