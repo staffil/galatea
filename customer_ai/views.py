@@ -35,9 +35,11 @@ load_dotenv(BASE_DIR / ".env")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
+SUPERTONE_API_KEY = os.getenv("SUPERTOME_API_KEY")
 
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_API_KEY)
+
 
 
 @csrf_exempt

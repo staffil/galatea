@@ -95,6 +95,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "galatea.wsgi.application"
 
 
+SESSION_COOKIE_AGE = 1200 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True   
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
