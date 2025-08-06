@@ -1,10 +1,11 @@
-        body {
+body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5b7e1, #e8a4d6, #dda0ca);
             min-height: 100vh;
             display: flex;
             margin: 0;
         }
+
         .container{
             margin: 0 auto;
         }
@@ -22,6 +23,7 @@
             color: #333;
             margin-bottom: 30px;
             font-weight: 600;
+            margin-top: -3px;
         }
 
         .sidebar-profile {
@@ -64,6 +66,7 @@
 
         .sidebar-menu {
             list-style: none;
+            padding-left: 10px;
         }
 
         .sidebar-menu li {
@@ -93,12 +96,60 @@
             color: #ccc;
         }
 
-        /* 메인 컨텐츠 영역 */
+        /* 메인 컨텐츠 영역 - 중앙 정렬 */
         .main-content {
             flex: 1;
             display: flex;
-            gap: 30px;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
+        }
+
+        /* 프로필 섹션 - 중앙 정렬 */
+        .profile-section {
+            background: linear-gradient(135deg, #ff69b4, #ff91c7);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .profile-section h2 {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* 프로필 이미지 - 중앙 정렬 */
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff69b4;
+            font-size: 48px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+        }
+
+        .profile-form {
+            width: 100%;
+            max-width: 400px;
         }
 
         .form-container {
@@ -125,6 +176,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 40px;
+            margin: auto;
         }
 
         /* 음성 목록 스타일 */
@@ -218,22 +270,24 @@
             flex-direction: column;
             gap: 20px;
         }
-        
 
         .form-group {
             display: flex;
             flex-direction: column;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             color: white;
-            font-size: 28px;
-            font-weight: 300;
-            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .form-group input[type="text"], 
+        .form-group input[type="email"],
+        .form-group input[type="password"],
         .form-group textarea, 
         .form-group select,
         .form-group input[type="file"] {
@@ -247,6 +301,8 @@
         }
 
         .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
@@ -367,8 +423,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-            align-self: flex-end;
             margin-top: 20px;
+            width: 100%;
         }
 
         .submit-btn:hover {
@@ -376,11 +432,9 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
         }
+
         .voice-panel{
             width: 200%;
-        }
-        .sidebar-menu{
-            padding-left: 10px;
         }
 
         /* 반응형 디자인 */
@@ -397,6 +451,10 @@
             .main-content {
                 flex-direction: column;
                 padding: 20px;
+            }
+
+            .profile-section {
+                max-width: none;
             }
 
             .voice-list-section {

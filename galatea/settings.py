@@ -35,7 +35,13 @@ SECRET_KEY = "django-insecure-_fcy$35d^qgcdkj6@pvo$!baii%3gz=2vphd#bs$ns4$-f@1wo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['54.173.112.53', 'ec2-54-173-112-53.compute-1.amazonaws.com']
+ALLOWED_HOSTS = [
+    '54.173.112.53',
+    'ec2-54-173-112-53.compute-1.amazonaws.com',
+    'galatea.website',
+    'www.galatea.website',
+    '127.0.0.1:8093'
+]
 
 # Application definition
 
