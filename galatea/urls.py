@@ -34,7 +34,6 @@ urlpatterns = [
     path('register/', include(('register.urls', 'register'), namespace='register')),
     path('logout/', home_views.user_logout, name='logout'),  
     path('mypage/', include(("mypage.urls","mypage"),namespace="mypage")),
-    path('supertone/',include(("supertone.urls", 'supertone'), namespace="supertone"))
     # path('payment/', include(('payment.urls', 'payment'), namespace='payment')),
 
 

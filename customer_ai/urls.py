@@ -14,7 +14,7 @@ urlpatterns = [
     path('image-file/', views.is_allowed_image_file, name='image-file'),
     path('vision_process/', views.vision_process, name='vision_process'),
     path("ai_name/", views.input_ai_name, name="input_ai_name"),
-    path('generate_image/<int:llm_id>/', views.generate_ai_image, name='generate_ai_image'),
+    # path('generate_image/<int:llm_id>/', views.generate_ai_image, name='generate_ai_image'),
     path('upload_image/', views.upload_image, name='upload_image'),
 
 

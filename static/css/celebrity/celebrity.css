@@ -23,6 +23,16 @@
             min-height: 300vh;
         }
 
+        #language{
+                background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 20px;
+            font-size: 16px;
+            color: #333;
+            font-family: inherit;
+            width: 200px;
+        }
         header {
             height: 60px;
             position: fixed;

@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login UI</title>
-    <link rel="stylesheet" href="{% static 'css/register/login.css' %}">
+<link rel="stylesheet" href="{% static 'css/register/login.css' %}?v=5">
 
 </head>
 <body>
@@ -60,6 +60,7 @@
 </form>
 
 <a href="{% url 'register:signup' %}"  class="signup">SIGN UP</a>
+<a href="{% url 'main' %}"  class="main">main</a>
 
 <script>
 

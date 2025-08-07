@@ -1,5 +1,6 @@
-    @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;700&display=swap');
 
         :root {
             --main-pink: #F359DE;
@@ -8,30 +9,42 @@
             --pink-light-3: rgba(243, 89, 222, 0.51);
         }
 
+        /* 스크롤 가능한 body 설정 */
         body {
             margin: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* 상단 정렬로 변경 */
             background: white;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden; /* 가로 스크롤만 숨김 */
+            overflow-y: auto; /* 세로 스크롤 허용 */
             font-family: 'Black Han Sans', sans-serif;
+            padding: 40px 0; /* 상하 패딩 추가 */
         }
 
-        /* Background Circles - Corrected to be truly centered */
+        /* 배경 원들 - 스크롤 시 고정 */
+        .container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
         .circle-bg {
             position: absolute;
             border-radius: 50%;
-            left: 50%; /* Center horizontally */
-            top: 50%; /* Center vertically */
-            transform: translate(-50%, -50%); /* Ensures the center of the circle is at 50%, 50% */
-            z-index: -1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .circle-1 {
-            width: 3000px; /* Larger to cover more area */
+            width: 3000px;
             height: 3000px;
             background: var(--pink-light-1);
         }
@@ -63,78 +76,165 @@
         /* Main Content Container */
         .main-container {
             display: flex;
-            justify-content: center; /* Center content horizontally */
-            align-items: center; /* Center content vertically */
-            width: 1200px; /* Increased width to match image content spread */
-            max-width: 95%; /* Responsive safety */
-            gap: 80px; /* Increased space between the two sections */
+            justify-content: center;
+            align-items: flex-start; /* 상단 정렬 */
+            width: 1200px;
+            max-width: 95%;
+            gap: 60px; /* 좌우 간격 조정 */
             z-index: 1;
-            padding: 30px 0; /* Add some vertical padding */
+            margin-top: 40px; /* 상단 마진 */
+            flex-wrap: wrap; /* 반응형을 위한 래핑 허용 */
         }
 
         /* Left Text Section */
         .text-section {
             flex: 1;
-            padding-left: 20px; /* Adjusted padding for alignment */
+            min-width: 300px; /* 최소 너비 설정 */
+            max-width: 450px;
+            padding: 20px;
             color: #333;
             text-align: left;
-            max-width: 450px; /* Limit width to match image */
         }
 
         .text-section h1 {
             font-family: 'Black Han Sans', sans-serif;
-            font-size: 50px; /* Matches image */
+            font-size: 48px;
             margin-bottom: 20px;
             line-height: 1.2;
-            color: var(--main-pink);
+            color: white; /* 원본에서 흰색으로 설정됨 */
             font-weight: 900;
         }
 
         .text-section p {
             font-family: 'Noto Sans KR', sans-serif;
-            font-size: 16px; /* Matches image */
+            font-size: 16px;
             line-height: 1.6;
-            color: #555;
-            word-break: keep-all; /* Prevents word breaking in Korean text */
+            color: white; /* 원본에서 흰색으로 설정됨 */
+            word-break: keep-all;
         }
 
-        /* Sign-in Box */
+        /* Sign-up Box */
         .signin-box {
-            background: rgba(255, 255, 255, 0.9); /* Slightly more opaque white */
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
             padding: 30px 40px 50px;
-            width: 700px; /* Adjusted width to match image */
+            width: 600px;
+            max-width: 100%;
             box-sizing: border-box;
             text-align: center;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            gap: 18px; /* Adjusted gap between elements */
+            gap: 15px;
         }
 
-        .signin-box .title {
-            font-family: 'Black Han Sans', sans-serif;
-            font-size: 40px;
-            font-weight: 900;
+         .main{
+      background-color: rgb(194, 31, 75);
+            border-radius: 20px;
+            width: 600px;
+            padding: 10px 40px 10px;
+            margin-top: 10px;
+            max-width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: white;
+                  text-decoration: none;
+                  font-size: 25px;
+
+    }
+        /* 로고 섹션 */
+        .img-wapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .img-wapper img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .img-wapper h1 {
+            margin: 0;
+            font-family: "Darker Grotesque", sans-serif;
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+            letter-spacing: 2.04px;
             color: #333;
-            margin-bottom: 25px;
-            letter-spacing: -2px;
+        }
+
+        /* 구분선 */
+        .divider-section {
+            text-align: center;
+            border-bottom: 2px solid var(--main-pink);
+            line-height: 0;
+            margin: 20px 0;
+        }
+
+        .divider-section span {
+            background: #fff;
+            padding: 0 15px;
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--main-pink);
+        }
+
+        /* 메시지 스타일 */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+        }
+
+        .messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .messages li.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .messages li.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* 폼 입력 필드 */
+        form div {
+            margin-bottom: 15px;
         }
 
         input[type="text"],
         input[type="password"],
         input[type="email"],
         input[type="tel"] {
-            width: 86%;
-            padding: 15px 18px; /* Adjusted padding for better visual match */
+            width: 100%;
+            padding: 12px 15px;
             border: 2px solid #ddd;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             outline-offset: 2px;
             outline-color: var(--main-pink);
             font-family: 'Noto Sans KR', sans-serif;
             box-sizing: border-box;
             color: #333;
+            background: white;
         }
 
         input::placeholder {
@@ -142,72 +242,233 @@
             opacity: 1;
         }
 
-        /* Sign In Button */
-        button {
-            margin-top: 30px; /* Space above button */
+        input:focus {
+            border-color: var(--main-pink);
+            outline: 2px solid var(--pink-light-2);
+        }
+
+        /* 에러 메시지 스타일 */
+        .error-message {
+            color: #e74c3c !important;
+            font-size: 14px !important;
+            font-family: 'Noto Sans KR', sans-serif !important;
+            margin-top: 5px;
+            text-align: left;
+            font-weight: 400;
+        }
+
+        /* Submit Button */
+        button[type="submit"] {
+            margin-top: 25px;
             width: 100%;
             background: var(--main-pink);
             color: white;
             font-weight: 900;
-            font-size: 20px;
+            font-size: 18px;
             border: none;
-            padding: 18px 0; /* Adjusted padding */
+            padding: 15px 0;
             border-radius: 10px;
             cursor: pointer;
             user-select: none;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 4px 10px rgba(243, 89, 222, 0.4); /* Added subtle shadow to button */
-        }
-
-        button:hover {
-            background: #d43bcf;
-        }
-
-        /* Footer Text */
-        .footer-text {
-            margin-top: 40px; /* Space above footer text */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(243, 89, 222, 0.4);
             font-family: 'Black Han Sans', sans-serif;
-            font-weight: 900;
-            font-size: 24px;
-            color: #333;
-            user-select: none;
-        }
-        .container{
-            position: relative;
-            left: 300px;
-        }
-        .text-section h1{
-            color: white;
-        }
-        .text-section p{
-            color: white;
-        }
-        
-        form div{
-            margin-bottom: 20px
-        }
-            .img-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100px;
-            height: 100px;
         }
 
-        .img-wrapper img {
-            width: 60px;
-            height: 60px;
+        button[type="submit"]:hover {
+            background: #d43bcf;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(243, 89, 222, 0.5);
         }
-        img{
-            width: 80px;
-            height: 80px;
+
+        /* 태블릿 반응형 */
+        @media (max-width: 1024px) {
+            .main-container {
+                width: 100%;
+                gap: 40px;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 20px;
+            }
+
+            .text-section {
+                max-width: 600px;
+                text-align: center;
+                order: 1;
+            }
+
+            .signin-box {
+                width: 90%;
+                max-width: 600px;
+                order: 2;
+            }
+
+            .text-section h1 {
+                font-size: 42px;
+            }
         }
-        h1{
-            margin-top: -10px;
-            font-family: "Darker Grotesque";
-            font-size: 24px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            letter-spacing: 2.04px;
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .main-container {
+                gap: 30px;
+                margin-top: 10px;
+            }
+
+            .text-section {
+                padding: 15px;
+            }
+
+            .text-section h1 {
+                font-size: 36px;
+                margin-bottom: 15px;
+            }
+
+            .text-section p {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+
+            .signin-box {
+                width: 100%;
+                padding: 25px 30px 40px;
+                gap: 12px;
+            }
+
+            .img-wapper img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .img-wapper h1 {
+                font-size: 20px;
+                letter-spacing: 1.5px;
+            }
+
+            .divider-section span {
+                font-size: 16px;
+                padding: 0 12px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"],
+            input[type="tel"] {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+
+            button[type="submit"] {
+                font-size: 16px;
+                padding: 12px 0;
+            }
+
+            .error-message {
+                font-size: 12px !important;
+            }
+
+            /* 배경 원 크기 조정 */
+            .circle-1 { width: 2000px; height: 2000px; }
+            .circle-2 { width: 1600px; height: 1600px; }
+            .circle-3 { width: 1200px; height: 1200px; }
+            .circle-4 { width: 800px; height: 800px; }
+            .circle-5 { width: 500px; height: 500px; }
+        }
+
+        /* 작은 모바일 */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 5px;
+            }
+
+            .text-section h1 {
+                font-size: 28px;
+            }
+
+            .text-section p {
+                font-size: 13px;
+            }
+
+            .signin-box {
+                padding: 20px 20px 30px;
+            }
+
+            .img-wapper img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .img-wapper h1 {
+                font-size: 18px;
+                letter-spacing: 1px;
+            }
+
+            .divider-section span {
+                font-size: 14px;
+                padding: 0 10px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"],
+            input[type="tel"] {
+                font-size: 13px;
+                padding: 9px 10px;
+            }
+
+            button[type="submit"] {
+                font-size: 14px;
+                padding: 11px 0;
+            }
+
+            form div {
+                margin-bottom: 12px;
+            }
+        }
+
+        /* 큰 화면 대응 */
+        @media (min-width: 1400px) {
+            .main-container {
+                width: 1400px;
+                gap: 80px;
+            }
+
+            .text-section h1 {
+                font-size: 56px;
+            }
+
+            .text-section p {
+                font-size: 18px;
+            }
+
+            .signin-box {
+                width: 700px;
+                padding: 40px 50px 60px;
+            }
+
+            .img-wapper img {
+                width: 90px;
+                height: 90px;
+            }
+
+            .img-wapper h1 {
+                font-size: 28px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"],
+            input[type="tel"] {
+                font-size: 18px;
+                padding: 14px 18px;
+            }
+
+            button[type="submit"] {
+                font-size: 20px;
+                padding: 16px 0;
+            }
         }

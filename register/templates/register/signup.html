@@ -6,7 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/register/signup.css' %}">
+    <link rel="stylesheet" href="{% static 'css/register/signup.css' %}?v=5">
 
     <title>Sign In UI</title>
 
@@ -22,9 +22,10 @@
 
     <div class="main-container">
         <div class="text-section">
-            <h1>안녕하세요</h1>
+            <h1>HELLO PIGMALEONS</h1>
             <p>
-                저희 GALATEA에 오신 피그말리온 분들을 환영합니다. 회원가입 및 로그인시 AI 를 커스텀할 수 있습니다. voice 와 프롬프트를 만들어 원하는 AI 모델을 생성해 보세요. 
+                저희 GALATEA에 오신 피그말리온 분들을 환영합니다. 회원가입 및 로그인시 GALATEA 를 커스텀할 수 있습니다. voice 와 프롬프트를 만들어 원하는 AI 모델을 생성해 보세요. 
+                자신이 원하는 목소리와 프롬프트로 얼마든지 원하는 GALATEA 를 만들 수 있습니다.
             </p>
         </div>
 
@@ -93,6 +94,8 @@
     </div>
 
     <button type="submit" aria-label="회원가입 버튼">SIGN IN</button>
+    <a href="{% url 'main' %}"  class="main">main</a>
+
 </form>
 
 </body>

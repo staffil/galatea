@@ -37,7 +37,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
-    'ec2-54-173-112-53.compute-1.amazonaws.com',
+    'ec2-54-173-112-53.compute-1.amazonaws.com',    
     'galatea.website',
     'www.galatea.website',
     '127.0.0.1:8093'
@@ -107,7 +107,7 @@ DATABASES = {
         "NAME": DB_NAME,                    
         "USER": DB_USER,                     
         "PASSWORD": DB_PASSWORD,          
-        "HOST": "172.31.81.134",                  
+        "HOST": "172.31.37.216",        # 인스턴스 바꾸면 여기 바꾸기          
         "PORT": "3306",                      
     }
 }

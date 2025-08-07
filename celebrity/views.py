@@ -99,9 +99,9 @@ def celebrity_response(request, celebrity_id):
         custom_temperature = 0.7
         custom_prompt = celebrity.celebrity_prompt
         custom_voice_id = celebrity.celebrity_voice_id
-        custom_stability = 0.5
+        custom_stability = 0.3
         custom_style = 0.5
-        custom_language = "ko"
+        custom_language = request.POST.get("language",'en')
         custom_speed = 1.0
         custom_model = "gpt-3.5-turbo"
 
@@ -111,16 +111,21 @@ def celebrity_response(request, celebrity_id):
         language_instruction = language_instructions.get(custom_language, language_instructions['en'])
 
         system_prompt = f"""
-{language_instruction}
+        You are an AI that must respond strictly in the user's selected language.
 
-{custom_prompt}
-""".strip()
+        {language_instruction}
+
+        Do not respond in English unless explicitly asked.
+
+        {custom_prompt}
+        """.strip()
+
 
         emotion_prompt = f"""
-Analyze the sentiment of the following text and respond ONLY with ONE word:
-[Happy, Sad, Neutral, Surprise, Excited, Relaxed, ]
-Text: "{user_input}"
-Emotion:
+        Analyze the sentiment of the following text and respond ONLY with ONE word:
+        [Happy, Sad, Neutral, Surprise, Excited, Relaxed, ]
+        Text: "{user_input}"
+        Emotion:
 """
         emotion_response = openai_client.chat.completions.create(
             model="gpt-3.5-turbo",

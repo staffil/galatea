@@ -173,7 +173,7 @@
         async function startVisionMode() {
             if (!streaming) await startWebcam();
             visionResult.innerText = '비전 모드 실행 중...';
-            intervalId = setInterval(sendFrameToServer, 1500); // 1.5초마다 프레임 분석
+            intervalId = setInterval(sendFrameToServer, 1500); 
             await startRecording();
             toggleBtn.innerText = '비전 모드 중지';
         }

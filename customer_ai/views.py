@@ -278,6 +278,10 @@ def generate_response(request):
         Below is the visual analysis result from what you saw.  
         Treat it as if you are actually seeing it, and respond accordingly.
 
+        
+        Analyze the sentiment of the following text and respond ONLY with ONE word:
+        [Happy, Sad, Neutral, Surprise, Excited, Relaxed, ]
+        
         [Visual Analysis Result]  
         “{vision_result}”
 
@@ -410,47 +414,47 @@ def upload_image(request):
     return render(request, "customer_ai/upload_image.html", {"llm_id": llm_id, "llm": llm})
 
 
-@csrf_exempt
-@login_required
-def generate_ai_image(request, llm_id):
-    if request.method == "POST":
-        prompt = request.POST.get("prompt", "")
-        if not prompt:
-            return JsonResponse({"error": "이미지 생성 프롬프트가 없습니다."}, status=400)
+# @csrf_exempt
+# @login_required
+# def generate_ai_image(request, llm_id):
+#     if request.method == "POST":
+#         prompt = request.POST.get("prompt", "")
+#         if not prompt:
+#             return JsonResponse({"error": "이미지 생성 프롬프트가 없습니다."}, status=400)
 
-        try:
-            # OpenAI 이미지 생성 API 호출 (DALL·E 등)
-            response = openai_client.images.generate(
-                model="dall-e-3",  # 또는 적절한 모델명
-                prompt=prompt,
-                n=1,
-                size="512x512"
-            )
+#         try:
+#             # OpenAI 이미지 생성 API 호출 (DALL·E 등)
+#             response = openai_client.images.generate(
+#                 model="dall-e-3",  # 또는 적절한 모델명
+#                 prompt=prompt,
+#                 n=1,
+#                 size="512x512"
+#             )
 
-            image_url = response.data[0].url
+#             image_url = response.data[0].url
 
-            # 이미지 URL로부터 이미지 데이터 다운로드
-            import requests
-            img_data = requests.get(image_url).content
+#             # 이미지 URL로부터 이미지 데이터 다운로드
+#             import requests
+#             img_data = requests.get(image_url).content
 
-            # media/uploads/llm_images/ 경로에 저장
-            save_dir = os.path.join(settings.MEDIA_ROOT, "uploads/llm_images")
-            os.makedirs(save_dir, exist_ok=True)
-            filename = f"{uuid4().hex}.png"
-            file_path = os.path.join(save_dir, filename)
-            with open(file_path, "wb") as f:
-                f.write(img_data)
+#             # media/uploads/llm_images/ 경로에 저장
+#             save_dir = os.path.join(settings.MEDIA_ROOT, "uploads/llm_images")
+#             os.makedirs(save_dir, exist_ok=True)
+#             filename = f"{uuid4().hex}.png"
+#             file_path = os.path.join(save_dir, filename)
+#             with open(file_path, "wb") as f:
+#                 f.write(img_data)
 
-            # LLM 객체에 이미지 경로 저장
-            llm = LLM.objects.get(id=llm_id)
-            llm.llm_image = f"uploads/llm_images/{filename}"
-            llm.save()
+#             # LLM 객체에 이미지 경로 저장
+#             llm = LLM.objects.get(id=llm_id)
+#             llm.llm_image = f"uploads/llm_images/{filename}"
+#             llm.save()
 
-            return JsonResponse({"image_url": llm.llm_image.url})
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+#             return JsonResponse({"image_url": llm.llm_image.url})
+#         except Exception as e:
+#             return JsonResponse({"error": str(e)}, status=500)
 
-    return JsonResponse({"error": "POST 요청만 허용됩니다."}, status=405)
+#     return JsonResponse({"error": "POST 요청만 허용됩니다."}, status=405)
 
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
