@@ -1,6 +1,6 @@
 import os
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from openai import OpenAI
@@ -30,17 +30,33 @@ def make_ai(request):
 
 def celebrity_view(request, celebrity_id):
     celebrity = get_object_or_404(Celebrity, id=celebrity_id)
+    language = request.LANGUAGE_CODE  # 현재 선택된 언어 코드 예: 'en', 'ko'
+
+    # 다국어 필드명 생성
+    name_field = f'celebrity_name_{language}'
+    desc_field = f'description_{language}'
+
+    # 해당 언어 필드가 있으면 사용, 없으면 기본 필드 사용
+    celebrity.display_name = getattr(celebrity, name_field, celebrity.celebrity_name)
+    celebrity.display_description = getattr(celebrity, desc_field, celebrity.description)
+
     context = {
         'celebrity': celebrity,
     }
     return render(request, "celebrity/celebrity.html", context)
+
+
+
 @login_required
 @csrf_exempt
 def celebrity_audio(request):
     if request.method == 'POST':
-        file = request.FILES['audio']
+        file = request.FILES.get('audio')
+        if not file:
+            return JsonResponse({"error": "No audio file provided."}, status=400)
+        
         path = default_storage.save('audio/' + file.name, file)
-        full_path = default_storage.path(path) 
+        full_path = default_storage.path(path)
         
         with open(full_path, 'rb') as audio_file:
             transcription = openai_client.audio.transcriptions.create(
@@ -48,6 +64,8 @@ def celebrity_audio(request):
                 model="whisper-1"
             )
         return JsonResponse({"text": transcription.text})
+    else:
+        return HttpResponseNotAllowed(['POST'])
 @login_required
 @csrf_exempt
 def celebrity_response(request, celebrity_id):
@@ -132,6 +150,7 @@ def celebrity_response(request, celebrity_id):
             messages=[{"role": "user", "content": emotion_prompt}]
         )
         emotion = emotion_response.choices[0].message.content.strip()
+        print(celebrity, custom_language,custom_voice_id, user_input)
 
         response = openai_client.chat.completions.create(
             model=custom_model,

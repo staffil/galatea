@@ -1,15 +1,15 @@
 {% load static %} 
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GALATEA - Chat with Celebrities</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/home/main.css' %}">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/home/main.css' %}" />
 </head>
 <body>
     <div class="circle-bg circle-1"></div>
@@ -17,36 +17,72 @@
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+  
+    <!-- 헤더 바로 아래, 오른쪽 하단 고정 다국어 선택 폼 -->
+    <div class="languageSelect" style="
+        position: fixed;
+        top: 110px;  /* header 높이 바로 아래 */
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 1100;
+        margin-top: 20px;
+    ">
+        <form action="{% url 'home:set_language' %}" method="post" style="display: flex; align-items: center; gap: 8px;">
+            {% csrf_token %}
+            <select name="language" style="height: 30px; border-radius: 15%; padding: 0 8px;">
+                {% for code, name in languages %}
+                    <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            <button type="submit" style="
+                height: 30px;
+                border-radius: 15%;
+                padding: 0 12px;
+                border: none;
+                background: #667eea;
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+            ">
+                {% trans "언어 바꾸기" %}
+            </button>
+        </form>
+    </div>
 
-{% if not user.is_authenticated %}
-    {% include "common/notLoginHeader.html" %}
-{% elif user.is_authenticated %}
-    {% include "common/loginHeader.html" %}
-{% endif %}
     <div class="main-content">
-        <h2 class="section-title">컨셉에 사로집힌 AI와 대화하기</h2>
-
+        <h2 class="section-title">{% trans "컨셉에 사로집힌 AI와 대화하기" %}</h2>
         <div class="character-cards-container">
             {% for celebrity in celebrity_list %}
             <div class="character-card pink">
-                <div class="status-badge">온라인</div>
+                <div class="status-badge">{% trans "온라인" %}</div>
                 <div class="card-header">
-                    <h3 class="celebrity-name">{{ celebrity.celebrity_name }}</h3>
+                    <h3 class="celebrity-name">{{ celebrity.display_name }}</h3>
                 </div>
                 <div class="card-content">
                     <div class="character-image">
                         {% if celebrity.celebrity_image %}
-                            <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.celebrity_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'">
+                            <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.display_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'" />
                         {% else %}
-                            <img src="https://via.placeholder.com/120x120/FFB6C1/FFFFFF?text=No+Image" alt="기본 이미지">
+                            <img src="https://via.placeholder.com/120x120/FFB6C1/FFFFFF?text=No+Image" alt="{% trans '기본 이미지' %}" />
                         {% endif %}
                     </div>
                     <div class="character-description">
-                        {{ celebrity.description }}
+                        {{ celebrity.display_description }}
                     </div>
-                    <button class="chat-button" onclick="location.href='/celebrity/{{ celebrity.id }}/'">대화 시작</button>
+                    <button class="chat-button" onclick="location.href='/celebrity/{{ celebrity.id }}/'">{% trans "대화 시작" %}</button>
                 </div>
-            </div>
+                </div>
             {% endfor %}
         </div>
     </div>

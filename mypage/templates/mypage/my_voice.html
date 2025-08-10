@@ -1,119 +1,114 @@
-{% load static %} 
-
+{% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이페이지 - GALATEA</title>
-    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}" />
 </head>
 <body>
     <div class="sidebar">
-        <h1>마이페이지</h1>
+        <h1>{% trans "마이페이지" %}</h1>
         <div class="sidebar-profile">
-{% if user.user_image %}
-    <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;">
-{% else %}
-    <p>프로필 이미지 없음</p>
-{% endif %}
-
-
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="{% trans '프로필 이미지' %}" style="width: 150px; height: 150px; border-radius: 50%;" />
+            {% else %}
+                <p>{% trans "프로필 이미지 없음" %}</p>
+            {% endif %}
             <h3>{{ user.nickname }}</h3>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="{% url 'logout' %}">로그아웃</a></li>
-            <li><a href="{% url 'mypage:mypage' %}">프로필</a></li>
+            <li><a href="{% url 'logout' %}">{% trans "로그아웃" %}</a></li>
+            <li><a href="{% url 'mypage:mypage' %}">{% trans "프로필" %}</a></li>
             {% if llm %}
-                <li><a href="{% url 'mypage:my_ai_models' llm.id %}">My AI models</a></li>
+                <li><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans "My AI models" %}</a></li>
             {% else %}
-                <li><a href="#" onclick="return alert('현재 커스터한 AI 가 없습니다.')">My AI models</a></li>
-            {% endif %}          
-              <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:my_voice' %}">voice id 목록</a></li>
-            <li><a href="{% url 'main' %}">main 으로</a></li>
+                <li><a href="#" onclick="return alert('{% trans "현재 커스터한 AI 가 없습니다." %}')">{% trans "My AI models" %}</a></li>
+            {% endif %}
+            <li style="background-color: rgba(0, 0, 0, 0.2);"><a href="{% url 'mypage:my_voice' %}">{% trans "voice id 목록" %}</a></li>
+            <li><a href="{% url 'home:main' %}">{% trans "main 으로" %}</a></li>
         </ul>
     </div>
 
     <div class="main-content">
-       <div class="payment-section">
+        <div class="payment-section">
             <div class="payment-header">
-                <h3>MY voice</h3>
+                <h3>{% trans "MY voice" %}</h3>
                 <div class="calendar-icon">🎶</div>
             </div>
-            
-        <table class="payment-table">
-        <thead>
-            <tr>
-                <th>번호</th>
-                <th>생성 날짜</th>
-                <th>voice 이름</th>
-                <th>voice id</th>
-                <th>샘플 재생</th>
-                <th>복사하기</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if voice_list %}
-                {% for voice in voice_list %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
-                    <td>{{ voice.voice_name }}</td>
-                    <td>{{ voice.voice_id }}</td>
-                    <td>
-                        {% if voice.sample_url %}
-                        <audio controls style="width:150px;">
-                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
-                            지원하지 않는 브라우저입니다.
-                        </audio>
+
+            <div class="table-responsive">
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "번호" %}</th>
+                            <th>{% trans "생성 날짜" %}</th>
+                            <th>{% trans "voice 이름" %}</th>
+                            <th>{% trans "voice id" %}</th>
+                            <th>{% trans "샘플 재생" %}</th>
+                            <th>{% trans "복사하기" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if voice_list %}
+                            {% for voice in voice_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ voice.voice_name }}</td>
+                                    <td>{{ voice.voice_id }}</td>
+                                    <td>
+                                        {% if voice.sample_url %}
+                                            <audio controls style="width:150px;">
+                                                <source src="{{ voice.sample_url }}" type="audio/mpeg" />
+                                                {% trans "지원하지 않는 브라우저입니다." %}
+                                            </audio>
+                                        {% else %}
+                                            {% trans "샘플 없음" %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="copy-btn" onclick="copyToClipboard('{{ voice.voice_id }}')">{% trans "복사" %}</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
                         {% else %}
-                        샘플 없음
+                            <tr>
+                                <td colspan="6" class="empty-state">{% trans "저장된 음성이 없습니다." %}</td>
+                            </tr>
                         {% endif %}
-                    </td>
-                    <td>
-                        <button class="copy-btn" onclick="copyToClipboard('{{ voice.voice_id }}')">복사</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            {% else %}
-            <tr>
-                <td colspan="6" class="empty-state">저장된 음성이 없습니다.</td>
-            </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {% if voice_list.has_other_pages %}
+                <div class="pagination">
+                    {% if voice_list.has_previous %}
+                        <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
+                    {% else %}
+                        <span class="disabled">&laquo; {% trans "이전" %}</span>
+                    {% endif %}
+
+                    {% for page_num in voice_list.paginator.page_range %}
+                        {% if page_num == voice_list.number %}
+                            <span class="current">{{ page_num }}</span>
+                        {% else %}
+                            <a href="?page={{ page_num }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if voice_list.has_next %}
+                        <a href="?page={{ voice_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
+                    {% else %}
+                        <span class="disabled">{% trans "다음" %} &raquo;</span>
+                    {% endif %}
+                </div>
             {% endif %}
-        </tbody>
-    </table>
-
-
-    {% if voice_list.has_other_pages %}
-    <div class="pagination">
-        {% if voice_list.has_previous %}
-            <a href="?page={{ voice_list.previous_page_number }}">&laquo; 이전</a>
-        {% else %}
-            <span class="disabled">&laquo; 이전</span>
-        {% endif %}
-
-        {% for page_num in voice_list.paginator.page_range %}
-            {% if page_num == voice_list.number %}
-                <span class="current">{{ page_num }}</span>
-            {% else %}
-                <a href="?page={{ page_num }}">{{ page_num }}</a>
-            {% endif %}
-        {% endfor %}
-
-        {% if voice_list.has_next %}
-            <a href="?page={{ voice_list.next_page_number }}">다음 &raquo;</a>
-        {% else %}
-            <span class="disabled">다음 &raquo;</span>
-        {% endif %}
+        </div>
     </div>
-    {% endif %}
-</div>
+
+    <script src="{% static 'js/mypage/myvoice.js' %}"></script>
 </body>
-
- <script src="{% static 'js/mypage/myvoice.js' %}"></script>
-
 </html>
-
-
-        

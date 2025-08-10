@@ -1,10 +1,13 @@
 {% load static %} 
+
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 이름 입력</title>
+    <title>{% trans 'AI 이름 입력' %}</title>
     <link rel="stylesheet" href="{% static 'css/customer_ai/ai_name.css' %}">
 </head>
 
@@ -156,7 +159,7 @@
 </style>
 
 <body>
-<h1>✨ 당신의 AI 이름과 사진을 입력하세요 ✨</h1>
+<h1>✨ {% trans '당신의 AI 이름과 사진을 입력하세요'%} ✨</h1>
 
 {% if error %}
 <div class="error-message">{{ error }}</div>
@@ -164,17 +167,17 @@
 
 <form method="POST" action="{% url 'customer_ai:input_ai_name' %}" enctype="multipart/form-data">
   {% csrf_token %}
-  <input type="text" name="llm_name" placeholder="✏️ AI 이름을 입력하세요" required />
+  <input type="text" name="llm_name" placeholder="✏️ {% trans 'AI 이름을 입력해주세요' %}" required />
   
   <div class="file-input-wrapper">
     <input type="file" name="user_image" accept="image/*" required id="file-input" />
     <label for="file-input" class="file-input-label" id="file-label">
       <span class="file-icon">📷</span>
-      <span id="file-text">사진을 선택해주세요</span>
+      <span id="file-text">{% trans '사진을 선택해주세요' %}</span>
     </label>
   </div>
   
-  <button type="submit">🚀 완료</button>
+  <button type="submit">🚀 {% trans '완료' %}</button>
 </form>
 
 <script>
@@ -188,7 +191,7 @@ document.getElementById('file-input').addEventListener('change', function(e) {
     fileText.textContent = fileName.length > 20 ? fileName.substring(0, 20) + '...' : fileName;
     fileLabel.classList.add('has-file');
   } else {
-    fileText.textContent = '사진을 선택해주세요';
+    fileText.textContent = "{% trans '사진을 선택해주세요' %}";
     fileLabel.classList.remove('has-file');
   }
 });

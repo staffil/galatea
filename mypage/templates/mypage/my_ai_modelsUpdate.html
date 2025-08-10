@@ -1,36 +1,36 @@
 {% load static %} 
-
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이페이지</title>
+    <title>{% trans "마이페이지" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/mypage/my_ai_modelsUpdate.css' %}">
 
 </head>
 <body>
     <div class="sidebar" style="width: 210px;">
-        <h1>마이페이지</h1>
+        <h1>{% trans "마이페이지" %}</h1>
         <div class="sidebar-profile">
             {% if user.user_image %}
-                <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;">
+                <img src="{{ user.user_image.url }}" alt="{% trans '프로필 이미지' %}" style="width: 150px; height: 150px; border-radius: 50%;">
             {% else %}
                 <div class="sidebar-profile-img">{{ user.nickname|first|upper }}</div>
             {% endif %}
             <h3>{{ user.nickname }}</h3>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="{% url 'logout' %}">로그아웃</a></li>
-            <li><a href="{% url 'mypage:mypage' %}">프로필</a></li>
+            <li><a href="{% url 'logout' %}">{% trans "로그아웃" %}</a></li>
+            <li><a href="{% url 'mypage:mypage' %}">{% trans "프로필" %}</a></li>
             {% if llm %}
-                <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:my_ai_models' llm.id %}">My AI models</a></li>
+                <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans "My AI models" %}</a></li>
             {% else %}
-                <li><a href="#" onclick="return alert('현재 커스터한 AI 가 없습니다.')">My AI models</a></li>
+                <a href="#" onclick="return alert('{% trans "현재 커스터한 AI 가 없습니다." %}')">{% trans "My AI models" %}</a>
             {% endif %}
-            <li><a href="{% url 'mypage:my_voice' %}">voice id 목록</a></li>
-            <li><a href="{% url 'main' %}">main 으로</a></li>
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans "voice id 목록" %}</a></li>
+            <li><a href="{% url 'home:main' %}">{% trans "main 으로" %}</a></li>
         </ul>
     </div>
 
@@ -39,28 +39,28 @@
             {% csrf_token %}
 
              <div class="form-group">
-                    <label for="llm_image">AI 이미지</label>
+                    <label for="llm_image">{% trans "AI 이미지" %}</label>
                     <input type="file" name="llm_image" id="llm_image">
                     {% if llm.llm_image %}
                         <div class="image-preview">
-                            <img src="{{ llm.llm_image.url }}" alt="AI 이미지">
+                            <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}">
                         </div>
                     {% endif %}
                 </div>
             <div class="container">
             <div class="left-panel">
                 <div class="form-group">
-                    <label for="name">AI 이름</label>
+                    <label for="name">{% trans "AI 이름" %}</label>
                     <input type="text" id="name" name="name" value="{{ llm.name }}">
                 </div>
 
                 <div class="form-group">
-                    <label for="prompt">프롬프트</label>
+                    <label for="prompt">{% trans "프롬프트" %}</label>
                     <textarea style="height: 500px;" name="prompt" id="prompt">{{ llm.prompt }}</textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="voice_id">Voice ID</label>
+                    <label for="voice_id">{% trans "Voice ID" %}</label>
                     <input type="text" name="voice_id" id="voice_id" value="{{ llm.voice.voice_id }}">
                 </div>
 
@@ -69,49 +69,44 @@
 
             <div class="right-panel">
                 <div class="form-group">
-                    <label for="language">언어</label>
+                    <label for="language">{% trans "언어" %}</label>
                     <select name="language" id="language">
                     <option value="en" {% if llm.voice.language == "en" %}selected{% endif %}>English (US)</option>
-                        <option value="ko" {% if llm.voice.language == "ko" %}selected{% endif %}>Korean</option>
-                        <option value="hi" {% if llm.voice.language == "hi" %}selected{% endif %}>Hindi</option>
-                        <option value="pt" {% if llm.voice.language == "pt" %}selected{% endif %}>Portuguese</option>
-                        <option value="zh" {% if llm.voice.language == "zh" %}selected{% endif %}>Chinese</option>
-                        <option value="es" {% if llm.voice.language == "es" %}selected{% endif %}>Spanish</option>
-                        <option value="fr" {% if llm.voice.language == "fr" %}selected{% endif %}>French</option>
-                        <option value="ja" {% if llm.voice.language == "ja" %}selected{% endif %}>Japanese</option>
-                        <option value="ar" {% if llm.voice.language == "ar" %}selected{% endif %}>Arabic</option>
-                        <option value="ru" {% if llm.voice.language == "ru" %}selected{% endif %}>Russian</option>
-                        <option value="id" {% if llm.voice.language == "id" %}selected{% endif %}>Indonesian</option>
-                        <option value="it" {% if llm.voice.language == "it" %}selected{% endif %}>Italian</option>
-                        <option value="nl" {% if llm.voice.language == "nl" %}selected{% endif %}>Dutch</option>
-                        <option value="tr" {% if llm.voice.language == "tr" %}selected{% endif %}>Turkish</option>
-                        <option value="pl" {% if llm.voice.language == "pl" %}selected{% endif %}>Polish</option>
-                        <option value="sv" {% if llm.voice.language == "sv" %}selected{% endif %}>Swedish</option>
-                        <option value="fil" {% if llm.voice.language == "fil" %}selected{% endif %}>Filipino</option>
-                        <option value="ms" {% if llm.voice.language == "ms" %}selected{% endif %}>Malay</option>
-                        <option value="ro" {% if llm.voice.language == "ro" %}selected{% endif %}>Romanian</option>
-                        <option value="uk" {% if llm.voice.language == "uk" %}selected{% endif %}>Ukrainian</option>
-                        <option value="el" {% if llm.voice.language == "el" %}selected{% endif %}>Greek</option>
-                        <option value="cs" {% if llm.voice.language == "cs" %}selected{% endif %}>Czech</option>
-                        <option value="da" {% if llm.voice.language == "da" %}selected{% endif %}>Danish</option>
-                        <option value="fi" {% if llm.voice.language == "fi" %}selected{% endif %}>Finnish</option>
-                        <option value="bg" {% if llm.voice.language == "bg" %}selected{% endif %}>Bulgarian</option>
-                        <option value="hr" {% if llm.voice.language == "hr" %}selected{% endif %}>Croatian</option>
-                        <option value="sk" {% if llm.voice.language == "sk" %}selected{% endif %}>Slovak</option>
-                        <option value="ta" {% if llm.voice.language == "ta" %}selected{% endif %}>Tamil</option>
-
-
-
-
-                        
+                        <option value="ko" {% if llm.voice.language == "ko" %}selected{% endif %}>{% trans "Korean" %}</option>
+                        <option value="hi" {% if llm.voice.language == "hi" %}selected{% endif %}>{% trans "Hindi" %}</option>
+                        <option value="pt" {% if llm.voice.language == "pt" %}selected{% endif %}>{% trans "Portuguese" %}</option>
+                        <option value="zh" {% if llm.voice.language == "zh" %}selected{% endif %}>{% trans "Chinese" %}</option>
+                        <option value="es" {% if llm.voice.language == "es" %}selected{% endif %}>{% trans "Spanish" %}</option>
+                        <option value="fr" {% if llm.voice.language == "fr" %}selected{% endif %}>{% trans "French" %}</option>
+                        <option value="ja" {% if llm.voice.language == "ja" %}selected{% endif %}>{% trans "Japanese" %}</option>
+                        <option value="ar" {% if llm.voice.language == "ar" %}selected{% endif %}>{% trans "Arabic" %}</option>
+                        <option value="ru" {% if llm.voice.language == "ru" %}selected{% endif %}>{% trans "Russian" %}</option>
+                        <option value="id" {% if llm.voice.language == "id" %}selected{% endif %}>{% trans "Indonesian" %}</option>
+                        <option value="it" {% if llm.voice.language == "it" %}selected{% endif %}>{% trans "Italian" %}</option>
+                        <option value="nl" {% if llm.voice.language == "nl" %}selected{% endif %}>{% trans "Dutch" %}</option>
+                        <option value="tr" {% if llm.voice.language == "tr" %}selected{% endif %}>{% trans "Turkish" %}</option>
+                        <option value="pl" {% if llm.voice.language == "pl" %}selected{% endif %}>{% trans "Polish" %}</option>
+                        <option value="sv" {% if llm.voice.language == "sv" %}selected{% endif %}>{% trans "Swedish" %}</option>
+                        <option value="fil" {% if llm.voice.language == "fil" %}selected{% endif %}>{% trans "Filipino" %}</option>
+                        <option value="ms" {% if llm.voice.language == "ms" %}selected{% endif %}>{% trans "Malay" %}</option>
+                        <option value="ro" {% if llm.voice.language == "ro" %}selected{% endif %}>{% trans "Romanian" %}</option>
+                        <option value="uk" {% if llm.voice.language == "uk" %}selected{% endif %}>{% trans "Ukrainian" %}</option>
+                        <option value="el" {% if llm.voice.language == "el" %}selected{% endif %}>{% trans "Greek" %}</option>
+                        <option value="cs" {% if llm.voice.language == "cs" %}selected{% endif %}>{% trans "Czech" %}</option>
+                        <option value="da" {% if llm.voice.language == "da" %}selected{% endif %}>{% trans "Danish" %}</option>
+                        <option value="fi" {% if llm.voice.language == "fi" %}selected{% endif %}>{% trans "Finnish" %}</option>
+                        <option value="bg" {% if llm.voice.language == "bg" %}selected{% endif %}>{% trans "Bulgarian" %}</option>
+                        <option value="hr" {% if llm.voice.language == "hr" %}selected{% endif %}>{% trans "Croatian" %}</option>
+                        <option value="sk" {% if llm.voice.language == "sk" %}selected{% endif %}>{% trans "Slovak" %}</option>
+                        <option value="ta" {% if llm.voice.language == "ta" %}selected{% endif %}>{% trans "Tamil" %}</option>
                     </select>
                 </div>
 
                 <div class="slider-container">
-                    <div class="slider-label">Stability</div>
+                    <div class="slider-label">{% trans "Stability" %}</div>
                     <div class="slider-description">
-                        생성된 음성이 얼마나 안정적인지 조절합니다.<br>
-                        값이 높을수록 더 일관된 음성이 생성됩니다.
+                        {% trans "생성된 음성이 얼마나 안정적인지 조절합니다." %}<br>
+                        {% trans "값이 높을수록 더 일관된 음성이 생성됩니다." %}
                     </div>
                     <div class="slider-control">
                         <span></span>
@@ -121,8 +116,8 @@
                 </div>
 
                 <div class="slider-container">
-                    <div class="slider-label">Speed</div>
-                    <div class="slider-description">AI 답변 속도를 조절합니다.</div>
+                    <div class="slider-label">{% trans "Speed" %}</div>
+                    <div class="slider-description">{% trans "AI 답변 속도를 조절합니다." %}</div>
                     <div class="slider-control">
                         <span></span>
                         <span class="slider-value" id="speedValue">{{ llm.speed }}</span>
@@ -131,8 +126,8 @@
                 </div>
 
                 <div class="slider-container">
-                    <div class="slider-label">Style</div>
-                    <div class="slider-description">스타일을 설정할 수 있습니다.</div>
+                    <div class="slider-label">{% trans "Style" %}</div>
+                    <div class="slider-description">{% trans "스타일을 설정할 수 있습니다." %}</div>
                     <div class="slider-control">
                         <span></span>
                         <span class="slider-value" id="styleValue">{{ llm.style }}</span>
@@ -141,8 +136,8 @@
                 </div>
 
                 <div class="slider-container">
-                    <div class="slider-label">Temperature</div>
-                    <div class="slider-description">AI의 창의성과 랜덤성을 조절합니다.</div>
+                    <div class="slider-label">{% trans "Temperature" %}</div>
+                    <div class="slider-description">{% trans "AI의 창의성과 랜덤성을 조절합니다." %}</div>
                     <div class="slider-control">
                         <span></span>
                         <span class="slider-value" id="temperatureValue">{{ llm.temperature }}</span>
@@ -151,7 +146,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="model">모델</label>
+                    <label for="model">{% trans "모델" %}</label>
                     <select name="model" id="model">
                         <option value="gpt-3.5-turbo" {% if llm.model == "gpt-3.5-turbo" %}selected{% endif %}>GPT 3.5 Turbo</option>
                         <option value="gpt-4o-mini" {% if llm.model == "gpt-4o-mini" %}selected{% endif %}>GPT 4o-mini</option>
@@ -164,16 +159,16 @@
 
             <div class="voice-panel">
                 <div class="voice-list-container">
-                    <h3>저장된 음성 목록</h3>
+                    <h3>{% trans "저장된 음성 목록" %}</h3>
                     <table class="voice-table">
                         <thead>
                             <tr>
-                                <th>번호</th>
-                                <th>날짜</th>
-                                <th>이름</th>
-                                <th>Voice ID</th>
-                                <th>샘플</th>
-                                <th>선택</th>
+                                <th>{% trans "번호" %}</th>
+                                <th>{% trans "날짜" %}</th>
+                                <th>{% trans "이름" %}</th>
+                                <th>{% trans "Voice ID" %}</th>
+                                <th>{% trans "샘플" %}</th>
+                                <th>{% trans "선택" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -190,27 +185,27 @@
                                             <source src="{{ voice.sample_url }}" type="audio/mpeg">
                                         </audio>
                                         {% else %}
-                                        <span style="font-size: 11px;">없음</span>
+                                        <span style="font-size: 11px;">{% trans "없음" %}</span>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <button type="button" class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">선택</button>
+                                        <button type="button" class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans "선택" %}</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
                             {% else %}
                             <tr>
                                 <td colspan="6" class="empty-state">
-                                    저장된 음성이 없습니다.
+                                    {% trans "저장된 음성이 없습니다." %}
                                     <br>
-                                    <a href="{% url 'makeVoice:make_voice' %}" class="make-voice-btn">음성 만들기</a>
+                                    <a href="{% url 'makeVoice:make_voice' %}" class="make-voice-btn">{% trans "음성 만들기" %}</a>
                                 </td>
                             </tr>
                             {% endif %}
                         </tbody>
                     </table>
                 </div>
-                <button type="submit" class="submit-btn">AI 수정하기</button>
+                <button type="submit" class="submit-btn">{% trans "AI 수정하기" %}</button>
             </div>
             </div>
 

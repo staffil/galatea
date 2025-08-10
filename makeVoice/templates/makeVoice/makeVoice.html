@@ -1,11 +1,12 @@
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My AI Voice</title>
+    <title>{% trans '목소리 만들기' %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css\makeVoice\makeVoice.css' %}?v=5">
 </head>
@@ -31,27 +32,27 @@
             {% endif %}
 
             {% if is_result %}
-            <h1>🎤 AI 목소리 생성</h1>
+            <h1>🎤 {% trans 'AI 목소리 생성' %}</h1>
             
-            <h3>✨ 샘플 미리듣기</h3>
+            <h3>✨ {% trans '샘플 미리듣기' %}</h3>
             <div class="audio-preview-section">
                 <audio controls>
                     <source src="{{ preview_url }}" type="audio/mpeg">
-                    Your browser does not support the audio element.
+                    {% trans '현재 브라우저가 샘플 기능을 허용하지 않음' %}
                 </audio>
-                <div class="sample-id">샘플 ID: {{ preview_id }}</div>
+                <div class="sample-id">{%trans '샘플 ID' %}: {{ preview_id }}</div>
             </div>
 
             <div class="form-group">
-                <label for="voice_name">🏷️ 목소리 이름:</label>
-                <input name="voice_name" id="voice_name" value="{{ voice_name }}" required placeholder="나만의 특별한 목소리 이름을 지어주세요">
+                <label for="voice_name">🏷️ {% trans '목소리 이름' %}:</label>
+                <input name="voice_name" id="voice_name" value="{{ voice_name }}" required placeholder="{% trans '나만의 특별한 목소리 이름을 지어주세요'%}">
             </div>
 
             <div class="button-group">
                 <button id="final-create-btn" class="btn btn-primary" data-id="{{ preview_id }}">
-                    <a href="{% url 'mypage:my_voice' %}" style="color: inherit; text-decoration: none;">💾 목소리 저장하기</a>
+                    <a href="{% url 'mypage:my_voice' %}" style="color: inherit; text-decoration: none;">💾 {% trans '목소리 저장하기' %}</a>
                 </button>
-                <button id="retry-btn" class="btn btn-tertiary">🔄 다시 만들기</button>
+                <button id="retry-btn" class="btn btn-tertiary">🔄 {% trans '다시 만들기' %}</button>
             </div>
 
             <script>
@@ -60,7 +61,7 @@
                 const voiceName = document.getElementById("voice_name").value.trim();
                 
                 if (!voiceName) {
-                    alert("목소리 이름을 입력해주세요!");
+                    alert("{% trans '목소리 이름을 입력해주세요!' %}");
                     return;
                 }
                 
@@ -75,46 +76,46 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        alert("🎉 최종 목소리 생성 완료! Voice ID: " + data.voice_id);
+                        alert("🎉 {% trans '최종 목소리 생성 완료! Voice ID:' %} " + data.voice_id);
                     } else {
                         alert("❌ 오류: " + data.error);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert("❌ 처리 중 오류가 발생했습니다.");
+                    alert("❌ {% trans '처리 중 오류가 발생했습니다.' %}");
                 });
             });
 
             document.getElementById("retry-btn").addEventListener('click', function () {
-                if (confirm("🔄 다시 만드시겠습니까?\n\n재생성시 기존의 토큰이 아닌 새로운 토큰이 차감됩니다.\n목소리는 마이페이지에 그대로 저장됩니다.")) {
+                if (confirm("🔄 {% trans '다시 만드시겠습니까?\n\n재생성시 기존의 토큰이 아닌 새로운 토큰이 차감됩니다.\n목소리는 마이페이지에 그대로 저장됩니다.' %}")) {
                     window.location.href = "{% url 'makeVoice:make_voice_page' %}";
                 }
             });
             </script>
 
             {% else %}
-            <p>나만의 특별한 AI 목소리를 만들어보세요! 원하는 스타일과 톤을 자세히 설명하면, 그에 맞는 독특한 목소리를 생성해드립니다.</p>
+            <p>{% trans '나만의 특별한 AI 목소리를 만들어보세요! 원하는 스타일과 톤을 자세히 설명하면, 그에 맞는 독특한 목소리를 생성해드립니다.' %}</p>
 
             <form method="POST" action="{% url 'makeVoice:sample_voice' %}" class="voice-creation-form">
                 {% csrf_token %}
                 
                 <div class="form-group">
-                    <label for="voice_prompt_input">🎨 음성 스타일 프롬프트</label>
+                    <label for="voice_prompt_input">🎨 {% trans '음성 스타일 프롬프트' %}</label>
                     <textarea name="voice_prompt_input" id="voice_prompt_input" required 
-                              placeholder="원하는 목소리의 특징을 자세히 설명해주세요!&#10;&#10;예시:&#10;- 따뜻하고 친근한 여성 목소리&#10;- 차분하고 지적인 남성 목소리&#10;- 활기차고 밝은 청년 목소리&#10;- 성숙하고 신뢰감 있는 목소리&#10;&#10;※ 폭력적, 성적인 내용은 포함할 수 없습니다.">{{ voice_prompt_input }}</textarea>
+                              placeholder="{% trans '원하는 목소리의 특징을 자세히 설명해주세요!&#10;&#10;예시:&#10;- 따뜻하고 친근한 여성 목소리&#10;- 차분하고 지적인 남성 목소리&#10;- 활기차고 밝은 청년 목소리&#10;- 성숙하고 신뢰감 있는 목소리&#10;&#10;※ 폭력적, 성적인 내용은 포함할 수 없습니다.' %}">{{ voice_prompt_input }}</textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="sample_text_input">📝 샘플 텍스트</label>
+                    <label for="sample_text_input">📝 {% trans '샘플 텍스트' %}</label>
                     <textarea name="sample_text_input" id="sample_text_input" required 
-                              placeholder="생성될 목소리로 읽어볼 텍스트를 입력해주세요.&#10;&#10;최소 130자 이상 작성해주세요 (약 3~4줄)&#10;&#10;예시:&#10;안녕하세요! 저는 여러분만을 위한 특별한 AI 목소리입니다. 따뜻한 마음으로 여러분과 소통하며, 언제나 도움이 되는 정보를 전달하고 싶습니다. 오늘도 좋은 하루 되세요!">{{ sample_text_input }}</textarea>
+                              placeholder="{% trans '생성될 목소리로 읽어볼 텍스트를 입력해주세요.&#10;&#10;최소 130자 이상 작성해주세요 (약 3~4줄)&#10;&#10;예시:&#10;안녕하세요! 저는 여러분만을 위한 특별한 AI 목소리입니다. 따뜻한 마음으로 여러분과 소통하며, 언제나 도움이 되는 정보를 전달하고 싶습니다. 오늘도 좋은 하루 되세요!' %}">{{ sample_text_input }}</textarea>
                 </div>
 
                 <div class="generate-container">
-                    <button type="submit" class="btn generate-button">✨ 샘플 생성하기</button>
+                    <button type="submit" class="btn generate-button">✨ {% trans '샘플 생성하기' %}</button>
                     <p style="margin-top: 20px; color: #888; font-size: 0.9rem;">
-                        💡 팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!
+                        💡 {% trans '팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!'%}
                     </p>
                 </div>
             </form>

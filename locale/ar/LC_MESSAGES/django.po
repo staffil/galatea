@@ -1,0 +1,656 @@
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-08 16:58+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#: .\home\templates\home\main.html:9
+msgid "GALATEA - AI와 대화하기"
+msgstr "غالاتيا - الدردشة مع المشاهير"
+
+#: .\home\templates\home\main.html:38
+msgid "언어 바꾸기"
+msgstr "تغيير اللغة"
+
+#: .\home\templates\home\main.html:44
+msgid "컨셉에 사로집힌 AI와 대화하기"
+msgstr "الدردشة مع ذكاء اصطناعي مهووس بالمفاهيم"
+
+#: .\home\templates\home\main.html:48
+msgid "온라인"
+msgstr "متصل"
+
+#: .\home\templates\home\main.html:57
+msgid "기본 이미지"
+msgstr "الصورة الافتراضية"
+
+#: .\home\templates\home\main.html:63
+msgid "대화 시작"
+msgstr "بدء الدردشة"
+
+#: .\templates\admin\login.html:33
+msgid "지금은 관리자 창입니다.."
+msgstr "هذه لوحة الإدارة."
+
+#: .\templates\admin\login.html:40
+#, python-format
+msgid "You are authenticated as %(username)s but are not authorized to access this page. Would you like to login to a different account?"
+msgstr "لقد تم التحقق من هويتك باسم %(username)s ولكن ليس لديك الصلاحية للوصول إلى هذه الصفحة. هل ترغب في تسجيل الدخول بحساب آخر؟"
+
+#: .\templates\admin\login.html:68
+msgid "아이디가 기억 안나세요?"
+msgstr "هل نسيت معرفك؟"
+
+#: .\templates\common\notLoginHeader.html
+msgid "로그인"
+msgstr "تسجيل الدخول"
+
+#: .\templates\common\notLoginHeader.html .\home\templates\home\home.html
+msgid "회원가입"
+msgstr "الاشتراك"
+
+#: .\templates\common\loginHeader.html
+msgid "보이스 만들기"
+msgstr "إنشاء صوت"
+
+#: .\templates\common\loginHeader.html
+msgid "이미지 만들기"
+msgstr "إنشاء صورة"
+
+#: .\templates\common\loginHeader.html
+msgid "AI 만들기⊕"
+msgstr "إنشاء ذكاء اصطناعي جديد⊕"
+
+#: .\templates\common\loginHeader.html
+msgid "이미지 없음"
+msgstr "لا توجد صورة"
+
+#: .\celebrity\templates\celebrity\celebrity.html
+msgid "텍스트나 음성으로 대화해보세요"
+msgstr "جرب الدردشة عبر النص أو الصوت"
+
+#: .\celebrity\templates\celebrity\celebrity.html
+msgid "녹음 시작"
+msgstr "بدء التسجيل"
+
+#: .\celebrity\templates\celebrity\celebrity.html
+msgid "녹음 종료"
+msgstr "إيقاف التسجيل"
+
+#: .\celebrity\templates\celebrity\celebrity.html
+msgid "마이크 기능을 켜주세요"
+msgstr "يرجى تفعيل الميكروفون في متصفحك"
+
+#: .\celebrity\templates\celebrity\celebrity.html
+msgid "로그인을 해주세요"
+msgstr "يرجى تسجيل الدخول"
+
+#: .\celebrity\templates\celebrity\celebrity.html .\makeImage\templates\makeImage\image.html .\customer_ai\templates\customer_ai\custom.html
+msgid "생성된 이미지가 없습니다."
+msgstr "لا توجد صورة تم إنشاؤها متاحة"
+
+#: .\customer_ai\templates\customer_ai\ai_name.html
+msgid "AI 이름 입력"
+msgstr "إدخال اسم الذكاء الاصطناعي"
+
+#: .\customer_ai\templates\customer_ai\ai_name.html
+msgid "AI 이름을 입력해주세요"
+msgstr "يرجى إدخال اسم الذكاء الاصطناعي الخاص بك"
+
+#: .\customer_ai\templates\customer_ai\ai_name.html
+msgid "사진을 선택해주세요"
+msgstr "يرجى اختيار صورة للذكاء الاصطناعي الخاص بك"
+
+#: .\customer_ai\templates\customer_ai\ai_name.html
+msgid "완료"
+msgstr "إكمال"
+
+#: .\customer_ai\templates\customer_ai\ai_name.html
+msgid "당신의 AI 이름과 사진을 입력하세요"
+msgstr "يرجى إدخال اسم الذكاء الاصطناعي الخاص بك وتحميل صورة"
+
+#: .\customer_ai\templates\customer_ai\custom.html .\customer_ai\templates\customer_ai\vision.html
+msgid "모드 선택"
+msgstr "اختيار الوضع"
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "텍스트 대화하기"
+msgstr "الدردشة عبر النص"
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "하고 싶은 말을 입력하세요"
+msgstr "يرجى إدخال رسالتك"
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "메시지를 입력하세요..."
+msgstr "أدخل رسالتك..."
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "녹음을 시작하려면 버튼을 누르세요"
+msgstr "اضغط على الزر لبدء التسجيل"
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "녹음 중... 다시 누르면 종료됩니다"
+msgstr "جارٍ التسجيل... اضغط مرة أخرى للتوقف"
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "인식된 텍스트: "
+msgstr "النص المعترف به:"
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "오디오 업로드 중 오류가 발생했습니다: "
+msgstr "حدث خطأ أثناء تحميل الصوت:"
+
+#: .\customer_ai\templates\customer_ai\custom.html
+msgid "마이크 권한을 허용해주세요."
+msgstr "يرجى السماح بالوصول إلى الميكروفون"
+
+#: customer_ai/templates/customer_ai/make_ai.html:8
+msgid "AI 만들기"
+msgstr "إنشاء ذكاء اصطناعي"
+
+#: customer_ai/templates/customer_ai/make_ai.html:18
+msgid "저장된 음성 목록"
+msgstr "قائمة الأصوات المحفوظة"
+
+#: customer_ai/templates/customer_ai/make_ai.html:22
+msgid "번호"
+msgstr "رقم"
+
+#: customer_ai/templates/customer_ai/make_ai.html:23
+msgid "생성 날짜"
+msgstr "تاريخ الإنشاء"
+
+#: customer_ai/templates/customer_ai/make_ai.html:25
+msgid "목소리 번호"
+msgstr "معرف الصوت"
+
+#: customer_ai/templates/customer_ai/make_ai.html:26
+msgid "샘플 재생"
+msgstr "تشغيل العينة"
+
+#: customer_ai/templates/customer_ai/make_ai.html:27
+msgid "복사하기"
+msgstr "نسخ"
+
+#: customer_ai/templates/customer_ai/make_ai.html:38
+msgid "지원하지 않는 브라우저입니다."
+msgstr "متصفح غير مدعوم"
+
+#: customer_ai/templates/customer_ai/make_ai.html:42
+msgid "샘플 없음"
+msgstr "لا توجد عينة متاحة"
+
+#: customer_ai/templates/customer_ai/make_ai.html:48
+msgid "선택하기"
+msgstr "اختيار"
+
+#: customer_ai/templates/customer_ai/make_ai.html:54
+msgid "저장된 음성이 없습니다."
+msgstr "لا توجد أصوات محفوظة"
+
+#: customer_ai/templates/customer_ai/make_ai.html:56
+msgid "목소리 만들기->"
+msgstr "إنشاء صوت ->"
+
+#: customer_ai/templates/customer_ai/make_ai.html:66
+msgid "이전"
+msgstr "السابق"
+
+#: customer_ai/templates/customer_ai/make_ai.html:75
+msgid "다음"
+msgstr "التالي"
+
+#: customer_ai/templates/customer_ai/make_ai.html:85
+msgid "Prompt"
+msgstr "موجه"
+
+#: customer_ai/templates/customer_ai/make_ai.html:87
+msgid "최대한 자세히 쓰세요. 프롬프트에 따라 원하는 대답을 얻을 수 있습니다."
+msgstr "اكتب بأكبر قدر ممكن من التفاصيل. يمكنك الحصول على الإجابة المطلوبة بناءً على الموجه."
+
+#: customer_ai/templates/customer_ai/make_ai.html:153
+msgid "모델 선택하기"
+msgstr "اختيار النموذج"
+
+#: customer_ai/templates/customer_ai/make_ai.html:168
+msgid "AI 생성하기"
+msgstr "إنشاء ذكاء اصطناعي"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "비전 모드"
+msgstr "وضع الرؤية"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "텍스트 모드"
+msgstr "وضع النص"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "비전 채팅"
+msgstr "دردشة الرؤية"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "카메라와 실시간 대화를 시도해보세요"
+msgstr "جرب إجراء محادثة في الوقت الفعلي مع الكاميرا"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "AI 캐릭터"
+msgstr "شخصية ذكاء اصطناعي"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "AI 이미지"
+msgstr "صورة ذكاء اصطناعي"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "라이브 카메라"
+msgstr "كاميرا مباشرة"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "비전 모드 시작"
+msgstr "بدء وضع الرؤية"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "비전 모드 준비 중..."
+msgstr "جارٍ تحضير وضع الرؤية..."
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "분석 결과: "
+msgstr "نتيجة التحليل:"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "분석 중 오류가 발생했습니다"
+msgstr "حدث خطأ أثناء التحليل"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "웹캠 접근 실패: "
+msgstr "فشل الوصول إلى كاميرا الويب:"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "서버 응답 오류"
+msgstr "خطأ استجابة الخادم"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "비전 모드 실행 중..."
+msgstr "وضع الرؤية قيد التشغيل..."
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "비전 모드 중지됨"
+msgstr "تم إيقاف وضع الرؤية"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "비전 모드 중지"
+msgstr "إيقاف وضع الرؤية"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "녹음 시작하려면 버튼을 누르세요"
+msgstr "اضغط على الزر لبدء التسجيل"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "녹음 중... 다시 눌러 중지"
+msgstr "جارٍ التسجيل... اضغط مرة أخرى للتوقف"
+
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "마이크 접근 권한을 허용해주세요."
+msgstr "يرجى السماح بالوصول إلى الميكروفون"
+
+#: \home\templates\home\home.html
+msgid "메인 페이지"
+msgstr "الصفحة الرئيسية"
+
+#: .\makeImage\templates\makeImage\image.html
+msgid "이미지 생성하기"
+msgstr "إنشاء صورة"
+
+#: .\makeImage\templates\makeImage\image.html
+msgid "이미지를 생성할 프롬프트를 넣어주세요. 되도록 자세한 프롬프트를 넣어주세요"
+msgstr "يرجى إدخال موجه لإنشاء الصورة. كلما كان الموجه أكثر تفصيلاً، كان ذلك أفضل."
+
+#: .\makeImage\templates\makeImage\image.html
+msgid "생성하기"
+msgstr "إنشاء"
+
+#: .\makeImage\templates\makeImage\image.html
+msgid "이미지를 생성하고 있습니다..."
+msgstr "جارٍ إنشاء الصورة..."
+
+#: .\makeImage\templates\makeImage\image.html
+msgid "생성된 이미지가 여기에 표시됩니다"
+msgstr "سيتم عرض الصورة التي تم إنشاؤها هنا"
+
+#: .\makeImage\templates\makeImage\image.html
+msgid "다운로드"
+msgstr "تحميل"
+
+#: .\celebrity\templates\celebrity\celebrity.html
+msgid "텍스트 입력"
+msgstr "إدخال نص"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "생성된 이미지"
+msgstr "الصورة التي تم إنشاؤها"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "목소리 만들기"
+msgstr "إنشاء صوت"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "AI 목소리 생성"
+msgstr "إنشاء صوت ذكاء اصطناعي"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "샘플 미리듣기"
+msgstr "معاينة العينة"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "현재 브라우저가 샘플 기능을 허용하지 않음"
+msgstr "متصفحك لا يدعم ميزة العينة"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "샘플 ID"
+msgstr "معرف العينة"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "목소리 이름"
+msgstr "اسم الصوت"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "나만의 특별한 목소리 이름을 지어주세요"
+msgstr "يرجى تسمية صوتك الفريد باسم خاص"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "목소리 저장하기"
+msgstr "حفظ الصوت"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "다시 만들기"
+msgstr "إعادة المحاولة"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "목소리 이름을 입력해주세요!"
+msgstr "يرجى إدخال اسم الصوت!"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "최종 목소리 생성 완료! Voice ID:"
+msgstr "اكتمل إنشاء الصوت النهائي! معرف الصوت:"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "처리 중 오류가 발생했습니다."
+msgstr "حدث خطأ أثناء المعالجة."
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "다시 만드시겠습니까?\n\n재생성시 기존의 토큰이 아닌 새로운 토큰이 차감됩니다.\n목소리는 마이페이지에 그대로 저장됩니다."
+msgstr "هل ترغب في إعادة المحاولة؟\n\nعند إعادة الإنشاء، سيتم خصم رمز جديد بدلاً من الرمز الحالي.\nسيظل صوتك محفوظًا في صفحتي الشخصية."
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "나만의 특별한 AI 목소리를 만들어보세요! 원하는 스타일과 톤을 자세히 설명하면, 그에 맞는 독특한 목소리를 생성해드립니다."
+msgstr "اصنع صوت ذكاء اصطناعي فريد خاص بك! صف الستايل والنبرة المطلوبين بالتفصيل، وسننشئ صوتًا مميزًا يناسب ذلك."
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "음성 스타일 프롬프트"
+msgstr "موجه نمط الصوت"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "원하는 목소리의 특징을 자세히 설명해주세요!&#10;&#10;예시:&#10;- 따뜻하고 친근한 여성 목소리&#10;- 차분하고 지적인 남성 목소리&#10;- 활기차고 밝은 청년 목소리&#10;- 성숙하고 신뢰감 있는 목소리&#10;&#10;※ 폭력적, 성적인 내용은 포함할 수 없습니다."
+msgstr "يرجى وصف خصائص الصوت المطلوب بالتفصيل!\n\nأمثلة:\n- صوت أنثوي دافئ وودود\n- صوت ذكوري هادئ ومثقف\n- صوت شبابي حيوي ومشرق\n- صوت ناضج وموثوق\n\n※ لا يمكن تضمين محتوى عنيف أو جنسي."
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "샘플 텍스트"
+msgstr "نص العينة"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "생성될 목소리로 읽어볼 텍스트를 입력해주세요.&#10;&#10;최소 130자 이상 작성해주세요 (약 3~4줄)&#10;&#10;예시:&#10;안녕하세요! 저는 여러분만을 위한 특별한 AI 목소리입니다. 따뜻한 마음으로 여러분과 소통하며, 언제나 도움이 되는 정보를 전달하고 싶습니다. 오늘도 좋은 하루 되세요!"
+msgstr "يرجى إدخال النص الذي سيقرأه الصوت المُنشأ.\n\nيرجى كتابة 130 حرفًا على الأقل (حوالي 3-4 أسطر).\n\nمثال:\nمرحبًا! أنا صوت ذكاء اصطناعي خاص مصمم لكم فقط. أتواصل معكم بحرارة وأرغب دائمًا في تقديم معلومات مفيدة. أتمنى لكم يومًا رائعًا!"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "샘플 생성하기"
+msgstr "إنشاء عينة"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+msgid "팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!"
+msgstr "نصيحة: كلما كان الوصف أكثر تحديدًا وتفصيلاً، كان الصوت المُنشأ أكثر دقة!"
+
+#: .\mypage\templates\mypage\my_ai_models.html:10
+msgid "마이페이지"
+msgstr "صفحتي"
+
+#: .\mypage\templates\mypage\my_ai_models.html:22
+msgid "로그아웃"
+msgstr "تسجيل الخروج"
+
+#: .\mypage\templates\mypage\my_ai_models.html:23
+msgid "프로필"
+msgstr "الملف الشخصي"
+
+#: .\mypage\templates\mypage\my_ai_models.html:26
+msgid "내 AI 모델들"
+msgstr "نماذج الذكاء الاصطناعي الخاصة بي"
+
+#: .\mypage\templates\mypage\my_ai_models.html:28
+msgid "voice id 목록"
+msgstr "قائمة معرفات الصوت"
+
+#: .\mypage\templates\mypage\my_ai_models.html:29
+msgid "main 으로"
+msgstr "العودة إلى الصفحة الرئيسية"
+
+#: .\mypage\templates\mypage\my_ai_models.html:44
+msgid "AI 모델 선택"
+msgstr "اختيار نموذج ذكاء اصطناعي"
+
+#: .\mypage\templates\mypage\my_ai_models.html:54
+msgid "프롬프트"
+msgstr "موجه"
+
+#: .\mypage\templates\mypage\my_ai_models.html:61
+msgid "언어"
+msgstr "اللغة"
+
+#: .\mypage\templates\mypage\my_ai_models.html:62
+msgid "언어를 선택해주세요"
+msgstr "يرجى اختيار لغة"
+
+#: .\mypage\templates\mypage\my_ai_models.html:66
+msgid "안정감"
+msgstr "الاستقرار"
+
+#: .\mypage\templates\mypage\my_ai_models.html:67
+msgid "음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다."
+msgstr "يضبط اتساق نبرة الصوت. القيم المنخفضة تعبر عن مشاعر أكثر تنوعًا، والقيم العالية تنتج صوتًا مستقرًا وأحادي النبرة."
+
+#: .\mypage\templates\mypage\my_ai_models.html:76
+msgid "음성 속도"
+msgstr "سرعة الصوت"
+
+#: .\mypage\templates\mypage\my_ai_models.html:77
+msgid "해당 AI의 음성 속도를 조절할 수 있습니다."
+msgstr "يمكنك ضبط سرعة الصوت لهذا الذكاء الاصطناعي."
+
+#: .\mypage\templates\mypage\my_ai_models.html:86
+msgid "목소리 스타일"
+msgstr "نمط الصوت"
+
+#: .\mypage\templates\mypage\my_ai_models.html:87
+msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
+msgstr "كلما زادت القيمة، زادت تضخيم مشاعر الصوت."
+
+#: .\mypage\templates\mypage\my_ai_models.html:95
+msgid "창의성"
+msgstr "الإبداع"
+
+#: .\mypage\templates\mypage\my_ai_models.html:96
+msgid "AI의 창의성을 정합니다"
+msgstr "يحدد إبداع الذكاء الاصطناعي."
+
+#: .\mypage\templates\mypage\my_ai_models.html:105
+msgid "Voice id"
+msgstr "معرف الصوت"
+
+#: .\mypage\templates\mypage\my_ai_models.html:111
+msgid "선택한 모델"
+msgstr "النموذج المحدد"
+
+#: .\mypage\templates\mypage\my_ai_models.html:124
+msgid "대화하기"
+msgstr "الدردشة"
+
+#: .\mypage\templates\mypage\my_ai_models.html:125
+msgid "수정하기"
+msgstr "تعديل"
+
+#: .\mypage\templates\mypage\my_ai_models.html:126
+msgid "삭제하기"
+msgstr "حذف"
+
+#: .\mypage\templates\mypage\my_ai_models.html:31
+msgid "현재 커스터한 AI 가 없습니다."
+msgstr "لا يوجد ذكاء اصطناعي مخصص حاليًا."
+
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "프로필 이미지 없음"
+msgstr "لا توجد صورة ملف شخصي"
+
+#: .\mypage\templates\mypage\my_ai_models.html:127
+msgid "해당 AI를 삭제하시겠습니까?"
+msgstr "هل أنت متأكد من حذف هذا الذكاء الاصطناعي؟"
+
+#: .\register\templates\register\signup.html:10
+msgid "Sign In UI"
+msgstr "واجهة تسجيل الدخول"
+
+#: .\register\templates\register\signup.html:22
+msgid "HELLO PIGMALEONS"
+msgstr "مرحبًا بكم في GALATEA، أصدقاء بيغمالييون الأعزاء. قم بتخصيص GALATEA أثناء التسجيل وتسجيل الدخول. أنشئ الأصوات والتعليمات لإنشاء نماذج الذكاء الاصطناعي التي تريدها. يمكنك إنشاء GALATEA تمامًا كما تريد بصوتك وتعليماتك المفضلة."
+
+#: .\register\templates\register\signup.html:28
+msgid "회원가입 폼"
+msgstr "نموذج التسجيل"
+
+#: .\register\templates\register\signup.html:30
+msgid "Galatea Logo"
+msgstr "شعار Galatea"
+
+#: .\register\templates\register\signup.html:32
+msgid "GALATEA"
+msgstr "GALATEA"
+
+#: .\register\templates\register\signup.html:35
+msgid "SIGN UP"
+msgstr "تسجيل"
+
+#: .\register\templates\register\signup.html:68
+msgid "회원가입 버튼"
+msgstr "زر التسجيل"
+
+#: .\register\templates\register\signup.html:70
+msgid "SIGN IN"
+msgstr "تسجيل الدخول"
+
+#: .\register\templates\register\signup.html:71
+msgid "main"
+msgstr "الرئيسية"
+
+
+#: .\register\templates\register\signup.html:23
+msgid "저희 GALATEA에 오신 피그말리온 분들을 환영합니다. 회원가입 및 로그인시 GALATEA 를 커스텀할 수 있습니다. voice 와 프롬프트를 만들어 원하는 AI 모델을 생성해 보세요. 자신이 원하는 목소리와 프롬프트로 얼마든지 원하는 GALATEA 를 만들 수 있습니다."
+msgstr "مرحبًا بكم في GALATEA، أيها البيغمليون الأعزاء. يمكنك تخصيص GALATEA أثناء التسجيل وتسجيل الدخول. أنشئ الأصوات والتعليمات لبناء نماذج الذكاء الاصطناعي التي ترغب بها. يمكنك إنشاء GALATEA بالطريقة التي تريدها مع صوتك وتعليماتك المفضلة."
+
+
+#: register/forms.py:9
+msgid "아이디"
+msgstr "اسم المستخدم"
+
+
+
+#: register/forms.py:24
+msgid "아이디는 필수 입력입니다."
+msgstr "اسم المستخدم مطلوب."
+
+#: register/forms.py:26
+msgid "이미 존재하는 아이디입니다."
+msgstr "اسم المستخدم هذا موجود بالفعل."
+
+#: register/forms.py:31
+msgid "닉네임"
+msgstr "اللقب"
+
+#: register/forms.py:32
+msgid "닉네임은 필수 입력입니다."
+msgstr "اللقب مطلوب."
+
+
+#: register/forms.py:37
+msgid "비밀번호 입력하세요()"
+msgstr "أدخل كلمة المرور الخاصة بك"
+
+#: register/forms.py:42
+msgid "비밀번호는 필수 입력입니다."
+msgstr "كلمة المرور مطلوبة."
+
+#: register/forms.py:45
+msgid "형식이 맞지 않습니다. 비밀번호는 소문자 최소 1개, 숫자 최소 1개,특수문자 최소 1개 이상이여야 합니다. ex): abcd1234! "
+msgstr "تنسيق كلمة المرور غير صالح. يجب أن تحتوي على حرف صغير واحد على الأقل، رقم واحد، ورمز خاص واحد على الأقل. مثال: abcd1234!"
+
+#: register/forms.py:49
+msgid "비밀번호 확인"
+msgstr "تأكيد كلمة المرور"
+
+#: register/forms.py:50
+msgid "비밀번호 확인은 필수 입력입니다."
+msgstr "تأكيد كلمة المرور مطلوب."
+
+#: register/forms.py:54
+msgid "비밀번호가 일치하지 않습니다."
+msgstr "كلمات المرور غير متطابقة."
+
+#: register/forms.py:58
+msgid "이메일"
+msgstr "البريد الإلكتروني"
+
+#: register/forms.py:59
+msgid "이메일은 필수 입력입니다."
+msgstr "البريد الإلكتروني مطلوب."
+
+#: register/forms.py:61
+msgid "이미 존재하는 이메일입니다."
+msgstr "هذا البريد الإلكتروني موجود بالفعل."
+
+#: register/forms.py:65
+msgid "전화번호"
+msgstr "رقم الهاتف"
+
+#: register/forms.py:66
+msgid "전화번호는 필수 입력입니다."
+msgstr "رقم الهاتف مطلوب."
+
+#: register/forms.py:69
+msgid "전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)"
+msgstr "تنسيق رقم الهاتف غير صحيح. (مثال: 010-1234-5678)"
+
+#: register/forms.py:78
+msgid "아이디를 입력하세요"
+msgstr "أدخل اسم المستخدم الخاص بك"
+
+#: register/forms.py:84
+msgid "비밀번호"
+msgstr "كلمة المرور"
+
+#: register/forms.py:88
+msgid "아이디를 입력해 주세요"
+msgstr "يرجى إدخال اسم المستخدم الخاص بك"
+
+

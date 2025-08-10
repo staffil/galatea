@@ -1,73 +1,71 @@
-{% load static %} 
+{% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이페이지 - GALATEA</title>
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
     <link rel="stylesheet" href="{% static 'css/mypage/mypage.css' %}">
-
 </head>
 <body>
     <div class="sidebar">
-        <h1>마이페이지</h1>
+        <h1>{% trans "마이페이지" %}</h1>
         <div class="sidebar-profile">
-{% if user.user_image %}
-    <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;">
-{% else %}
-    <p>프로필 이미지 없음</p>
-{% endif %}
-
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="{% trans '프로필 이미지' %}" style="width: 150px; height: 150px; border-radius: 50%;">
+            {% else %}
+                <p>{% trans "프로필 이미지 없음" %}</p>
+            {% endif %}
 
             <h3>{{ user.nickname }}</h3>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="{% url 'logout' %}">로그아웃</a></li>
-            <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:mypage' %}">프로필</a></li>
+            <li><a href="{% url 'logout' %}">{% trans "로그아웃" %}</a></li>
+            <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:mypage' %}">{% trans "프로필" %}</a></li>
             {% if llm %}
-                <li><a href="{% url 'mypage:my_ai_models' llm.id %}">My AI models</a></li>
+                <li><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans "My AI models" %}</a></li>
             {% else %}
-                <li><a href="#" onclick="return alert('현재 커스터한 AI 가 없습니다.')">My AI models</a></li>
+                <li><a href="#" onclick="return alert('{% trans "현재 커스터한 AI 가 없습니다." %}')">{% trans "My AI models" %}</a></li>
             {% endif %}
-            <li><a href="{% url 'mypage:my_voice' %}">voice id 목록</a></li>
-            <li><a href="{% url 'main' %}">main 으로</a></li>
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans "voice id 목록" %}</a></li>
+            <li><a href="#">{% trans "크레딧 목록" %}</a></li>
+            <li><a href="{% url 'home:main' %}">{% trans "main 으로" %}</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="profile-section">
-            <h2>프로필</h2>
+            <h2>{% trans "프로필" %}</h2>
 
             <div class="profile-main">
-{% if user.user_image %}
-    <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;">
-{% else %}
-    <p>프로필 이미지 없음</p>
-{% endif %}
-
+                {% if user.user_image %}
+                    <img src="{{ user.user_image.url }}" alt="{% trans '프로필 이미지' %}" style="width: 150px; height: 150px; border-radius: 50%;">
+                {% else %}
+                    <p>{% trans "프로필 이미지 없음" %}</p>
+                {% endif %}
 
                 <div>
-
-
-                <div class="profile-form">
-                    <div class="form-group">
-                        <label>닉네임</label>
-                        <input type="text" value="{{ user.nickname }}" readonly>
+                    <div class="profile-form">
+                        <div class="form-group">
+                            <label>{% trans "닉네임" %}</label>
+                            <input type="text" value="{{ user.nickname }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans "아이디:" %}</label>
+                            <input type="text" value="{{ user.username }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans "이메일:" %}</label>
+                            <input type="email" value="{{ user.email }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans "전화번호:" %}</label>
+                            <input type="text" value="{{ user.phonenumber }}" readonly>
+                        </div>
+                        <a href="{% url 'mypage:mypage_update' %}" class="submit-btn">{% trans "수정하기" %}</a>
                     </div>
-                    <div class="form-group">
-                        <label>아이디:</label>
-                        <input type="text" value="{{ user.username }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>이메일:</label>
-                        <input type="email" value="{{ user.email }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>전화번호:</label>
-                        <input type="text" value="{{ user.phonenumber }}" readonly>
-                    </div>
-<a href="{% url 'mypage:mypage_update' %}" class="submit-btn">수정하기</a>
                 </div>
             </div>
         </div>
@@ -75,26 +73,27 @@
 </body>
 </html>
 
-        <!-- <div class="payment-section">
-            <div class="payment-header">
-                <h3>결제 내역</h3>
-                <div class="calendar-icon">📅</div>
-            </div>
-            
-            <table class="payment-table">
-                <thead>
-                    <tr>
-                        <th>날짜</th>
-                        <th>결제 방식</th>
-                        <th>상태</th>
-                        <th>결제 금액</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="4" class="empty-state">결제 내역이 없습니다.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> -->
- 
+<!--
+<div class="payment-section">
+    <div class="payment-header">
+        <h3>{% trans "결제 내역" %}</h3>
+        <div class="calendar-icon">📅</div>
+    </div>
+    
+    <table class="payment-table">
+        <thead>
+            <tr>
+                <th>{% trans "날짜" %}</th>
+                <th>{% trans "결제 방식" %}</th>
+                <th>{% trans "상태" %}</th>
+                <th>{% trans "결제 금액" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="4" class="empty-state">{% trans "결제 내역이 없습니다." %}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+-->

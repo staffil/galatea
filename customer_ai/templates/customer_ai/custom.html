@@ -1,5 +1,5 @@
 {% load static %} 
-
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,7 +21,7 @@
     <div class="container">
         <!-- 사이드바 -->
       <aside class="sidebar">
-    <h3>🎯 모드 선택</h3>
+    <h3>🎯 {% trans '모드 선택' %}</h3>
     <div class="mode-option active">
         <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
         <label>💬 TEXT MODE</label>
@@ -38,15 +38,15 @@
             {% if llm.llm_image %}
                 <img src="{{ llm.llm_image.url }}" alt="AI 이미지" style="max-width: 700px; max-height: 400px; border-radius: 15px; margin-top: 50px;" />
             {% else %}
-                <p>생성된 이미지가 없습니다.</p>
+                <p>{% trans '생성된 이미지가 없습니다.'%}</p>
             {% endif %}
 
             <div class="chat-header">
                 <div class="ai-avatar">🗨️</div>
-                <h1 class="chat-title">{{ llm.name }} 텍스트 대화하기</h1>
+                <h1 class="chat-title">{{ llm.name }} {% trans '텍스트 대화하기'%}</h1>
             </div>
             
-            <p class="chat-subtitle">하고 싶은 말을 입력하세요</p>
+            <p class="chat-subtitle">{% trans '하고 싶은 말을 입력하세요'%}</p>
             
             <!-- 메시지 영역을 텍스트 입력창 위로 이동 -->
             <div class="message-area" id="message-area">
@@ -59,7 +59,7 @@
             </div>
             
             <!-- 텍스트 입력창을 메시지 영역 아래로 이동 -->
-            <input type="text" class="text-input" id="text-input" placeholder="메시지를 입력하세요..." onkeydown="if(event.key === 'Enter'){ sendText(); }">
+            <input type="text" class="text-input" id="text-input" placeholder="{% trans '메시지를 입력하세요...' %}" onkeydown="if(event.key === 'Enter'){ sendText(); }">
             
             <!-- 마이크를 텍스트 입력창 아래로 이동 -->
             <div class="record-container">
@@ -67,7 +67,7 @@
                     <span class="record-icon" id="record-icon">🎤</span>
                 </button>
             </div>
-            <div class="record-status" id="record-status">녹음을 시작하려면 버튼을 누르세요</div>
+            <div class="record-status" id="record-status">{% trans '녹음을 시작하려면 버튼을 누르세요'%}</div>
             
             <div class="recognized-text" id="recognized-text"></div>
         </main>
@@ -78,6 +78,9 @@
     let audioChunks = [];
     let isRecording = false;
     let stream;
+
+    // 현재 URL에서 /chat/1/ 또는 /vision/1/ 부분 제거해서 기본 URL 추출
+    const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
 
     function toggleRecording() {
         const recordBtn = document.getElementById("record-btn");
@@ -96,7 +99,7 @@
                     recordBtn.querySelector(".record-icon").textContent = "⏹";
                     recordBtn.classList.add("recording");
                     recordBtn.parentElement.classList.add("recording");
-                    recordStatus.textContent = "녹음 중... 다시 누르면 종료됩니다";
+                    recordStatus.textContent = "{% trans '녹음 중... 다시 누르면 종료됩니다' %}";
 
                     mediaRecorder.addEventListener("dataavailable", (event) => {
                         audioChunks.push(event.data);
@@ -107,16 +110,15 @@
                         const formData = new FormData();
                         formData.append("audio", audioBlob, "recorded.wav");
 
-                        fetch("/customer_ai/upload_audio/", {
+                        fetch(`${baseUrl}/upload_audio/`, {
                             method: "POST",
                             body: formData,
                         })
                         .then((res) => res.json())
                         .then((data) => {
-                            document.getElementById("recognized-text").textContent = "인식된 텍스트: " + data.text;
+                            document.getElementById("recognized-text").textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
                             sendText(data.text);
 
-                            // mp3 URL이 응답에 있으면 오디오 재생
                             if (data.audio_url) {
                                 const audioElem = document.getElementById("tts-audio");
                                 audioElem.src = data.audio_url;
@@ -125,12 +127,12 @@
                             }
                         })
                         .catch((error) => {
-                            alert("오디오 업로드 중 오류가 발생했습니다: " + error.message);
+                            alert("{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}" + error.message);
                         });
                     });
                 })
                 .catch((err) => {
-                    alert("마이크 권한을 허용해주세요.");
+                    alert("{% trans '마이크 권한을 허용해주세요.' %}");
                     console.error(err);
                 });
         } else {
@@ -139,7 +141,7 @@
             recordBtn.querySelector(".record-icon").textContent = "🎤";
             recordBtn.classList.remove("recording");
             recordBtn.parentElement.classList.remove("recording");
-            recordStatus.textContent = "녹음을 시작하려면 버튼을 누르세요";
+            recordStatus.textContent = "{% trans '녹음을 시작하려면 버튼을 누르세요' }";
         }
     }
 
@@ -172,7 +174,7 @@
         formData.append("text", userText);
         formData.append("llm_id", currentLlmId);
 
-        fetch("/customer_ai/generate_response/", {
+        fetch(`${baseUrl}/generate_response/`, {
             method: "POST",
             body: formData,
         })
@@ -195,7 +197,6 @@
                 audioElem.play();
             }
 
-            // AI 응답 후에도 텍스트 입력창으로 스크롤
             setTimeout(() => {
                 const textInput = document.getElementById("text-input");
                 textInput.scrollIntoView({
@@ -205,10 +206,11 @@
             }, 100);
         })
         .catch(error => {
-            alert("오류 발생: " + error.message);
+            alert("{% trans '오류 발생: ' %}" + error.message);
         });
     }
 </script>
+
 
 </body>
 </html>

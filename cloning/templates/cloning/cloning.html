@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Voice Cloning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/makeVoice/makeVoice.css' %}" />
+</head>
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+        {% else %}
+        {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <main class="container">
+        <div class="main-card">
+            <h1>🎤 AI 목소리 클로닝</h1>
+
+            <div class="form-group">
+                <label for="voiceName">🏷️ 목소리 이름</label>
+                <input type="text" id="voiceName" placeholder="나만의 목소리 이름을 입력하세요" />
+            </div>
+
+            <div class="form-group">
+                <button id="recordBtn">🔴 녹음 시작</button>
+                <button id="stopBtn" disabled>■ 녹음 중지</button>
+            </div>
+
+            <div class="form-group">
+                <audio id="audioPlayback" controls></audio>
+            </div>
+
+            <div class="form-group">
+                <label for="sampleText">📝 샘플 텍스트</label>
+                <textarea id="sampleText" rows="5" placeholder="이 텍스트로 클로닝된 목소리를 샘플 재생합니다. 최소 130자 이상 작성해주세요."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button id="generateSampleBtn" disabled>✨ 샘플 생성하기</button>
+                <button id="retryBtn" disabled>🔄 다시 만들기</button>
+                <button id="saveBtn" disabled>💾 저장하기</button>
+            </div>
+
+            <div id="message" style="margin-top: 1rem; color: red;"></div>
+        </div>
+    </main>
+
+<script>
+const recordBtn = document.getElementById('recordBtn');
+const stopBtn = document.getElementById('stopBtn');
+const audioPlayback = document.getElementById('audioPlayback');
+const generateSampleBtn = document.getElementById('generateSampleBtn');
+const retryBtn = document.getElementById('retryBtn');
+const saveBtn = document.getElementById('saveBtn');
+const voiceNameInput = document.getElementById('voiceName');
+const sampleTextInput = document.getElementById('sampleText');
+const messageDiv = document.getElementById('message');
+
+let mediaRecorder;
+let audioChunks = [];
+let recordedBlob = null;
+let savedVoiceId = null;
+
+function showMessage(text, color = 'red') {
+    messageDiv.style.color = color;
+    messageDiv.textContent = text;
+}
+
+recordBtn.onclick = async () => {
+    showMessage('');
+    audioChunks = [];
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        recordBtn.disabled = true;
+        stopBtn.disabled = false;
+
+        mediaRecorder.ondataavailable = e => {
+            audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            audioPlayback.src = URL.createObjectURL(recordedBlob);
+            generateSampleBtn.disabled = false;
+            retryBtn.disabled = false;
+            saveBtn.disabled = true;
+            savedVoiceId = null;
+        };
+    } catch(err) {
+        showMessage('마이크 접근 권한을 허용해주세요.');
+    }
+};
+
+stopBtn.onclick = () => {
+    mediaRecorder.stop();
+    recordBtn.disabled = false;
+    stopBtn.disabled = true;
+};
+
+generateSampleBtn.onclick = async () => {
+    showMessage('');
+    const voiceName = voiceNameInput.value.trim();
+    const sampleText = sampleTextInput.value.trim();
+
+    if (!voiceName) {
+        alert('목소리 이름을 입력하세요.');
+        return;
+    }
+    if (!sampleText || sampleText.length < 130) {
+        alert('샘플 텍스트를 130자 이상 입력하세요.');
+        return;
+    }
+    if (!recordedBlob) {
+        alert('녹음된 음성이 없습니다.');
+        return;
+    }
+
+    generateSampleBtn.disabled = true;
+    showMessage('샘플 생성 중입니다. 잠시만 기다려주세요...', 'blue');
+
+    const formData = new FormData();
+    formData.append('voice_name', voiceName);
+    formData.append('sample_text', sampleText);
+    formData.append('audio', recordedBlob, 'recorded.webm');
+
+    try {
+        const res = await fetch("{% url 'cloning:voice_cloning_sample' %}", {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken'),
+            },
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            audioPlayback.src = data.sample_url;
+            savedVoiceId = data.voice_id;
+            saveBtn.disabled = false;
+            showMessage('샘플 생성 완료! 목소리를 확인하세요.', 'green');
+        } else {
+            showMessage('오류: ' + data.error);
+        }
+    } catch (e) {
+        showMessage('서버 오류가 발생했습니다.');
+    } finally {
+        generateSampleBtn.disabled = false;
+    }
+};
+
+retryBtn.onclick = () => {
+    recordedBlob = null;
+    savedVoiceId = null;
+    audioPlayback.src = '';
+    sampleTextInput.value = '';
+    voiceNameInput.value = '';
+    generateSampleBtn.disabled = true;
+    retryBtn.disabled = true;
+    saveBtn.disabled = true;
+    showMessage('');
+};
+
+saveBtn.onclick = async () => {
+    showMessage('');
+    if (!savedVoiceId) {
+        alert('저장할 목소리가 없습니다.');
+        return;
+    }
+    const voiceName = voiceNameInput.value.trim();
+    if (!voiceName) {
+        alert('목소리 이름을 입력하세요.');
+        return;
+    }
+
+    try {
+        const res = await fetch("{% url 'cloning:voice_cloning_save' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                voice_id: savedVoiceId,
+                voice_name: voiceName,
+            }),
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            alert('목소리가 성공적으로 저장되었습니다!');
+            window.location.href = '/mypage/my_voice/';
+        } else {
+            showMessage('저장 오류: ' + data.error);
+        }
+    } catch (e) {
+        showMessage('서버 오류가 발생했습니다.');
+    }
+};
+
+// CSRF token 가져오기 함수 (Django 기본 방식)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let c of cookies) {
+            c = c.trim();
+            if (c.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+</body>
+</html>

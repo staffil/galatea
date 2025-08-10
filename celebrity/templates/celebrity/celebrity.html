@@ -1,4 +1,5 @@
 {% load static %} 
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -27,7 +28,7 @@
             {% if celebrity.celebrity_image %}
                 <img src="{{ celebrity.celebrity_image.url }}" alt="AI 이미지" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;" />
             {% else %}
-                <p>생성된 이미지가 없습니다.</p>
+                <p>{% trans '생성된 이미지가 없습니다.' %}</p>
             {% endif %}
             </div>
 
@@ -37,43 +38,43 @@
             </div>
               <div class="right-panel">
                 <div class="form-group">
-                    <label for="language">언어를 선택해주세요</label>
+                    <label for="language">{% trans '언어를 선택해주세요'%}</label>
                     <div class="custom-select-wrapper">
                         <div class="custom-select">
                             <select name="language" id="language">
-                                <option value="en" selected>US-en</option>
-                                <option value="ko">Korea</option>
-                                <option value="hi">Hindi</option>
-                                <option value="pt">Portuguese</option>
-                                <option value="zh">Chinese</option>
-                                <option value="es">Spanish</option>
-                                <option value="fr">French</option>
-                                <option value="ja">Japanese</option>
-                                <option value="ar">Arabic</option>
-                                <option value="ru">Russian</option>
-                                <option value="id">Indonesian</option>
-                                <option value="it">Italian</option>
-                                <option value="nl">Dutch</option>
-                                <option value="tr">Turkish</option>
-                                <option value="pl">Polish</option>
-                                <option value="sv">Swedish</option>
+                                <option value="en" selected>English</option>
+                                <option value="ko">한국어</option>
+                                <option value="hi">हिन्दी</option>
+                                <option value="pt">Português</option>
+                                <option value="zh">中文</option>
+                                <option value="es">Español</option>
+                                <option value="fr">Français</option>
+                                <option value="ja">日本語</option>
+                                <option value="ar">العربية</option>
+                                <option value="ru">Русский</option>
+                                <option value="id">Bahasa Indonesia</option>
+                                <option value="it">Italiano</option>
+                                <option value="nl">Nederlands</option>
+                                <option value="tr">Türkçe</option>
+                                <option value="pl">Polski</option>
+                                <option value="sv">Svenska</option>
                                 <option value="fil">Filipino</option>
-                                <option value="ms">Malay</option>
-                                <option value="ro">Romanian</option>
-                                <option value="uk">Ukrainian</option>
-                                <option value="el">Greek</option>
-                                <option value="cs">Czech</option>
-                                <option value="da">Danish</option>
-                                <option value="fi">Finnish</option>
-                                <option value="bg">Bulgarian</option>
-                                <option value="hr">Croatian</option>
-                                <option value="sk">Slovak</option>
-                                <option value="ta">Tamil</option>
+                                <option value="ms">Bahasa Melayu</option>
+                                <option value="ro">Română</option>
+                                <option value="uk">Українська</option>
+                                <option value="el">Ελληνικά</option>
+                                <option value="cs">Čeština</option>
+                                <option value="da">Dansk</option>
+                                <option value="fi">Suomi</option>
+                                <option value="bg">Български</option>
+                                <option value="hr">Hrvatski</option>
+                                <option value="sk">Slovenčina</option>
+                                <option value="ta">தமிழ்</option>
                             </select>
                         </div>
                     </div>
                 </div>
-            <p class="chat-subtitle">텍스트나 음성으로 대화해보세요</p>
+            <p class="chat-subtitle">{% trans '텍스트나 음성으로 대화해보세요'%}</p>
             
             <!-- 메시지 영역 -->
             <div class="message-area" id="message-area">
@@ -86,7 +87,7 @@
             </div>
             
             <!-- 텍스트 입력창 -->
-            <input type="text" class="text-input" id="text-input" placeholder="텍스트 입력" onkeydown="if(event.key === 'Enter'){ sendText(); }">
+            <input type="text" class="text-input" id="text-input" placeholder="{% trans '텍스트 입력' %}" onkeydown="if(event.key === 'Enter'){ sendText(); }">
             
             <!-- 인식된 텍스트 표시 -->
             <p id="recognized-text" class="recognized-text"></p>
@@ -97,7 +98,7 @@
                     <span class="record-icon" id="record-icon">🎤</span>
                 </button>
             </div>
-            <div class="record-status" id="record-status">🎙 녹음 시작</div>
+            <div class="record-status" id="record-status">🎙 {% trans '녹음 시작' %}</div>
         </main>
     </div>
 
@@ -123,7 +124,7 @@
 
                         recordBtn.querySelector(".record-icon").textContent = "⏹";
                         recordBtn.classList.add("recording");
-                        recordStatus.textContent = "⏹ 녹음 종료";
+                        recordStatus.textContent = "⏹ {% trans '녹음 종료' %}";
 
                         mediaRecorder.addEventListener("dataavailable", (event) => {
                             audioChunks.push(event.data);
@@ -149,7 +150,7 @@
                         });
                     })
                     .catch((err) => {
-                        alert("마이크 권한을 허용해주세요.");
+                        alert("{% trans '마이크 기능을 켜주세요' %}");
                         console.error(err);
                     });
             } else {
@@ -157,7 +158,7 @@
                 isRecording = false;
                 recordBtn.querySelector(".record-icon").textContent = "🎤";
                 recordBtn.classList.remove("recording");
-                recordStatus.textContent = "🎙 녹음 시작";
+                recordStatus.textContent = "🎙 {% trans '녹음 시작' %}";
             }
         }
 
@@ -182,7 +183,7 @@
             formData.append("language", selectedLanguage)
             console.log("선택된 언어", selectedLanguage)
             const pathParts = window.location.pathname.split('/');
-            const celebrityId = pathParts[2];
+            const celebrityId = pathParts[3];
 
             fetch(`/celebrity/${celebrityId}/response/`, {
                 method: "POST",
@@ -210,7 +211,7 @@
                 })
                 .catch((error) => {
                     console.error("Error:", error);
-                    alert("오류가 발생했습니다.");
+                    alert("{% trans '로그인을 해주세요' %}");
                 });
         }
     </script>

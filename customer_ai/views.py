@@ -189,7 +189,6 @@ def upload_audio(request):
     wav_path = os.path.join(audio_dir, wav_filename)
 
     try:
-        # ffmpeg 명령어 실행, 실패 시 예외 발생
         subprocess.run(
             ['ffmpeg', '-y', '-i', webm_path, wav_path],
             check=True,
@@ -201,10 +200,24 @@ def upload_audio(request):
         error_msg = e.stderr.decode() if e.stderr else str(e)
         logger.error(f"FFmpeg conversion failed: {error_msg}")
         return JsonResponse({'error': 'Audio format conversion failed'}, status=500)
-    
+
+    # 3) wav → mp3 변환 (ffmpeg)
     mp3_filename = wav_filename.replace('.wav', '.mp3')
     mp3_path = os.path.join(audio_dir, mp3_filename)
-    
+
+    try:
+        subprocess.run(
+            ['ffmpeg', '-y', '-i', wav_path, mp3_path],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        logger.info(f"Converted WAV to MP3: {mp3_path}")
+    except subprocess.CalledProcessError as e:
+        error_msg = e.stderr.decode() if e.stderr else str(e)
+        logger.error(f"FFmpeg MP3 conversion failed: {error_msg}")
+        return JsonResponse({'error': 'MP3 conversion failed'}, status=500)
+
     # 4) Whisper API 호출 (wav 파일로)
     try:
         with open(wav_path, 'rb') as f:
@@ -217,12 +230,22 @@ def upload_audio(request):
         logger.error(f"Whisper API error: {e}")
         return JsonResponse({'error': 'Transcription failed'}, status=500)
 
+    mp3_url = os.path.join(settings.MEDIA_URL, 'audio', mp3_filename)
+
     # 5) 결과에 mp3 파일 경로도 포함해서 반환
     return JsonResponse({
         'text': transcription.text,
-        'mp3_file': mp3_path  # 필요에 따라 URL 경로로 변경할 것
+        'mp3_file': mp3_url
     })
 
+
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.conf import settings
+from uuid import uuid4
+import os
+import time
 
 @csrf_exempt
 @login_required
@@ -233,8 +256,7 @@ def generate_response(request):
         if len(vision_result) > 400:
             vision_result = vision_result[:1000]
 
-        vision_result = vision_result.replace('"', '“')  
-
+        vision_result = vision_result.replace('"', '“')
 
         user = request.user
 
@@ -255,15 +277,14 @@ def generate_response(request):
         custom_language = llm.language
         custom_speed = llm.speed
         custom_model = llm.model
-        print("voice id", custom_voice_id)
 
         if not custom_voice_id or not not_in_voice_id(custom_voice_id, ELEVEN_API_KEY):
             return JsonResponse({
                 "error": "voice_id 값이 맞지 않습니다. 목소리를 다시 생성하거나 다른 목소리로 바꿔 주세요."
             }, status=400)
+
         db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:50][::-1]
         chat_history = []
-
 
         system_prompt = f"""
         You are an AI that can see the user directly through a camera.
@@ -278,7 +299,6 @@ def generate_response(request):
         Below is the visual analysis result from what you saw.  
         Treat it as if you are actually seeing it, and respond accordingly.
 
-        
         Analyze the sentiment of the following text and respond ONLY with ONE word:
         [Happy, Sad, Neutral, Surprise, Excited, Relaxed, ]
         
@@ -298,15 +318,12 @@ def generate_response(request):
         {custom_prompt}
         """.strip()
 
-
         for convo in db_history:
             if convo.user_message:
                 chat_history.append({"role": "user", "content": convo.user_message})
             if convo.llm_response:
                 chat_history.append({"role": "assistant", "content": convo.llm_response})
 
-
-        print(system_prompt)
         chat_history.append({"role": "user", "content": user_input})
 
         response = openai_client.chat.completions.create(
@@ -319,48 +336,45 @@ def generate_response(request):
         chat_history.append({"role": "assistant", "content": ai_text})
         request.session["chat_history"] = chat_history
 
-        # Conversation 생성 시 llm이 None이 아님을 확실히 함
         Conversation.objects.create(
             user=user,
             llm=llm,
             user_message=user_input,
             llm_response=ai_text
         )
-        from django.utils import timezone
-        print(timezone.localtime())
-        if not llm:
-            return JsonResponse({"error": "LLM not found."}, status=400)
 
         # 오디오 처리
-        audio_dir = os.path.join('media', 'audio')
+        audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
         os.makedirs(audio_dir, exist_ok=True)
-        audio_filename = f"response_{int(time.time())}.mp3"
-        from uuid import uuid4
-
         filename = f"response_{uuid4().hex}.mp3"
         audio_path = os.path.join(audio_dir, filename)
-
-    
 
         audio_stream = eleven_client.text_to_speech.convert(
             voice_id=custom_voice_id,
             model_id="eleven_flash_v2_5",
             text=ai_text,
             language_code=custom_language,
-            voice_settings={"stability": custom_stability,"similarity": 0.75,"style": custom_style,"speed": custom_speed , "use_speaker_boost":True}
+            voice_settings={
+                "stability": custom_stability,
+                "similarity": 0.75,
+                "style": custom_style,
+                "speed": custom_speed,
+                "use_speaker_boost": True
+            }
         )
 
         with open(audio_path, "wb") as f:
             for chunk in audio_stream:
                 f.write(chunk)
-    
-        return JsonResponse({"ai_text": ai_text,"audio_url": f"/media/audio/{audio_filename}"})
+
+        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
+
+        return JsonResponse({"ai_text": ai_text, "audio_url": audio_url})
+
     else:
         return JsonResponse({
             "error": "이 뷰는 POST 요청만 받습니다. 유효한 데이터와 함께 요청해주세요."
         }, status=405)
-    
-
 
 
 

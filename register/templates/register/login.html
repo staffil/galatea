@@ -1,13 +1,27 @@
-{% load static %} 
-
+{% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login UI</title>
-<link rel="stylesheet" href="{% static 'css/register/login.css' %}?v=5">
-
+  <link rel="stylesheet" href="{% static 'css/register/login.css' %}?v=5">
+  <style>
+    /* 구글 로그인 버튼 스타일 최소화 */
+    .g_id_signin {
+      margin-left: 45%;
+      /* 필요에 따라 크기 조절 가능 */
+      width: 60px !important;
+      height: 60px !important;
+      border-radius: 50% !important;
+      padding: 0 !important;
+      overflow: hidden;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
 <body>
 
@@ -18,53 +32,118 @@
   <div class="circle-bg circle-4"></div>
   <div class="circle-bg circle-5"></div>
 </div>
-  <div class="login-box" role="main" aria-label="로그인 폼">
-    <div class="img-wapper">
-                <img src="/static/img/Group 31.png" alt="Galatea Logo">
-                <h1>GALATEA</h1>
-            </div>
 
-    <hr class="divider" />
+<div class="login-box" role="main" aria-label="로그인 폼">
+  <div class="img-wapper">
+    <img src="{% static 'img/Group 31.png' %}" alt="Galatea Logo">
+    <h1>GALATEA</h1>
+  </div>
 
-<form method="POST" novalidate>
-  {% csrf_token %}
-  
-  <!-- 아이디 필드 -->
-  <label for="{{ form.username.id_for_label }}">LOGIN</label>
-  <div class="input-group">
-    <!-- 아이콘은 그대로 유지 -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <hr class="divider" />
+
+  <form method="POST" novalidate>
+    {% csrf_token %}
+
+    <!-- 아이디 필드 -->
+    <label for="{{ form.username.id_for_label }}">{% trans '로그인' %}</label>
+    <div class="input-group">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
       </svg>
-    {{ form.username }}
-    {% if form.username.errors %}
-      <div class="error" style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ form.username.errors.0 }}</div>
-    {% endif %}
-  </div>
-<br>
-  <!-- 비밀번호 필드 -->
-  <label for="{{ form.password.id_for_label }}">PASSWORD</label>
-  <div class="input-group">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      {{ form.username }}
+      {% if form.username.errors %}
+        <div class="error" style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+          {{ form.username.errors.0 }}
+        </div>
+      {% endif %}
+    </div>
+    <br>
+
+    <!-- 비밀번호 필드 -->
+    <label for="{{ form.password.id_for_label }}">{% trans '비밀번호' %}</label>
+    <div class="input-group">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-6h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2zm-6-4a3 3 0 013 3v4H9v-4a3 3 0 013-3z"/>
       </svg>
-    {{ form.password }}
-    {% if form.password.errors %}
-      <div class="error" style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">{{ form.password.errors.0 }}</div>
-    {% endif %}
-  </div>
+      {{ form.password }}
+      {% if form.password.errors %}
+        <div class="error" style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+          {{ form.password.errors.0 }}
+        </div>
+      {% endif %}
+    </div>
 
-  <button type="submit">LOGIN</button>
-  
-  
-</form>
+    <!-- 구글 OAuth -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-<a href="{% url 'register:signup' %}"  class="signup">SIGN UP</a>
-<a href="{% url 'main' %}"  class="main">main</a>
+    <div id="g_id_onload"
+         data-client_id="949565745119-4jjiffn8camcf124blkhun9glkq8839f.apps.googleusercontent.com"
+data-login_uri="http://localhost:8000/google-login/"
+         data-auto_prompt="false">
+    </div>
 
-<script>
+    <div class="g_id_signin"
+         data-type="icon"
+         data-size="large"
+         data-theme="outline"
+         data-text="icon"
+         data-shape="rectangular"
+         data-logo_alignment="center"
+         data-callback="handleCredentialResponse"
+         >
+    </div>
 
-</script>
-  </div>
+    <script>
+      // 글로벌 함수로 선언 (구글 API가 콜백을 찾을 수 있게)
+      window.handleCredentialResponse = function(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+
+        fetch('/google-login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: JSON.stringify({ token: response.credential }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = '{% url "home:main" %}';
+          } else {
+            alert('로그인 실패: ' + (data.error || '알 수 없는 오류'));
+          }
+        })
+        .catch(err => {
+          console.error('Error during login:', err);
+          alert('로그인 중 오류가 발생했습니다.');
+        });
+      };
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    </script>
+
+    <!-- 기본 로그인 버튼 -->
+    <button type="submit">LOGIN</button>
+  </form>
+
+  <a href="{% url 'register:signup' %}" class="signup">SIGN UP</a>
+  <a href="{% url 'home:main' %}" class="main">main</a>
+
+</div>
+
 </body>
 </html>

@@ -1,225 +1,425 @@
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GALATEA Header</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GALATEA Header - Logged In</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        header {
-            background-color: rgba(255, 255, 255, 0.5);
-            box-shadow:rgba(0, 1, 3, 0.3); ;
-            padding: 15px 30px;
-           position: fixed;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            width: 100%;
-            height: 150px;
-            z-index: 1;
-            margin-top: -90px;
-              z-index: 1000;
-
-            
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-       .img-wrapper img {
-            display: flex;
-
-            width: 100px;
-            height: 100px;
-        }
-        h1{
-            margin-top: -10px;
-            font-family: "Darker Grotesque";
-            font-size: 20px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            letter-spacing: 2.04px;
-            margin-bottom: -20px;
-        }
-
-        .brand-name {
-            color: #333;
-            font-family: "Darker Grotesque", sans-serif;
-            font-size: 20px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            letter-spacing: 2.04px;
-            margin-top: -10px;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .nav-button {
-            padding: 12px 24px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-            background-color: #e5e5e5;
-            color: #333;
-            border-radius: 25px;
-        }
-
-        .nav-button:hover {
-            background-color: #d0d0d0;
-        }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-        }
-
-        .profile-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            border: 2px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .profile-circle:hover {
-            border-color: #9f4bff;
-        }
-
-        /* 반응형 디자인 */
-        @media (max-width: 1024px) {
-            .main-nav {
-                gap: 15px;
-            }
-            
-            .nav-button {
-                padding: 10px 18px;
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                padding: 15px 20px;
-                flex-wrap: wrap;
-            }
-            
-            .brand-name {
-                font-size: 14px;
-                letter-spacing: 1px;
-            }
-            
-            .main-nav {
-                order: 3;
-                width: 100%;
-                justify-content: center;
-                margin-top: 15px;
-                gap: 10px;
-            }
-            
-            .nav-button {
-                padding: 8px 12px;
-                font-size: 11px;
-            }
-            
-            .img-wrapper img {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .brand-name {
-                font-size: 16px;
-                letter-spacing: 1.5px;
-            }
-            
-            .profile-circle {
-                width: 50px;
-                height: 50px;
-            }
-        }
-        .profile-circle {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  overflow: hidden; /* 혹시 이미지 밖이 보이는 걸 방지 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 2px solid #ddd;
-  transition: all 0.2s ease;
+/*
+* Global Styles & Base Layout
+* 모든 화면에 공통적으로 적용되는 기본 스타일
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-        .profile-avatar {
-  width: 100px;          
-  height: 100px;    
-  border-radius: 50%;   
-  object-fit: cover;    
-  display: block;      
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f9fa;
+    padding-top: 110px; /* 데스크톱 헤더 높이만큼 여백 */
+}
+
+header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 0 40px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 110px;
+    z-index: 1000;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-wrapper img {
+    width: 80px;
+    height: 80px;
+    transition: transform 0.3s ease;
+}
+
+.logo-wrapper:hover img {
+    transform: scale(1.05);
+}
+
+.brand-name {
+    color: #1a1a1a;
+    font-family: "Darker Grotesque", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.main-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.nav-button {
+    padding: 12px 20px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.8);
+    color: #4a5568;
+    border-radius: 25px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap; /* 버튼 텍스트가 줄바꿈되지 않도록 설정 */
+}
+
+.nav-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    transition: left 0.5s;
+}
+
+.nav-button:hover::before {
+    left: 100%;
+}
+
+.nav-button:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    border-color: transparent;
+}
+
+.nav-button.special {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    font-weight: 600;
+}
+
+.nav-button.special:hover {
+    background: linear-gradient(135deg, #ff5252, #ff7043);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+}
+
+.profile-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    position: relative;
+}
+
+.profile-circle::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-circle:hover::before {
+    opacity: 1;
+}
+
+.profile-circle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-placeholder {
+    color: #9ca3af;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/*
+* Language Selector
+* 언어 선택 폼의 기본 스타일
+*/
+.languageSelect {
+    position: fixed;
+    top: 110px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1100;
+    margin-top: 20px;
+}
+
+.languageSelect form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.languageSelect select, .languageSelect button {
+    height: 30px;
+    border-radius: 15%;
+    padding: 0 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+}
+
+.languageSelect button {
+    padding: 0 12px;
+    border: none;
+    background: #667eea;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.languageSelect button:hover {
+    background: #5a67d8;
+}
+
+/*
+* Responsive Design
+* 화면 크기에 따른 반응형 디자인
+*/
+
+/* 1200px 이하: 데스크톱 ~ 태블릿 전환 구간 */
+@media (max-width: 1200px) {
+    .main-nav {
+        gap: 6px;
+    }
+    
+    .nav-button {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+}
+
+/* 900px 이하: 일반 태블릿 (가로/세로) */
+@media (max-width: 900px) {
+    header {
+        height: 100px;
+        padding: 0 20px;
+    }
+    
+    body {
+        padding-top: 100px;
+    }
+    
+    .logo-wrapper img {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .brand-name {
+        font-size: 20px;
+        letter-spacing: 2px;
+    }
+    
+    .main-nav {
+        gap: 4px;
+    }
+    
+    .nav-button {
+        padding: 8px 12px;
+        font-size: 11px;
+        letter-spacing: 0.2px;
+    }
+    
+    .profile-circle {
+        width: 65px;
+        height: 65px;
+    }
+
+    .languageSelect {
+        top: 100px;
+    }
+}
+
+/* 768px 이하: 모바일 가로 모드 및 소형 태블릿 */
+@media (max-width: 768px) {
+    header {
+        height: 60px;
+        padding: 0 15px;
+    }
+    
+    body {
+        padding-top: 60px;
+    }
+    
+    .logo-wrapper img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .brand-name {
+        font-size: 16px;
+        letter-spacing: 1.5px;
+    }
+    
+    .main-nav {
+        gap: 2px;
+    }
+    
+    .nav-button {
+        padding: 5px 8px;
+        font-size: 9px;
+    }
+    
+    .profile-circle {
+        width: 40px;
+        height: 40px;
+        border-width: 2px;
+    }
+    
+    .languageSelect {
+        top: 60px;
+        margin-top: 10px;
+    }
+}
+
+/* 480px 이하: 일반 모바일 세로 모드 */
+@media (max-width: 480px) {
+    header {
+        height: 50px;
+        padding: 0 10px;
+    }
+    
+    body {
+        padding-top: 50px;
+    }
+
+    .logo-container {
+        gap: 10px;
+    }
+
+    .logo-wrapper img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .brand-name {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    .main-nav {
+        display: flex;
+        gap: 5px;
+    }
+
+    .nav-button {
+        padding: 4px 8px;
+        font-size: 8px;
+        white-space: nowrap;
+    }
+
+    .profile-circle {
+        width: 35px;
+        height: 35px;
+    }
+
+    .languageSelect {
+        top: 50px;
+        right: 10px;
+        margin-top: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    .languageSelect form {
+        gap: 6px;
+    }
+
+    .languageSelect select, .languageSelect button {
+        height: 25px;
+        font-size: 12px;
+    }
 }
     </style>
 </head>
 <body>
     <header>
         <div class="logo-container">
-            <div class="img-wrapper">
-                <a href="{% url 'main' %}">
-                <img src="/static/img/Group 31.png" alt="Galatea Logo">
+            <div class="logo-wrapper">
+                <a href="{% url 'home:main' %}">
+                    <img src="/static/img/Group 31.png" alt="Galatea Logo" style="width: 100px; height: 100px;">
                 </a>
-                <h1 class="brand-name">GALATEA</h1>
             </div>
+            <h1 class="brand-name">GALATEA</h1>
         </div>
         
         <nav class="main-nav">
-            <a href="/make_voice/" class="nav-button">CREATE VOICE</a>
-            <a href="/image/" class="nav-button">MAKE IMAGE</a>
-            <!-- <a href="/payment/" class="nav-button">PAYMENT</a> -->
-            <a href="/customer_ai/ai_name" class="nav-button">AI 만들기⊕</a>
+            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
+            <a href="/cloning/" class="nav-button">{% trans "보이스 클로닝" %}</a>
+            <a href="/make_voice/" class="nav-button">{% trans "보이스 만들기" %}</a>
+            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
+            <a href="/customer_ai/ai_name" class="nav-button special" style="margin-right: 190px;">{% trans "AI 만들기⊕" %}</a>
         </nav>
 
-<div class="profile-section">
-  <a href="{% url 'mypage:mypage' %}">
-    <div class="profile-circle">
-{% if user.user_image %}
-    <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;">
-{% else %}
-    <p>프로필 이미지 없음</p>
-{% endif %}
-
-
-
-
-          </div>
-  </a>
-</div>
-
+        <div class="profile-section">
+            <a href="{% url 'mypage:mypage' %}">
+                <div class="profile-circle">
+                    {% if user.user_image %}
+                        <img src="{{ user.user_image.url }}" alt="{% trans '이미지 없음' %}" class="profile-avatar" />
+                    {% else %}
+                        <div class="profile-placeholder">{% trans "이미지 없음" %}</div>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
     </header>
+
 </body>
 </html>
