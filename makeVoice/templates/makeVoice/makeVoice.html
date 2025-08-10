@@ -4,12 +4,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans '목소리 만들기' %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css\makeVoice\makeVoice.css' %}?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/makeVoice/makeVoice.css' %}?v=5" />
 </head>
+<body>
     <!-- Background Circles -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
@@ -19,106 +20,131 @@
 
     <header>
         {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
+            {% include "common/notLoginHeader.html" %}
         {% else %}
-        {% include "common/loginHeader.html" %}
+            {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
 
     <div class="container">
         <div class="main-card">
             {% if error %}
-            <div class="error-message">{{ error }}</div>
+                <div class="error-message">{{ error }}</div>
             {% endif %}
 
             {% if is_result %}
-            <h1>🎤 {% trans 'AI 목소리 생성' %}</h1>
-            
-            <h3>✨ {% trans '샘플 미리듣기' %}</h3>
-            <div class="audio-preview-section">
-                <audio controls>
-                    <source src="{{ preview_url }}" type="audio/mpeg">
-                    {% trans '현재 브라우저가 샘플 기능을 허용하지 않음' %}
-                </audio>
-                <div class="sample-id">{%trans '샘플 ID' %}: {{ preview_id }}</div>
-            </div>
-
-            <div class="form-group">
-                <label for="voice_name">🏷️ {% trans '목소리 이름' %}:</label>
-                <input name="voice_name" id="voice_name" value="{{ voice_name }}" required placeholder="{% trans '나만의 특별한 목소리 이름을 지어주세요'%}">
-            </div>
-
-            <div class="button-group">
-                <button id="final-create-btn" class="btn btn-primary" data-id="{{ preview_id }}">
-                    <a href="{% url 'mypage:my_voice' %}" style="color: inherit; text-decoration: none;">💾 {% trans '목소리 저장하기' %}</a>
-                </button>
-                <button id="retry-btn" class="btn btn-tertiary">🔄 {% trans '다시 만들기' %}</button>
-            </div>
-
-            <script>
-            document.getElementById('final-create-btn').addEventListener('click', function () {
-                const id = this.dataset.id;
-                const voiceName = document.getElementById("voice_name").value.trim();
+                <h1>🎤 {% trans 'AI 목소리 생성' %}</h1>
                 
-                if (!voiceName) {
-                    alert("{% trans '목소리 이름을 입력해주세요!' %}");
-                    return;
-                }
-                
-                fetch("{% url 'makeVoice:make_voice' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: `generated_voice_id=${encodeURIComponent(id)}&voice_name=${encodeURIComponent(voiceName)}`
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert("🎉 {% trans '최종 목소리 생성 완료! Voice ID:' %} " + data.voice_id);
-                    } else {
-                        alert("❌ 오류: " + data.error);
+                <h3>✨ {% trans '샘플 미리듣기' %}</h3>
+                <div class="audio-preview-section">
+                    <audio controls>
+                        <source src="{{ preview_url }}" type="audio/mpeg" />
+                        {% trans '현재 브라우저가 샘플 기능을 허용하지 않음' %}
+                    </audio>
+                    <div class="sample-id">{% trans '샘플 ID' %}: {{ preview_id }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="voice_name">🏷️ {% trans '목소리 이름' %}:</label>
+                    <input name="voice_name" id="voice_name" value="{{ voice_name }}" required placeholder="{% trans '나만의 특별한 목소리 이름을 지어주세요' %}" />
+                </div>
+
+                <div class="button-group">
+                    <button id="final-create-btn" class="btn btn-primary" data-id="{{ preview_id }}">
+                        <a href="{% url 'mypage:my_voice' %}" style="color: inherit; text-decoration: none;">💾 {% trans '목소리 저장하기' %}</a>
+                    </button>
+                    <button id="retry-btn" class="btn btn-tertiary">🔄 {% trans '다시 만들기' %}</button>
+                </div>
+
+                <script>
+                    // 쿠키에서 CSRF 토큰 읽기 함수
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("❌ {% trans '처리 중 오류가 발생했습니다.' %}");
-                });
-            });
 
-            document.getElementById("retry-btn").addEventListener('click', function () {
-                if (confirm("🔄 {% trans '다시 만드시겠습니까?\n\n재생성시 기존의 토큰이 아닌 새로운 토큰이 차감됩니다.\n목소리는 마이페이지에 그대로 저장됩니다.' %}")) {
-                    window.location.href = "{% url 'makeVoice:make_voice_page' %}";
-                }
-            });
-            </script>
+                    const csrftoken = getCookie('csrftoken');
+
+                    document.getElementById('final-create-btn').addEventListener('click', function (event) {
+                        event.preventDefault();  // 버튼 안의 링크 기본 동작 막기
+
+                        const id = this.dataset.id;
+                        const voiceName = document.getElementById("voice_name").value.trim();
+
+                        if (!voiceName) {
+                            alert("{% trans '목소리 이름을 입력해주세요!' %}");
+                            return;
+                        }
+
+                        fetch("{% url 'makeVoice:make_voice' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': csrftoken,
+                            },
+                            body: `generated_voice_id=${encodeURIComponent(id)}&voice_name=${encodeURIComponent(voiceName)}`
+                        })
+                        .then(res => {
+                            if (!res.ok) throw new Error('서버 응답이 정상적이지 않습니다.');
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data.status === 'success') {
+                                alert("🎉 {% trans '최종 목소리 생성 완료! Voice ID:' %} " + data.voice_id);
+                                // 저장 후 마이페이지 이동 원하면 아래 주석 해제
+                                // window.location.href = "{% url 'mypage:my_voice' %}";
+                            } else {
+                                alert("❌ 오류: " + data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("❌ {% trans '처리 중 오류가 발생했습니다.' %}");
+                        });
+                    });
+
+                    document.getElementById("retry-btn").addEventListener('click', function () {
+                        if (confirm("🔄 {% trans '다시 만드시겠습니까?\n\n재생성시 기존의 토큰이 아닌 새로운 토큰이 차감됩니다.\n목소리는 마이페이지에 그대로 저장됩니다.' %}")) {
+                            window.location.href = "{% url 'makeVoice:make_voice_page' %}";
+                        }
+                    });
+                </script>
 
             {% else %}
-            <p>{% trans '나만의 특별한 AI 목소리를 만들어보세요! 원하는 스타일과 톤을 자세히 설명하면, 그에 맞는 독특한 목소리를 생성해드립니다.' %}</p>
+                <p>{% trans '나만의 특별한 AI 목소리를 만들어보세요! 원하는 스타일과 톤을 자세히 설명하면, 그에 맞는 독특한 목소리를 생성해드립니다.' %}</p>
 
-            <form method="POST" action="{% url 'makeVoice:sample_voice' %}" class="voice-creation-form">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="voice_prompt_input">🎨 {% trans '음성 스타일 프롬프트' %}</label>
-                    <textarea name="voice_prompt_input" id="voice_prompt_input" required 
-                              placeholder="{% trans '원하는 목소리의 특징을 자세히 설명해주세요!&#10;&#10;예시:&#10;- 따뜻하고 친근한 여성 목소리&#10;- 차분하고 지적인 남성 목소리&#10;- 활기차고 밝은 청년 목소리&#10;- 성숙하고 신뢰감 있는 목소리&#10;&#10;※ 폭력적, 성적인 내용은 포함할 수 없습니다.' %}">{{ voice_prompt_input }}</textarea>
-                </div>
+                <form method="POST" action="{% url 'makeVoice:sample_voice' %}" class="voice-creation-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="voice_prompt_input">🎨 {% trans '음성 스타일 프롬프트' %}</label>
+                        <textarea name="voice_prompt_input" id="voice_prompt_input" required
+                            placeholder="{% trans '원하는 목소리의 특징을 자세히 설명해주세요!&#10;&#10;예시:&#10;- 따뜻하고 친근한 여성 목소리&#10;- 차분하고 지적인 남성 목소리&#10;- 활기차고 밝은 청년 목소리&#10;- 성숙하고 신뢰감 있는 목소리&#10;&#10;※ 폭력적, 성적인 내용은 포함할 수 없습니다.' %}">{{ voice_prompt_input }}</textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label for="sample_text_input">📝 {% trans '샘플 텍스트' %}</label>
-                    <textarea name="sample_text_input" id="sample_text_input" required 
-                              placeholder="{% trans '생성될 목소리로 읽어볼 텍스트를 입력해주세요.&#10;&#10;최소 130자 이상 작성해주세요 (약 3~4줄)&#10;&#10;예시:&#10;안녕하세요! 저는 여러분만을 위한 특별한 AI 목소리입니다. 따뜻한 마음으로 여러분과 소통하며, 언제나 도움이 되는 정보를 전달하고 싶습니다. 오늘도 좋은 하루 되세요!' %}">{{ sample_text_input }}</textarea>
-                </div>
+                    <div class="form-group">
+                        <label for="sample_text_input">📝 {% trans '샘플 텍스트' %}</label>
+                        <textarea name="sample_text_input" id="sample_text_input" required
+                            placeholder="{% trans '생성될 목소리로 읽어볼 텍스트를 입력해주세요.&#10;&#10;최소 130자 이상 작성해주세요 (약 3~4줄)&#10;&#10;예시:&#10;안녕하세요! 저는 여러분만을 위한 특별한 AI 목소리입니다. 따뜻한 마음으로 여러분과 소통하며, 언제나 도움이 되는 정보를 전달하고 싶습니다. 오늘도 좋은 하루 되세요!' %}">{{ sample_text_input }}</textarea>
+                    </div>
 
-                <div class="generate-container">
-                    <button type="submit" class="btn generate-button">✨ {% trans '샘플 생성하기' %}</button>
-                    <p style="margin-top: 20px; color: #888; font-size: 0.9rem;">
-                        💡 {% trans '팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!'%}
-                    </p>
-                </div>
-            </form>
+                    <div class="generate-container">
+                        <button type="submit" class="btn generate-button">✨ {% trans '샘플 생성하기' %}</button>
+                        <p style="margin-top: 20px; color: #888; font-size: 0.9rem;">
+                            💡 {% trans '팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!' %}
+                        </p>
+                    </div>
+                </form>
             {% endif %}
         </div>
     </div>

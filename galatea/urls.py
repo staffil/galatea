@@ -9,6 +9,7 @@ from django.utils.translation import get_language
 from django.shortcuts import redirect
 from celebrity import views as celebrity_views
 from customer_ai import views as customer_ai_views
+from makeImage import views as make_image_view
 
 def root_redirect(request):
     lang = get_language()
@@ -26,6 +27,9 @@ urlpatterns = [
     path('upload_audio/', customer_ai_views.upload_audio, name='upload_audio'),
     path('generate_response/', customer_ai_views.generate_response, name='generate_response'),
     path('vision_process/', customer_ai_views.vision_process, name='vision_process'),
+    path("generate_image/", make_image_view.generate_image, name="generate_image"),
+    path('proxy_image/', make_image_view.proxy_image, name='proxy_image'),  # 이미지 프록시용
+
 ]
 
 urlpatterns += i18n_patterns(

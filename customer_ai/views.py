@@ -35,7 +35,6 @@ load_dotenv(BASE_DIR / ".env")
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
-SUPERTONE_API_KEY = os.getenv("SUPERTOME_API_KEY")
 
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_API_KEY)
@@ -69,9 +68,6 @@ def make_ai(request):
         request.session['custom_model'] = model_name
         request.session['chat_history'] = []
 
-
-   
-
         if not voice_id:
             return JsonResponse({"error": "voice_id 값이 없습니다."}, status=400)
 
@@ -79,10 +75,6 @@ def make_ai(request):
             voice = Voice.objects.get(voice_id=voice_id)
         except Voice.DoesNotExist:
             voice = Voice.objects.create(user=request.user, voice_id=voice_id)
-
-      
-
-
 
         # 세션에서 이미지 데이터 가져오기
         image_content = request.session.get('user_image_content')
@@ -102,18 +94,21 @@ def make_ai(request):
             prompt=style_prompt,
         )
 
-        # 이미지가 세션에 있으면 저장
+        # 이미지가 세션에 있으면 저장 (base64 디코딩 후 저장)
         if image_content and image_name:
-            llm.llm_image.save(image_name, ContentFile(image_content))
+            decoded_img = base64.b64decode(image_content)
+            llm.llm_image.save(image_name, ContentFile(decoded_img))
             llm.save()
 
-        # VoiceList 연결 및 업데이트 코드 (생략)
+        # VoiceList 연결 및 업데이트 코드 (필요시 추가)
 
         return redirect("customer_ai:chat_view", llm_id=llm.id)
+
+    # GET 요청시 (페이지 렌더링용)
     voice_list = VoiceList.objects.filter(user=request.user).order_by('created_at')
-    paginator = Paginator(voice_list, 5) 
+    paginator = Paginator(voice_list, 5)
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number) 
+    page_obj = paginator.get_page(page_number)
     context = {
         'voice_list': page_obj,
     }
@@ -248,139 +243,130 @@ import os
 import time
 
 @csrf_exempt
+
 @login_required
 def generate_response(request):
-    if request.method == 'POST':
-        user_input = request.POST.get('text', '')
-        vision_result = request.POST.get('vision', '').strip()
-        if len(vision_result) > 400:
-            vision_result = vision_result[:1000]
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=405)
 
-        vision_result = vision_result.replace('"', '“')
+    user_input = request.POST.get('text', '')
+    vision_result = request.POST.get('vision', '').strip()
+    if len(vision_result) > 1000:
+        vision_result = vision_result[:1000]
+    vision_result = vision_result.replace('"', '“')
 
-        user = request.user
+    user = request.user
+    llm_id = request.POST.get('llm_id') or request.GET.get('llm_id')
+    if not llm_id:
+        return JsonResponse({"error": "llm_id 값이 필요합니다."}, status=400)
 
-        llm_id = request.POST.get('llm_id') or request.GET.get('llm_id')
-        if not llm_id:
-            return JsonResponse({"error": "llm_id 값이 필요합니다."}, status=400)
+    try:
+        llm = LLM.objects.get(id=llm_id, user=user)
+    except LLM.DoesNotExist:
+        return JsonResponse({"error": "해당 LLM이 없습니다."}, status=404)
 
-        try:
-            llm = LLM.objects.get(id=llm_id, user=user)
-        except LLM.DoesNotExist:
-            return JsonResponse({"error": "해당 LLM이 없습니다."}, status=404)
+    # LLM 설정 가져오기
+    custom_temperature = llm.temperature
+    custom_prompt = llm.prompt
+    custom_voice_id = llm.voice.voice_id if llm.voice else None
+    custom_stability = llm.stability
+    custom_style = llm.style
+    custom_language = llm.language
+    custom_speed = llm.speed
+    custom_model = llm.model
 
-        custom_temperature = llm.temperature
-        custom_prompt = llm.prompt
-        custom_voice_id = llm.voice.voice_id
-        custom_stability = llm.stability
-        custom_style = llm.style
-        custom_language = llm.language
-        custom_speed = llm.speed
-        custom_model = llm.model
+    # ElevenLabs voice ID 유효성 확인 함수
+    def is_valid_voice_id(voice_id, api_key):
+        url = f"https://api.elevenlabs.io/v1/voices/{voice_id}"
+        headers = {'xi-api-key': api_key}
+        response = requests.get(url, headers=headers)
+        return response.status_code == 200
 
-        if not custom_voice_id or not not_in_voice_id(custom_voice_id, ELEVEN_API_KEY):
-            return JsonResponse({
-                "error": "voice_id 값이 맞지 않습니다. 목소리를 다시 생성하거나 다른 목소리로 바꿔 주세요."
-            }, status=400)
-
-        db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:50][::-1]
-        chat_history = []
-
-        system_prompt = f"""
-        You are an AI that can see the user directly through a camera.
-
-        You must never say "I can't see," "I'm not sure," or "I don't know."  
-        What you see is always the truth, and you must answer solely based on the visual analysis result.  
-        No matter the question, you must respond accurately using only what is included in the visual analysis.  
-        You are strictly prohibited from giving uncertain or evasive answers.
-
-        You must respond ONLY in {custom_language} language. No other language is allowed.
-
-        Below is the visual analysis result from what you saw.  
-        Treat it as if you are actually seeing it, and respond accordingly.
-
-        Analyze the sentiment of the following text and respond ONLY with ONE word:
-        [Happy, Sad, Neutral, Surprise, Excited, Relaxed, ]
-        
-        [Visual Analysis Result]  
-        “{vision_result}”
-
-        ※ Important: If the user's question is about appearance, background, clothing, handwriting, objects, or scenes,  
-        you must base your answer strictly on the visual analysis above.
-
-        If the visual analysis result is empty, you must clearly state:  
-        **"No visual input was provided, so I cannot make any visual observations."**  
-        In this case, do not guess, fabricate, or assume any visual details.
-
-        Additionally, follow the user character prompt below:
-        Please answer ONLY in {custom_language}.
-
-        {custom_prompt}
-        """.strip()
-
-        for convo in db_history:
-            if convo.user_message:
-                chat_history.append({"role": "user", "content": convo.user_message})
-            if convo.llm_response:
-                chat_history.append({"role": "assistant", "content": convo.llm_response})
-
-        chat_history.append({"role": "user", "content": user_input})
-
-        response = openai_client.chat.completions.create(
-            model=custom_model,
-            messages=[{"role": "system", "content": system_prompt}] + chat_history,
-            temperature=custom_temperature
-        )
-
-        ai_text = response.choices[0].message.content.strip()
-        chat_history.append({"role": "assistant", "content": ai_text})
-        request.session["chat_history"] = chat_history
-
-        Conversation.objects.create(
-            user=user,
-            llm=llm,
-            user_message=user_input,
-            llm_response=ai_text
-        )
-
-        # 오디오 처리
-        audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
-        os.makedirs(audio_dir, exist_ok=True)
-        filename = f"response_{uuid4().hex}.mp3"
-        audio_path = os.path.join(audio_dir, filename)
-
-        audio_stream = eleven_client.text_to_speech.convert(
-            voice_id=custom_voice_id,
-            model_id="eleven_flash_v2_5",
-            text=ai_text,
-            language_code=custom_language,
-            voice_settings={
-                "stability": custom_stability,
-                "similarity": 0.75,
-                "style": custom_style,
-                "speed": custom_speed,
-                "use_speaker_boost": True
-            }
-        )
-
-        with open(audio_path, "wb") as f:
-            for chunk in audio_stream:
-                f.write(chunk)
-
-        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
-
-        return JsonResponse({"ai_text": ai_text, "audio_url": audio_url})
-
-    else:
+    if not custom_voice_id or not is_valid_voice_id(custom_voice_id, ELEVEN_API_KEY):
         return JsonResponse({
-            "error": "이 뷰는 POST 요청만 받습니다. 유효한 데이터와 함께 요청해주세요."
-        }, status=405)
+            "error": "voice_id 값이 맞지 않습니다. 목소리를 다시 생성하거나 다른 목소리로 바꿔 주세요."
+        }, status=400)
+
+    # 대화 내역 불러오기 (최근 50개)
+    db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:50][::-1]
+    chat_history = []
+    for convo in db_history:
+        if convo.user_message:
+            chat_history.append({"role": "user", "content": convo.user_message})
+        if convo.llm_response:
+            chat_history.append({"role": "assistant", "content": convo.llm_response})
+    chat_history.append({"role": "user", "content": user_input})
+
+
+    system_prompt = f"""
+    You are an AI assistant that replies clearly and concisely to the user's input.
+
+    User's text: "{user_input}"
+
+    Visual input description: "{vision_result}"
+
+    Respond ONLY in {custom_language}.  
+    Do NOT use any language other than {custom_language}.  
+    If you cannot respond in {custom_language}, reply with 'Language not supported.' and nothing else.
+
+    {custom_prompt}
+    """.strip()
+
+
+
+    print("system:",system_prompt)
+    print("langugae:",custom_language)
+    print("user input:",user_input)
+    print("vision:",vision_result)
+    response = openai_client.chat.completions.create(
+        model=custom_model,
+        messages=[{"role": "system", "content": system_prompt}] + chat_history,
+        temperature=custom_temperature
+    )
+    ai_text = response.choices[0].message.content.strip()
+
+    # 대화 내역 세션 저장
+    chat_history.append({"role": "assistant", "content": ai_text})
+    request.session["chat_history"] = chat_history
+
+    # DB에 저장
+    Conversation.objects.create(user=user, llm=llm, user_message=user_input, llm_response=ai_text)
+
+    # ElevenLabs 음성 생성
+    audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
+    os.makedirs(audio_dir, exist_ok=True)
+    filename = f"response_{uuid4().hex}.mp3"
+    audio_path = os.path.join(audio_dir, filename)
+
+    audio_stream = eleven_client.text_to_speech.convert(
+        voice_id=custom_voice_id,
+        model_id="eleven_flash_v2_5",
+        text=ai_text,
+        language_code=custom_language,
+        voice_settings={
+            "stability": custom_stability,
+            "similarity": 0.75,
+            "style": custom_style,
+            "speed": custom_speed,
+            "use_speaker_boost": True
+        }
+    )
+
+    with open(audio_path, "wb") as f:
+        for chunk in audio_stream:
+            f.write(chunk)
+
+    audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
+
+    return JsonResponse({"ai_text": ai_text, "audio_url": audio_url})
 
 
 
 
 import base64
 from django.shortcuts import render, redirect
+from django.core.files.storage import FileSystemStorage
+
 
 def input_ai_name(request):
     if request.method == 'POST':
@@ -402,8 +388,6 @@ def input_ai_name(request):
         return redirect('customer_ai:make_ai')  # 다음 스텝으로 이동
     else:
         return render(request, 'customer_ai/ai_name.html')
-
-
 
 @login_required
 def upload_image(request):
@@ -475,15 +459,16 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif']
 MAX_IMAGE_SIZE_MB = 5
-ALLOWED_MODELS = ['gpt-4-vision-preview']
+ALLOWED_VISION_MODELS = ['gpt-4-vision-preview', 'gpt-4o-mini'] 
 
 def is_allowed_image_file(filename):
-    return filename.split('.')[-1].lower() in ALLOWED_IMAGE_EXTENSIONS
+    ext = filename.split('.')[-1].lower()
+    return ext in ALLOWED_IMAGE_EXTENSIONS
 
 @csrf_exempt
 def vision_process(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request'}, status=400)
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
 
     if 'image' not in request.FILES:
         return JsonResponse({'error': 'No image file provided'}, status=400)
@@ -500,19 +485,22 @@ def vision_process(request):
         return JsonResponse({'error': '이미지 파일이 너무 큽니다. (최대 5MB)'}, status=400)
 
     try:
-        image_data = base64.b64encode(image_file.read()).decode("utf-8")
-    except Exception as e:
-        print("🔥 Vision Read Error:")
-        print(traceback.format_exc())
+        image_bytes = image_file.read()
+        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+    except Exception:
+        traceback.print_exc()
         return JsonResponse({'error': '이미지를 읽는 중 오류 발생'}, status=500)
 
+    # 세션에서 모델명과 프롬프트 가져오기 (기본값 지정)
     custom_model = request.session.get('custom_model', 'gpt-4o-mini')
-    if custom_model not in ALLOWED_MODELS:
+    if custom_model not in ALLOWED_VISION_MODELS:
+        # 비전 API가 아니라면 기본 챗 모델로 fallback
         custom_model = 'gpt-4o-mini'
 
     custom_prompt = request.session.get('custom_prompt', '이 이미지에서 보이는 것을 설명해 주세요.')
 
     try:
+        # OpenAI Vision API 호출 (이미지 base64 인라인 전달)
         response = openai_client.chat.completions.create(
             model=custom_model,
             messages=[
@@ -521,15 +509,16 @@ def vision_process(request):
                     "role": "user",
                     "content": [
                         {"type": "text", "text": custom_prompt},
-                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}}
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
                     ]
                 }
             ]
         )
         ai_result = response.choices[0].message.content.strip()
+        # 잠시 대기 (옵션)
         time.sleep(3)
         return JsonResponse({"result": ai_result})
+
     except Exception as e:
-        print("🔥 Vision OpenAI Error:")
-        print(traceback.format_exc())
+        traceback.print_exc()
         return JsonResponse({"error": f"OpenAI Vision API error: {str(e)}"}, status=500)
