@@ -88,7 +88,7 @@ INSTALLED_APPS = [
 "makeImage",
 "payment",
 "home",
-"cloning",
+# "cloning",
 "makeVoice",
 "register",
 "mypage",
