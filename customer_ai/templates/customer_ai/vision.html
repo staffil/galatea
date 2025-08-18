@@ -43,7 +43,7 @@
         <main class="chat-container">
             <div class="chat-header">
                 <div class="ai-avatar">👁️</div>
-                <h1 class="chat-title">{{ llm.name }} {% trans '비전 대화하기'%}</h1>
+                <h1 class="chat-title">{{ llm.name }} {% trans '비전 대화하기' %}</h1>
             </div>
             
             <p class="chat-subtitle">{% trans '카메라로 실시간 대화해보세요' %}</p>
@@ -52,7 +52,7 @@
             <div class="video-container">
                 <!-- AI 이미지 섹션 -->
                 <div class="ai-image-section">
-                    <div class="section-title">🤖 {% trans 'AI 캐릭터' }</div>
+                    <div class="section-title">🤖 {% trans 'AI 캐릭터' %}</div>
                     {% if llm.llm_image %}
                         <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image" />
                     {% else %}

@@ -325,7 +325,10 @@
                     <div class="time-info">🎵 음성: 5분 (300초)</div>
                     <div class="time-info">💎 무료 토큰: 20회</div>
                 </div>
-                <button class="upgrade-btn">UPGRADE</button>
+        <form action="{% url 'payment:payment_charge' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="upgrade-btn">UPGRADE</button>
+        </form>
             </div>
 
             <div class="pricing-card friend" style="background-color: #70be94;">

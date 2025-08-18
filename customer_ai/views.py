@@ -326,9 +326,8 @@ def generate_response(request):
 
     Visual input description: "{vision_result}"
 
-    Respond ONLY in {custom_language}.  
-    Do NOT use any language other than {custom_language}.  
-    If you cannot respond in {custom_language}, reply with 'Language not supported.' and nothing else.
+  Respond in Korean.
+
 
     {custom_prompt}
     """.strip()

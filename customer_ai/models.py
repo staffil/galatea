@@ -77,3 +77,17 @@ class LLM(models.Model):
     class Meta:
         db_table = 'LLM'
         verbose_name = 'ai 정보'
+
+
+
+class Prompt(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    prompt_title= models.CharField(max_length=100,verbose_name="프롬프트 제목 적는칸")
+    prompt = models.TextField(verbose_name="프롬프트 적는 칸")
+
+    class Meta:
+        db_table = "prompt"
+        verbose_name = 'prompt 정보'
+
+        
+

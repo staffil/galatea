@@ -77,7 +77,7 @@
     <div class="voice-sidebar" id="voiceSidebar" style="margin-top: 50px;">
         <div class="voice-sidebar-header">
             <h2 class="voice-sidebar-title">🎵 {% trans "생생한 음성 대화" %}</h2>
-            <button onclick="window.location.href='#'">목소리 전체보기</button>
+            <button onclick="window.location.href='#'">{% trans '목소리 전체보기' %}</button>
         </div>
         <div class="voice-sidebar-content">
             {% for voice in voice_list|slice:":7" %}
@@ -144,15 +144,15 @@
 
     <div class="helpdesk" style="margin-top: 100px;">
       <a href="{% url 'helpdesk:Faq' %}" class="faq">FAQ</a>
-        <a href="{% url 'helpdesk:request' %}" class="request">요청하기</a>
-        <a href="{% url 'helpdesk:notice' %}" class="notice">공지사항</a>
+        <a href="{% url 'helpdesk:request' %}" class="request">{% trans '요청하기' %}</a>
+        <a href="{% url 'helpdesk:notice' %}" class="notice">{% trans '공지사항' %}</a>
     </div>
     <main>
 
 
         <!-- 뉴스 섹션 -->
         <div class="main-content" id="mainContent">
-            <h2 class="section-title">뉴스</h2>
+            <h2 class="section-title">{% trans "뉴스" %}</h2>
             <div class="news-banner">
                 <button class="slider-btn prev" onclick="slideNews(-1)">‹</button>
                 <button class="slider-btn next" onclick="slideNews(1)">›</button>
@@ -172,7 +172,7 @@
 
 <!-- celebrity voice 목록 -->
 <div class="cv-main-content">
-    <h2 class="cv-section-title">이거 한번 사용해 보세요!!</h2>
+    <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!!' %}</h2>
     
     <div class="cv-container">
         <div class="cv-scroll">
@@ -232,7 +232,7 @@
                         </a>
                     {% endfor %}
                 </div>
-                <a href="{% url 'home:genre_all' %}" class="view-all-btn">전체 보기</a>
+                <a href="{% url 'home:genre_all' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
         </div>
 
@@ -264,7 +264,7 @@
         <!-- LLM 추천 섹션 -->
         <div class="main-content">
             <div class="llm-container">
-                <h2 class="section-title">추천</h2>
+                <h2 class="section-title">{% trans '추천' %}</h2>
                 <div class="llm-cards-container">
                     {% for item in llm|slice:":10" %}
                     <div class="llm-card" onclick="openModal({{ item.id }})">
@@ -288,7 +288,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                <a href="{% url 'home:llm_section' %}" class="view-all-btn">전체 보기</a>
+                <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
         </div>
 
@@ -298,7 +298,7 @@
         <!-- 인기있는 팔로워 섹션 -->
         <div class="main-content">
             <div class="character-container">
-                <h2 class="section-title">인기있는 팔로워</h2>
+                <h2 class="section-title">{% trans '인기있는 팔로워' %}</h2>
                 <div class="character-cards-container">
                     <!-- 인기 팔로워 카드들 (기존 celebrity_list 재사용) -->
                     {% for celebrity in celebrity_list|slice:"5:10" %}
@@ -320,7 +320,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                <a href="#" class="view-all-btn">전체 보기</a>
+                <a href="#" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
         </div>
 <script>

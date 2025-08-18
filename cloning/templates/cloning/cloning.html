@@ -19,16 +19,16 @@
 
     <main class="container">
         <div class="main-card">
-            <h1>🎤 AI 목소리 클로닝</h1>
+            <h1>🎤 {% trans 'AI 목소리 클로닝' %}</h1>
 
             <div class="form-group">
-                <label for="voiceName">🏷️ 목소리 이름</label>
+                <label for="voiceName">🏷️ {% trans '목소리 이름' %}</label>
                 <input type="text" id="voiceName" placeholder="나만의 목소리 이름을 입력하세요" />
             </div>
 
             <div class="form-group">
-                <button id="recordBtn">🔴 녹음 시작</button>
-                <button id="stopBtn" disabled>■ 녹음 중지</button>
+                <button id="recordBtn">🔴 {% trans '녹음 시작' %}</button>
+                <button id="stopBtn" disabled>■ {% trans '녹음 중지' %}</button>
             </div>
 
             <div class="form-group">
@@ -36,14 +36,14 @@
             </div>
 
             <div class="form-group">
-                <label for="sampleText">📝 샘플 텍스트</label>
+                <label for="sampleText">📝 {% trnas '샘플 텍스트' %}</label>
                 <textarea id="sampleText" rows="5" placeholder="이 텍스트로 클로닝된 목소리를 샘플 재생합니다. 최소 130자 이상 작성해주세요."></textarea>
             </div>
 
             <div class="button-group">
-                <button id="generateSampleBtn" disabled>✨ 샘플 생성하기</button>
-                <button id="retryBtn" disabled>🔄 다시 만들기</button>
-                <button id="saveBtn" disabled>💾 저장하기</button>
+                <button id="generateSampleBtn" disabled>✨ {% trans '샘플 생성하기' %}</button>
+                <button id="retryBtn" disabled>🔄 {% trans '다시 만들기' %}</button>
+                <button id="saveBtn" disabled>💾 {% trans '저장하기' %}</button>
             </div>
 
             <div id="message" style="margin-top: 1rem; color: red;"></div>

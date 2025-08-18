@@ -85,9 +85,7 @@ msgstr "NO IMAGE"
 msgid "텍스트나 음성으로 대화해보세요"
 msgstr "Have a conversation using text or voice"
 
-#: .\celebrity\templates\celebrity\celebrity.html
-msgid "녹음 시작"
-msgstr "Start recording"
+
 
 #: .\celebrity\templates\celebrity\celebrity.html
 msgid "녹음 종료"
@@ -101,9 +99,6 @@ msgstr "Please enable the microphone in your browser"
 msgid "로그인을 해주세요"
 msgstr "Please log in"
 
-#: .\celebrity\templates\celebrity\celebrity.html .\makeImage\templates\makeImage\image.html .\customer_ai\templates\customer_ai\custom.html
-msgid "생성된 이미지가 없습니다."
-msgstr "No generated image available"
 
 #: .\customer_ai\templates\customer_ai\ai_name.html
 msgid "AI 이름 입력"
@@ -197,6 +192,7 @@ msgstr "Unsupported browser"
 msgid "샘플 없음"
 msgstr "No sample available"
 
+#: customer_ai/templates/customer_ai/make_ai.html
 #: customer_ai/templates/customer_ai/make_ai.html:48
 msgid "선택하기"
 msgstr "Select"
@@ -254,9 +250,6 @@ msgstr "Try real-time conversation with the camera"
 msgid "AI 캐릭터"
 msgstr "AI Character"
 
-#: \customer_ai\templates\customer_ai\vision.html
-msgid "AI 이미지"
-msgstr "AI Image"
 
 #: \customer_ai\templates\customer_ai\vision.html
 msgid "라이브 카메라"
@@ -368,9 +361,7 @@ msgstr "Your browser does not support the sample feature"
 msgid "샘플 ID"
 msgstr "Sample ID"
 
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-msgid "목소리 이름"
-msgstr "Voice Name"
+
 
 #: .\makeVoice\templates\makeVoice\makeVoice.html
 msgid "나만의 특별한 목소리 이름을 지어주세요"
@@ -380,9 +371,7 @@ msgstr "Please give your unique voice a special name"
 msgid "목소리 저장하기"
 msgstr "Save Voice"
 
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-msgid "다시 만들기"
-msgstr "Retry"
+
 
 #: .\makeVoice\templates\makeVoice\makeVoice.html
 msgid "목소리 이름을 입력해주세요!"
@@ -412,53 +401,17 @@ msgstr "Voice Style Prompt"
 msgid "원하는 목소리의 특징을 자세히 설명해주세요!&#10;&#10;예시:&#10;- 따뜻하고 친근한 여성 목소리&#10;- 차분하고 지적인 남성 목소리&#10;- 활기차고 밝은 청년 목소리&#10;- 성숙하고 신뢰감 있는 목소리&#10;&#10;※ 폭력적, 성적인 내용은 포함할 수 없습니다."
 msgstr "Please describe the desired voice characteristics in detail!\n\nExamples:\n- Warm and friendly female voice\n- Calm and intellectual male voice\n- Energetic and bright young voice\n- Mature and trustworthy voice\n\n※ Violent or sexual content is not allowed."
 
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-msgid "샘플 텍스트"
-msgstr "Sample Text"
+
 
 #: .\makeVoice\templates\makeVoice\makeVoice.html
 msgid "생성될 목소리로 읽어볼 텍스트를 입력해주세요.&#10;&#10;최소 130자 이상 작성해주세요 (약 3~4줄)&#10;&#10;예시:&#10;안녕하세요! 저는 여러분만을 위한 특별한 AI 목소리입니다. 따뜻한 마음으로 여러분과 소통하며, 언제나 도움이 되는 정보를 전달하고 싶습니다. 오늘도 좋은 하루 되세요!"
 msgstr "Please enter the text to be read by the generated voice.\n\nPlease write at least 130 characters (about 3-4 lines).\n\nExample:\nHello! I am a special AI voice just for you. I communicate warmly with you and always want to deliver helpful information. Have a great day!"
 
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-msgid "샘플 생성하기"
-msgstr "Generate Sample"
 
 #: .\makeVoice\templates\makeVoice\makeVoice.html
 msgid "팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!"
 msgstr "Tip: The more specific and detailed your description, the more accurate the voice generation!"
 
-#: .\mypage\templates\mypage\my_ai_models.html:10
-msgid "마이페이지"
-msgstr "My Page"
-
-#: .\mypage\templates\mypage\my_ai_models.html:22
-msgid "로그아웃"
-msgstr "Logout"
-
-#: .\mypage\templates\mypage\my_ai_models.html:23
-msgid "프로필"
-msgstr "Profile"
-
-#: .\mypage\templates\mypage\my_ai_models.html:26
-msgid "내 AI 모델들"
-msgstr "My AI Models"
-
-#: .\mypage\templates\mypage\my_ai_models.html:28
-msgid "voice id 목록"
-msgstr "Voice ID List"
-
-#: .\mypage\templates\mypage\my_ai_models.html:29
-msgid "main 으로"
-msgstr "Back to Main"
-
-#: .\mypage\templates\mypage\my_ai_models.html:44
-msgid "AI 모델 선택"
-msgstr "Select AI Model"
-
-#: .\mypage\templates\mypage\my_ai_models.html:54
-msgid "프롬프트"
-msgstr "Prompt"
 
 #: .\mypage\templates\mypage\my_ai_models.html:61
 msgid "언어"
@@ -507,33 +460,6 @@ msgstr "Voice ID"
 #: .\mypage\templates\mypage\my_ai_models.html:111
 msgid "선택한 모델"
 msgstr "Selected Model"
-
-#: .\mypage\templates\mypage\my_ai_models.html:124
-msgid "대화하기"
-msgstr "Chat"
-
-#: .\mypage\templates\mypage\my_ai_models.html:125
-msgid "수정하기"
-msgstr "Edit"
-
-#: .\mypage\templates\mypage\my_ai_models.html:126
-msgid "삭제하기"
-msgstr "Delete"
-
-#: .\mypage\templates\mypage\my_ai_models.html:31
-msgid "현재 커스터한 AI 가 없습니다."
-msgstr "There are no customized AIs currently."
-
-#: .\mypage\templates\mypage\my_ai_models.html:18
-msgid "프로필 이미지 없음"
-msgstr "No Profile Image"
-
-#: .\mypage\templates\mypage\my_ai_models.html:127
-msgid "해당 AI를 삭제하시겠습니까?"
-msgstr "Are you sure you want to delete this AI?"
-
-
-
 
 #: .\register\templates\register\signup.html:10
 msgid "Sign In UI"
@@ -600,10 +526,11 @@ msgid "닉네임은 필수 입력입니다."
 msgstr "Nickname is required."
 
 
-
-#: register/forms.py:37
-msgid "비밀번호 입력하세요()"
+#: register/templates/register/login.html
+msgid "비밀번호 입력하세요"
 msgstr "Enter your password"
+
+
 
 #: register/forms.py:42
 msgid "비밀번호는 필수 입력입니다."
@@ -670,3 +597,289 @@ msgstr "Please enter your password"
 #: register/forms.py:102
 msgid "비밀번호가 일치하지 않습니다."
 msgstr "Password does not match."
+
+
+
+
+
+
+
+
+
+
+#: home/templates/home/main.html
+msgid "뉴스"
+msgstr "NEWS"
+
+#: home/templates/home/main.html
+msgid "이거 한번 사용해 보세요!!"
+msgstr "Please give this a try!!"
+
+
+#: home/templates/home/main.html
+msgid "장르"
+msgstr "GENRE"
+
+
+#: home/templates/home/main.html
+msgid "추천"
+msgstr "RECOMMEND"
+
+#: home/templates/home/main.html
+msgid "인기있는 팔로워"
+msgstr "Popular Follower"
+
+
+#: .\templates\common\notLoginHeader.html
+#: .\templates\common\loginHeader.html
+msgid "검색어를 입력하세요..."
+msgstr "Search here..."
+
+
+#: register/forms.py:37
+msgid "비밀번호 입력하세요()"
+msgstr "Enter your password"
+
+#: home/templates/home/main.html
+msgid "결제하기"
+msgstr "PAYMENT"
+
+#: home/templates/home/main.html
+msgid "보이스 클로닝"
+msgstr "VOICE CLONING"
+
+#: home/templates/home/main.html
+msgid "요청하기"
+msgstr "REQUEST"
+
+#: home/templates/home/main.html
+msgid "공지사항"
+msgstr "NOTICE"
+
+#: home/templates/home/main.html
+msgid "생생한 음성 대화"
+msgstr "Realistic Voice Conversation"
+
+#: home/templates/home/main.html
+msgid "목소리 전체보기"
+msgstr "Browse All Voices"
+
+#: home/templates/home/main.html
+msgid "전체 보기"
+msgstr "View All"
+
+#: cloning/templates/cloning/cloning.html
+msgid "AI 목소리 클로닝"
+msgstr "AI VOICE CLONING"
+
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+#: cloning/templates/cloning/cloning.html
+msgid "목소리 이름"
+msgstr "VOICE NAME"
+
+#: .\celebrity\templates\celebrity\celebrity.html
+#: cloning/templates/cloning/cloning.html
+msgid "녹음 시작" 
+msgstr "RECORD START"
+
+#: cloning/templates/cloning/cloning.html
+msgid "녹음 중지"
+msgstr "RECORD END"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+#: cloning/templates/cloning/cloning.html
+msgid "샘플 텍스트"
+msgstr "Sample text"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+#: cloning/templates/cloning/cloning.html
+msgid "샘플 생성하기"
+msgstr "response sample"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+#: cloning/templates/cloning/cloning.html
+msgid "다시 만들기"
+msgstr "Recreate"
+
+
+#: cloning/templates/cloning/cloning.html
+msgid "저장하기"
+msgstr "Save"
+
+#: customer_ai/templates/customer_ai/make_ai.html
+msgid "모델을 선택해 주세요"
+msgstr "Please select LLM Model"
+
+#: customer_ai/templates/customer_ai/vision.html
+msgid "실시간 카메라"
+msgstr "Real time camera"
+
+#: customer_ai/templates/customer_ai/vision.html
+msgid "카메라로 실시간 대화해보세요"
+msgstr "Try real-time conversation with the camera"
+
+
+#: distribute/templates/distribute/distribute.html
+#: \customer_ai\templates\customer_ai\vision.html
+msgid "AI 이미지"
+msgstr "AI Image"
+
+
+
+#: distribute/templates/distribute/distribute.html
+#: .\celebrity\templates\celebrity\celebrity.html .\makeImage\templates\makeImage\image.html .\customer_ai\templates\customer_ai\custom.html
+msgid "생성된 이미지가 없습니다."
+msgstr "No generated image available"
+
+#: distribute/templates/distribute/distribute.html
+msgid "제목"
+msgstr "title"
+
+#: distribute/templates/distribute/distribute.html
+#: .\mypage\templates\mypage\my_ai_models.html:54
+msgid "프롬프트"
+msgstr "Prompt"
+
+#: distribute/templates/distribute/distribute.html
+msgid "AI 모델에 대한 간단한 설명을 작성해주세요"
+msgstr "Please write a brief description of the AI model."
+
+#: distribute/templates/distribute/distribute.html
+msgid "배경이 될 사진을 선택해주세요"
+msgstr "Please select a photo to use as the background."
+
+#: distribute/templates/distribute/distribute.html
+msgid "기존 배경 이미지 링크"
+msgstr "Existing background image link"
+
+#: distribute/templates/distribute/distribute.html
+msgid "현재 배경 이미지 미리보기"
+msgstr "Current background image preview"
+
+#: distribute/templates/distribute/distribute.html
+msgid "배경 이미지 미리보기"
+msgstr "Background image preview"
+
+#: distribute/templates/distribute/distribute.html
+msgid "해당 AI를 정말 공유하시겠습니까?"
+msgstr "Are you sure you want to share this AI?"
+
+
+#: distribute/templates/distribute/distribute.html
+msgid "수정한 내용 공유하기"
+msgstr "Share the changes"
+
+#: distribute/templates/distribute/distribute.html
+msgid "다른 사람들과 공유하기"
+msgstr "Share with others"
+
+#: distribute/templates/distribute/distribute.html
+msgid "돌아가기"
+msgstr "Go back"
+
+#: distribute/templates/distribute/distribute.html
+msgid "공유를 취소하시겠습니까?"
+msgstr "Are you sure you want to cancel sharing?"
+
+#: distribute/templates/distribute/distribute.html
+msgid "공유취소하기"
+msgstr "Cancel sharing"
+
+
+#: .\templates\common\sidebar.html
+msgid "마이페이지"
+msgstr "My Page"
+
+
+#: .\templates\common\sidebar.html
+msgid "로그아웃>"
+msgstr "Logout>"
+
+#: .\templates\common\sidebar.html
+msgid "main 으로>"
+msgstr "Go to main>"
+
+#: .\templates\common\sidebar.html
+msgid "프로필>"
+msgstr "Profile>"
+
+#: .\templates\common\sidebar.html
+msgid "내 AI 모델들>"
+msgstr "My AI Models>"
+
+#: .\mypage\templates\mypage\my_ai_models.html:31
+#: .\templates\common\sidebar.html
+msgid "현재 커스텀한 AI 가 없습니다."
+msgstr "There is no AI you have customized currently."
+
+#: .\templates\common\sidebar.html
+msgid "voice id 목록>"
+msgstr "Voice ID List>"
+
+#: .\templates\common\sidebar.html
+msgid "토큰 내역>"
+msgstr "Token History>"
+
+#: .\templates\common\sidebar.html
+msgid "내 커스텀>"
+msgstr "My Custom>"
+
+#: .\templates\common\sidebar.html
+msgid "요청 글 목록>"
+msgstr "Request Posts List>"
+
+#: .\templates\common\sidebar.html
+msgid "내 쿠폰>"
+msgstr "My Coupons>"
+
+#: .\mypage\templates\mypage\my_ai_models.html:18
+#: .\templates\common\sidebar.html
+msgid "프로필 이미지 없음"
+msgstr "No profile image"
+
+#: .\mypage\templates\mypage\my_voice.html:18
+msgid "voice 이름"
+msgstr "voice name"
+
+
+#: .\mypage\templates\mypage\my_voice.html:18
+msgid "공유 취소하기"
+msgstr "Cancel Share"
+
+#: .\mypage\templates\mypage\my_voice.html:18
+msgid "복사"
+msgstr "Copy"
+
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "AI 모델 선택"
+msgstr "Select AI Model"
+
+#: .\mypage\templates\mypage\my_ai_models.html:124
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "대화하기"
+msgstr "Chat"
+
+#: .\mypage\templates\mypage\my_ai_models.html:125
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "수정하기"
+msgstr "Edit"
+
+#: .\mypage\templates\mypage\my_ai_models.html:126
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "삭제하기"
+msgstr "Delete"
+
+#: .\mypage\templates\mypage\my_ai_models.html:127
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "해당 AI를 삭제하시겠습니까?"
+msgstr "Are you sure you want to delete this AI?"
+
+#: .\mypage\templates\mypage\my_voice.html:18
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "공유하기"
+msgstr "Share"
+
+#: .\mypage\templates\mypage\my_ai_models.html:18
+msgid "공유한 AI 수정하기"
+msgstr "Edit Shared AI"

@@ -58,3 +58,15 @@ def verify_payment(request):
         return JsonResponse({"message": "결제 검증 및 저장 성공", "status": payment_data["status"]})
     else:
         return JsonResponse({"error": "결제 검증 실패", "detail": res_json}, status=400)
+    
+
+from payment.models import TokenHistory
+def payment_charge(request):
+    user = request.user
+    
+    TokenHistory.objects.create(
+        user = user,
+        change_type = TokenHistory.CHARGE,
+        amount= 300
+    )
+    return redirect('home:main')

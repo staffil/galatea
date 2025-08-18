@@ -271,7 +271,7 @@ body {
         <img src="{% static 'images/default_user.png' %}" alt="기본 이미지">
     {% endif %}
 
-            <span>{{ item.user.username }}</span>
+            <span style="color:#fff;">{{ item.user.username }}</span>
 {% if user.is_authenticated and user != item.user %}
     {% with item.user.id|stringformat:"s" as user_id %}
 {% for item in llm_list %}
@@ -304,18 +304,7 @@ body {
 
 {% for item in llm_list %}
 <div class="llm-item">
-    <h3>{{ item.title }}</h3>
-    <button class="glt2-chat-btn" onclick="window.location.href='/customer_ai/chat/{{ item.id }}/'">
-        대화하기
-    </button>
 
-    <div class="glt2-genre-tags">
-        {% for genre in item.genres.all %}
-            <div class="glt2-genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-        {% empty %}
-            <div class="glt2-genre-tag" style="background-color: #999;">장르 없음</div>
-        {% endfor %}
-    </div>
 
     <!-- 댓글창 include -->
     {% include 'home/comment.html' with item=item comments=item.comments.all %}

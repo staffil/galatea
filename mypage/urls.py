@@ -14,6 +14,9 @@ urlpatterns = [
     path('my_ai_models/update/<int:llm_id>', views.my_ai_models_update, name='my_ai_models_update'),
     path('my_ai_models/delete/<int:llm_id>', views.my_ai_models_delete, name='my_ai_models_delete'),
     path('<int:voice_id>/toggle_public/', views.toggle_voice_public, name='toggle_voice_public'),
+    path("my_custom/", views.my_custom, name= "my_custom"),
+    path("my_request/", views.my_request, name= "my_request"),
+    path("my_coupon/", views.my_coupon, name= "my_coupon"),
 
 
 ]

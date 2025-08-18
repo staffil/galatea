@@ -100,7 +100,7 @@
 
                     <div class="slider-container">
                         <div class="slider-label">{% trans '목소리 스타일'%}</div>
-                        <div class="slider-description">{ % trans '값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다.' % }/div>
+                        <div class="slider-description">{ % trans '값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다.' %}/div>
                         <div class="slider-control">
                             <span></span>
                             <span class="slider-value" id="styleValue">0.5</span>
@@ -110,7 +110,7 @@
 
                     <div class="slider-container">
                         <div class="slider-label">{% trans '창의성' %}</div>
-                        <div class="slider-description">{% trans 'AI의 창의성을 정합니다' }</div>
+                        <div class="slider-description">{% trans 'AI의 창의성을 정합니다' %}</div>
                         <div class="slider-control">
                             <span></span>
                             <span class="slider-value" id="temperatureValue">0.5</span>
@@ -136,18 +136,19 @@
                 
 
             </div>
-        <div style="display: flex; gap: 10px; margin-top: 70px; width: 200%;">
-            <a href="{% url 'customer_ai:chat_view' llm.id %}" class="action-button">대화하기</a>
-            <a href="{% url 'mypage:my_ai_models_update' llm.id %}" class="action-button">수정하기</a>
-            <a href="{% url 'mypage:my_ai_models_delete' llm.id %}" class="action-button delete-button" onclick="return confirm('해당 AI를 삭제하시겠습니까?')">삭제하기</a>
-            {% if llm.is_public == True %}
-                        <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">공유한 AI 수정하기</a>
 
-            {% else %}
-                        <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">공유하기</a>
+<div style="display: flex; gap: 10px; margin-top: 70px; width: 200%;">
+    <a href="{% url 'customer_ai:chat_view' llm.id %}" class="action-button">{% trans '대화하기' %}</a>
+    <a href="{% url 'mypage:my_ai_models_update' llm.id %}" class="action-button">{% trans '수정하기' %}</a>
+    <a href="{% url 'mypage:my_ai_models_delete' llm.id %}" class="action-button delete-button" onclick="return confirm('{% trans "해당 AI를 삭제하시겠습니까?" %}')">{% trans '삭제하기' %}</a>
+    
+    {% if llm.is_public %}
+        <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">{% trans '공유한 AI 수정하기' %}</a>
+    {% else %}
+        <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">{% trans '공유하기' %}</a>
+    {% endif %}
+</div>
 
-            {% endif %}
-        </div>
 
 
 

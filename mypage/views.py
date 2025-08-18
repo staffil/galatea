@@ -11,6 +11,7 @@ from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from payment.models import Payment, PaymentMethod, PaymentRank, PaymentStats,Token, TokenHistory, TotalToken
+from user_auth.models import Requests
 
 # Create your views here.
 @login_required(login_url='/register/login/')
@@ -268,3 +269,26 @@ def personal_token(request):
     }
 
     return render(request, 'mypage/token.html', context)
+
+
+@login_required
+def my_custom(request):
+    return render(request, "mypage/my_custom.html")
+
+
+@login_required
+def my_request(request):
+    if request.user:
+        request_list = Requests.objects.filter(user=request.user)
+
+        context = {
+            "request_list": request_list
+        }
+
+        
+    return render(request, "mypage/my_request.html", context)
+
+
+@login_required
+def my_coupon(request):
+    return render(request, "mypage/my_coupon.html")
