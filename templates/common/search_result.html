@@ -1,0 +1,194 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+<style>
+    
+/* 모달 전체 배경 */
+#llm-modal .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+}
+
+/* 모달 컨텐츠 */
+#llm-modal .modal-content {
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 화면 중앙으로 이동 */
+
+
+    border-radius: 12px;
+
+    overflow-y: auto;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* 닫기 버튼 */
+#llm-modal .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 100;
+    color: aliceblue;
+}
+</style>
+</head>
+<body>
+{% block content %}
+<h2>검색 결과: "{{ query }}"</h2>
+    <!-- 배경 원들 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+        <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+{% if results %}
+
+
+    <ul>
+    {% for item in results %}
+        <!-- LLM 추천 섹션 -->
+        <div class="main-content">
+            <div class="llm-container">
+                <h2 class="section-title">추천</h2>
+                <div class="llm-cards-container">
+                    <div class="llm-card" onclick="openModal({{ item.id }})">
+                        <div class="llm-card-body">
+                            <div class="llm-image-container">
+                                {% if item.llm_image %}
+                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지">
+                                {% endif %}
+                            </div>
+                            <div class="llm-name">{{ item.title }}</div>
+                            <div class="genre-tags">
+                                {% for genre in item.genres.all %}
+                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.display_name }}</div>
+                                {% empty %}
+                                    <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+    </ul>
+{% else %}
+
+
+    <p>검색 결과가 없습니다.</p>
+{% endif %}
+
+{% endblock %}
+<script>
+
+function getLanguage() {
+    const path = window.location.pathname.split('/').filter(Boolean);
+    return path[0] || 'ko';
+}
+document.addEventListener('click', (e) => {
+    const followBtn = e.target.closest('.glt2-follow-btn');
+    if (!followBtn) return;
+
+    const userId = followBtn.dataset.id;
+
+    fetch("{% url 'home:toggle_follow' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `user_id=${userId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'follow') {
+            followBtn.classList.add("following");
+            followBtn.textContent = 'Following';
+            followBtn.style.color = '#0000FF';
+        } else if (data.status === 'unfollow') {
+            followBtn.classList.remove("following");
+            followBtn.textContent = 'Follow';
+            followBtn.style.color = '#FF0000';
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error('팔로우 토글 오류:', err));
+});
+
+    // 카드 클릭 시 모달 열기
+    document.querySelectorAll('.glt2-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            // 버튼 클릭이면 모달 열지 않음
+            if (e.target.closest('.glt2-follow-btn') || e.target.closest('.glt2-like-btn') || e.target.closest('.glt2-chat-btn')) return;
+
+            // 카드 내용 모달로 복사
+            modalContent.innerHTML = card.innerHTML;
+            modalOverlay.style.display = 'flex';
+        });
+    });
+  // LLM 모달
+    function openModal(llm_id) {
+        const modalHTML = `
+        <div id="llm-modal">
+            <div class="modal-overlay" onclick="closeModal()"></div>
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">X</button>
+                <div id="llm-container" class="llm-container"></div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        const LANGUAGE_CODE = getLanguage();
+
+        fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('llm-modal');
+        if (modal) modal.remove();
+    }
+
+ 
+  
+
+  
+</script>
+
+</body>
+</html>

@@ -7,10 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GALATEA Header - Logged In</title>
     <style>
-/*
-* Global Styles & Base Layout
-* 모든 화면에 공통적으로 적용되는 기본 스타일
-*/
+ /* 기본 리셋 */
 * {
     margin: 0;
     padding: 0;
@@ -20,30 +17,32 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #f8f9fa;
-    padding-top: 110px; /* 데스크톱 헤더 높이만큼 여백 */
+    padding-top: 160px; /* 헤더 높이 만큼 여백 */
 }
 
 header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    padding: 0 40px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 110px;
     z-index: 1000;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100px;
+    gap: 20px;
 }
 
+/* 로고 */
 .logo-container {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     gap: 15px;
+    z-index: 10;
 }
 
 .logo-wrapper img {
@@ -66,19 +65,94 @@ header {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    user-select: none;
 }
 
+/* 중앙 영역: 검색 + 네비 */
+.search-and-nav {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+    min-width: 0;
+    z-index: 1;
+    transition: all 0.4s ease;
+}
+
+.header-search-form {
+    flex: 0 0 auto;
+    max-width: 120px;
+    transition: max-width 0.4s ease, flex-grow 0.4s ease;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    right: 60px;
+}
+
+.header-search-form.expanded {
+    max-width: 500px;
+    flex-grow: 1;
+    cursor: auto;
+}
+
+.header-search-form input[type="search"] {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 25px;
+    border: 1.5px solid #667eea;
+    outline: none;
+    box-sizing: border-box;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    cursor: text;
+}
+
+.header-search-form.expanded input[type="search"] {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: text;
+}
+
+/* 검색 버튼 역할 텍스트 */
+.search-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 20px;
+    font-size: 16px;
+    color: #4a5568;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 25px;
+    border: 1.5px solid #667eea;
+    user-select: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.search-placeholder:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+/* 네비게이션 버튼 */
 .main-nav {
     display: flex;
-    gap: 8px;
-    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    transition: all 0.4s ease;
 }
 
 .nav-button {
-    padding: 12px 20px;
+    padding: 12px 24px;
     text-decoration: none;
     font-weight: 500;
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
     border: none;
@@ -89,7 +163,7 @@ header {
     border: 1px solid rgba(226, 232, 240, 0.8);
     position: relative;
     overflow: hidden;
-    white-space: nowrap; /* 버튼 텍스트가 줄바꿈되지 않도록 설정 */
+    white-space: nowrap;
 }
 
 .nav-button::before {
@@ -127,9 +201,12 @@ header {
     box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
 }
 
+/* 프로필 */
 .profile-section {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
+    z-index: 10;
 }
 
 .profile-circle {
@@ -185,241 +262,209 @@ header {
     font-weight: 500;
 }
 
-/*
-* Language Selector
-* 언어 선택 폼의 기본 스타일
-*/
-.languageSelect {
-    position: fixed;
-    top: 110px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 1100;
-    margin-top: 20px;
-}
-
-.languageSelect form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.languageSelect select, .languageSelect button {
-    height: 30px;
-    border-radius: 15%;
-    padding: 0 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-}
-
-.languageSelect button {
-    padding: 0 12px;
-    border: none;
-    background: #667eea;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.languageSelect button:hover {
-    background: #5a67d8;
-}
-
-/*
-* Responsive Design
-* 화면 크기에 따른 반응형 디자인
-*/
-
-/* 1200px 이하: 데스크톱 ~ 태블릿 전환 구간 */
-@media (max-width: 1200px) {
-    .main-nav {
-        gap: 6px;
+/* 태블릿 이하 */
+@media (max-width: 900px) {
+    header {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 15px 20px;
+        gap: 15px;
     }
-    
+
+    /* 로고 축소 */
+    .logo-wrapper img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .brand-name {
+        font-size: 20px;
+    }
+
+    /* 프로필 축소 */
+    .profile-circle {
+        width: 60px;
+        height: 60px;
+    }
+
+    /* 검색창 항상 표시 */
+    .search-placeholder {
+        display: none !important;
+    }
+
+    .header-search-form {
+        max-width: none !important;
+        flex-grow: 1 !important;
+    }
+
+    .header-search-form input[type="search"] {
+        font-size: 14px;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        cursor: text !important;
+        width: 300px;
+        margin-left: 100px;
+    }
+
+    /* 네비게이션 버튼 정렬 + 구분선 */
+    .search-and-nav {
+        flex-basis: 100%;
+        justify-content: center;
+        gap: 10px;
+        border-top: 1px solid #ddd; /* 구분선 */
+        padding-top: 10px;
+    }
+
+    .main-nav {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
     .nav-button {
         padding: 10px 16px;
         font-size: 12px;
     }
 }
 
-/* 900px 이하: 일반 태블릿 (가로/세로) */
-@media (max-width: 900px) {
-    header {
-        height: 100px;
-        padding: 0 20px;
-    }
-    
+/* 모바일 */
+@media (max-width: 480px) {
     body {
-        padding-top: 100px;
+        padding-top: 140px;
     }
-    
-    .logo-wrapper img {
-        width: 70px;
-        height: 70px;
-    }
-    
-    .brand-name {
-        font-size: 20px;
-        letter-spacing: 2px;
-    }
-    
-    .main-nav {
-        gap: 4px;
-    }
-    
-    .nav-button {
-        padding: 8px 12px;
-        font-size: 11px;
-        letter-spacing: 0.2px;
-    }
-    
-    .profile-circle {
-        width: 65px;
-        height: 65px;
-    }
+    header{
+        height: 220px !important;
+        }
 
-    .languageSelect {
-        top: 100px;
-    }
-}
-
-/* 768px 이하: 모바일 가로 모드 및 소형 태블릿 */
-@media (max-width: 768px) {
-    header {
-        height: 60px;
-        padding: 0 15px;
-    }
-    
-    body {
-        padding-top: 60px;
-    }
-    
     .logo-wrapper img {
         width: 40px;
         height: 40px;
     }
-    
+
     .brand-name {
         font-size: 16px;
-        letter-spacing: 1.5px;
     }
-    
-    .main-nav {
-        gap: 2px;
-    }
-    
-    .nav-button {
-        padding: 5px 8px;
-        font-size: 9px;
-    }
-    
+
     .profile-circle {
         width: 40px;
         height: 40px;
-        border-width: 2px;
-    }
-    
-    .languageSelect {
-        top: 60px;
-        margin-top: 10px;
-    }
-}
-
-/* 480px 이하: 일반 모바일 세로 모드 */
-@media (max-width: 480px) {
-    header {
-        height: 50px;
-        padding: 0 10px;
-    }
-    
-    body {
-        padding-top: 50px;
-    }
-
-    .logo-container {
-        gap: 10px;
-    }
-
-    .logo-wrapper img {
-        width: 30px;
-        height: 30px;
-    }
-
-    .brand-name {
-        font-size: 14px;
-        letter-spacing: 1px;
-    }
-
-    .main-nav {
-        display: flex;
-        gap: 5px;
     }
 
     .nav-button {
-        padding: 4px 8px;
-        font-size: 8px;
-        white-space: nowrap;
-    }
-
-    .profile-circle {
-        width: 35px;
-        height: 35px;
-    }
-
-    .languageSelect {
-        top: 50px;
-        right: 10px;
-        margin-top: 8px;
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-    
-    .languageSelect form {
-        gap: 6px;
-    }
-
-    .languageSelect select, .languageSelect button {
-        height: 25px;
-        font-size: 12px;
+        padding: 8px 12px;
+        font-size: 10px;
     }
 }
+
+
+
+@media (max-width: 600px) {
+    .nav-button { padding: 8px 12px; font-size: 11px; }
+    .brand-name { font-size: 18px; letter-spacing: 2px; }
+    .profile-circle { width: 50px; height: 50px; }
+}
+
+@media (max-width: 480px) {
+    body { padding-top: 140px; }
+    header { padding: 10px 15px; gap: 10px; }
+    .logo-wrapper img { width: 40px; height: 40px; }
+    .brand-name { font-size: 16px; letter-spacing: 1px; }
+    .profile-circle { width: 40px; height: 40px; }
+    .nav-button { padding: 6px 10px; font-size: 10px; }
+    .search-and-nav { flex-direction: column; align-items: stretch; }
+    .main-nav {
+        justify-content: center;
+        gap: 6px;
+        border-top: 1px solid rgba(0,0,0,0.15); /* 모바일 구분선 */
+        padding-top: 8px;
+        margin-top: 8px;
+    }
+.profile-section {
+    margin-left: auto;
+    align-self: flex-start;
+    position: relative;
+    top: -220px;
+}
+
+}
+
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-container">
-            <div class="logo-wrapper">
-                <a href="{% url 'home:main' %}">
-                    <img src="/static/img/Group 31.png" alt="Galatea Logo" style="width: 100px; height: 100px;">
-                </a>
-            </div>
-            <h1 class="brand-name">GALATEA</h1>
+<header>
+    <div class="logo-container">
+        <div class="logo-wrapper">
+            <a href="{% url 'home:main' %}">
+                <img src="/static/img/Group 31.png" alt="Galatea Logo" />
+            </a>
         </div>
-        
-        <nav class="main-nav">
+        <h1 class="brand-name">GALATEA</h1>
+    </div>
+
+ 
+
+    <div class="search-and-nav">
+        <form class="header-search-form" action="/search/" method="get" role="search" aria-label="{% trans '검색' %}">
+            <div class="search-placeholder" tabindex="0" aria-label="{% trans '검색창 열기' %}">{% trans "검색어를 입력하세요..." %}</div>
+            <input type="search" name="q" placeholder="{% trans '검색어를 입력하세요...' %}" aria-hidden="true" />
+        </form>
+
+        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}">
+            <a href="{% url 'logout' %}" class="nav-button">{% trans "로그아웃" %}</a>
             <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
             <a href="/cloning/" class="nav-button">{% trans "보이스 클로닝" %}</a>
             <a href="/make_voice/" class="nav-button">{% trans "보이스 만들기" %}</a>
             <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
-            <a href="/customer_ai/ai_name" class="nav-button special" style="margin-right: 190px;">{% trans "AI 만들기⊕" %}</a>
+            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
         </nav>
+    </div>
 
-        <div class="profile-section">
-            <a href="{% url 'mypage:mypage' %}">
-                <div class="profile-circle">
-                    {% if user.user_image %}
-                        <img src="{{ user.user_image.url }}" alt="{% trans '이미지 없음' %}" class="profile-avatar" />
-                    {% else %}
-                        <div class="profile-placeholder">{% trans "이미지 없음" %}</div>
-                    {% endif %}
-                </div>
-            </a>
-        </div>
-    </header>
+       <div class="profile-section">
+        <a href="{% url 'mypage:mypage' %}">
+            <div class="profile-circle" title="{% trans '내 프로필' %}">
+                {% if user.user_image %}
+                    <img src="{{user.user_image.url }}" alt="{% trans '프로필 이미지' %}" class="profile-avatar" />
+                {% else %}
+                    <div class="profile-placeholder">{% trans "이미지 없음" %}</div>
+                {% endif %}
+            </div>
+        </a>
+    </div>
+</header>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('.header-search-form');
+    const input = form.querySelector('input[type="search"]');
+    const placeholder = form.querySelector('.search-placeholder');
+
+    function expandSearch() {
+        form.classList.add('expanded');
+        input.setAttribute('aria-hidden', 'false');
+        input.focus();
+        placeholder.style.display = 'none';
+    }
+
+    function collapseSearch(e) {
+        if (!form.contains(e.target)) {
+            form.classList.remove('expanded');
+            input.setAttribute('aria-hidden', 'true');
+            placeholder.style.display = 'flex';
+            input.value = '';
+        }
+    }
+
+    placeholder.addEventListener('click', expandSearch);
+    placeholder.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            expandSearch();
+        }
+    });
+
+    document.addEventListener('click', collapseSearch);
+});
+</script>
 </body>
 </html>

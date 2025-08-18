@@ -9,4 +9,15 @@ urlpatterns = [
     path('main/', views.main, name='main'),
     path('logout/', views.user_logout, name='logout'),
     path('i18n/setlang/', set_language, name='set_language'),
+    path('follow/', views.follow_toggle, name = "toggle_follow"),
+    path('like/', views.like_toggle, name = 'like_toggle'),
+    path('llm/<int:llm_id>/', views.llm_intro, name='llm_intro'),
+    path('genres/', views.gerne_all, name= 'genre_all'),
+    path('search/', views.search_llm, name = 'search_llm'),
+    path('genres/<int:genres_id>', views.genre_detail, name='genres_detail'),
+    path('llm_sections/', views.llm_section, name='llm_section'),
+    path('comment_create/<int:llm_id>', views.comment_create, name="comment_create")
+
+    # path('like/<int:llm_id>/', views.like_toggle, name = "like_toggle"),
 ]
+

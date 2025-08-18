@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GALATEA Header - Logged In</title>
+  
+  
+  <div class="sidebar" id="sidebar">  <!-- id="sidebar" 추가 -->
+        <h1>{% trans '마이페이지' %}</h1>
+        <div class="sidebar-profile">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;" />
+            {% else %}
+                <p>{% trans '프로필 이미지 없음' %}</p>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃>' %}</a></li>
+            <li><a href="{% url 'home:main' %}">{% trans 'main 으로>' %}</a></li>
+            <li><a href="{% url 'mypage:mypage' %}">{% trans '프로필>' %}</a></li>
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans '내 AI 모델들>' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="return alert('{% trans '현재 커스터한 AI 가 없습니다.' %}')">{% trans '내 AI 모델들>' %}</a></li>
+            {% endif %}
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans 'voice id 목록>' %}</a></li>
+            <li><a href="{% url 'mypage:token' %}">{% trans '토큰 내역>' %}</a></li>
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans '내 커스텀>' %}</a></li>
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans '요청 글 목록>' %}</a></li>
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans '내 쿠폰>' %}</a></li>
+        </ul>
+    </div>
+</body>
+</html>

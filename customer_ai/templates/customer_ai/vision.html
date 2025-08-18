@@ -33,7 +33,12 @@
                 <label>👁️ VISION MODE</label>
             </div>
         </aside>
-
+         <div class="chat-container">
+    <div class="background" 
+         {% if llm.llm_background_image %}
+         style="background-image: url('{{ llm.llm_background_image.url }}');"
+         {% endif %}>
+    </div>
         <!-- 메인 채팅 영역 -->
         <main class="chat-container">
             <div class="chat-header">

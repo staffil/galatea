@@ -11,85 +11,9 @@
             display: flex;
         }
 
-        .sidebar {
-            width: 250px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 30px 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
 
-        .sidebar h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-
-        .sidebar-profile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar-profile-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #9f4bff, #b266ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(159, 75, 255, 0.3);
-        }
-
-        .sidebar-profile h3 {
-            color: #333;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-profile p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 10px;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 15px;
-            color: #555;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .sidebar-menu a:hover {
-            background-color: rgba(159, 75, 255, 0.1);
-            color: #9f4bff;
-        }
 
         .sidebar-menu a::after {
-            content: '>';
             font-size: 16px;
             color: #ccc;
         }
@@ -346,3 +270,5 @@ button{
             pointer-events: none;
             border-color: #ddd;
         }
+
+       

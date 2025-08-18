@@ -3,8 +3,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GALATEA Header - Logged Out</title>
     <style>
         * {
@@ -66,6 +66,28 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        .search-and-nav {
+            flex: 1 1 auto;
+            max-width: 500px;
+            margin: 0 20px;
+        }
+
+        .header-search-form input[type="search"] {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: 1.5px solid #667eea;
+            outline: none;
+            box-sizing: border-box;
+            color: #1a1a1a;
+        }
+
+        .header-search-form input[type="search"]::placeholder {
+            color: #4a5568;
+            user-select: none;
         }
 
         .auth-buttons {
@@ -150,6 +172,16 @@
                 letter-spacing: 2px;
             }
             
+            .search-and-nav {
+                max-width: 300px;
+                margin: 0 10px;
+            }
+            
+            .header-search-form input[type="search"] {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+            
             .auth-buttons {
                 gap: 10px;
             }
@@ -175,22 +207,6 @@
                 letter-spacing: 1.5px;
             }
         }
-
-        /* 데모 컨텐츠 */
-        .demo-content {
-            padding: 40px;
-            text-align: center;
-        }
-
-        .demo-content h2 {
-            color: #4a5568;
-            margin-bottom: 20px;
-        }
-
-        .demo-content p {
-            color: #718096;
-            line-height: 1.6;
-        }
     </style>
 </head>
 <body>
@@ -198,17 +214,22 @@
         <div class="logo-container">
             <div class="logo-wrapper">
                 <a href="{% url 'home:main' %}">
-                    <img src="/static/img/Group 31.png" alt="Galatea Logo">
+                    <img src="/static/img/Group 31.png" alt="Galatea Logo" />
                 </a>
             </div>
             <h1 class="brand-name">GALATEA</h1>
         </div>
-        
+
+        <div class="search-and-nav">
+            <form class="header-search-form" action="/search/" method="get" role="search" aria-label="{% trans '검색' %}">
+                <input type="search" name="q" placeholder="{% trans '검색어를 입력하세요...' %}" aria-label="{% trans '검색어 입력' %}" required />
+            </form>
+        </div>
+
         <nav class="auth-buttons">
             <a href="/register/login/" class="auth-button login-btn">{% trans "로그인" %}</a>
             <a href="/register/signup/" class="auth-button signup-btn">{% trans "회원가입" %}</a>
         </nav>
     </header>
-
 </body>
 </html>

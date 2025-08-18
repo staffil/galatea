@@ -1,0 +1,68 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <script src="{% static 'js/home/main.js' %}"></script>
+</head>
+<body>
+
+    <!-- 배경 원들 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+    <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+<h2>{% trans "장르" %}: {{ genres.name }}</h2>
+    
+        <!-- LLM 추천 섹션 -->
+        <div class="main-content">
+            <div class="llm-container">
+                <h2 class="section-title">추천</h2>
+                <div class="llm-cards-container">
+                    {% for item in llm_list|slice:":10" %}
+                    <div class="llm-card" onclick="openModal({{ item.id }})">
+                        <div class="llm-card-body">
+                            <div class="llm-image-container">
+                                {% if item.llm_image %}
+                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지">
+                                {% endif %}
+                            </div>
+                            <div class="llm-name">{{ item.title }}</div>
+                            <div class="genre-tags">
+                                {% for genre in item.genres.all %}
+                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.display_name }}</div>
+                                {% empty %}
+                                    <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+</body>
+</html>

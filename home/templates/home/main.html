@@ -8,83 +8,433 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/home/main.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <script src="{% static 'js/home/main.js' %}"></script>
 </head>
-<body>
+<style>
+
+/* 모달 전체 배경 */
+#llm-modal .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+}
+
+/* 모달 컨텐츠 */
+#llm-modal .modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 화면 중앙으로 이동 */
+
+    height: 700px;
+    background-color: #222;
+    border-radius: 15px;
+    overflow-y: auto;   /* 내용이 넘치면 세로 스크롤 */
+    overflow-x: hidden;
+   
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* 닫기 버튼 */
+#llm-modal .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 100;
+    color: aliceblue;
+}
+
+
+
+</style>
+
+</style>
+
+<body >
+
+
+    <!-- 배경 원들 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
-<header>
-    {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
-    {% else %}
-        {% include "common/loginHeader.html" %}
-    {% endif %}
-</header>
-  
-    <!-- 헤더 바로 아래, 오른쪽 하단 고정 다국어 선택 폼 -->
-    <div class="languageSelect" style="
-        position: fixed;
-        top: 110px;  /* header 높이 바로 아래 */
-        right: 20px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 10px 15px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        z-index: 1100;
-        margin-top: 20px;
-    ">
-        <form action="{% url 'home:set_language' %}" method="post" style="display: flex; align-items: center; gap: 8px;">
+
+    <!-- 생생한 음성 대화 사이드바 -->
+    <div class="voice-sidebar" id="voiceSidebar" style="margin-top: 50px;">
+        <div class="voice-sidebar-header">
+            <h2 class="voice-sidebar-title">🎵 {% trans "생생한 음성 대화" %}</h2>
+            <button onclick="window.location.href='#'">목소리 전체보기</button>
+        </div>
+        <div class="voice-sidebar-content">
+            {% for voice in voice_list|slice:":7" %}
+                <div class="voice-wrapper">
+                    <div class="voice-header">
+                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
+                            <div class="play-overlay">
+                                <div class="play-icon"></div>
+                            </div>
+                        </div>
+                        <div class="voice-info">
+                            <input type="hidden" value="{{ voice.voice_id }}">
+                            <p>{{ voice.voice_name }}</p>
+                            <div class="voice-progress" onclick="seekAudio(event, this)">
+                            <div class="voice-progress-bar"></div>
+                        </div>
+                        <div class="voice-bottom">
+                            <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button>
+                        </div>
+                        
+                        </div>
+                    </div>
+                    <div class="voice-controls">
+
+
+                    </div>
+                    <audio class="voice-audio">
+                        <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                    </audio>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 사이드바 토글 버튼 -->
+    <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+        <div class="sidebar-toggle-icon">◀</div>
+    </div>
+
+    <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <!-- 언어 선택기 -->
+    <div class="languageSelect">
+        <form action="{% url 'home:set_language' %}" method="post">
             {% csrf_token %}
-            <select name="language" style="height: 30px; border-radius: 15%; padding: 0 8px;">
+            <select name="language">
                 {% for code, name in languages %}
                     <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}>{{ name }}</option>
                 {% endfor %}
             </select>
             <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-            <button type="submit" style="
-                height: 30px;
-                border-radius: 15%;
-                padding: 0 12px;
-                border: none;
-                background: #667eea;
-                color: white;
-                font-weight: 600;
-                cursor: pointer;
-            ">
-                {% trans "언어 바꾸기" %}
-            </button>
+            <button type="submit">{% trans "언어 바꾸기" %}</button>
         </form>
+
+  
     </div>
 
-    <div class="main-content">
-        <h2 class="section-title">{% trans "컨셉에 사로집힌 AI와 대화하기" %}</h2>
-        <div class="character-cards-container">
-            {% for celebrity in celebrity_list %}
-            <div class="character-card pink">
-                <div class="status-badge">{% trans "온라인" %}</div>
-                <div class="card-header">
-                    <h3 class="celebrity-name">{{ celebrity.display_name }}</h3>
-                </div>
-                <div class="card-content">
-                    <div class="character-image">
-                        {% if celebrity.celebrity_image %}
-                            <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.display_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'" />
-                        {% else %}
-                            <img src="https://via.placeholder.com/120x120/FFB6C1/FFFFFF?text=No+Image" alt="{% trans '기본 이미지' %}" />
-                        {% endif %}
+    <div class="helpdesk" style="margin-top: 100px;">
+      <a href="{% url 'helpdesk:Faq' %}" class="faq">FAQ</a>
+        <a href="{% url 'helpdesk:request' %}" class="request">요청하기</a>
+        <a href="{% url 'helpdesk:notice' %}" class="notice">공지사항</a>
+    </div>
+    <main>
+
+
+        <!-- 뉴스 섹션 -->
+        <div class="main-content" id="mainContent">
+            <h2 class="section-title">뉴스</h2>
+            <div class="news-banner">
+                <button class="slider-btn prev" onclick="slideNews(-1)">‹</button>
+                <button class="slider-btn next" onclick="slideNews(1)">›</button>
+                
+                <div class="news-tab">
+                    {% for news in news_list %}
+                    <div>
+                        <img src="{{ news.news_img.url }}" alt="">
                     </div>
-                    <div class="character-description">
-                        {{ celebrity.display_description }}
-                    </div>
-                    <button class="chat-button" onclick="location.href='/celebrity/{{ celebrity.id }}/'">{% trans "대화 시작" %}</button>
+                    {% endfor %}
                 </div>
+                
+                <div class="slider-indicators" id="indicators"></div>
+            </div>
+        </div>
+
+
+<!-- celebrity voice 목록 -->
+<div class="cv-main-content">
+    <h2 class="cv-section-title">이거 한번 사용해 보세요!!</h2>
+    
+    <div class="cv-container">
+        <div class="cv-scroll">
+            {% for voice in celebrity_voice_list %}
+                <div class="voice-wrapper">
+                    <div class="cv-header">
+                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
+                            {% if voice.celebrity_voice_image %}
+                                <img src="{{ voice.celebrity_voice_image.url }}" alt="">
+                            {% else %}
+                                <img src="{% static 'images/default_voice.png' %}" alt="">
+                            {% endif %}
+                            <div class="cv-play-overlay">
+                                <div class="cv-play-icon"></div>
+                            </div>
+                        </div>
+                        <div class="cv-info" >
+                            <p >{{ voice.name }}</p>
+                            <input type="hidden" value="{{ voice.celebrity_voice_id }}">
+                            <p >{{ voice.voice_name }}</p>
+                        </div>
+                    </div>
+                    <div class="voice-progress" onclick="seekAudio(event, this)">
+                        <div class="cv-progress-bar"></div>
+                    </div>
+                    <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button>
+                    {% if voice.sample_url %}
+                        <audio class="voice-audio" controls>
+                            <source src="{{ voice.sample_url.url }}" type="audio/mpeg">
+                        </audio>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     </div>
+    
+</div>
+
+
+
+        <!-- 장르 섹션 -->
+        <div class="main-content">
+            <div class="genre-container">
+                <h2 class="section-title">{% trans "장르" %}</h2>
+                <div class="genre-tags-container">
+                    {% for genre in genre_list|slice:":10" %}
+                    <a href="{% url 'home:genres_detail' genre.id %}">
+
+                        <div class="genre-tag-box">
+                            {% if genre.genre_image %}
+                                <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}">
+                            {% else %}
+                                <img src="{% static 'images/default_genre.png' %}" alt="{{ genre.name }}">
+                            {% endif %}
+                            <div class="genre-tag-overlay">{{ genre.name }}</div>
+                        </div>
+                        </a>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'home:genre_all' %}" class="view-all-btn">전체 보기</a>
+            </div>
+        </div>
+
+        <!-- 컨셉 섹션 -->
+        <div class="main-content">
+            <div class="character-container">
+                <h2 class="section-title">{% trans "컨셉에 사로집힌 AI와 대화하기" %}</h2>
+                <div class="character-cards-container">
+                    {% for celebrity in celebrity_list %}
+                    <div class="character-card">
+                        <div class="card-content">
+                            <div class="character-image">
+                                {% if celebrity.celebrity_image %}
+                                    <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.display_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'" />
+                                {% else %}
+                                    <img src="https://via.placeholder.com/60x60/FFB6C1/FFFFFF?text=No+Image" alt="{% trans '기본 이미지' %}" />
+                                {% endif %}
+                            </div>
+                            <div class="character-description">{{ celebrity.display_name }}</div>
+                            <button class="chat-button" onclick="location.href='/celebrity/{{ celebrity.id }}/'">{% trans "대화 시작" %}</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+        <!-- LLM 추천 섹션 -->
+        <div class="main-content">
+            <div class="llm-container">
+                <h2 class="section-title">추천</h2>
+                <div class="llm-cards-container">
+                    {% for item in llm|slice:":10" %}
+                    <div class="llm-card" onclick="openModal({{ item.id }})">
+                        <div class="llm-card-body">
+                            <div class="llm-image-container">
+                                {% if item.llm_image %}
+                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지">
+                                {% endif %}
+                            </div>
+                            <div class="llm-name">{{ item.title }}</div>
+                            <div class="genre-tags">
+                                {% for genre in item.genres.all %}
+                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.display_name }}</div>
+                                {% empty %}
+                                    <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="{% url 'home:llm_section' %}" class="view-all-btn">전체 보기</a>
+            </div>
+        </div>
+
+
+
+
+        <!-- 인기있는 팔로워 섹션 -->
+        <div class="main-content">
+            <div class="character-container">
+                <h2 class="section-title">인기있는 팔로워</h2>
+                <div class="character-cards-container">
+                    <!-- 인기 팔로워 카드들 (기존 celebrity_list 재사용) -->
+                    {% for celebrity in celebrity_list|slice:"5:10" %}
+                    <div class="character-card">
+                        <div class="card-header">
+                            <h3 class="celebrity-name">{{ celebrity.display_name }}</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="character-image">
+                                {% if celebrity.celebrity_image %}
+                                    <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.display_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'" />
+                                {% else %}
+                                    <img src="https://via.placeholder.com/60x60/FFB6C1/FFFFFF?text=No+Image" alt="{% trans '기본 이미지' %}" />
+                                {% endif %}
+                            </div>
+                            <div class="character-description">{{ celebrity.display_description }}</div>
+                            <button class="chat-button" onclick="location.href='/celebrity/{{ celebrity.id }}/'">{% trans "대화 시작" %}</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <a href="#" class="view-all-btn">전체 보기</a>
+            </div>
+        </div>
+<script>
+document.addEventListener('click', (e) => {
+    const followBtn = e.target.closest('.glt2-follow-btn');
+    if (!followBtn) return;
+
+    const userId = followBtn.dataset.id;
+    if (!userId) return;
+
+    fetch("{% url 'home:toggle_follow' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `user_id=${encodeURIComponent(userId)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'follow') {
+            followBtn.textContent = 'Following';
+            followBtn.classList.add('following');
+        } else if (data.status === 'unfollow') {
+            followBtn.textContent = 'Follow';
+            followBtn.classList.remove('following');
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error('팔로우 토글 오류:', err));
+});
+
+
+
+// like btn
+document.addEventListener('click', (e)=>{
+    const likeBtn = e.target.closest('.glt2-like-btn');
+    if (!likeBtn) return;
+
+    const userId = likeBtn.dataset.id;
+
+    fetch("{% url 'home:like_toggle' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `llm_id=${userId}`
+    })
+    .then(response => response.json())
+    .then(data=>{
+        if (data.status === 'like'){
+            likeBtn.textContent = '❤️';
+        } else if(data.status === 'unlike'){
+            likeBtn.textContent = '♡';
+        } else{
+            alert(data.message)
+        }
+    })
+    .catch(err => console.error('좋아요 토글 오류:', err))
+})
+
+    // 카드 클릭 시 모달 열기
+    document.querySelectorAll('.glt2-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            // 버튼 클릭이면 모달 열지 않음
+            if (e.target.closest('.glt2-follow-btn') || e.target.closest('.glt2-like-btn') || e.target.closest('.glt2-chat-btn')) return;
+
+            // 카드 내용 모달로 복사
+            modalContent.innerHTML = card.innerHTML;
+            modalOverlay.style.display = 'flex';
+        });
+    });
+  // LLM 모달
+    function openModal(llm_id) {
+        const modalHTML = `
+        <div id="llm-modal">
+            <div class="modal-overlay" onclick="closeModal()"></div>
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">X</button>
+                <div id="llm-container" class="llm-container"></div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+        fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('llm-modal');
+        if (modal) modal.remove();
+    }
+
+    // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        initNewsSlider();
+    });
+  
+
+  
+</script>
+
+    </main>
+
+<footer>
+
+</footer>
+    
 </body>
 </html>

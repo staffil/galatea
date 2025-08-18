@@ -1,0 +1,60 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "요청 상세 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/helpdesk/request.css' %}">
+</head>
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <main class="detail-container">
+        <div class="detail-card">
+            <h1 class="detail-title">
+                {{ request_list.title }}
+                {% if request_list.is_secret %}
+                    <span style="color:red; font-size:0.9rem;">[비밀글]</span>
+                {% endif %}
+            </h1>
+            <div class="detail-meta">
+                {{ request_list.created_at|date:"Y-m-d H:i" }}
+                {% if request_list.is_secret %}
+                    | 작성자 전용
+                {% endif %}
+            </div>
+            <div class="detail-content">
+                {{ request_list.content }}
+            </div>
+        </div>
+
+{% if request.user.is_superuser %}
+<div class="response-form-container">
+    <h2>관리자 응답 작성</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ response_form.as_p }}
+        <button type="submit" class="submit-btn">{% trans "응답 저장" %}</button>
+    </form>
+</div>
+{% elif request_list.response %}
+<div class="detail-card" style="margin-top:20px;">
+    <h3>관리자 응답</h3>
+    <div class="detail-content">
+        {{ request_list.response }}
+    </div>
+</div>
+{% endif %}
+
+    </main>
+</body>
+</html>

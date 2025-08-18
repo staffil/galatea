@@ -23,3 +23,5 @@ uploads/ # image_ea265d.png에 uploads 폴더가 보입니다. 확인 필요.
 .DS_Store
 .idea/ # IDE specific files
 *.log
+
+galatea/media/

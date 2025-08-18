@@ -6,7 +6,7 @@ urlpatterns = [
     path('upload_audio/', views.upload_audio, name='upload_audio'),
     path('generate_response/', views.generate_response, name='generate_response'),
 
-    path('chat/<int:llm_id>', views.chat_view, name='chat_view'),
+    path('chat/<int:llm_id>/', views.chat_view, name='chat_view'),
 
     path('vision/<int:llm_id>/', views.vision_view, name='vision_view'),
     path('make_ai/', views.make_ai, name='make_ai'),

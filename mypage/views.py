@@ -1,15 +1,16 @@
 from django.shortcuts import render ,redirect,get_object_or_404
 from home.models import Users
 from django.contrib.auth.decorators import login_required
-from user_auth.models import LLM, Voice
 from django.core.files.storage import default_storage
 from django.utils import timezone
 import os
+from mypage.models import LLM
 from makeVoice.models import VoiceList
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from payment.models import Payment, PaymentMethod, PaymentRank, PaymentStats,Token, TokenHistory, TotalToken
 
 # Create your views here.
 @login_required(login_url='/register/login/')
@@ -61,10 +62,11 @@ def my_voice(request):
     user = request.user
 
     voice_list = VoiceList.objects.filter(user=request.user).order_by('created_at')
-    paginator = Paginator(voice_list, 10) 
+    paginator = Paginator(voice_list, 5) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number) 
     llm = LLM.objects.filter(user=user).first()
+
 
     context = {
         'voice_list': page_obj,
@@ -83,6 +85,15 @@ def my_ai_models(request, llm_id):
         "llm":llm
     }
     return render(request, "mypage/my_ai_models.html", context)
+
+@login_required
+def toggle_voice_public(request, voice_id):
+    voice = get_object_or_404(VoiceList, id=voice_id, user=request.user)
+
+    voice.is_public = not voice.is_public
+    voice.save()
+    return redirect(request.META.get('HTTP_REFERER', 'mypage:my_voice'))
+
 
 from django.views.decorators.http import require_POST
 
@@ -116,9 +127,9 @@ def my_ai_models_update(request, llm_id):
 
         if voice_id:
             try:
-                voice = Voice.objects.get(voice_id=voice_id)
-            except Voice.DoesNotExist:
-                voice = Voice.objects.create(user=request.user, voice_id=voice_id)
+                voice = VoiceList.objects.get(voice_id=voice_id)
+            except VoiceList.DoesNotExist:
+                voice = VoiceList.objects.create(user=request.user, voice_id=voice_id)
             llm.voice = voice
 
         if stability not in [None, ""]:
@@ -146,7 +157,7 @@ def my_ai_models_update(request, llm_id):
         return redirect("mypage:my_ai_models", llm_id=llm.id)
 
     voice_list = VoiceList.objects.filter(user=request.user).order_by('created_at')
-    paginator = Paginator(voice_list, 10)
+    paginator = Paginator(voice_list, 3)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -183,3 +194,77 @@ def upload_profile_image(request):
         messages.error(request, "이미지 파일을 선택해주세요.")
 
     return redirect("mypage:mypage")
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from datetime import datetime, timedelta
+from django.utils.safestring import mark_safe
+import json
+from django.db.models.functions import TruncDate
+
+@login_required
+def personal_token(request):
+    user = request.user
+
+    # GET 파라미터로 날짜 범위 받기, 없으면 최근 20일
+    end_date_str = request.GET.get('end_date')
+    start_date_str = request.GET.get('start_date')
+
+    today = timezone.localdate()
+
+    # 날짜 파싱
+    try:
+        end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date() if end_date_str else today
+    except ValueError:
+        end_date = today
+
+    try:
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date() if start_date_str else end_date - timedelta(days=20)
+    except ValueError:
+        start_date = end_date - timedelta(days=20)
+
+    # timezone-aware datetime
+    start_datetime = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
+    end_datetime = timezone.make_aware(datetime.combine(end_date, datetime.max.time()))
+
+    # 일별 토큰 사용량 집계 (consume)
+    token_daily_qs = (
+        TokenHistory.objects
+        .filter(
+            user=user,
+            change_type=TokenHistory.CONSUME,
+            created_at__gte=start_datetime,
+            created_at__lte=end_datetime
+        )
+        .annotate(day=TruncDate('created_at', tzinfo=timezone.get_current_timezone()))
+        .values('day')
+        .annotate(daily_usage=Sum('amount'))
+        .order_by('day')
+    )
+
+    # 날짜별 사용량 dict
+    usage_dict = {t['day'].strftime("%Y-%m-%d"): t['daily_usage'] for t in token_daily_qs if t['day']}
+
+    # 전체 날짜 범위 채우기 (0 포함)
+    labels = []
+    data = []
+    current_date = start_date
+    while current_date <= end_date:
+        date_str = current_date.strftime("%Y-%m-%d")
+        labels.append(date_str)
+        data.append(usage_dict.get(date_str, 0))
+        current_date += timedelta(days=1)
+
+    # 결제 정보
+    payments = Payment.objects.all()
+
+    context = {
+        'labels': labels,
+        'data': data,
+        'start_date': start_date.strftime("%Y-%m-%d"),
+        'end_date': end_date.strftime("%Y-%m-%d"),
+        'payments': payments,
+    }
+
+    return render(request, 'mypage/token.html', context)

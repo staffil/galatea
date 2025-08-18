@@ -8,32 +8,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans "마이페이지 - GALATEA" %}</title>
     <link rel="stylesheet" href="{% static 'css/mypage/mypage.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 </head>
 <body>
-    <div class="sidebar">
-        <h1>{% trans "마이페이지" %}</h1>
-        <div class="sidebar-profile">
-            {% if user.user_image %}
-                <img src="{{ user.user_image.url }}" alt="{% trans '프로필 이미지' %}" style="width: 150px; height: 150px; border-radius: 50%;">
-            {% else %}
-                <p>{% trans "프로필 이미지 없음" %}</p>
-            {% endif %}
 
-            <h3>{{ user.nickname }}</h3>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="{% url 'logout' %}">{% trans "로그아웃" %}</a></li>
-            <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:mypage' %}">{% trans "프로필" %}</a></li>
-            {% if llm %}
-                <li><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans "My AI models" %}</a></li>
-            {% else %}
-                <li><a href="#" onclick="return alert('{% trans "현재 커스터한 AI 가 없습니다." %}')">{% trans "My AI models" %}</a></li>
-            {% endif %}
-            <li><a href="{% url 'mypage:my_voice' %}">{% trans "voice id 목록" %}</a></li>
-            <li><a href="#">{% trans "크레딧 목록" %}</a></li>
-            <li><a href="{% url 'home:main' %}">{% trans "main 으로" %}</a></li>
-        </ul>
-    </div>
+   <!-- 배경 원형 효과 (distribute.css에서 사용) -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+          {% include "common/sidebar.html" %}
+
 
     <div class="main-content">
         <div class="profile-section">
@@ -69,31 +66,12 @@
                 </div>
             </div>
         </div>
+
     </div>
+
+    <script src="{% static 'js/sidebar.js' %}"></script>
+
 </body>
 </html>
 
-<!--
-<div class="payment-section">
-    <div class="payment-header">
-        <h3>{% trans "결제 내역" %}</h3>
-        <div class="calendar-icon">📅</div>
-    </div>
-    
-    <table class="payment-table">
-        <thead>
-            <tr>
-                <th>{% trans "날짜" %}</th>
-                <th>{% trans "결제 방식" %}</th>
-                <th>{% trans "상태" %}</th>
-                <th>{% trans "결제 금액" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td colspan="4" class="empty-state">{% trans "결제 내역이 없습니다." %}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
--->
+

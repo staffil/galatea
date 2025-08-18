@@ -1,365 +1,1150 @@
-    :root {
-            --pink-bg-light: rgba(255, 182, 193, 0.2);
-            --purple-bg-light: rgba(221, 160, 221, 0.2);
-            --blue-bg-light: rgba(173, 216, 230, 0.2);
-            --text-color: #333;
-            --main-pink: #F359DE;
+:root {
+    --main-pink: #F359DE;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --gradient-pink: linear-gradient(135deg, #F359DE 0%, #E91E63 50%, #9C27B0 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans KR', sans-serif;
+    background-color: #ffffff;
+    min-height: 100vh;
+    padding-top: 80px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 배경 원들 */
+.circle-bg {
+    position: fixed;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.circle-1 { width: 3000px; height: 3000px; background: rgba(243, 89, 222, 0.12); }
+.circle-2 { width: 2400px; height: 2400px; background: rgba(243, 89, 222, 0.28); }
+.circle-3 { width: 1800px; height: 1800px; background: rgba(243, 89, 222, 0.51); }
+.circle-4 { width: 1200px; height: 1200px; background: rgba(243, 89, 222, 0.28); }
+.circle-5 { 
+    width: 800px; 
+    height: 800px; 
+    background: #F359DE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 사이드바 스타일 */
+.voice-sidebar {
+    position: fixed;
+    left: 0;
+    top: 80px;
+    bottom: 0;
+    width: 350px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    border-right: 1px solid var(--glass-border);
+    z-index: 100;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+.voice-sidebar.collapsed {
+    transform: translateX(-310px);
+}
+
+.voice-sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    z-index: 10;
+}
+
+.voice-sidebar-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: rgb(158, 76, 152);
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.voice-sidebar-content {
+    padding: 20px;
+}
+
+.voice-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    height: 80px;
+}
+
+.voice-wrapper:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.voice-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.voice-character {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-bottom: 10px;
+}
+
+.voice-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 18px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.voice-character:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-icon {
+    width: 0;
+    height: 0;
+    border-left: 5px solid white;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    margin-left: 1px;
+}
+
+.pause-icon {
+    width: 8px;
+    height: 8px;
+    position: relative;
+}
+
+.pause-icon::before,
+.pause-icon::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 8px;
+    background: white;
+}
+
+.pause-icon::before { left: 1px; }
+.pause-icon::after { right: 1px; }
+
+.voice-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.voice-info p {
+    margin: 0 0 8px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.voice-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.voice-progress {
+    width: 50%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.voice-progress-bar {
+    height: 100%;
+    background: var(--gradient-pink);
+    width: 0%;
+    border-radius: 2px;
+    transition: width 0.1s;
+}
+
+.voice-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.voice-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.copy-id-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 12px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    left: 150px;
+    bottom: 20px;
+}
+
+.copy-id-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.voice-audio {
+    display: none;
+}
+/* 전체 카드 컨테이너 */
+.celebrity-voice-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 25px;
+    background: #1e1e2f;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 15px;
+}
+
+.celebrity-voice-wrapper:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+
+/* 아바타 이미지 */
+.celebrity-voice-character {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #fff;
+    cursor: pointer;
+    position: relative;
+}
+
+.celebrity-voice-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 재생 버튼 오버레이 */
+.celebrity-voice-play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.celebrity-voice-character:hover .celebrity-voice-play-overlay {
+    opacity: 1;
+}
+
+.celebrity-voice-play-icon {
+    width: 0;
+    height: 0;
+    border-left: 8px solid #fff;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+/* 정보 영역 */
+.celebrity-voice-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.celebrity-voice-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.celebrity-voice-voice-name {
+    font-size: 0.85rem;
+    color: #ccc;
+    margin-bottom: 8px;
+}
+
+/* 진행 바 */
+.celebrity-voice-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.celebrity-voice-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff6ec4, #7873f5);
+    border-radius: 3px;
+    transition: width 0.2s ease;
+}
+
+/* 버튼 */
+.celebrity-voice-copy-id-btn {
+    background: #444;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.celebrity-voice-copy-id-btn:hover {
+    background: #666;
+}
+
+/* 오디오 플레이어 숨김 */
+.celebrity-voice-audio {
+    display: none;
+}
+
+/* 사이드바 토글 버튼 */
+.sidebar-toggle {
+    position: fixed;
+    left: 350px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 101;
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle.collapsed {
+    left: 40px;
+}
+
+.sidebar-toggle-icon {
+    color: white;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-toggle.collapsed .sidebar-toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* 언어 선택기 */
+.languageSelect {
+    position: fixed;
+    top: 110px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 20px;
+    z-index: 1100;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+}
+
+.languageSelect form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.languageSelect select {
+    height: 36px;
+    border-radius: 12px;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+    font-family: inherit;
+    font-weight: 500;
+    color: #333;
+}
+
+.languageSelect button {
+    height: 36px;
+    border-radius: 12px;
+    padding: 0 16px;
+    border: none;
+    background: var(--gradient-pink);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* 메인 컨테이너 */
+.main-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto 40px auto;
+    padding: 0 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.main-content.expanded {
+    margin-left: 60px;
+}
+
+/* 섹션 타이틀 */
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    text-align: left;
+    margin: 40px 0 20px 0;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 뉴스 섹션 */
+.news-banner {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    height: 500px;
+    margin-bottom: 20px;
+}
+
+.news-tab {
+    display: flex;
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.news-tab > div {
+    flex: 0 0 100%;
+    width: 100%;
+}
+
+.news-tab img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* 슬라이더 버튼 */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #333;
+    z-index: 10;
+}
+
+.slider-btn.prev { left: 10px; }
+.slider-btn.next { right: 10px; }
+
+/* 인디케이터 */
+.slider-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+/* 장르 섹션 */
+.genre-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.genre-tags-container {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 15px 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.genre-tags-container::-webkit-scrollbar {
+    display: none;
+}
+
+.genre-tag-box {
+    position: relative;
+    flex: 0 0 auto;
+    width: 130px;
+    height: 160px;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.genre-tag-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.genre-tag-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 15px 10px;
+    text-align: center;
+}
+        .genre-tag-box:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-            min-height: 100vh;
-            padding-top: 80px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .circle-bg {
-            position: absolute;
-            border-radius: 50%;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-        }
-
-        .circle-1 {
-            width: 3000px;
-            height: 3000px;
-            background: rgba(243, 89, 222, 0.12);
-        }
-
-        .circle-2 {
-            width: 2400px;
-            height: 2400px;
-            background: rgba(243, 89, 222, 0.28);
-        }
-
-        .circle-3 {
-            width: 1800px;
-            height: 1800px;
-            background: rgba(243, 89, 222, 0.51);
-        }
-
-        .circle-4 {
-            width: 1200px;
-            height: 1200px;
-            background: rgba(243, 89, 222, 0.28);
-        }
-
-        .circle-5 {
-            width: 800px;
-            height: 800px;
-            background: #F359DE;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .circle-5 img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 50%;
-        }
-
-        .main-content {
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-            margin: 90px auto 50px auto;
-        }
-
-        .section-title {
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #333;
-            text-align: left;
-            margin-bottom: 40px;
-            padding-left: 20px;
-        }
-
-        .character-cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 35px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .character-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
-            border-radius: 25px;
-            padding: 0;
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.1),
-                0 1px 8px rgba(0, 0, 0, 0.06);
-            text-align: center;
-            width: 100%;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .character-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.6s;
-        }
-
-        .character-card:hover::before {
-            left: 100%;
-        }
-
-        .character-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.15),
-                0 5px 15px rgba(243, 89, 222, 0.2);
-            cursor: pointer;
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, #F359DE, #E91E63);
-            color: white;
-            padding: 25px 20px;
-            margin: 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            transform: rotate(45deg);
-            transition: all 0.3s ease;
-        }
-
-        .character-card:hover .card-header::before {
-            transform: rotate(45deg) scale(1.2);
-        }
-
-        .celebrity-name {
-            font-size: 1.6rem;
-            font-weight: 900;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 1;
-        }
-
-        .card-content {
-            padding: 30px 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-grow: 1;
-            position: relative;
-        }
-
-        .character-image {
-            position: relative;
-            margin-bottom: 25px;
-        }
-
-        .character-image img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border: 4px solid #fff;
-            box-shadow: 
-                0 8px 25px rgba(0, 0, 0, 0.15),
-                0 0 0 2px rgba(243, 89, 222, 0.3);
-            transition: all 0.4s ease;
-        }
-
-        .character-card:hover .character-image img {
+        .genre-tag-box:hover img {
             transform: scale(1.1);
-            box-shadow: 
-                0 12px 35px rgba(0, 0, 0, 0.2),
-                0 0 0 4px rgba(243, 89, 222, 0.5);
         }
 
-        .character-image::after {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            right: -8px;
-            bottom: -8px;
-            border-radius: 50%;
-            background: conic-gradient(#F359DE, #E91E63, #9C27B0, #673AB7, #F359DE);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s ease;
+        .genre-tag-box:hover .genre-tag-overlay {
+            transform: translateY(0);
         }
 
-        .character-card:hover .character-image::after {
-            opacity: 0.7;
-            animation: rotate 3s linear infinite;
-        }
+/* 컨셉 섹션 */
+.character-container {
+    position: relative;
+    margin-bottom: 20px;
+}
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+.character-cards-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 15px 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
 
-        .character-description {
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 1rem;
-            line-height: 1.7;
-            color: #555;
-            text-align: left;
-            background: rgba(248, 249, 250, 0.8);
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 4px solid #F359DE;
-            position: relative;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-        }
+.character-cards-container::-webkit-scrollbar {
+    display: none;
+}
 
-        .character-description::before {
-            content: '"';
-            font-size: 3rem;
-            color: #F359DE;
-            position: absolute;
-            top: -10px;
-            left: 10px;
-            font-family: Georgia, serif;
-            opacity: 0.3;
-        }
+.character-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    overflow: hidden;
+    min-width: 200px;
+    max-width: 200px;
+    flex: 0 0 200px;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
 
-        .chat-button {
-            margin-top: 25px;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #F359DE, #E91E63);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(243, 89, 222, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
+.character-card:hover {
+    transform: translateY(-5px);
+}
 
-        .chat-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.6s;
-        }
+.card-header {
+    background: var(--gradient-pink);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
 
-        .chat-button:hover::before {
-            left: 100%;
-        }
+.celebrity-name {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
 
-        .chat-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(243, 89, 222, 0.4);
-        }
+.card-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 
-        .status-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #4CAF50;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            animation: pulse 2s infinite;
-        }
+.character-image {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
-        }
+.character-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
 
-        /* 카드별 색상 테마 */
-        .character-card.pink .card-header {
-            background: linear-gradient(135deg, #FF6B9D, #F359DE);
-        }
+.character-description {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    height: 80px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
 
-        .character-card.purple .card-header {
-            background: linear-gradient(135deg, #9C27B0, #673AB7);
-        }
+.chat-button {
+    background: var(--gradient-pink);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: auto;
+}
 
-        .character-card.blue .card-header {
-            background: linear-gradient(135deg, #2196F3, #3F51B5);
-        }
+/* LLM 추천 섹션 */
+.llm-container {
+    position: relative;
+    margin-bottom: 20px;
+}
 
-        .character-card.pink .character-description {
-            border-left-color: #FF6B9D;
-        }
+.llm-cards-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 15px 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
 
-        .character-card.purple .character-description {
-            border-left-color: #9C27B0;
-        }
+.llm-cards-container::-webkit-scrollbar {
+    display: none;
+}
 
-        .character-card.blue .character-description {
-            border-left-color: #2196F3;
-        }
+.llm-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    overflow: hidden;
+    min-width: 220px;
+    max-width: 220px;
+    flex: 0 0 220px;
+    height:260px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .section-title {
-                font-size: 1.8rem;
-                text-align: center;
-                padding-left: 0;
-            }
+.llm-card:hover {
+    transform: translateY(-5px);
+}
 
-            .character-cards-container {
-                grid-template-columns: 1fr;
-                gap: 25px;
-                padding: 10px;
-            }
+.llm-card-body {
+    padding: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
-            .character-card {
-                min-height: 380px;
-            }
+.llm-image-container {
+    width: 100%;
+    height: 120px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
 
-            .celebrity-name {
-                font-size: 1.4rem;
-            }
+.llm-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-            .character-description {
-                font-size: 0.9rem;
-                padding: 15px;
-            }
-        }
+.llm-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.genre-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.genre-tag {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: white;
+}
+
+/* 전체 보기 버튼 */
+.view-all-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.view-all-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* a css */
+.helpdesk {
+  position: fixed;       /* 화면 고정 */
+  top: 100px;            /* 화면 위에서 위치 조정 */
+  right: 20px;           /* 화면 맨 오른쪽 */
+  display: flex;
+  flex-direction: column; /* 세로 나열 */
+  align-items: flex-end;  /* 오른쪽 정렬 */
+  gap: 10px;              /* 버튼 간격 */
+  z-index: 1000;          /* 다른 요소 위로 */
+}
+
+.helpdesk a {
+  display: block;
+  min-width: 120px;       /* 버튼 최소 너비 */
+  text-align: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+/* FAQ 버튼 */
+.helpdesk a.faq {
+  background: rgba(63, 81, 181, 0.1);
+  border: 1px solid rgba(63, 81, 181, 0.3);
+  color: #3f51b5;
+}
+.helpdesk a.faq:hover {
+  background: #3f51b5;
+  color: #fff;
+}
+
+/* 요청하기 버튼 */
+.helpdesk a.request {
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+.helpdesk a.request:hover {
+  background: #4caf50;
+  color: #fff;
+}
+
+/* 공지사항 버튼 */
+.helpdesk a.notice {
+  background: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  color: #ff9800;
+}
+.helpdesk a.notice:hover {
+  background: #ff9800;
+  color: #fff;
+}
+
+
+/* 반응형 */
+@media (max-width: 1024px) {
+    .voice-sidebar {
+        transform: translateX(-310px);
+    }
+    
+    .voice-sidebar.show-mobile {
+        transform: translateX(0);
+    }
+    
+    .sidebar-toggle {
+        left: 40px;
+    }
+    
+    .main-content {
+        margin-left: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .voice-sidebar {
+        width: 280px;
+        transform: translateX(-240px);
+    }
+    
+    .voice-sidebar.show-mobile {
+        transform: translateX(0);
+    }
+    
+    .sidebar-toggle {
+        left: 40px;
+    }
+    
+    .sidebar-toggle.show-mobile {
+        left: 280px;
+    }
+    
+    .main-content {
+        margin-left: 60px;
+        padding: 0 15px;
+    }
+    
+    .main-content.show-mobile {
+        margin-left: 300px;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .character-card,
+    .llm-card {
+        min-width: 160px;
+        max-width: 160px;
+        flex: 0 0 160px;
+    }
+}
+
+
+
+
+/* Celebrity Voice 섹션 */
+.cv-main-content {
+   position: relative;
+   z-index: 2;
+   max-width: 1200px;
+   margin: 0 auto 40px auto;
+   padding: 0 20px;
+}
+
+.cv-section-title {
+   font-size: 1.8rem;
+   font-weight: 700;
+   color: white;
+   text-align: left;
+   margin: 40px 0 20px 0;
+   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Celebrity Voice 컨테이너 - 가로 스크롤 */
+.cv-container {
+   position: relative;
+   margin-bottom: 20px;
+}
+
+.cv-scroll {
+   display: flex;
+   gap: 15px;
+   overflow-x: auto;
+   padding: 15px 0;
+   scrollbar-width: none;
+   -webkit-overflow-scrolling: touch;
+}
+
+.cv-scroll::-webkit-scrollbar {
+   display: none;
+}
+
+/* 개별 voice-wrapper 크기 조정 */
+.cv-scroll .voice-wrapper {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+   padding: 12px;
+   background: rgba(255, 255, 255, 0.05);
+   border: 1px solid rgba(255, 255, 255, 0.1);
+   border-radius: 16px;
+   transition: all 0.3s ease;
+   min-width: 200px;
+   max-width: 200px;
+   flex: 0 0 200px;
+   height: 90px;
+}
+
+.cv-scroll .voice-wrapper:hover {
+   background: rgba(255, 255, 255, 0.1);
+   border-color: rgba(255, 255, 255, 0.2);
+   transform: translateY(-2px);
+}
+
+.cv-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cv-scroll .voice-character {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   cursor: pointer;
+   position: relative;
+   border: 2px solid rgba(255, 255, 255, 0.3);
+   overflow: hidden;
+   transition: all 0.3s ease;
+   flex-shrink: 0;
+}
+
+.cv-scroll .voice-character img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+
+.cv-play-overlay {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 16px;
+   height: 16px;
+   background: rgba(0, 0, 0, 0.7);
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   opacity: 0;
+   transition: opacity 0.3s;
+}
+
+.cv-scroll .voice-character:hover .cv-play-overlay {
+   opacity: 1;
+}
+
+.cv-play-icon {
+   width: 0;
+   height: 0;
+   border-left: 4px solid white;
+   border-top: 2px solid transparent;
+   border-bottom: 2px solid transparent;
+   margin-left: 1px;
+}
+
+.cv-info {
+   flex: 1;
+   min-width: 0;
+}
+
+.cv-info p {
+   margin: 0 0 4px 0;
+   font-size: 0.8rem;
+   font-weight: 600;
+   color: white;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.cv-info p:last-child {
+   font-size: 0.7rem;
+   opacity: 0.8;
+}
+
+.cv-scroll .voice-progress {
+   width: 100%;
+   height: 3px;
+   background: rgba(255, 255, 255, 0.3);
+   border-radius: 2px;
+   cursor: pointer;
+   margin: 8px 0;
+}
+
+.cv-progress-bar {
+   height: 100%;
+   background: var(--gradient-pink);
+   width: 0%;
+   border-radius: 2px;
+   transition: width 0.1s;
+}
+
+.cv-scroll .copy-id-btn {
+   background: rgba(255, 255, 255, 0.2);
+   border: 1px solid rgba(255, 255, 255, 0.3);
+   color: white;
+   border-radius: 8px;
+   padding: 3px 6px;
+   cursor: pointer;
+  position: fixed;
+}
+
+.cv-scroll .copy-id-btn:hover {
+   background: rgba(255, 255, 255, 0.3);
+}
+
+.cv-scroll .voice-audio {
+   display: none;
+}
+
+.cv-view-all-btn {
+   background: rgba(255, 255, 255, 0.1);
+   border: 2px solid rgba(255, 255, 255, 0.3);
+   color: white;
+   padding: 12px 24px;
+   border-radius: 20px;
+   font-size: 0.9rem;
+   font-weight: 600;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   margin-top: 15px;
+   display: block;
+   text-align: center;
+   text-decoration: none;
+}
+
+.cv-view-all-btn:hover {
+   background: rgba(255, 255, 255, 0.2);
+   border-color: rgba(255, 255, 255, 0.5);
+   transform: translateY(-2px);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+   .cv-scroll .voice-wrapper {
+       min-width: 160px;
+       max-width: 160px;
+       flex: 0 0 160px;
+       height: 110px;
+   }
+   
+   .cv-scroll .voice-character {
+       width: 35px;
+       height: 35px;
+   }
+   
+   .cv-info p {
+       font-size: 0.75rem;
+   }
+   
+   .cv-info p:last-child {
+       font-size: 0.65rem;
+   }
+   
+   .cv-section-title {
+       font-size: 1.5rem;
+   }
+}

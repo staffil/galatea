@@ -8,7 +8,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #FAC3F3;
     min-height: 100vh;
-    padding-top: 10px; /* header 높이 만큼 여백 확보 */
+
 }
 .container {
     margin: 0 auto;
@@ -16,7 +16,7 @@
     text-align: center;
     height: 100%;
     background-color: #FAC3F3; /* 또는 원하는 색 */
-    margin-top: 140px;
+    margin-top: -40px;
     display: flex;
     min-height: 300vh; /* 변경: 화면이 길어질 수 있도록 */
 }
@@ -448,7 +448,31 @@
             margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
             text-align: left;
+            width: 100%;
         }
+.chat-container {
+    position: relative; /* 배경과 내용을 겹치게 하기 위해 */
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5;
+    z-index: 0; /* 뒤로 보내기 */
+}
+
+.chat-content {
+    position: relative;
+    z-index: 1; /* 메인 채팅 앞으로 */
+    padding: 20px; /* 배경과 겹치지 않도록 여유 공간 */
+}
+
+
 
         /* 반응형 */
         @media (max-width: 768px) {

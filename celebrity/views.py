@@ -11,6 +11,7 @@ from user_auth.models import Celebrity
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import uuid
+from payment.models import Token, TokenHistory
 
 from django.conf import settings
 load_dotenv(os.path.join(settings.BASE_DIR, ".env"))
@@ -66,6 +67,18 @@ def celebrity_audio(request):
         return JsonResponse({"text": transcription.text})
     else:
         return HttpResponseNotAllowed(['POST'])
+    
+
+
+
+from pydub import AudioSegment
+
+def get_audio_duration_in_seconds(file_path):
+    audio = AudioSegment.from_file(file_path)
+    return int(audio.duration_seconds)
+
+
+
 @login_required
 @csrf_exempt
 def celebrity_response(request, celebrity_id):
@@ -185,10 +198,12 @@ def celebrity_response(request, celebrity_id):
         with open(audio_path, "wb") as f:
             for chunk in audio_stream:
                 f.write(chunk)
+        
+
+        
 
         return JsonResponse({
             "ai_text": ai_text,
-            "emotion": emotion,
             "audio_url": f"/media/audio/{filename}"
         })
 

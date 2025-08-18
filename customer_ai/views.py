@@ -2,15 +2,14 @@ import os
 import time
 import base64
 from django.shortcuts import render, redirect
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse,HttpResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from openai import OpenAI
 from elevenlabs import ElevenLabs
 from dotenv import load_dotenv
 from django.contrib.auth.decorators import login_required
-from mypage.models import LLM
-from mypage.models import Voice
+from customer_ai.models import LLM
 from makeVoice.models import VoiceList
 from uuid import uuid4
 import logging
@@ -26,9 +25,12 @@ from home.models import Users
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator
-from user_auth.models import Conversation
+from customer_ai.models import Conversation
 from pathlib import Path
 import requests
+from payment.models import Token, TokenHistory
+
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -67,14 +69,12 @@ def make_ai(request):
         request.session['custom_voice_id'] = voice_id
         request.session['custom_model'] = model_name
         request.session['chat_history'] = []
-
+        
         if not voice_id:
             return JsonResponse({"error": "voice_id 값이 없습니다."}, status=400)
 
-        try:
-            voice = Voice.objects.get(voice_id=voice_id)
-        except Voice.DoesNotExist:
-            voice = Voice.objects.create(user=request.user, voice_id=voice_id)
+        voice, created = VoiceList.objects.get_or_create(user=request.user, voice_id=voice_id)
+
 
         # 세션에서 이미지 데이터 가져오기
         image_content = request.session.get('user_image_content')
@@ -120,8 +120,16 @@ def make_ai(request):
 def chat_view(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
+        
     except LLM.DoesNotExist:
         llm= None
+
+    if llm.user != request.user and not llm.is_public:
+        return HttpResponseForbidden("이 LLM에 접근할 권한이 없습니다.")
+
+
+
+
     return render(request, "customer_ai/custom.html", {
         "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
         "llm_id": llm_id,
@@ -154,8 +162,19 @@ def not_in_voice_id(voice_id,eleven_client):
     print(f"[DEBUG] voice check body: {response.text}")
     return response.status_code ==200
 
+
+# 초 단위 세기
+from pydub import AudioSegment
+
+def get_audio_duration_in_seconds(file_path):
+    audio = AudioSegment.from_file(file_path)
+    return int(audio.duration_seconds)  # 초 단위 반환
+
+
 @csrf_exempt
 def upload_audio(request):
+    print("=== 함수 시작 ===")
+
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method'}, status=400)
 
@@ -227,6 +246,8 @@ def upload_audio(request):
 
     mp3_url = os.path.join(settings.MEDIA_URL, 'audio', mp3_filename)
 
+
+
     # 5) 결과에 mp3 파일 경로도 포함해서 반환
     return JsonResponse({
         'text': transcription.text,
@@ -282,7 +303,7 @@ def generate_response(request):
         response = requests.get(url, headers=headers)
         return response.status_code == 200
 
-    if not custom_voice_id or not is_valid_voice_id(custom_voice_id, ELEVEN_API_KEY):
+    if not custom_voice_id.strip() or not is_valid_voice_id(custom_voice_id.strip(), ELEVEN_API_KEY):
         return JsonResponse({
             "error": "voice_id 값이 맞지 않습니다. 목소리를 다시 생성하거나 다른 목소리로 바꿔 주세요."
         }, status=400)
@@ -352,9 +373,54 @@ def generate_response(request):
         }
     )
 
+    
     with open(audio_path, "wb") as f:
         for chunk in audio_stream:
             f.write(chunk)
+
+        # 초 세기
+
+    audio_seconds = get_audio_duration_in_seconds(audio_path)
+
+    print("여기까지는 무조건 실행됨")
+
+    if request.user.llm_set.filter(model="gpt-3.5-turbo").exists():
+        print("조건문 안에 들어옴")
+        print("second", audio_seconds)
+
+        def consume_tokens(user, amount, model_name):
+            # 모델별 배율
+            multiplier = 3 if model_name.startswith("gpt-4") else 1
+            required_tokens = amount * multiplier
+
+            token_obj = Token.objects.filter(user=user).latest("created_at")
+            available_tokens = token_obj.total_token - token_obj.token_usage
+
+            if available_tokens < required_tokens:
+                return False
+
+            # 토큰 차감
+            token_obj.token_usage += required_tokens
+            token_obj.total_token -= required_tokens
+            if token_obj.total_token < 0:
+                token_obj.total_token = 0
+            token_obj.save()
+
+            TokenHistory.objects.create(
+                user=user,
+                change_type=TokenHistory.CONSUME,
+                amount=required_tokens,
+                total_voice_generated=required_tokens
+            )
+            return True
+
+
+        success = consume_tokens(request.user, audio_seconds, custom_model)
+        if not success:
+            return JsonResponse({"error": "토큰이 부족합니다"}, status=403)
+        
+        print("success", success)
+
 
     audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
 

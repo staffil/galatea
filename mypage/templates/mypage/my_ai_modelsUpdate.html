@@ -8,31 +8,29 @@
     <title>{% trans "마이페이지" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/mypage/my_ai_modelsUpdate.css' %}">
-
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 </head>
 <body>
-    <div class="sidebar" style="width: 210px;">
-        <h1>{% trans "마이페이지" %}</h1>
-        <div class="sidebar-profile">
-            {% if user.user_image %}
-                <img src="{{ user.user_image.url }}" alt="{% trans '프로필 이미지' %}" style="width: 150px; height: 150px; border-radius: 50%;">
-            {% else %}
-                <div class="sidebar-profile-img">{{ user.nickname|first|upper }}</div>
-            {% endif %}
-            <h3>{{ user.nickname }}</h3>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="{% url 'logout' %}">{% trans "로그아웃" %}</a></li>
-            <li><a href="{% url 'mypage:mypage' %}">{% trans "프로필" %}</a></li>
-            {% if llm %}
-                <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans "My AI models" %}</a></li>
-            {% else %}
-                <a href="#" onclick="return alert('{% trans "현재 커스터한 AI 가 없습니다." %}')">{% trans "My AI models" %}</a>
-            {% endif %}
-            <li><a href="{% url 'mypage:my_voice' %}">{% trans "voice id 목록" %}</a></li>
-            <li><a href="{% url 'home:main' %}">{% trans "main 으로" %}</a></li>
-        </ul>
-    </div>
+
+   <!-- 배경 원형 효과 (distribute.css에서 사용) -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+           {% include "common/sidebar.html" %}
+
 
     <div class="main-content">
         <form action="" method="post" enctype="multipart/form-data">
@@ -193,6 +191,29 @@
                                     </td>
                                 </tr>
                                 {% endfor %}
+                                     {% if voice_list.has_other_pages %}
+                <div class="pagination">
+                    {% if voice_list.has_previous %}
+                        <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
+                    {% else %}
+                        <span class="disabled">&laquo; {% trans "이전" %}</span>
+                    {% endif %}
+
+                    {% for page_num in voice_list.paginator.page_range %}
+                        {% if page_num == voice_list.number %}
+                            <span class="current">{{ page_num }}</span>
+                        {% else %}
+                            <a href="?page={{ page_num }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if voice_list.has_next %}
+                        <a href="?page={{ voice_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
+                    {% else %}
+                        <span class="disabled">{% trans "다음" %} &raquo;</span>
+                    {% endif %}
+                </div>
+            {% endif %}
                             {% else %}
                             <tr>
                                 <td colspan="6" class="empty-state">
@@ -211,6 +232,7 @@
 
         </form>
     </div>
+<script src="{% static 'js/sidebar.js' %}"></script>
 
   <script src="{% static 'js/mypage/my_ai_modelsUpdate.js' %}"></script>
 

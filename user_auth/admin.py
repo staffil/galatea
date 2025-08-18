@@ -1,9 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Users, LLM, Voice
 from makeVoice.models import VoiceList
-from user_auth.models import Authority, UserAuth, Conversation, Celebrity
+from user_auth.models import Authority, News
+from customer_ai.models import Conversation, LLM
+from celebrity.models import Celebrity,CelebrityVoice
+from distribute.models import Genre
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from user_auth.models import Faq, Requests, Notice
+
 User = get_user_model()
 
 
@@ -39,9 +43,11 @@ class UserAdmin(BaseUserAdmin):
 
 class LLMConversationInline(admin.TabularInline):
     model = Conversation
-    extra =0 
+    fk_name = 'llm'  # 추가
+    extra = 0
     fields = ('created_at', 'user', 'user_message', 'llm_response',)
     readonly_fields = ('created_at', 'user', 'user_message', 'llm_response',)
+
 @admin.register(LLM)
 class LLMAdmin(admin.ModelAdmin):
     # list_display에는 정의한 @admin.display 메서드들의 이름이 들어가야 합니다.
@@ -107,44 +113,67 @@ class VoiceListAdmin(admin.ModelAdmin):
     
 
 
+from django.contrib.admin import DateFieldListFilter
+from django.utils.timezone import localtime
+from datetime import date
 
+class CreatedAtDayFilter(admin.SimpleListFilter):
+    title = '생성일'
+    parameter_name = 'created_day'
+
+    def lookups(self, request, model_admin):
+        days = model_admin.model.objects.dates('created_at', 'day', order='DESC')
+        return [(d.strftime("%Y-%m-%d"), d.strftime("%Y-%m-%d")) for d in days]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            day = date.fromisoformat(self.value())
+            return queryset.filter(created_at__date=day)
+        return queryset
 
 
 @admin.register(Conversation)
-class converstationAdmin(admin.ModelAdmin):
-    list_display=('get_id_display', 'get_llm_display','get_user_display', 'get_created_at_display', 'get_user_message_display',)
-    list_filter = ('created_at', 'user','llm',)
-    search_fields = ('user__username', 'llms__name', 'user_message', 'llm_response',) # user_message, llm_response 검색 추가
-    
+class ConversationAdmin(admin.ModelAdmin):
+    list_display = ('get_id_display', 'get_llm_display', 'get_user_display', 'get_created_at_display', 'get_user_message_display')
+    list_filter = (
+        ('created_at', DateFieldListFilter),
+        'user',
+        'llm',
+    )
+    search_fields = ('user__username', 'llm__name', 'user_message', 'llm_response')
     
     @admin.display(description="id")
     def get_id_display(self, obj):
-        return obj.user.id
+        return obj.id
+    
     @admin.display(description="LLM 이름")
     def get_llm_display(self, obj):
         return obj.llm.name
+    
     @admin.display(description="사용자 이름")
     def get_user_display(self, obj):
         return obj.user.username
-
-  
-
+    
     @admin.display(description="생성날짜")
     def get_created_at_display(self, obj):
         return obj.created_at
-
+    
     @admin.display(description="사용자 메시지")
     def get_user_message_display(self, obj):
         return obj.user_message
-
-
+    
+    readonly_fields = ('created_at',)
     fieldsets = (
         (None, {
-            'fields': ('user', 'llm', 'created_at', 'user_message', 'llm_response',)
+            'fields': ('user', 'llm', 'created_at', 'user_message', 'llm_response')
         }),
     )
-    readonly_fields = ('created_at',)
-    list_filter = ('user', 'llm',)
+
+
+
+
+
+
 
 
 
@@ -162,5 +191,83 @@ class CelebrityAdmin(admin.ModelAdmin):
     def get_description_display(self, obj):
         return obj.description
 
+
+@admin.register(CelebrityVoice)
+class CelebrityVoiceAdmin(admin.ModelAdmin):
+    list_display = ("get_celebrity_voice_name", 'get_sample_url', 'get_celebrity_voice_id')    
+    search_fields = ('name','sample_url', 'celebrity_voice_id')
+    list_filter= ('name',)
+
+    @admin.display(description="celebrity_voice 이름")
+    def get_celebrity_voice_name(self, obj):
+        return obj.name
     
+    @admin.display(description="celebrity_voice 샘플")
+    def get_sample_url(self, obj):
+        return obj.sample_url
+    @admin.display(description="celebrity_voice_id")
+    def get_celebrity_voice_id(self, obj):
+        return obj.celebrity_voice_id
+
+
+@admin.register(Genre)
+class GenreAdmin(admin.ModelAdmin):
+    list_display = ("get_genre_name", "get_genre_img")
+
+    @admin.display(description='genre 이름')
+    def get_genre_name(self, obj):
+        return obj.name  # 'name' 필드로 수정
+
+    @admin.display(description="genre 이미지")
+    def get_genre_img(self, obj):
+        if obj.genre_image:
+            return obj.genre_image.url  # 이미지 URL 반환
+        return "-"
+
+
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    list_display= ("get_title", "get_news_img", "get_news_description", "get_link")
+
+    @admin.display(description="뉴스 타이틀")
+    def get_title(self, obj):
+        if obj.title:
+            return obj.title
+        
+    @admin.display(description="뉴스 이미지")
+    def get_news_img(self, obj):
+        if obj.news_img:
+            return obj.news_img
+        
+    @admin.display(description="뉴스 설명")
+    def get_news_description(self, obj):
+        if obj.news_description:
+            return obj.news_description
+        
+    @admin.display(description="링크")
+    def get_link(self, obj):
+        if obj.link:
+            return obj.link
+
+@admin.register(Faq)
+class FaqAdmin(admin.ModelAdmin):
+    list_display= ("get_title", 'get_content', 'get_faq_img')
+
+    @admin.display(description="faq 제목")
+    def get_title(self, obj):
+        if obj.title:
+            return obj.title
+        
+    @admin.display(description="faq 내용")
+    def get_content(self, obj):
+        if obj.content:
+            return obj.content
+        
+    @admin.display(description="faq 이미지")
+    def get_faq_img(self, obj):
+        if obj.faq_img:
+            return obj.faq_img
+        
+        
+
 

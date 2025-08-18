@@ -10,6 +10,8 @@ from django.shortcuts import redirect
 from celebrity import views as celebrity_views
 from customer_ai import views as customer_ai_views
 from makeImage import views as make_image_view
+from register import views as login_view
+from home import views as main_view
 
 def root_redirect(request):
     lang = get_language()
@@ -29,10 +31,13 @@ urlpatterns = [
     path('vision_process/', customer_ai_views.vision_process, name='vision_process'),
     path("generate_image/", make_image_view.generate_image, name="generate_image"),
     path('proxy_image/', make_image_view.proxy_image, name='proxy_image'),  # 이미지 프록시용
+    path('<int:llm_id>/introduce', main_view.distribute_llm, name='distribute_llm'),
+
 
 ]
 
 urlpatterns += i18n_patterns(
+    
     path('', include('home.urls', namespace='home')),  # home.urls 안에 main/ 포함
     path('celebrity/', include(('celebrity.urls', 'celebrity'), namespace='celebrity')),
     path('customer_ai/', include(('customer_ai.urls', 'customer_ai'), namespace='customer_ai')),
@@ -42,7 +47,12 @@ urlpatterns += i18n_patterns(
     path('logout/', home_views.user_logout, name='logout'),
     path('mypage/', include(("mypage.urls","mypage"), namespace="mypage")),
     # path('cloning/', include(('cloning.urls', 'cloning'), namespace='cloning')),
-    path('payment/', include(('payment.urls', 'payment'), namespace='payment'))
+    path('payment/', include(('payment.urls', 'payment'), namespace='payment')),
+    path("distribute/", include(("distribute.urls", 'distribute'), namespace="distribute")),
+    path('intro/<int:llm_id>/', main_view.llm_detail_partial, name='llm_detail_partial'),
+    path('helpdesk/', include(("helpdesk.urls", 'helpdesk'), namespace='helpdesk')),
+
+
 )
 
 if settings.DEBUG:

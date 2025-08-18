@@ -1,0 +1,108 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    {% include "common/sidebar.html" %}
+    <script src="{% static 'js/sidebar.js' %}"></script>
+
+    <div class="main-content">
+        <div class="date-range">
+            <label>시작 날짜:</label>
+            <input type="text" id="startDate" value="{{ start_date }}">
+            <label>종료 날짜:</label>
+            <input type="text" id="endDate" value="{{ end_date }}">
+            <button id="applyRange">적용</button>
+        </div>
+
+        <canvas id="tokenChart" width="600" height="300"></canvas>
+
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const labels = {{ labels|safe }};
+            const data = {{ data|safe }};
+
+            const ctx = document.getElementById('tokenChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // 선 그래프로 변경
+                data: {
+                    labels: labels.length ? labels : ["No Data"],
+                    datasets: [{
+                        label: '일별 토큰 사용량',
+                        data: data.length ? data : [0],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        tension: 0.3, // 부드러운 곡선
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: '사용량' } },
+                        x: { title: { display: true, text: '날짜' } }
+                    }
+                }
+            });
+
+            flatpickr("#startDate", { dateFormat: "Y-m-d" });
+            flatpickr("#endDate", { dateFormat: "Y-m-d" });
+
+            document.getElementById("applyRange").addEventListener("click", () => {
+                const start = document.getElementById("startDate").value;
+                const end = document.getElementById("endDate").value;
+                if(start && end){
+                    window.location.href = `?start_date=${start}&end_date=${end}`;
+                }
+            });
+        });
+        </script>
+
+        <div class="payment-section">
+            <h3>{% trans "결제 내역" %}</h3>
+            <table class="payment-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "날짜" %}</th>
+                        <th>{% trans "결제 방식" %}</th>
+                        <th>{% trans "상태" %}</th>
+                        <th>{% trans "결제 금액" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if payments %}
+                        {% for p in payments %}
+                        <tr>
+                            <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
+                            <td>{{ p.method }}</td>
+                            <td>{{ p.status }}</td>
+                            <td>{{ p.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="empty-state">{% trans "결제 내역이 없습니다." %}</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

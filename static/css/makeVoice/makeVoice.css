@@ -41,7 +41,6 @@ body {
 
         h1 {
             color: #d81b60; /* A deeper pink/rose color */
-            margin-bottom: 30px;
             font-size: 2.2em;
             font-weight: 700;
         }
@@ -173,11 +172,9 @@ body {
         input {
               width: calc(100% - 20px); /* Account for padding */
             padding: 12px;
-            margin-bottom: 20px;
             border: 1px solid #ffc1e3; /* Soft pink border */
             border-radius: 8px;
             font-size: 1em;
             resize: vertical; /* Allow vertical resizing */
-            height: 30px;
             box-sizing: border-box;
         }

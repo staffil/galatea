@@ -1,0 +1,23 @@
+
+/* 배경 원들 */
+.circle-bg {
+    position: fixed;
+    border-radius: 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.circle-1 { width: 3000px; height: 3000px; background: rgba(243, 89, 222, 0.12); }
+.circle-2 { width: 2400px; height: 2400px; background: rgba(243, 89, 222, 0.28); }
+.circle-3 { width: 1800px; height: 1800px; background: rgba(243, 89, 222, 0.51); }
+.circle-4 { width: 1200px; height: 1200px; background: rgba(243, 89, 222, 0.28); }
+.circle-5 { 
+    width: 800px; 
+    height: 800px; 
+    background: #F359DE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

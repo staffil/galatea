@@ -1,0 +1,41 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "요청하기 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/helpdesk/request.css' %}">
+</head>
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <main class="request-container">
+        <!-- 요청 리스트 -->
+        {% for request in request_list %}
+        <div class="request-card">
+            <a href="{% url 'helpdesk:request_detail' request.id %}" class="request-title">{{ request.title }}</a>
+            <div class="request-meta">{{ request.created_at|date:"Y-m-d H:i" }}</div>
+                    {% if request.is_secret %}
+            <span style="color:red; font-size:0.9rem;">🔒 비밀글</span>
+        {% endif %}
+        </div>
+        {% empty %}
+        <p>등록된 요청이 없습니다.</p>
+        {% endfor %}
+
+        <!-- 요청 작성 버튼 -->
+        <div class="write-btn-container">
+            <a href="{% url 'helpdesk:request_write' %}" class="submit-btn">{% trans "요청 작성하기" %}</a>
+        </div>
+    </main>
+</body>
+</html>

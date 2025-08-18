@@ -93,7 +93,9 @@ INSTALLED_APPS = [
 "register",
 "mypage",
 "user_auth",
-'modeltranslation'
+'modeltranslation',
+'distribute',
+"helpdesk",
 ]
 
 

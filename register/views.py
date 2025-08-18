@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import authenticate, login as auth_login
 from django.conf import settings
+from django.utils.translation import get_language
 
 
 def signup(request):
@@ -28,8 +29,11 @@ def signup(request):
 
 
 def login_view(request):
+    language = get_language()
+
     if request.method == "POST":
         form = LoginForm(request.POST)
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -44,25 +48,23 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'register/login.html', {
         'form': form,
-        'google_client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id']
-
+        'google_client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'],
+        "LANGUAGE_CODE": language,
         })
-
-from dotenv import load_dotenv
-import os 
-from django.contrib.auth import login, get_user_model
-from django.views.decorators.csrf import csrf_exempt
+import os
 import json
 import requests
+from django.contrib.auth import login, get_user_model
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 User = get_user_model()
 
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+
 
 def verify_google_token(token):
-    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-    
     try:
         response = requests.get(
             'https://oauth2.googleapis.com/tokeninfo',
@@ -70,19 +72,18 @@ def verify_google_token(token):
             timeout=5
         )
         response.raise_for_status()
-        data = response.json()  # 이 위치에 있어야 함
+        data = response.json()
     except requests.RequestException as e:
         print("Google tokeninfo request failed:", e)
         return None
 
     print(f"Google aud: '{data.get('aud')}' vs GOOGLE_CLIENT_ID: '{GOOGLE_CLIENT_ID}'")
     print("Google tokeninfo data:", data)
-    
+
     if data.get('aud') != GOOGLE_CLIENT_ID:
         print("Client ID mismatch:", data.get('aud'), GOOGLE_CLIENT_ID)
         return None
     return data
-
 
 
 @csrf_exempt
@@ -90,7 +91,7 @@ def google_login(request):
     print("google_login 호출, method:", request.method)
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'POST 요청만 허용'}, status=400)
-
+    print('IJEJFIJEIFJIEJFIFIFIEJFIFJIEFJEIFJIFJIFJEIF')
     try:
         body = json.loads(request.body)
         print("Request body:", body)
@@ -108,9 +109,15 @@ def google_login(request):
 
         print(f"Google 로그인 정보 - email: {email}, name: {name}, google_id: {google_id}")
 
+        # 필수 필드 nickname, phonenumber 임시값으로 넣기
         user, created = User.objects.get_or_create(
             username=google_id,
-            defaults={'email': email, 'first_name': name}
+            defaults={
+                'email': email,
+                'first_name': name,
+                'nickname': email.split('@')[0],  # 닉네임 임시로 이메일 앞부분 사용
+                'phonenumber': '',  # 빈 문자열로 임시 지정 (null=False이기 때문)
+            }
         )
         login(request, user)
         print("로그인 성공, user:", user)

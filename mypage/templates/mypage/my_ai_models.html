@@ -6,32 +6,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans '마이페이지' %} - GALATEA</title>
-    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_models.css' %}">
 
+<link rel="stylesheet" href="{% static 'css/mypage/my_ai_models.css' %}?v={{ STATIC_VERSION }}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 </head>
 <body>
-    <div class="sidebar">
-        <h1>{% trans '마이페이지' %}</h1>
-        <div class="sidebar-profile">
-            {% if user.user_image %}
-                <img src="{{ user.user_image.url }}" alt="프로필 이미지" style="width: 150px; height: 150px; border-radius: 50%;" />
-            {% else %}
-                <p>{% trans '프로필 이미지 없음' %}</p>
-            {% endif %}
-            <h3>{{ user.nickname }}</h3>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
-            <li><a href="{% url 'mypage:mypage' %}">{% trans '프로필' %}</a></li>
-            {% if llm %}
-                <li style="background-color: rgb(0, 0, 0, 0.2);"><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
-            {% else %}
-                <li><a href="#" onclick="return alert('현재 커스터한 AI 가 없습니다.')">{% trans '내 AI 모델들' %}</a></li>
-            {% endif %}
-            <li><a href="{% url 'mypage:my_voice' %}">{% trans 'voice id 목록' %}</a></li>
-            <li><a href="{% url 'home:main' %}">{% trans 'main 으로' %}</a></li>
-        </ul>
-    </div>
+
+   <!-- 배경 원형 효과 (distribute.css에서 사용) -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+          {% include "common/sidebar.html" %}
 
     <div class="main-content">
         <div class="ai-config-container">
@@ -138,11 +136,20 @@
                 
 
             </div>
-        <div style="display: flex; gap: 10px; margin-top: 30px;">
+        <div style="display: flex; gap: 10px; margin-top: 70px; width: 200%;">
             <a href="{% url 'customer_ai:chat_view' llm.id %}" class="action-button">대화하기</a>
             <a href="{% url 'mypage:my_ai_models_update' llm.id %}" class="action-button">수정하기</a>
             <a href="{% url 'mypage:my_ai_models_delete' llm.id %}" class="action-button delete-button" onclick="return confirm('해당 AI를 삭제하시겠습니까?')">삭제하기</a>
+            {% if llm.is_public == True %}
+                        <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">공유한 AI 수정하기</a>
+
+            {% else %}
+                        <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">공유하기</a>
+
+            {% endif %}
         </div>
+
+
 
 
             <!-- 기존 hidden inputs - DB 연동용 -->
@@ -172,6 +179,8 @@
             </div>
         </div>
     </div>
+        <script src="{% static 'js/sidebar.js' %}"></script>
+
  <script>
     // 페이지 로드 시 현재 선택된 llm 객체의 데이터로 UI를 초기화하는 함수
     function initializeUIWithCurrentLlm() {
@@ -296,5 +305,6 @@
         setupSliderListeners();      // 슬라이더 이벤트 리스너 등록
     };
 </script>
+
 </body>
 </html>

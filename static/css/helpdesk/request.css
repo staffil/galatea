@@ -1,0 +1,160 @@
+/* ========== GALATEA Helpdesk Styles (new-faq.css) ========== */
+/* 색/타이포 시스템 */
+:root{
+  --bg: #ffffff;
+  --surface:#fafafa;
+  --border:#e5e7eb;
+  --text:#111827;
+  --muted:#6b7280;
+  --brand:#10b981; /* emerald */
+  --brand-hover:#059669;
+  --ring: rgba(16,185,129,.25);
+
+  --radius: 6px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --container: 720px;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: 'Noto Sans KR', Inter, system-ui, sans-serif;
+  line-height:1.7;
+}
+header{margin-bottom:24px}
+
+/* -------- 컨테이너 공통 -------- */
+.request-container,
+.request-list,
+.detail-container{
+  max-width: var(--container);
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+/* -------- 카드 대신 라인형 리스트 -------- */
+.request-card{
+  border-bottom:1px solid var(--border);
+  padding:18px 4px;
+  transition: background .2s ease;
+}
+.request-card:last-child{border-bottom:none}
+.request-card:hover{
+  background:var(--surface);
+}
+
+.request-title{
+  font-size:1.15rem;
+  font-weight:600;
+  color:var(--brand);
+  text-decoration:none;
+}
+.request-title:hover{color:var(--brand-hover)}
+
+.request-meta{
+  font-size:.85rem;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* -------- 작성 버튼 -------- */
+.write-btn-container{text-align:center; margin-top:28px}
+.submit-btn{
+  background:var(--brand);
+  color:#fff;
+  padding:12px 28px;
+  font-size:1rem;
+  font-weight:600;
+  border:none;
+  border-radius: var(--radius-lg);
+  cursor:pointer;
+  text-decoration:none;
+  box-shadow: var(--shadow);
+  transition: background .2s ease, transform .1s ease;
+}
+.submit-btn:hover{background:var(--brand-hover); transform:translateY(-2px)}
+.submit-btn:active{transform:translateY(0)}
+.submit-btn:focus{outline:2px solid var(--ring); outline-offset:2px}
+
+/* -------- 작성/수정 폼 -------- */
+.request-form{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  box-shadow:var(--shadow);
+}
+
+.form-input,
+.form-textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:12px;
+  font-size:1rem;
+  background:#fff;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.form-textarea{min-height:140px; resize:vertical}
+.form-input:focus,
+.form-textarea:focus{
+  border-color:var(--brand);
+  box-shadow:0 0 0 3px var(--ring);
+  outline:none;
+}
+
+.form-checkbox{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:.9rem;
+  color:var(--muted);
+}
+.form-checkbox input{width:16px; height:16px; accent-color:var(--brand)}
+
+/* -------- 디테일 페이지 -------- */
+.detail-title{
+  font-size:1.75rem;
+  font-weight:700;
+  margin:10px 0 6px;
+}
+.detail-meta{
+  font-size:.9rem;
+  color:var(--muted);
+  margin-bottom:20px;
+}
+.detail-content{
+  border-left:4px solid var(--brand);
+  background:var(--surface);
+  padding:18px 20px;
+  border-radius: var(--radius);
+  white-space:pre-wrap;
+  line-height:1.8;
+}
+
+/* -------- 알림/메시지 -------- */
+.alert{
+  max-width:var(--container);
+  margin: 16px auto;
+  padding: 12px 16px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  background:var(--surface);
+  font-size:.95rem;
+}
+.alert.success{border-left:4px solid #10b981}
+.alert.error{border-left:4px solid #ef4444}
+
+/* -------- 반응형 -------- */
+@media (max-width:640px){
+  .detail-title{font-size:1.4rem}
+  .submit-btn{width:100%}
+  .request-container{margin:24px auto}
+}

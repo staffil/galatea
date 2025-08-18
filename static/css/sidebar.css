@@ -1,0 +1,175 @@
+/* 햄버거 메뉴 버튼 (모바일용) */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: linear-gradient(145deg, #F359DE, #E91E63);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(243, 89, 222, 0.4);
+    transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(243, 89, 222, 0.6);
+}
+
+.menu-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: white;
+    margin: 4px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+/* 햄버거 애니메이션 */
+.menu-toggle.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
+/* 사이드바 오버레이 */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    width: 250px;
+    background: linear-gradient(145deg, #F359DE, #E91E63);
+    color: white;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.sidebar h1 {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.sidebar-profile {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.3);
+    margin-bottom: 10px;
+}
+
+.sidebar-profile h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.sidebar-menu {
+    list-style: none;
+}
+
+.sidebar-menu li {
+    margin-bottom: 15px;
+}
+
+.sidebar-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: block;
+    transition: background 0.3s ease;
+}
+
+.sidebar-menu a:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* 사이드바 반응형 스타일 */
+@media (max-width: 768px) {
+    /* 햄버거 메뉴 버튼 표시 */
+    .menu-toggle {
+        display: block;
+    }
+    
+    /* 사이드바를 화면 밖으로 숨김 */
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px; /* 모바일에서 조금 더 넓게 */
+    }
+    
+    /* 사이드바 활성화 시 */
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    /* 모바일에서 메인 콘텐츠 전체 너비 */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 70px 15px 15px 15px !important; /* 햄버거 버튼 공간 */
+    }
+    
+    /* 사이드바 프로필 이미지 크기 조정 */
+    .sidebar-profile img {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .sidebar h1 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 260px;
+        padding: 15px;
+    }
+    
+    .main-content {
+        padding: 70px 10px 10px 10px !important;
+    }
+}
+
+/* 데스크톱에서 메인 콘텐츠가 사이드바에 가려지지 않도록 */
+.main-content {
+    margin-left: 250px; /* 사이드바 너비만큼 여백 */
+    transition: margin-left 0.3s ease;
+}
