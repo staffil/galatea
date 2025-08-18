@@ -88,7 +88,7 @@ LOCALE_PATHS = [
 ]
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = True
+DEBUG = False
 
 SESSION_COOKIE_AGE = 1200 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True   
