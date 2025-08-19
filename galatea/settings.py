@@ -66,7 +66,7 @@ ALLOWED_HOSTS = [
     'www.galatea.website',
     '127.0.0.1:8093'
 ]
-
+ 
 # Application definition
 
 

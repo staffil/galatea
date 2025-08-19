@@ -272,7 +272,7 @@ def generate_response(request):
     user_input = request.POST.get('text', '')
     vision_result = request.POST.get('vision', '').strip()
     if len(vision_result) > 1000:
-        vision_result = vision_result[:1000]
+        vision_result = vision_result[:1000].replace('"', '“')
     vision_result = vision_result.replace('"', '“')
 
     user = request.user
@@ -343,6 +343,16 @@ def generate_response(request):
         temperature=custom_temperature
     )
     ai_text = response.choices[0].message.content.strip()
+
+    def clean_text_for_tts(text: str) -> str:
+        # 비정상 문자 제거
+        text = ''.join(ch for ch in text if ch.isprintable())
+        # 너무 긴 경우 잘라내기
+        if len(text) > 1000:
+            text = text[:1000] + "..."
+        return text
+
+    ai_text = clean_text_for_tts(ai_text)
 
     # 대화 내역 세션 저장
     chat_history.append({"role": "assistant", "content": ai_text})
