@@ -11,15 +11,27 @@
 
 <style>
 .message-wrapper {
-    display: flex-start; 
-    align-items: flex-start; 
-    justify-content: flex-start;
-    gap: 10px; 
+    display: flex;
+    align-items: flex-start; /* 이미지와 메시지 정렬 */
+    gap: 10px; /* 이미지와 메시지 사이 간격 */
 }
 
+.ai-image-container {
+    flex-shrink: 0; /* 이미지 크기 고정 */
+}
+
+.ai-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
 .message-area {
-    flex: 1; /* 남는 공간 모두 차지 */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 
@@ -68,18 +80,16 @@
             </div>
             
             <p class="chat-subtitle">{% trans '하고 싶은 말을 입력하세요'%}</p>
-<div class="message-wrapper">
+
         
-            <!-- 메시지 영역을 텍스트 입력창 위로 이동 -->
-            <div class="message-area" id="message-area">
-                <!-- 메시지들이 여기에 표시됩니다 -->
-                         <div class="ai-image" id="ai-image">
+<div class="message-wrapper">
+    <div class="ai-image-container">
+    </div>
 
-            </div>
-            </div>
-
-    
-          </div>
+    <div class="message-area" id="message-area">
+        <!-- 사용자 메시지, AI 메시지 여기에 추가 -->
+    </div>
+</div>
   
             <!-- 오디오 플레이어를 텍스트 입력창 위로 이동 -->
             <div class="audio-player" id="audio-container" style="display: none;">
@@ -181,7 +191,7 @@
 
         const messageArea = document.getElementById("message-area");
 
-        // const aiImageArea = document.getElementById('ai-image')
+        const aiImageArea = document.getElementById('ai-image')
 
         // 사용자 메시지 추가
         const userMessage = document.createElement("div");
@@ -221,7 +231,7 @@
             aiMessage.className = "ai-message";
             aiMessage.textContent = data.ai_text;
 
-            // aiImage.className = 'ai-image';
+            aiImage.className = 'ai-image';
             aiImage.src = "{{ llm.llm_image.url }}"
 
             messageArea.appendChild(aiMessage);

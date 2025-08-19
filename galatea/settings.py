@@ -155,7 +155,7 @@ DATABASES = {
         "PASSWORD": DB_PASSWORD,          
         "HOST": "172.31.37.216",        # 인스턴스 바꾸면 여기 바꾸기          
         "PORT": "3306",  
-	    "CONN_MAX_AGE": 600,              
+	"CONN_MAX_AGE": 600;                    
     }
 }
 
