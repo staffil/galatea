@@ -173,7 +173,6 @@ def get_audio_duration_in_seconds(file_path):
 
 @csrf_exempt
 def upload_audio(request):
-    print("=== 함수 시작 ===")
 
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request method'}, status=400)

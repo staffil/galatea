@@ -141,12 +141,12 @@ TEMPLATES = [
 WSGI_APPLICATION = "galatea.wsgi.application"
 
 
-SESSION_COOKIE_AGE = 1200 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True   
+SESSION_COOKIE_AGE = 3600 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",  
@@ -154,7 +154,8 @@ DATABASES = {
         "USER": DB_USER,                     
         "PASSWORD": DB_PASSWORD,          
         "HOST": "172.31.37.216",        # 인스턴스 바꾸면 여기 바꾸기          
-        "PORT": "3306",                      
+        "PORT": "3306",  
+	    "CONN_MAX_AGE": 600,              
     }
 }
 
