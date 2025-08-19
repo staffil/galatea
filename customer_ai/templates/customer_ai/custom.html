@@ -6,25 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Chat UI</title>
-        <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
 </head>
 
 <style>
 .message-wrapper {
     display: flex;
-    align-items: flex-start; /* 이미지와 메시지 정렬 */
-    gap: 10px; /* 이미지와 메시지 사이 간격 */
-}
-
-.ai-image-container {
-    flex-shrink: 0; /* 이미지 크기 고정 */
-}
-
-.ai-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
+    align-items: flex-start;
+    gap: 10px;
 }
 
 .message-area {
@@ -33,83 +22,80 @@
     flex-direction: column;
     gap: 8px;
 }
-
-
 </style>
+
 <body>
     <!-- 헤더 -->
-      <header>
-    {% if not user.is_authenticated %}
-      {% include "common/notLoginHeader.html" %}
-    {% else %}
-      {% include "common/loginHeader.html" %}
-    {% endif %}
-  </header>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
 
     <div class="container">
         <!-- 사이드바 -->
-      <aside class="sidebar">
-    <h3>🎯 {% trans '모드 선택' %}</h3>
-    <div class="mode-option active">
-        <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
-        <label>💬 TEXT MODE</label>
-    </div>
-    <div class="mode-option">
-        <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
-        <label>👁️ VISION MODE</label>
-    </div>
-  </aside>
+        <aside class="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-option active">
+                <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
+                <label>💬 TEXT MODE</label>
+            </div>
+            <div class="mode-option">
+                <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                <label>👁️ VISION MODE</label>
+            </div>
+        </aside>
 
         <!-- 메인 채팅 영역 -->
-         <div class="chat-container">
-    <div class="background" 
-         {% if llm.llm_background_image %}
-         style="background-image: url('{{ llm.llm_background_image.url }}');"
-         {% endif %}>
-    </div>
-        <main class="chat-container">
-            {% if llm.llm_image %}
-                <img src="{{ llm.llm_image.url }}" alt="AI 이미지" style="max-width: 700px; max-height: 400px; border-radius: 15px; margin-top: 50px;" />
-            {% else %}
-                <p>{% trans '생성된 이미지가 없습니다.'%}</p>
-            {% endif %}
-
-            <div class="chat-header">
-                <div class="ai-avatar">🗨️</div>
-                <h1 class="chat-title">{{ llm.name }} {% trans '텍스트 대화하기'%}</h1>
+        <div class="chat-container">
+            <div class="background" 
+                 {% if llm.llm_background_image %}
+                 style="background-image: url('{{ llm.llm_background_image.url }}');"
+                 {% endif %}>
             </div>
-            
-            <p class="chat-subtitle">{% trans '하고 싶은 말을 입력하세요'%}</p>
 
-        
-<div class="message-wrapper">
-    <div class="ai-image-container">
-    </div>
+            <main class="chat-container">
+                {% if llm.llm_image %}
+                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" style="max-width: 700px; max-height: 400px; border-radius: 15px; margin-top: 50px;" />
+                {% else %}
+                    <p>{% trans '생성된 이미지가 없습니다.'%}</p>
+                {% endif %}
 
-    <div class="message-area" id="message-area">
-        <!-- 사용자 메시지, AI 메시지 여기에 추가 -->
-    </div>
-</div>
+                <div class="chat-header">
+                    <div class="ai-avatar">🗨️</div>
+                    <h1 class="chat-title">{{ llm.name }} {% trans '텍스트 대화하기'%}</h1>
+                </div>
+                
+                <p class="chat-subtitle">{% trans '하고 싶은 말을 입력하세요'%}</p>
+
+                <!-- 메시지 영역 -->
+                <div class="message-wrapper">
+                    <div class="message-area" id="message-area">
+                        <!-- 메시지가 여기 추가됨 -->
+                    </div>
+                </div>
   
-            <!-- 오디오 플레이어를 텍스트 입력창 위로 이동 -->
-            <div class="audio-player" id="audio-container" style="display: none;">
-                <audio id="tts-audio" controls></audio>
-            </div>
-            
-            <!-- 텍스트 입력창을 메시지 영역 아래로 이동 -->
-            <input type="text" class="text-input" id="text-input" placeholder="{% trans '메시지를 입력하세요...' %}" onkeydown="if(event.key === 'Enter'){ sendText(); }">
-            
-            <!-- 마이크를 텍스트 입력창 아래로 이동 -->
-            <div class="record-container">
-                <button class="record-button" id="record-btn" onclick="toggleRecording()">
-                    <span class="record-icon" id="record-icon">🎤</span>
-                </button>
-            </div>
-            <div class="record-status" id="record-status">{% trans '녹음을 시작하려면 버튼을 누르세요'%}</div>
-            
-            <div class="recognized-text" id="recognized-text"></div>
-            </div>
-        </main>
+                <!-- 오디오 플레이어 -->
+                <div class="audio-player" id="audio-container" style="display: none;">
+                    <audio id="tts-audio" controls></audio>
+                </div>
+                
+                <!-- 입력창 -->
+                <input type="text" class="text-input" id="text-input" placeholder="{% trans '메시지를 입력하세요...' %}" onkeydown="if(event.key === 'Enter'){ sendText(); }">
+                
+                <!-- 마이크 -->
+                <div class="record-container">
+                    <button class="record-button" id="record-btn" onclick="toggleRecording()">
+                        <span class="record-icon" id="record-icon">🎤</span>
+                    </button>
+                </div>
+                <div class="record-status" id="record-status">{% trans '녹음을 시작하려면 버튼을 누르세요'%}</div>
+                
+                <div class="recognized-text" id="recognized-text"></div>
+            </main>
+        </div>
     </div>
 
 <script>
@@ -118,7 +104,6 @@
     let isRecording = false;
     let stream;
 
-    // 현재 URL에서 /chat/1/ 또는 /vision/1/ 부분 제거해서 기본 URL 추출
     const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
 
     function toggleRecording() {
@@ -191,8 +176,6 @@
 
         const messageArea = document.getElementById("message-area");
 
-        const aiImageArea = document.getElementById('ai-image')
-
         // 사용자 메시지 추가
         const userMessage = document.createElement("div");
         userMessage.className = "user-message";
@@ -202,10 +185,8 @@
         // 입력창 초기화
         document.getElementById("text-input").value = "";
 
-        // 메시지 추가 후 텍스트 입력창으로 부드럽게 스크롤
         setTimeout(() => {
-            const textInput = document.getElementById("text-input");
-            textInput.scrollIntoView({
+            document.getElementById("text-input").scrollIntoView({
                 behavior: 'smooth',
                 block: 'center'
             });
@@ -227,16 +208,9 @@
         })
         .then(data => {
             const aiMessage = document.createElement("div");
-            const aiImage = document.createElement('img');
             aiMessage.className = "ai-message";
             aiMessage.textContent = data.ai_text;
-
-            aiImage.className = 'ai-image';
-            aiImage.src = "{{ llm.llm_image.url }}"
-
             messageArea.appendChild(aiMessage);
-            aiImageArea.appendChild(aiImage)
-            
 
             if(data.audio_url){
                 const audioElem = document.getElementById("tts-audio");
@@ -246,8 +220,7 @@
             }
 
             setTimeout(() => {
-                const textInput = document.getElementById("text-input");
-                textInput.scrollIntoView({
+                document.getElementById("text-input").scrollIntoView({
                     behavior: 'smooth',
                     block: 'center'
                 });
@@ -258,7 +231,6 @@
         });
     }
 </script>
-
 
 </body>
 </html>
