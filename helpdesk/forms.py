@@ -25,3 +25,12 @@ class ResponseForm(forms.ModelForm):
         widgets = {
             'response': forms.Textarea(attrs={'rows':4, 'placeholder':'관리자 응답 작성'})
         }
+
+
+from django import forms
+from customer_ai.models import Prompt
+
+class PromptForm(forms.ModelForm):
+    class Meta:
+        model = Prompt
+        fields = ['prompt_title', 'prompt', 'prompt_type']

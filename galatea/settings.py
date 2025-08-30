@@ -1,3 +1,4 @@
+
 """
 Django settings for galatea project.
 
@@ -54,8 +55,7 @@ LOCALE_PATHS = [
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-_fcy$35d^qgcdkj6@pvo$!baii%3gz=2vphd#bs$ns4$-f@1wo"
-
+SECRET_KEY =os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -66,7 +66,7 @@ ALLOWED_HOSTS = [
     'www.galatea.website',
     '127.0.0.1:8093'
 ]
- 
+
 # Application definition
 
 
@@ -76,8 +76,10 @@ INSTALLED_APPS = [
 'django.contrib.sites',
 'allauth',
 'allauth.account',
+'django.contrib.humanize',
 'allauth.socialaccount',
 'allauth.socialaccount.providers.google',
+"allauth.socialaccount.providers.github", 
 "django.contrib.contenttypes",
 "django.contrib.sessions",
 "django.contrib.messages",
@@ -88,7 +90,7 @@ INSTALLED_APPS = [
 "makeImage",
 "payment",
 "home",
-# "cloning",
+"cloning",
 "makeVoice",
 "register",
 "mypage",
@@ -96,7 +98,9 @@ INSTALLED_APPS = [
 'modeltranslation',
 'distribute',
 "helpdesk",
+
 ]
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 SITE_ID = 1
@@ -107,6 +111,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_REDIRECT_URL = '/'   
+LOGOUT_REDIRECT_URL = '/'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -155,17 +160,13 @@ DATABASES = {
         "PASSWORD": DB_PASSWORD,          
         "HOST": "172.31.37.216",        # 인스턴스 바꾸면 여기 바꾸기          
         "PORT": "3306",  
-	"CONN_MAX_AGE": 600                   
+	"CONN_MAX_AGE": 600              
     }
 }
 
 dotenv_path = BASE_DIR / ".env"
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
-print("DB_NAME:", DB_NAME)
-print("DB_USER:", DB_USER)
-print("DB_PASSWORD:", DB_PASSWORD)
 
-print("dotenv_path exists?", dotenv_path.exists())
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -223,11 +224,25 @@ LOGIN_URL = '/register/login/'
 
 
 SOCIALACCOUNT_PROVIDERS = {
+    "github": {
+        "APP": {
+            "client_id": os.getenv("SOCIAL_AUTH_GITHUB_KEY"),
+            "secret": os.getenv("SOCIAL_AUTH_GITHUB_SECRET"),
+            "key": ""
+        }
+    },
     'google': {
         'APP': {
-            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
-            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
             'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
         }
-    }
+    },
 }

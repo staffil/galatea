@@ -1,0 +1,388 @@
+/* 전체 초기화 */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    overflow-x: hidden;
+}
+
+/* 메인 컨테이너 */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 120px 20px 40px;
+}
+
+/* 카드 공통 스타일 */
+.main-card {
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.05));
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 20px;
+    padding: 35px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(139,92,246,0.1);
+    transition: all 0.3s ease;
+}
+
+.main-card:hover {
+    border-color: #8b5cf6;
+    box-shadow: 0 15px 50px rgba(139,92,246,0.2);
+}
+
+/* 제목 스타일 */
+h1, h2 {
+    font-weight: 700;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 25px;
+}
+
+h1 {
+    font-size: 28px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+/* 동의서 섹션 */
+#consentSection textarea {
+    width: 100%;
+    min-height: 200px;
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    color: #e2e8f0;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    margin-bottom: 20px;
+}
+
+#consentSection textarea:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
+}
+
+/* 체크박스 스타일 */
+#consentSection > div {
+    background: rgba(139,92,246,0.05);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#consentSection input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #8b5cf6;
+    margin-right: 12px;
+    vertical-align: middle;
+}
+
+#consentSection label {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    display: block;
+    cursor: pointer;
+    color: #e2e8f0;
+}
+
+/* 폼 그룹 */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 12px;
+}
+
+/* 입력 필드 */
+input[type="text"], textarea {
+    width: 100%;
+    padding: 15px 18px;
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 12px;
+    color: #e2e8f0;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
+    background: rgba(139,92,246,0.12);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+}
+
+input[type="text"]::placeholder, textarea::placeholder {
+    color: rgba(226,232,240,0.6);
+}
+
+/* 오디오 컨트롤 */
+audio {
+    width: 100%;
+    background: rgba(139,92,246,0.1);
+    border-radius: 12px;
+    padding: 10px;
+}
+
+audio::-webkit-media-controls-panel {
+    background-color: rgba(139,92,246,0.2);
+    border-radius: 8px;
+}
+
+/* 버튼 스타일 */
+button {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+}
+
+/* 기본 버튼 */
+#agreeBtn, #generateSampleBtn, #saveBtn {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139,92,246,0.3);
+}
+
+#agreeBtn:hover, #generateSampleBtn:hover, #saveBtn:hover {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139,92,246,0.4);
+}
+
+/* 녹음 버튼들 */
+#recordBtn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+}
+
+#recordBtn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(239,68,68,0.4);
+}
+
+#stopBtn {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+    box-shadow: 0 4px 15px rgba(107,114,128,0.3);
+}
+
+#stopBtn:hover {
+    background: linear-gradient(135deg, #4b5563, #374151);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(107,114,128,0.4);
+}
+
+/* 재시도 버튼 */
+#retryBtn {
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.1));
+    border: 1px solid rgba(139,92,246,0.3);
+    color: #e2e8f0;
+}
+
+#retryBtn:hover {
+    background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(6,182,212,0.2));
+    border-color: #8b5cf6;
+    transform: translateY(-2px);
+}
+
+/* 비활성화된 버튼 */
+button:disabled {
+    background: rgba(107,114,128,0.3) !important;
+    color: rgba(226,232,240,0.5) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: rgba(107,114,128,0.2) !important;
+}
+
+/* 버튼 그룹 */
+.button-group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.form-group .button-group {
+    justify-content: flex-start;
+    margin-top: 0;
+}
+
+/* 메시지 */
+#message {
+    margin-top: 20px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#message:not(:empty) {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #fca5a5;
+}
+
+#message.success {
+    background: rgba(34,197,94,0.1) !important;
+    border-color: rgba(34,197,94,0.3) !important;
+    color: #86efac !important;
+}
+
+#message.info {
+    background: rgba(59,130,246,0.1) !important;
+    border-color: rgba(59,130,246,0.3) !important;
+    color: #93c5fd !important;
+}
+
+/* 로딩 애니메이션 */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        padding: 100px 15px 30px;
+    }
+    
+    .main-card {
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    h2 {
+        font-size: 20px;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    button {
+        padding: 12px 20px;
+        font-size: 13px;
+    }
+    
+    input[type="text"], textarea {
+        padding: 12px 15px;
+        font-size: 13px;
+    }
+    
+    .form-group label {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 90px 12px 25px;
+    }
+    
+    .main-card {
+        padding: 20px;
+        border-radius: 15px;
+    }
+    
+    h1 {
+        font-size: 22px;
+    }
+    
+    h2 {
+        font-size: 18px;
+    }
+    
+    #consentSection textarea {
+        min-height: 150px;
+        padding: 15px;
+        font-size: 13px;
+    }
+    
+    #consentSection > div {
+        padding: 15px;
+    }
+    
+    input[type="text"], textarea {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    button {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 포커스 표시 개선 */
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+}
+
+/* 다크모드 지원 */
+@media (prefers-color-scheme: dark) {
+    input[type="text"]::placeholder, textarea::placeholder {
+        color: rgba(226,232,240,0.4);
+    }
+}

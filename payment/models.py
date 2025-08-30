@@ -7,6 +7,7 @@ class PaymentMethod(models.Model):
     name = models.CharField(max_length=50, unique=True)  # ex) KakaoPay, TossPayments, PayPal
     description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    payment_image = models.ImageField( null=True, blank=True)
 
     class Meta:
         db_table = 'payment_method'
@@ -20,9 +21,11 @@ class PaymentMethod(models.Model):
 class PaymentRank(models.Model):
     rankname = models.CharField(max_length=100, verbose_name='결제 등급', unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='등급에 따른 가격')
+    daller_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='등급에 따른 가격(달러)')
     voicetime = models.CharField(max_length=100, verbose_name='가격에 따른 음성 시간')
     freetoken = models.IntegerField(null=True, verbose_name='등급에 따른 무료 토큰 횟수')
     color = models.CharField(max_length=100,  default="#FFF", verbose_name='등급에 따른 색깔')
+
 
     class Meta:
         db_table = 'payment_rank'
@@ -49,6 +52,7 @@ class Payment(models.Model):
     apply_num = models.CharField(max_length=50, null=True, blank=True, verbose_name='PG 승인 번호')
     currency = models.CharField(max_length=10, default='KRW', verbose_name='결제 통화 기록')
     refund_reason = models.TextField(null=True, blank=True, verbose_name='환불 사유')
+    customer_uid = models.CharField(max_length=100,  null=True, blank=True, verbose_name="PG 사 발급 토큰")
 
     class Meta:
         db_table = 'payment'
@@ -120,8 +124,8 @@ from django.contrib.auth.models import User
 class Token(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, null=True)
-    total_token = models.DecimalField(max_digits=10, decimal_places=2, default=150)
-    token_usage = models.DecimalField(max_digits=10, decimal_places=2)
+    total_token = models.DecimalField(max_digits=10, decimal_places=2, default=100)
+    token_usage = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -141,6 +145,8 @@ class Token(models.Model):
         self.token_usage += amount
         self.save()
         return True
+    
+    
 
 
 class PaymentStats(models.Model):

@@ -1,6 +1,6 @@
 import os
 import base64
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -11,6 +11,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from elevenlabs import ElevenLabs
 from makeVoice.models import VoiceList
+from cloning.models import CloningAgreement
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -23,12 +24,65 @@ eleven_client = ElevenLabs(api_key=ELEVEN_API_KEY)
 @login_required
 @require_http_methods(["GET"])
 def voice_cloning_page (request):
-    return render(request, "cloning/cloning.html")
+    cloning_agreement = CloningAgreement.objects.all()
+    context = {
+        "cloning_agreement": cloning_agreement
+    }
+    return render(request, "cloning/cloning.html", context)
+
+
+
+from payment.models import Token
+from payment.models import TokenHistory
+from pydub import AudioSegment
+
+def get_audio_duration(file_path):
+    audio = AudioSegment.from_file(file_path)
+    return int(audio.duration_seconds)
+
+from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
+import json
+@login_required
+@csrf_exempt
+def save_consent(request):
+    if request.method != "POST":
+        return JsonResponse({"status":"error","error":"POST 요청만 허용됩니다."}, status=405)
+
+    data = json.loads(request.body)
+    consent_voice = data.get("consent_voice", False)
+    consent_third = data.get("consent_third", False)
+    consent_share = data.get("consent_share", False)
+
+    # update_or_create로 체크박스만 저장
+    agreement, created = CloningAgreement.objects.update_or_create(
+        user=request.user,
+        defaults={
+            "consent_voice": consent_voice,
+            "consent_third": consent_third,
+            "consent_share": consent_share
+        }
+    )
+    return JsonResponse({"status":"success"})
 
 @login_required
 @csrf_exempt
 @require_http_methods(['POST'])
 def voice_cloning_sample(request):
+
+    try:
+        agreement = CloningAgreement.objects.get(user =request.user)
+        if not (agreement.consent_voice and agreement.consent_share and agreement.consent_share):
+            return JsonResponse({"status":"error", "error":"음성 클로닝을 사용하려면 동의서에 동의 하셔야 합니다."}, status=403)
+        
+
+    except CloningAgreement.DoesNotExist:
+        return JsonResponse({
+            "status": "error",
+            "error": "동의서가 존재하지 않습니다. 먼저 동의서를 확인해주세요."
+        }, status=403)
+
+    
     audio_file = request.FILES.get('audio')
     voice_name = request.POST.get('voice_name', '').strip()
     sample_text = request.POST.get('sample_text', '').strip()
@@ -53,6 +107,34 @@ def voice_cloning_sample(request):
                 name = voice_name,
                 files = [("audio_file", f)],
             )
+
+        audio_second = get_audio_duration(full_audio_path)
+        def consume_token(user, amount):
+            with transaction.atomic():
+                try:
+                    token_obj = Token.objects.select_for_update().get(user=user)
+                except ObjectDoesNotExist:
+                    return False 
+
+                avail_token = token_obj.total_token - token_obj.token_usage
+                if avail_token < amount:
+                    return False
+
+                token_obj.token_usage += amount
+                token_obj.save()
+
+                TokenHistory.objects.create(
+                    user=user,
+                    change_type=TokenHistory.CONSUME,
+                    amount=amount,
+                    total_voice_generated=amount
+                )
+                return True
+        
+        success = consume_token(request.user, audio_second)
+        if not success:
+            return JsonResponse({"error": "토큰이 부족합니다."}, status = 403)
+
         
 
         voice_id = voice_clone_resp.voice_id
@@ -109,5 +191,6 @@ def voice_cloning_save(request):
     
     except Exception as e:
         return JsonResponse({"status": "error", "error": str(e)})
+
 
     

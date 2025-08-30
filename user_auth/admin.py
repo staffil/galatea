@@ -7,6 +7,7 @@ from celebrity.models import Celebrity,CelebrityVoice
 from distribute.models import Genre
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from user_auth.models import Faq, Requests, Notice
+from cloning.models import CloningAgreement
 
 User = get_user_model()
 
@@ -268,6 +269,78 @@ class FaqAdmin(admin.ModelAdmin):
         if obj.faq_img:
             return obj.faq_img
         
+
+@admin.register(Notice)
+class NoticeAdmin(admin.ModelAdmin):
+    list_display = ("get_title", "get_content", "get_author")  
+
+    @admin.display(description="공지사항 제목")
+    def get_title(self, obj):
+        return obj.title if obj.title else "-"
         
+    @admin.display(description="공지사항 내용")
+    def get_content(self, obj):
+        return obj.content if obj.content else "-"
+        
+    @admin.display(description="올린 관리자")
+    def get_author(self, obj):
+        return obj.author.username if obj.author else "-"
+        
+from django.contrib import admin
+from payment.models import (
+    PaymentMethod,
+    PaymentRank,
+    Payment,
+    Token,
+    TokenHistory,
+    TotalToken,
+    PaymentStats,
+)
+
+# 결제 수단
+@admin.register(PaymentMethod)
+class PaymentMethodAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_active',)
+    list_filter = ('is_active',)
+    search_fields = ('name',)
+
+# 결제 등급
+@admin.register(PaymentRank)
+class PaymentRankAdmin(admin.ModelAdmin):
+    list_display = ('rankname', 'price', 'voicetime', 'freetoken', 'color',)
+    search_fields = ('rankname',)
+
+# 결제 내역
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'payment_rank', 'amount', 'status', 'paid_at', 'payment_method', 'imp_uid', 'merchant_uid')
+    list_filter = ('status', 'payment_method', 'payment_rank')
+    search_fields = ('user__username', 'imp_uid', 'merchant_uid')
+
+# 토큰
+@admin.register(Token)
+class TokenAdmin(admin.ModelAdmin):
+    list_display = ('user', 'total_token', 'token_usage', 'created_at')
+    search_fields = ('user__username',)
+
+# 토큰 히스토리
+@admin.register(TokenHistory)
+class TokenHistoryAdmin(admin.ModelAdmin):
+    list_display = ('user', 'change_type', 'amount', 'total_voice_generated', 'created_at')
+    list_filter = ('change_type',)
+    search_fields = ('user__username',)
+
+# 총 토큰
+@admin.register(TotalToken)
+class TotalTokenAdmin(admin.ModelAdmin):
+    list_display = ('total_tokens_used', 'total_llm_count', 'updated_at')
+
+# 결제 통계
+@admin.register(PaymentStats)
+class PaymentStatsAdmin(admin.ModelAdmin):
+    list_display = ('total_payments', 'success_count', 'failure_count', 'pending_count', 'refunded_count', 'updated_at')
 
 
+@admin.register(CloningAgreement)
+class CloningAgreementAdmin(admin.ModelAdmin):
+    list_display = ('voice_text', 'third_text', 'share_text')

@@ -198,7 +198,33 @@ def celebrity_response(request, celebrity_id):
         with open(audio_path, "wb") as f:
             for chunk in audio_stream:
                 f.write(chunk)
-        
+        audio_seconds = get_audio_duration_in_seconds(audio_path)
+
+
+        def consume_tokens(user, amount, model_name):
+            # 모델별 배율
+            required_tokens = amount
+            print("실제 파일 길이(pydub):", audio_seconds)
+
+            token_obj = Token.objects.filter(user=user).latest("created_at")
+            available_tokens = token_obj.total_token - token_obj.token_usage
+
+            if available_tokens < required_tokens:
+                return False
+
+
+            TokenHistory.objects.create(
+                user=user,
+                change_type=TokenHistory.CONSUME,
+                amount=required_tokens,
+                total_voice_generated=required_tokens
+            )
+            return True
+
+
+        success = consume_tokens(request.user, audio_seconds, custom_model)
+        if not success:
+            return JsonResponse({"error": "토큰이 부족합니다"}, status=403)        
 
         
 

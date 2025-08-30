@@ -100,6 +100,7 @@
                 </div>
             </div>
 
+
             <div class="right-panel">
                 <div class="form-group">
                     <h2>{% trans '언어' %}</h2>
@@ -170,7 +171,7 @@
                     <div class="custom-select-wrapper">
                         <div class="custom-select">
                             <select name="model" id="model">
-                                <option value="gpt-3.5-turbo" selected>GPT3 turbo</option>
+                                <!-- <option value="gpt-3.5-turbo" selected>GPT3 turbo</option> -->
                                 <option value="gpt-4o-mini">GPT4o-mini</option>
                                 <option value="gpt-4o">GPT4o</option>
                             </select>
@@ -183,6 +184,60 @@
         </div>
     </form>
 
+                <button type="submit" id="auto_prompt" class="btn generate-button">대신 만들어줘!</button>
+                <p>{% trans '대신 만들어줘를 눌러 보세요. AI가 프롬프트를 더 자세하게 적어 줄 겁니다.'%}</p>
+
+            <script>
+
+                                    // 쿠키에서 CSRF 토큰 읽기 함수
+                    
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    const csrftoken = getCookie('csrftoken');
+                document.getElementById("auto_prompt").addEventListener("click", function(){
+                    const userPromptInput  = document.getElementById('prompt').value.trim()
+                    const csrftoken = "{{ csrf_token }}"
+
+                    if (!userPromptInput){
+                        alert("{% trans '프롬프트을 입력해 주세요' %}")
+                        return;
+                    }
+                    fetch("{% url 'auto_prompt' %}", {
+                        method :"POST",
+                        headers:{
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body : JSON.stringify({prompt:userPromptInput})
+                    })
+                    .then(res => res.json())
+                    .then(data =>{
+                        if (data.status == 'success'){
+                            document.getElementById("prompt").value = data.refine_data
+                        alert("{% trans '프롬프트가 좀 더 구체화 되었습니다.'%}");
+                        }else {
+                            alert("{% trans '프롬프트 생성 중 오류가 발생했습니다.'%}")
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("서버 요청중 오류 발생")
+                    })
+                })
+            </script>
 <script src="{% static 'js/customer_ai/make_ai.js' %}"></script>
 
 </body>

@@ -1,0 +1,118 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "FAQ - GALATEA" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/faq.css' %}">
+</head>
+
+<style>
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #fafafa;
+    margin: 0;
+    padding: 0;
+}
+
+.faq-page {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.faq-page h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2rem;
+    color: #333;
+}
+
+.faq-item {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.faq-question {
+    width: 100%;
+    background: #f7f7f7;
+    border: none;
+    outline: none;
+    text-align: left;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.3s;
+    position: relative;
+}
+
+.faq-question::after {
+    content: '+';
+    position: absolute;
+    right: 20px;
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+}
+
+.faq-item.active .faq-question::after {
+    content: '−';
+}
+
+.faq-question:hover {
+    background: #e0e0e0;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 20px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.faq-answer p {
+    margin: 15px 0;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px; /* 충분히 큰 값 */
+}
+  
+</style>
+<body>
+
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+
+<main class="faq-page">
+ <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">저장</button>
+</form>
+
+
+</main>
+
+<script>
+document.querySelectorAll('.faq-question').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        item.classList.toggle('active');
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,78 +1,649 @@
-{% load static %}
-{% load i18n %}
+{% load i18n static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#8b5cf6">
     <title>{% trans "마이페이지 - GALATEA" %}</title>
     <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}">
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            --accent-color: #8b5cf6;
+            --secondary-accent: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --text-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --border-radius: 12px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background: var(--primary-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 배경 원형 효과 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(60px);
+            animation: float 20s infinite linear;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .circle-bg:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-color);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .circle-bg:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: var(--secondary-accent);
+            top: 60%;
+            right: 20%;
+            animation-delay: -5s;
+        }
+
+        .circle-bg:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            background: var(--warning-color);
+            bottom: 20%;
+            left: 30%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .main-content {
+            margin: 80px auto 40px;
+            padding: 0 20px;
+            max-width: 1200px;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 토큰 요약 섹션 스타일링 */
+        .token-summary {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+        }
+
+        .token-summary h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            text-align: center;
+            position: relative;
+        }
+
+        .token-summary h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-accent));
+            border-radius: 2px;
+        }
+
+        .token-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            list-style: none;
+        }
+
+        .token-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 25px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .token-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .token-card:hover::before {
+            left: 100%;
+        }
+
+        .token-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .token-card.total {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .token-card.used {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .token-card.remaining {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .token-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .token-card.total .token-icon::before {
+            content: '💎';
+        }
+
+        .token-card.used .token-icon::before {
+            content: '📊';
+        }
+
+        .token-card.remaining .token-icon::before {
+            content: '💰';
+        }
+
+        .token-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .token-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .token-card.total .token-value {
+            color: var(--accent-color);
+        }
+
+        .token-card.used .token-value {
+            color: #ef4444;
+        }
+
+        .token-card.remaining .token-value {
+            color: var(--success-color);
+        }
+
+        .token-description {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        /* 진행률 바 */
+        .token-progress {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .token-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--warning-color), #ef4444);
+            border-radius: 10px;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+
+        .token-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .token-progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* 결제 내역 섹션 */
+        .payment-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+        }
+
+        .payment-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--secondary-accent);
+            text-align: center;
+        }
+
+        /* 반응형 디자인 */
+        
+        /* Large Desktop (1200px+) */
+        @media (min-width: 1200px) {
+            .main-content {
+                max-width: 1400px;
+                padding: 0 40px;
+            }
+            
+            .token-summary {
+                padding: 40px;
+            }
+            
+            .token-stats {
+                gap: 30px;
+            }
+            
+            .token-card {
+                padding: 35px 25px;
+            }
+            
+            .token-icon {
+                font-size: 3rem;
+                margin-bottom: 20px;
+            }
+            
+            .token-value {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Desktop (992px-1199px) */
+        @media (max-width: 1199px) and (min-width: 992px) {
+            .main-content {
+                padding: 0 30px;
+            }
+            
+            .token-summary {
+                padding: 35px;
+            }
+            
+            .token-stats {
+                gap: 25px;
+            }
+        }
+
+        /* Tablet Landscape (769px-991px) */
+        @media (max-width: 991px) and (min-width: 769px) {
+            .main-content {
+                margin: 70px auto 30px;
+                padding: 0 25px;
+            }
+            
+            .page-title {
+                font-size: 2.2rem;
+            }
+            
+            .token-summary {
+                padding: 30px;
+                margin-bottom: 35px;
+            }
+            
+            .token-stats {
+                gap: 20px;
+            }
+            
+            .token-card {
+                padding: 25px 18px;
+            }
+            
+            .token-value {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Tablet Portrait (481px-768px) */
+        @media (max-width: 768px) {
+            .main-content {
+                margin: 60px auto 20px;
+                padding: 0 20px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+                margin-bottom: 12px;
+            }
+            
+            .token-summary {
+                padding: 25px;
+                margin-bottom: 30px;
+                border-radius: 10px;
+            }
+            
+            .token-summary h2 {
+                font-size: 1.5rem;
+                margin-bottom: 25px;
+            }
+            
+            .token-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .token-card {
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                text-align: left;
+            }
+            
+            .token-icon {
+                font-size: 2rem;
+                margin-bottom: 0;
+                margin-right: 20px;
+                flex-shrink: 0;
+            }
+            
+            .token-info {
+                flex: 1;
+            }
+            
+            .token-value {
+                font-size: 1.8rem;
+                margin-bottom: 5px;
+            }
+            
+            .token-label {
+                margin-bottom: 5px;
+            }
+            
+            .payment-section {
+                padding: 25px;
+                border-radius: 10px;
+            }
+            
+            .payment-section h3 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Small Mobile (361px-480px) */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0 15px;
+                margin: 50px auto 15px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .token-summary {
+                padding: 20px;
+                margin: 0 -5px 25px;
+                border-radius: 8px;
+            }
+            
+            .token-summary h2 {
+                font-size: 1.3rem;
+                margin-bottom: 20px;
+            }
+            
+            .token-stats {
+                gap: 12px;
+            }
+            
+            .token-card {
+                padding: 18px 15px;
+                border-radius: 8px;
+            }
+            
+            .token-icon {
+                font-size: 1.8rem;
+                margin-right: 15px;
+            }
+            
+            .token-value {
+                font-size: 1.6rem;
+            }
+            
+            .token-label {
+                font-size: 0.85rem;
+            }
+            
+            .token-description {
+                font-size: 0.75rem;
+            }
+            
+            .token-progress {
+                height: 10px;
+                margin-top: 25px;
+            }
+            
+            .payment-section {
+                padding: 20px;
+                margin: 0 -5px;
+                border-radius: 8px;
+            }
+        }
+
+        /* Extra Small Mobile (max-360px) */
+        @media (max-width: 360px) {
+            .main-content {
+                padding: 0 10px;
+                margin: 45px auto 10px;
+            }
+            
+            .token-summary {
+                padding: 15px;
+                margin: 0 -2px 20px;
+            }
+            
+            .token-summary h2 {
+                font-size: 1.2rem;
+                margin-bottom: 18px;
+            }
+            
+            .token-card {
+                padding: 15px 12px;
+            }
+            
+            .token-icon {
+                font-size: 1.6rem;
+                margin-right: 12px;
+            }
+            
+            .token-value {
+                font-size: 1.4rem;
+            }
+            
+            .token-label {
+                font-size: 0.8rem;
+            }
+            
+            .payment-section {
+                padding: 15px;
+                margin: 0 -2px;
+            }
+            
+            .payment-section h3 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .token-card:hover::before {
+                left: -100%;
+            }
+            
+            .token-card:hover {
+                transform: none;
+            }
+            
+            .token-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* High DPI Display Support */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .circle-bg {
+                filter: blur(80px);
+            }
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            
+            .circle-bg {
+                animation: none;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #ffffff;
+                --card-bg: rgba(255, 255, 255, 0.1);
+            }
+        }
+    </style>
 </head>
 <body>
-    <button class="menu-toggle" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg"></div>
+    <div class="circle-bg"></div>
+    <div class="circle-bg"></div>
+
     {% include "common/sidebar.html" %}
-    <script src="{% static 'js/sidebar.js' %}"></script>
 
     <div class="main-content">
-        <div class="date-range">
-            <label>시작 날짜:</label>
-            <input type="text" id="startDate" value="{{ start_date }}">
-            <label>종료 날짜:</label>
-            <input type="text" id="endDate" value="{{ end_date }}">
-            <button id="applyRange">적용</button>
+        <div class="page-header">
+            <h1 class="page-title">{% trans "토큰 관리" %}</h1>
         </div>
 
-        <canvas id="tokenChart" width="600" height="300"></canvas>
+        <div class="token-summary">
+            <h2>{% trans "토큰 요약" %}</h2>
+            <ul class="token-stats">
+                <li class="token-card total">
+                    <span class="token-icon"></span>
+                    <div class="token-info">
+                        <div class="token-label">{% trans "총 토큰" %}</div>
+                        <div class="token-value">{{ total|default:"0" }}</div>
+                        <div class="token-description">{% trans "구매한 전체 토큰" %}</div>
+                    </div>
+                </li>
+                <li class="token-card used">
+                    <span class="token-icon"></span>
+                    <div class="token-info">
+                        <div class="token-label">{% trans "사용한 토큰" %}</div>
+                        <div class="token-value">{{ used|default:"0" }}</div>
+                        <div class="token-description">{% trans "이미 소모된 토큰" %}</div>
+                    </div>
+                </li>
+                <li class="token-card remaining">
+                    <span class="token-icon"></span>
+                    <div class="token-info">
+                        <div class="token-label">{% trans "남은 토큰" %}</div>
+                        <div class="token-value">{{ remaining|default:"0" }}</div>
+                        <div class="token-description">{% trans "사용 가능한 토큰" %}</div>
+                    </div>
+                </li>
+            </ul>
+            
+            <!-- 토큰 사용률 진행률 바 -->
+            <div class="token-progress">
+<div class="token-progress-bar" style="width: {{ usage_percent }}%"></div>
+<div class="token-progress-text">
+    {% trans "토큰 사용률" %}: <strong>{{ usage_percent|floatformat:1 }}%</strong>
+</div>
 
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const labels = {{ labels|safe }};
-            const data = {{ data|safe }};
-
-            const ctx = document.getElementById('tokenChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line', // 선 그래프로 변경
-                data: {
-                    labels: labels.length ? labels : ["No Data"],
-                    datasets: [{
-                        label: '일별 토큰 사용량',
-                        data: data.length ? data : [0],
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 2,
-                        tension: 0.3, // 부드러운 곡선
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: '사용량' } },
-                        x: { title: { display: true, text: '날짜' } }
-                    }
-                }
-            });
-
-            flatpickr("#startDate", { dateFormat: "Y-m-d" });
-            flatpickr("#endDate", { dateFormat: "Y-m-d" });
-
-            document.getElementById("applyRange").addEventListener("click", () => {
-                const start = document.getElementById("startDate").value;
-                const end = document.getElementById("endDate").value;
-                if(start && end){
-                    window.location.href = `?start_date=${start}&end_date=${end}`;
-                }
-            });
-        });
-        </script>
+        </div>
 
         <div class="payment-section">
             <h3>{% trans "결제 내역" %}</h3>
@@ -90,19 +661,70 @@
                         {% for p in payments %}
                         <tr>
                             <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
-                            <td>{{ p.method }}</td>
+                            <td>{{ p.payment_method.name }}</td>
                             <td>{{ p.status }}</td>
                             <td>{{ p.amount }}</td>
                         </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="4" class="empty-state">{% trans "결제 내역이 없습니다." %}</td>
+                            <td colspan="4">{% trans "결제 내역이 없습니다." %}</td>
                         </tr>
                     {% endif %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        // 토큰 사용률 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.querySelector('.token-progress-bar');
+            if (progressBar) {
+                const targetWidth = progressBar.style.width;
+                progressBar.style.width = '0%';
+                
+                setTimeout(() => {
+                    progressBar.style.width = targetWidth;
+                }, 500);
+            }
+
+            // 토큰 카드 애니메이션
+            const tokenCards = document.querySelectorAll('.token-card');
+            tokenCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 * (index + 1));
+            });
+        });
+
+        // 반응형 대응
+        function handleResize() {
+            const isMobile = window.innerWidth <= 768;
+            const tokenCards = document.querySelectorAll('.token-card');
+            
+            tokenCards.forEach(card => {
+                const icon = card.querySelector('.token-icon');
+                const info = card.querySelector('.token-info');
+                
+                if (isMobile) {
+                    card.style.display = 'flex';
+                    card.style.textAlign = 'left';
+                } else {
+                    card.style.display = 'block';
+                    card.style.textAlign = 'center';
+                }
+            });
+        }
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+        handleResize(); // 초기 실행
+    </script>
 </body>
 </html>

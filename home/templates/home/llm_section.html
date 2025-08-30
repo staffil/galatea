@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 {% load i18n %}
 
 <!DOCTYPE html>
@@ -10,13 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
-
     <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
-    <script src="{% static 'js/home/main.js' %}"></script>
 </head>
+<style>
+.llm-cards-container {
+    display: flex;
+    flex-wrap: wrap;        /* 줄 바꿈 허용 */
+    gap: 16px;              /* 카드 간 간격 */
+}
 
+
+
+</style>
 <body>
-       <!-- 배경 원들 -->
+    <!-- 배경 원들 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
@@ -31,10 +38,11 @@
             {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
+
         <!-- LLM 추천 섹션 -->
         <div class="main-content">
             <div class="llm-container">
-                <h2 class="section-title">추천</h2>
+                <h2 class="section-title">{% trans '추천' %}</h2>
                 <div class="llm-cards-container">
                     {% for item in llm_list %}
                     <div class="llm-card" onclick="openModal({{ item.id }})">
@@ -49,7 +57,7 @@
                             <div class="llm-name">{{ item.title }}</div>
                             <div class="genre-tags">
                                 {% for genre in item.genres.all %}
-                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.display_name }}</div>
+                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
                                 {% empty %}
                                     <div class="genre-tag" style="background-color: #999;">장르 없음</div>
                                 {% endfor %}
@@ -60,8 +68,50 @@
                 </div>
             </div>
         </div>
+
+
+
+
 <script>
-    document.addEventListener('click', (e) => {
+const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+  // LLM 모달
+    function openModal(llm_id) {
+        const modalHTML = `
+        <div id="llm-modal">
+            <div class="modal-overlay" onclick="closeModal()"></div>
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">X</button>
+                <div id="llm-container" class="llm-container"></div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+
+        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+fetch(`${window.location.origin}/${LANGUAGE_CODE}/intro/${llm_id}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('llm-modal');
+        if (modal) modal.remove();
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
+
+    }
+        // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        initNewsSlider();
+    });
+
+// 팔로우 버튼
+document.addEventListener('click', e => {
     const followBtn = e.target.closest('.glt2-follow-btn');
     if (!followBtn) return;
 
@@ -77,24 +127,17 @@
     })
     .then(response => response.json())
     .then(data => {
-        if (data.status === 'follow') {
-            followBtn.textContent = 'Following';
-        } else if (data.status === 'unfollow') {
-            followBtn.textContent = 'Follow';
-        } else {
-            alert(data.message);
-        }
+        followBtn.textContent = data.status === 'follow' ? 'Following' : 'Follow';
     })
     .catch(err => console.error('팔로우 토글 오류:', err));
 });
 
-
-// like btn
-document.addEventListener('click', (e)=>{
+// 좋아요 버튼
+document.addEventListener('click', e => {
     const likeBtn = e.target.closest('.glt2-like-btn');
     if (!likeBtn) return;
 
-    const userId = likeBtn.dataset.id;
+    const llmId = likeBtn.dataset.id;
 
     fetch("{% url 'home:like_toggle' %}", {
         method: "POST",
@@ -102,64 +145,14 @@ document.addEventListener('click', (e)=>{
             "X-CSRFToken": "{{ csrf_token }}",
             "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: `llm_id=${userId}`
+        body: `llm_id=${llmId}`
     })
     .then(response => response.json())
-    .then(data=>{
-        if (data.status === 'like'){
-            likeBtn.textContent = '❤️';
-        } else if(data.status === 'unlike'){
-            likeBtn.textContent = '♡';
-        } else{
-            alert(data.message)
-        }
+    .then(data => {
+        likeBtn.textContent = data.status === 'like' ? '❤️' : '♡';
     })
-    .catch(err => console.error('좋아요 토글 오류:', err))
-})
-
-    // 카드 클릭 시 모달 열기
-    document.querySelectorAll('.glt2-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            // 버튼 클릭이면 모달 열지 않음
-            if (e.target.closest('.glt2-follow-btn') || e.target.closest('.glt2-like-btn') || e.target.closest('.glt2-chat-btn')) return;
-
-            // 카드 내용 모달로 복사
-            modalContent.innerHTML = card.innerHTML;
-            modalOverlay.style.display = 'flex';
-        });
-    });
-  // LLM 모달
-    function openModal(llm_id) {
-        const modalHTML = `
-        <div id="llm-modal">
-            <div class="modal-overlay" onclick="closeModal()"></div>
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal()">X</button>
-                <div id="llm-container" class="llm-container"></div>
-            </div>
-        </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-        fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('llm-container').innerHTML = html;
-        });
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('llm-modal');
-        if (modal) modal.remove();
-    }
-
-    // 초기화
-    document.addEventListener('DOMContentLoaded', () => {
-        initNewsSlider();
-    });
-  
-
+    .catch(err => console.error('좋아요 토글 오류:', err));
+});
 </script>
 </body>
 </html>

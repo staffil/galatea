@@ -1,0 +1,378 @@
+/* 전체 초기화 */
+* { 
+
+    padding: 0; 
+    box-sizing: border-box; 
+}
+.brand-name{
+    margin:-10px;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    overflow-x: hidden;
+    position: relative;
+    padding: 0;
+}
+
+/* 배경 장식 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 15% 25%, rgba(139,92,246,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 85% 75%, rgba(6,182,212,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(139,92,246,0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 메인 컨테이너 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 120px 20px 60px;
+    position: relative;
+    z-index: 1;
+}
+
+/* 페이지 제목 */
+h1 {
+    font-size: 48px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 50px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+    border-radius: 2px;
+}
+
+/* 플랜 카드 컨테이너 */
+div:has(.plan-card) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 플랜 카드 */
+.plan-card {
+    background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08));
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 24px;
+    padding: 40px 30px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        0 20px 60px rgba(139,92,246,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 0;
+}
+
+.plan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+}
+
+.plan-card:hover {
+    border-color: rgba(139,92,246,0.4);
+    box-shadow: 
+        0 30px 80px rgba(139,92,246,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+    transform: translateY(-8px);
+}
+
+/* 플랜 제목 */
+.plan-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 플랜 정보 */
+.plan-card p {
+    font-size: 16px;
+    color: rgba(226,232,240,0.9);
+    margin-bottom: 15px;
+    line-height: 1.6;
+    background: rgba(139,92,246,0.08);
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(139,92,246,0.15);
+    width: 100%;
+}
+
+.plan-card p:first-of-type {
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(16,185,129,0.1));
+    border-color: rgba(34,197,94,0.3);
+    color: #86efac;
+}
+
+/* 폼 */
+.plan-card form {
+    width: 100%;
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+/* UPGRADE 버튼 */
+.plan-card button[type="submit"] {
+    width: 100%;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    border: none;
+    border-radius: 16px;
+    color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(139,92,246,0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.plan-card button[type="submit"]:hover {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(139,92,246,0.4);
+}
+
+.plan-card button[type="submit"]:active {
+    transform: translateY(-1px);
+}
+
+.plan-card button[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.plan-card button[type="submit"]:hover::before {
+    left: 100%;
+}
+
+/* 특별 플랜 강조 (중간 카드) */
+.plan-card:nth-child(2) {
+    transform: scale(1.05);
+    border-width: 2px;
+    border-color: rgba(139,92,246,0.4);
+    box-shadow: 
+        0 25px 70px rgba(139,92,246,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.plan-card:nth-child(2)::before {
+    height: 6px;
+}
+
+.plan-card:nth-child(2) h3 {
+    font-size: 28px;
+    position: relative;
+}
+
+.plan-card:nth-child(2) h3::after {
+    content: '추천';
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.plan-card:nth-child(2):hover {
+    transform: scale(1.05) translateY(-8px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+    .container {
+        padding: 100px 15px 50px;
+    }
+    
+    div:has(.plan-card) {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        padding: 0 10px;
+    }
+    
+    h1 {
+        font-size: 42px;
+        margin-bottom: 40px;
+    }
+}
+
+@media (max-width: 900px) {
+    div:has(.plan-card) {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .plan-card {
+        padding: 35px 25px;
+    }
+    
+    .plan-card:nth-child(2) {
+        transform: none;
+        order: -1;
+    }
+    
+    .plan-card:nth-child(2):hover {
+        transform: translateY(-8px);
+    }
+    
+    h1 {
+        font-size: 36px;
+        margin-bottom: 35px;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 90px 12px 40px;
+    }
+    
+    div:has(.plan-card) {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0;
+    }
+    
+    .plan-card {
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+    
+    .plan-card h3 {
+        font-size: 22px;
+    }
+    
+    .plan-card p {
+        font-size: 15px;
+        padding: 10px 16px;
+    }
+    
+    .plan-card p:first-of-type {
+        font-size: 18px;
+    }
+    
+    .plan-card button[type="submit"] {
+        padding: 14px 24px;
+        font-size: 15px;
+    }
+    
+    h1 {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+    
+    .plan-card:nth-child(2) {
+        top: -15px;
+        right: -10px;
+        font-size: 11px;
+        padding: 3px 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .container {
+        padding: 80px 8px 35px;
+    }
+    
+    .plan-card {
+        padding: 25px 16px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    .plan-card h3 {
+        font-size: 20px;
+    }
+    
+    .plan-card p {
+        font-size: 14px;
+    }
+    
+    .plan-card button[type="submit"] {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 포커스 표시 개선 */
+.plan-card button[type="submit"]:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+}
+
+/* 다크모드 강화 */
+@media (prefers-color-scheme: dark) {
+    .plan-card p {
+        color: rgba(226,232,240,0.85);
+    }
+}

@@ -2,120 +2,23 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
     <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
     <script src="{% static 'js/home/main.js' %}"></script>
+
 </head>
-<style>
-
-/* 모달 전체 배경 */
-#llm-modal .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
-    z-index: 9998;
-}
-
-/* 모달 컨텐츠 */
-#llm-modal .modal-content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* 화면 중앙으로 이동 */
-
-    height: 700px;
-    background-color: #222;
-    border-radius: 15px;
-    overflow-y: auto;   /* 내용이 넘치면 세로 스크롤 */
-    overflow-x: hidden;
-   
-    z-index: 9999;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-/* 닫기 버튼 */
-#llm-modal .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    border: none;
-    background: none;
-    font-size: 18px;
-    cursor: pointer;
-    z-index: 100;
-    color: aliceblue;
-}
+<body>
 
 
-
-</style>
-
-</style>
-
-<body >
-
-
-    <!-- 배경 원들 -->
-    <div class="circle-bg circle-1"></div>
-    <div class="circle-bg circle-2"></div>
-    <div class="circle-bg circle-3"></div>
-    <div class="circle-bg circle-4"></div>
-    <div class="circle-bg circle-5"></div>
-
-    <!-- 생생한 음성 대화 사이드바 -->
-    <div class="voice-sidebar" id="voiceSidebar" style="margin-top: 50px;">
-        <div class="voice-sidebar-header">
-            <h2 class="voice-sidebar-title">🎵 {% trans "생생한 음성 대화" %}</h2>
-            <button onclick="window.location.href='#'">{% trans '목소리 전체보기' %}</button>
-        </div>
-        <div class="voice-sidebar-content">
-            {% for voice in voice_list|slice:":7" %}
-                <div class="voice-wrapper">
-                    <div class="voice-header">
-                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
-                            <div class="play-overlay">
-                                <div class="play-icon"></div>
-                            </div>
-                        </div>
-                        <div class="voice-info">
-                            <input type="hidden" value="{{ voice.voice_id }}">
-                            <p>{{ voice.voice_name }}</p>
-                            <div class="voice-progress" onclick="seekAudio(event, this)">
-                            <div class="voice-progress-bar"></div>
-                        </div>
-                        <div class="voice-bottom">
-                            <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button>
-                        </div>
-                        
-                        </div>
-                    </div>
-                    <div class="voice-controls">
-
-
-                    </div>
-                    <audio class="voice-audio">
-                        <source src="{{ voice.sample_url }}" type="audio/mpeg">
-                    </audio>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- 사이드바 토글 버튼 -->
-    <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
-        <div class="sidebar-toggle-icon">◀</div>
-    </div>
 
     <!-- 헤더 -->
     <header>
@@ -126,91 +29,101 @@
         {% endif %}
     </header>
 
-    <!-- 언어 선택기 -->
-    <div class="languageSelect">
-        <form action="{% url 'home:set_language' %}" method="post">
-            {% csrf_token %}
-            <select name="language">
-                {% for code, name in languages %}
-                    <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}>{{ name }}</option>
-                {% endfor %}
-            </select>
-            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-            <button type="submit">{% trans "언어 바꾸기" %}</button>
-        </form>
+    <!-- 토글 버튼 -->
+    <div id="sidebar-toggle" class="collapsed">&#9650;</div>
 
-  
+    <!-- 토글 컨텐츠 -->
+    <div id="sidebar-content" class="collapsed">
+        <div class="languageSelect">
+            <form action="{% url 'home:set_language' %}" method="post">
+                {% csrf_token %}
+                <label for="language-select">{% trans "언어 선택" %}</label>
+                <select id="language-select" name="language">
+                    {% for code, name in languages %}
+                        <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                <button type="submit">{% trans "언어 바꾸기" %}</button>
+            </form>
+        </div>
+        <div class="helpdesk">
+            <a href="{% url 'helpdesk:Faq' %}" class="faq">FAQ</a>
+            <a href="{% url 'helpdesk:request' %}" class="request">{% trans '요청하기' %}</a>
+            <a href="{% url 'helpdesk:notice' %}" class="notice">{% trans '공지사항' %}</a>
+            <a href="{% url 'helpdesk:prompt_share' %}" class="notice">{% trans '프롬프트 공유하기' %}</a>
+        </div>
     </div>
 
-    <div class="helpdesk" style="margin-top: 100px;">
-      <a href="{% url 'helpdesk:Faq' %}" class="faq">FAQ</a>
-        <a href="{% url 'helpdesk:request' %}" class="request">{% trans '요청하기' %}</a>
-        <a href="{% url 'helpdesk:notice' %}" class="notice">{% trans '공지사항' %}</a>
-    </div>
-    <main>
+    <main style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin-top: -40px; padding-bottom: 40px;">
+        <!-- 메인 네비게이션 -->
+                 {% if user.is_authenticated %}
+        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}" style="padding-top: 70px;">
+            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
+            <a href="/cloning/" class="nav-button">{% trans "보이스 클로닝" %}</a>
+            <a href="/make_voice/" class="nav-button">{% trans "보이스 만들기" %}</a>
+            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
+            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
+        </nav>
+        {% endif %}
+                    {% for news in news_list %}
 
+                    {% endfor %}
 
         <!-- 뉴스 섹션 -->
-        <div class="main-content" id="mainContent">
-            <h2 class="section-title">{% trans "뉴스" %}</h2>
-            <div class="news-banner">
-                <button class="slider-btn prev" onclick="slideNews(-1)">‹</button>
-                <button class="slider-btn next" onclick="slideNews(1)">›</button>
-                
-                <div class="news-tab">
-                    {% for news in news_list %}
-                    <div>
-                        <img src="{{ news.news_img.url }}" alt="">
-                    </div>
-                    {% endfor %}
-                </div>
-                
-                <div class="slider-indicators" id="indicators"></div>
-            </div>
-        </div>
 
-
-<!-- celebrity voice 목록 -->
-<div class="cv-main-content">
-    <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!!' %}</h2>
+<!-- 뉴스 섹션 HTML (Django 템플릿) -->
+<div class="news-section">
     
-    <div class="cv-container">
-        <div class="cv-scroll">
-            {% for voice in celebrity_voice_list %}
-                <div class="voice-wrapper">
-                    <div class="cv-header">
-                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
-                            {% if voice.celebrity_voice_image %}
-                                <img src="{{ voice.celebrity_voice_image.url }}" alt="">
-                            {% else %}
-                                <img src="{% static 'images/default_voice.png' %}" alt="">
-                            {% endif %}
-                            <div class="cv-play-overlay">
-                                <div class="cv-play-icon"></div>
-                            </div>
+    <!-- 메인 뉴스 슬라이더 -->
+    <div class="news-container"  style="margin-top: 20px;">
+        <div class="news-slider" id="newsSlider">
+            {% for news in news_list %}
+                <div class="news-slide">
+                    {% if news.news_img %}
+                        <img src="{{ news.news_img.url }}" alt="{{ news.title }}">
+                    {% else %}
+                        <div class="news-placeholder">
+                            <i class="icon-news"></i>
                         </div>
-                        <div class="cv-info" >
-                            <p >{{ voice.name }}</p>
-                            <input type="hidden" value="{{ voice.celebrity_voice_id }}">
-                            <p >{{ voice.voice_name }}</p>
-                        </div>
-                    </div>
-                    <div class="voice-progress" onclick="seekAudio(event, this)">
-                        <div class="cv-progress-bar"></div>
-                    </div>
-                    <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button>
-                    {% if voice.sample_url %}
-                        <audio class="voice-audio" controls>
-                            <source src="{{ voice.sample_url.url }}" type="audio/mpeg">
-                        </audio>
                     {% endif %}
+                    
+                    <div class="news-content">
+                        <h3 class="news-title">{{ news.title }}</h3>
+                        {% if news.news_description %}
+                            <p class="news-description">{{ news.news_description|truncatewords:20 }}</p>
+                        {% endif %}
+                        
+                        {% if news.link %}
+                            <a href="{{ news.link }}" class="news-link" target="_blank">
+                                <span>자세히 보기</span>
+                                <i class="icon-arrow-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="news-slide">
+                    <div class="news-placeholder">
+                        <p>등록된 뉴스가 없습니다.</p>
+                    </div>
                 </div>
             {% endfor %}
         </div>
+        
+        {% if news_list|length > 1 %}
+            <button class="nav-btn prev" onclick="slideNews(-1)">‹</button>
+            <button class="nav-btn next" onclick="slideNews(1)">›</button>
+            
+            <div class="indicators">
+                {% for news in news_list %}
+                    <div class="indicator {% if forloop.first %}active{% endif %}" 
+                         onclick="goToSlide({{ forloop.counter0 }})"></div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
-    
 </div>
-
 
 
         <!-- 장르 섹션 -->
@@ -295,35 +208,134 @@
 
 
 
-        <!-- 인기있는 팔로워 섹션 -->
-        <div class="main-content">
-            <div class="character-container">
-                <h2 class="section-title">{% trans '인기있는 팔로워' %}</h2>
-                <div class="character-cards-container">
-                    <!-- 인기 팔로워 카드들 (기존 celebrity_list 재사용) -->
-                    {% for celebrity in celebrity_list|slice:"5:10" %}
-                    <div class="character-card">
-                        <div class="card-header">
-                            <h3 class="celebrity-name">{{ celebrity.display_name }}</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="character-image">
-                                {% if celebrity.celebrity_image %}
-                                    <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.display_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'" />
-                                {% else %}
-                                    <img src="https://via.placeholder.com/60x60/FFB6C1/FFFFFF?text=No+Image" alt="{% trans '기본 이미지' %}" />
-                                {% endif %}
+
+  <!-- 일반 voice 목록 -->
+<div class="cv-main-content">
+    <h2 class="cv-section-title">{% trans 'user 가 추천하는 목소리' %}</h2>
+    
+    <div class="cv-container">
+        <div class="cv-scroll">
+            {% for voice in voice_list|slice:":7" %}
+                <div class="voice-wrapper">
+                    <div class="cv-header">
+                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
+
+                            <div class="cv-play-overlay">
+                                <div class="cv-play-icon"></div>
                             </div>
-                            <div class="character-description">{{ celebrity.display_description }}</div>
-                            <button class="chat-button" onclick="location.href='/celebrity/{{ celebrity.id }}/'">{% trans "대화 시작" %}</button>
+                        </div>
+                        <div class="cv-info">
+                            <p>{{ voice.voice_name }}</p>
+                            <input type="hidden" value="{{ voice.voice_id }}">
                         </div>
                     </div>
+                    <div class="voice-progress" onclick="seekAudio(event, this)">
+                        <div class="cv-progress-bar"></div>
+                    </div>
+                    <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button>
+                    {% if voice.sample_url %}
+                        <audio class="voice-audio" controls>
+                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                        </audio>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+                    <a href="{% url 'home:voice_all' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
+
+</div>
+
+
+        <!-- celebrity voice 목록 -->
+        <div class="cv-main-content">
+            <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!' %}</h2>
+            <div class="cv-container">
+                <div class="cv-scroll">
+                    {% for voice in celebrity_voice_list %}
+                        <div class="voice-wrapper">
+                            <div class="cv-header">
+                                <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
+                                    {% if voice.celebrity_voice_image %}
+                                        <img src="{{ voice.celebrity_voice_image.url }}" alt="">
+                                    {% else %}
+                                        <img src="{% static 'images/default_voice.png' %}" alt="">
+                                    {% endif %}
+                                    <div class="cv-play-overlay"><div class="cv-play-icon"></div></div>
+                                </div>
+                                <div class="cv-info">
+                                    <p>{{ voice.name }}</p>
+                                    <input type="hidden" value="{{ voice.celebrity_voice_id }}">
+                                    <p>{{ voice.voice_name }}</p>
+                                </div>
+                            </div>
+                            <div class="voice-progress" onclick="seekAudio(event, this)">
+                                <div class="cv-progress-bar"></div>
+                            </div>
+                            <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button>
+                            {% if voice.sample_url %}
+                                <audio class="voice-audio" controls>
+                                    <source src="{{ voice.sample_url.url }}" type="audio/mpeg">
+                                </audio>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
-                <a href="#" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
         </div>
+
+
 <script>
+
+  // LLM 모달
+    function openModal(llm_id) {
+        const modalHTML = `
+        <div id="llm-modal">
+            <div class="modal-overlay" onclick="closeModal()"></div>
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">X</button>
+                <div id="llm-container" class="llm-container"></div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+
+        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+        fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('llm-modal');
+        if (modal) modal.remove();
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
+
+    }
+
+    // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        initNewsSlider();
+    });
+  
+
+        // 사이드바 토글
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const sidebarContent = document.getElementById('sidebar-content');
+
+    toggleBtn.addEventListener('click', () => {
+        const collapsed = sidebarContent.classList.contains('collapsed');
+        sidebarContent.classList.toggle('collapsed');
+        toggleBtn.classList.toggle('collapsed');
+        toggleBtn.classList.toggle('expanded');
+        toggleBtn.innerHTML = collapsed ? '&#9660;' : '&#9650;'; // ▼ / ▲
+    });
 document.addEventListener('click', (e) => {
     const followBtn = e.target.closest('.glt2-follow-btn');
     if (!followBtn) return;
@@ -353,7 +365,251 @@ document.addEventListener('click', (e) => {
     })
     .catch(err => console.error('팔로우 토글 오류:', err));
 });
+  
 
+  // 가로 스크롤 개선 스크립트
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 모든 가로 스크롤 컨테이너
+    const horizontalContainers = document.querySelectorAll(
+        '.cv-scroll, .genre-tags-container, .character-cards-container, .llm-cards-container'
+    );
+    
+    horizontalContainers.forEach(container => {
+        // 마우스 휠로 가로 스크롤
+        container.addEventListener('wheel', function(e) {
+            if (e.deltaY !== 0) {
+                e.preventDefault();
+                container.scrollLeft += e.deltaY;
+            }
+        });
+        
+        // 드래그 스크롤 (데스크톱)
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        
+        container.addEventListener('mousedown', function(e) {
+            isDown = true;
+            container.style.cursor = 'grabbing';
+            startX = e.pageX - container.offsetLeft;
+            scrollLeft = container.scrollLeft;
+        });
+        
+        container.addEventListener('mouseleave', function() {
+            isDown = false;
+            container.style.cursor = 'grab';
+        });
+        
+        container.addEventListener('mouseup', function() {
+            isDown = false;
+            container.style.cursor = 'grab';
+        });
+        
+        container.addEventListener('mousemove', function(e) {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const walk = (x - startX) * 2;
+            container.scrollLeft = scrollLeft - walk;
+        });
+        
+        // 기본 커서 스타일
+        container.style.cursor = 'grab';
+    });
+    
+    // 스크롤 인디케이터 생성 (옵션)
+    function createScrollIndicator(container) {
+        const indicator = document.createElement('div');
+        indicator.className = 'scroll-indicator';
+        indicator.style.cssText = `
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 2px;
+            background: rgba(139,92,246,0.3);
+            border-radius: 1px;
+            width: 60px;
+        `;
+        
+        const thumb = document.createElement('div');
+        thumb.style.cssText = `
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            border-radius: 1px;
+            transition: width 0.2s ease;
+            width: 30%;
+        `;
+        
+        indicator.appendChild(thumb);
+        
+        // 상대적 위치를 위해 부모에 relative 추가
+        const parent = container.parentElement;
+        if (parent && getComputedStyle(parent).position === 'static') {
+            parent.style.position = 'relative';
+        }
+        parent.appendChild(indicator);
+        
+        // 스크롤 이벤트로 인디케이터 업데이트
+        container.addEventListener('scroll', function() {
+            const scrollPercent = (container.scrollLeft / (container.scrollWidth - container.clientWidth)) * 100;
+            thumb.style.width = Math.max(10, Math.min(90, scrollPercent)) + '%';
+        });
+    }
+    
+    // 키보드 네비게이션
+    document.addEventListener('keydown', function(e) {
+        const focusedContainer = document.querySelector('.cv-scroll:hover, .genre-tags-container:hover, .character-cards-container:hover, .llm-cards-container:hover');
+        
+        if (focusedContainer) {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                focusedContainer.scrollLeft -= 200;
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                focusedContainer.scrollLeft += 200;
+            }
+        }
+    });
+    
+    // 터치 디바이스에서 스크롤 개선
+    if ('ontouchstart' in window) {
+        horizontalContainers.forEach(container => {
+            container.style.scrollBehavior = 'smooth';
+            container.style.WebkitOverflowScrolling = 'touch';
+        });
+    }
+    
+    // 접근성: 포커스 시 자동 스크롤
+    horizontalContainers.forEach(container => {
+        const items = container.children;
+        Array.from(items).forEach(item => {
+            item.addEventListener('focus', function() {
+                const containerRect = container.getBoundingClientRect();
+                const itemRect = item.getBoundingClientRect();
+                
+                if (itemRect.left < containerRect.left) {
+                    container.scrollLeft -= (containerRect.left - itemRect.left + 20);
+                } else if (itemRect.right > containerRect.right) {
+                    container.scrollLeft += (itemRect.right - containerRect.right + 20);
+                }
+            });
+        });
+    });
+});
+
+// 스크롤 성능 최적화
+const optimizeScroll = () => {
+    const containers = document.querySelectorAll('.cv-scroll, .genre-tags-container, .character-cards-container, .llm-cards-container');
+    
+    containers.forEach(container => {
+        container.style.scrollBehavior = 'smooth';
+        
+        // Intersection Observer로 뷰포트 밖 요소 최적화
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.transform = 'none';
+                } else {
+                    entry.target.style.transform = 'translateZ(0)'; // 하드웨어 가속
+                }
+            });
+        }, {
+            root: container,
+            rootMargin: '50px'
+        });
+        
+        Array.from(container.children).forEach(child => {
+            observer.observe(child);
+        });
+    });
+};
+
+// 페이지 로드 후 최적화 실행
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', optimizeScroll);
+} else {
+    optimizeScroll();
+}
+
+let currentSlide = 0;
+const slides = document.querySelectorAll('.news-slide');
+const indicators = document.querySelectorAll('.indicator');
+const slider = document.getElementById('newsSlider');
+
+function slideNews(direction) {
+    if (slides.length <= 1) return;
+    
+    currentSlide += direction;
+    
+    if (currentSlide >= slides.length) {
+        currentSlide = 0;
+    } else if (currentSlide < 0) {
+        currentSlide = slides.length - 1;
+    }
+    
+    updateSlider();
+}
+
+function goToSlide(index) {
+    if (slides.length <= 1) return;
+    
+    currentSlide = index;
+    updateSlider();
+}
+
+function updateSlider() {
+    if (!slider) return;
+    
+    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    
+    indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentSlide);
+    });
+}
+
+// 자동 슬라이드 (5초마다)
+if (slides.length > 1) {
+    setInterval(() => {
+        slideNews(1);
+    }, 5000);
+}
+
+// 키보드 네비게이션
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+        slideNews(-1);
+    } else if (e.key === 'ArrowRight') {
+        slideNews(1);
+    }
+});
+
+// 터치 스와이프 지원 (모바일)
+let startX = 0;
+let endX = 0;
+
+slider?.addEventListener('touchstart', (e) => {
+    startX = e.changedTouches[0].screenX;
+});
+
+slider?.addEventListener('touchend', (e) => {
+    endX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const threshold = 50; // 최소 스와이프 거리
+    const diff = startX - endX;
+    
+    if (Math.abs(diff) > threshold) {
+        if (diff > 0) {
+            slideNews(1); // 왼쪽으로 스와이프 = 다음 슬라이드
+        } else {
+            slideNews(-1); // 오른쪽으로 스와이프 = 이전 슬라이드
+        }
+    }
+}
 
 
 // like btn
@@ -374,12 +630,17 @@ document.addEventListener('click', (e)=>{
     .then(response => response.json())
     .then(data=>{
         if (data.status === 'like'){
-            likeBtn.textContent = '❤️';
+            likeBtn.innerHTML  = '<span class="heart-filled"></span>';
         } else if(data.status === 'unlike'){
-            likeBtn.textContent = '♡';
+            likeBtn.innerHTML  = '<span class="heart-empty"></span>';
         } else{
             alert(data.message)
         }
+ 
+
+            
+
+
     })
     .catch(err => console.error('좋아요 토글 오류:', err))
 })
@@ -395,42 +656,19 @@ document.addEventListener('click', (e)=>{
             modalOverlay.style.display = 'flex';
         });
     });
-  // LLM 모달
-    function openModal(llm_id) {
-        const modalHTML = `
-        <div id="llm-modal">
-            <div class="modal-overlay" onclick="closeModal()"></div>
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal()">X</button>
-                <div id="llm-container" class="llm-container"></div>
-            </div>
-        </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-        fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('llm-container').innerHTML = html;
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("share-btn")) {
+        const link = e.target.getAttribute("data-link");
+        navigator.clipboard.writeText(link).then(() => {
+            alert("링크가 복사되었습니다!");
         });
     }
+});
 
-    function closeModal() {
-        const modal = document.getElementById('llm-modal');
-        if (modal) modal.remove();
-    }
-
-    // 초기화
-    document.addEventListener('DOMContentLoaded', () => {
-        initNewsSlider();
-    });
-  
-
-  
 </script>
 
-    </main>
+
 
 <footer>
 

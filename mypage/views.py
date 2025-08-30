@@ -30,6 +30,7 @@ def mypage_update(request):
     user = request.user
 
     if request.method == 'POST':
+        nickname = request.POST.get("nickname")
         email = request.POST.get('email')
         phonenumber = request.POST.get('phonenumber')
         password1 = request.POST.get('password1')
@@ -42,6 +43,7 @@ def mypage_update(request):
 
         user.email = email
         user.phonenumber = phonenumber
+        user.nickname = nickname
         if user_image:
             user.user_image = user_image
         if password1:
@@ -180,6 +182,20 @@ def my_ai_models_delete(request, llm_id):
 
     return redirect("mypage:mypage")
 
+@login_required
+def my_voice_delete(request, voice_id):
+
+    if request.method == 'POST':
+        user = request.user
+        try:
+            voice = VoiceList.objects.get(id=voice_id, user=user)
+            voice.delete()
+            messages.success(request, "보이스가 삭제되었습니다.")
+        except VoiceList.DoesNotExist:
+            messages.error("해당 보이스가 없습니다.")
+        
+        return redirect('mypage:my_voice')
+            
 
 @login_required
 @require_POST
@@ -200,72 +216,39 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from datetime import datetime, timedelta
-from django.utils.safestring import mark_safe
-import json
-from django.db.models.functions import TruncDate
+
 
 @login_required
 def personal_token(request):
     user = request.user
 
-    # GET 파라미터로 날짜 범위 받기, 없으면 최근 20일
-    end_date_str = request.GET.get('end_date')
-    start_date_str = request.GET.get('start_date')
+    # 유저 토큰 정보 가져오기
+    token = Token.objects.filter(user=user).first()
 
-    today = timezone.localdate()
+    remaining = token.remaining_tokens() if token else 0
+    total = token.total_token if token else 0
+    used = token.token_usage if token else 0
 
-    # 날짜 파싱
-    try:
-        end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date() if end_date_str else today
-    except ValueError:
-        end_date = today
+    # 결제 내역
+    payments = Payment.objects.filter(user=user).order_by('-paid_at')
 
-    try:
-        start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date() if start_date_str else end_date - timedelta(days=20)
-    except ValueError:
-        start_date = end_date - timedelta(days=20)
+    # LLM 정보
+    llm = LLM.objects.filter(user=user).first()
 
-    # timezone-aware datetime
-    start_datetime = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
-    end_datetime = timezone.make_aware(datetime.combine(end_date, datetime.max.time()))
+    usage_percent = 0
+    if token and token.total_token > 0:
+        usage_percent = (token.token_usage / token.total_token) * 100
 
-    # 일별 토큰 사용량 집계 (consume)
-    token_daily_qs = (
-        TokenHistory.objects
-        .filter(
-            user=user,
-            change_type=TokenHistory.CONSUME,
-            created_at__gte=start_datetime,
-            created_at__lte=end_datetime
-        )
-        .annotate(day=TruncDate('created_at', tzinfo=timezone.get_current_timezone()))
-        .values('day')
-        .annotate(daily_usage=Sum('amount'))
-        .order_by('day')
-    )
-
-    # 날짜별 사용량 dict
-    usage_dict = {t['day'].strftime("%Y-%m-%d"): t['daily_usage'] for t in token_daily_qs if t['day']}
-
-    # 전체 날짜 범위 채우기 (0 포함)
-    labels = []
-    data = []
-    current_date = start_date
-    while current_date <= end_date:
-        date_str = current_date.strftime("%Y-%m-%d")
-        labels.append(date_str)
-        data.append(usage_dict.get(date_str, 0))
-        current_date += timedelta(days=1)
-
-    # 결제 정보
-    payments = Payment.objects.all()
 
     context = {
-        'labels': labels,
-        'data': data,
-        'start_date': start_date.strftime("%Y-%m-%d"),
-        'end_date': end_date.strftime("%Y-%m-%d"),
+        'remaining': remaining,
+        'total': total,
+        'used': used,
         'payments': payments,
+        'llm': llm,
+        'usage_percent': usage_percent,
+
+
     }
 
     return render(request, 'mypage/token.html', context)
@@ -280,9 +263,12 @@ def my_custom(request):
 def my_request(request):
     if request.user:
         request_list = Requests.objects.filter(user=request.user)
+        llm = LLM.objects.filter(user=request.user).first()
+        
 
         context = {
-            "request_list": request_list
+            "request_list": request_list,
+            "llm": llm
         }
 
         
@@ -291,4 +277,22 @@ def my_request(request):
 
 @login_required
 def my_coupon(request):
-    return render(request, "mypage/my_coupon.html")
+    llm = LLM.objects.filter(user=request.user).first()
+    context={
+        "llm":llm
+    }
+
+    return render(request, "mypage/my_coupon.html", context)
+
+
+from customer_ai.models import Conversation
+@login_required
+def my_ai_conversation(request, llm_id):
+    user = request.user
+    llm_list = Conversation.objects.filter(user=user)
+    llm= get_object_or_404(LLM, id=llm_id)
+    context = {
+        "llm_list" : llm_list,
+        "llm":llm
+    }
+    return render(request, "mypage/my_ai_conversation.html", context)

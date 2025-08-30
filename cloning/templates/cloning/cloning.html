@@ -1,4 +1,5 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,51 +7,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AI Voice Cloning</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/makeVoice/makeVoice.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/cloning/cloning.css' %}" />
 </head>
 <body>
-    <header>
-        {% if not user.is_authenticated %}
+<header>
+    {% if not user.is_authenticated %}
         {% include "common/notLoginHeader.html" %}
-        {% else %}
+    {% else %}
         {% include "common/loginHeader.html" %}
-        {% endif %}
-    </header>
+    {% endif %}
+</header>
 
-    <main class="container">
-        <div class="main-card">
-            <h1>🎤 {% trans 'AI 목소리 클로닝' %}</h1>
+<main class="container">
 
-            <div class="form-group">
-                <label for="voiceName">🏷️ {% trans '목소리 이름' %}</label>
-                <input type="text" id="voiceName" placeholder="나만의 목소리 이름을 입력하세요" />
-            </div>
-
-            <div class="form-group">
-                <button id="recordBtn">🔴 {% trans '녹음 시작' %}</button>
-                <button id="stopBtn" disabled>■ {% trans '녹음 중지' %}</button>
-            </div>
-
-            <div class="form-group">
-                <audio id="audioPlayback" controls></audio>
-            </div>
-
-            <div class="form-group">
-                <label for="sampleText">📝 {% trnas '샘플 텍스트' %}</label>
-                <textarea id="sampleText" rows="5" placeholder="이 텍스트로 클로닝된 목소리를 샘플 재생합니다. 최소 130자 이상 작성해주세요."></textarea>
-            </div>
-
-            <div class="button-group">
-                <button id="generateSampleBtn" disabled>✨ {% trans '샘플 생성하기' %}</button>
-                <button id="retryBtn" disabled>🔄 {% trans '다시 만들기' %}</button>
-                <button id="saveBtn" disabled>💾 {% trans '저장하기' %}</button>
-            </div>
-
-            <div id="message" style="margin-top: 1rem; color: red;"></div>
+    <!-- 1️⃣ 동의서 섹션 -->
+    <div id="consentSection" class="main-card">
+        <h2>📄 음성 클로닝 동의서</h2>
+        <textarea readonly rows="10" style="width:100%;">
+        <!-- 동의 전문 표시 -->
+         {% for cloning in cloning_agreement %}
+            1,{{ cloning.voice_text }}
+            2,{{ cloning.third_text }}
+            3,{{ cloning.share_text }}
+         {% endfor %}
+      
+        </textarea>
+        <div style="margin-top:1rem;">
+            <input type="checkbox" id="consentVoice" required> 본인 음성 클로닝 동의<br/>
+            <input type="checkbox" id="consentThird" required> 타인 음성 사용 책임 인지
+            <input type="checkbox" id="consentShare" required> 타인 음성 사용 책임 인지
         </div>
-    </main>
+        <button id="agreeBtn" style="margin-top:1rem;">동의하고 시작하기</button>
+    </div>
+
+    <!-- 2️⃣ 클로닝 UI 섹션 -->
+    <div id="cloningUI" class="main-card" style="display:none;">
+        <h1>🎤 {% trans 'AI 목소리 클로닝' %}</h1>
+
+        <div class="form-group">
+            <label for="voiceName">🏷️ {% trans '목소리 이름' %}</label>
+            <input type="text" id="voiceName" placeholder="나만의 목소리 이름을 입력하세요" />
+        </div>
+
+        <div class="form-group">
+            <button id="recordBtn">🔴 {% trans '녹음 시작' %}</button>
+            <button id="stopBtn" disabled>■ {% trans '녹음 중지' %}</button>
+        </div>
+
+        <div class="form-group">
+            <audio id="audioPlayback" controls></audio>
+        </div>
+
+        <div class="form-group">
+            <label for="sampleText">📝 {% trans '샘플 텍스트' %}</label>
+            <textarea id="sampleText" rows="5" placeholder="이 텍스트로 클로닝된 목소리를 샘플 재생합니다. 최소 130자 이상 작성해주세요."></textarea>
+        </div>
+
+        <div class="button-group">
+            <button id="generateSampleBtn" disabled>✨ {% trans '샘플 생성하기' %}</button>
+            <button id="retryBtn" disabled>🔄 {% trans '다시 만들기' %}</button>
+            <button id="saveBtn" disabled>💾 {% trans '저장하기' %}</button>
+        </div>
+
+        <div id="message" style="margin-top: 1rem; color: red;"></div>
+    </div>
+</main>
 
 <script>
+const consentVoice = document.getElementById('consentVoice');
+const consentThird = document.getElementById('consentThird');
+const consentShare = document.getElementById('consentShare');
+const agreeBtn = document.getElementById('agreeBtn');
+const consentSection = document.getElementById('consentSection');
+const cloningUI = document.getElementById('cloningUI');
+
 const recordBtn = document.getElementById('recordBtn');
 const stopBtn = document.getElementById('stopBtn');
 const audioPlayback = document.getElementById('audioPlayback');
@@ -66,11 +96,61 @@ let audioChunks = [];
 let recordedBlob = null;
 let savedVoiceId = null;
 
+// 1️⃣ 동의 후 UI 활성화
+agreeBtn.onclick = async () => {
+    if(!consentVoice.checked || !consentThird.checked || !consentShare.checked){
+        alert("모든 동의 항목에 체크해야 합니다.");
+        return;
+    }
+
+    // 서버에 체크박스만 저장
+    try {
+        const res = await fetch("{% url 'cloning:save_consent' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                consent_voice: consentVoice.checked,
+                consent_third: consentThird.checked,
+                consent_share: consentShare.checked
+            })
+        });
+        const data = await res.json();
+        if(data.status === 'success'){
+            consentSection.style.display = 'none';
+            cloningUI.style.display = 'block';
+        } else {
+            alert("동의 저장에 실패했습니다: " + data.error);
+        }
+    } catch(e){
+        alert("서버 오류가 발생했습니다.");
+    }
+}
+
+// CSRF token 가져오기 함수
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let c of cookies) {
+            c = c.trim();
+            if (c.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+// 2️⃣ 녹음/샘플/저장 기능 (기존 코드 그대로)
 function showMessage(text, color = 'red') {
     messageDiv.style.color = color;
     messageDiv.textContent = text;
 }
 
+// 녹음 시작
 recordBtn.onclick = async () => {
     showMessage('');
     audioChunks = [];
@@ -98,29 +178,22 @@ recordBtn.onclick = async () => {
     }
 };
 
+// 녹음 중지
 stopBtn.onclick = () => {
     mediaRecorder.stop();
     recordBtn.disabled = false;
     stopBtn.disabled = true;
 };
 
+// 샘플 생성
 generateSampleBtn.onclick = async () => {
     showMessage('');
     const voiceName = voiceNameInput.value.trim();
     const sampleText = sampleTextInput.value.trim();
 
-    if (!voiceName) {
-        alert('목소리 이름을 입력하세요.');
-        return;
-    }
-    if (!sampleText || sampleText.length < 130) {
-        alert('샘플 텍스트를 130자 이상 입력하세요.');
-        return;
-    }
-    if (!recordedBlob) {
-        alert('녹음된 음성이 없습니다.');
-        return;
-    }
+    if (!voiceName) { alert('목소리 이름을 입력하세요.'); return; }
+    if (!sampleText || sampleText.length < 130) { alert('샘플 텍스트를 130자 이상 입력하세요.'); return; }
+    if (!recordedBlob) { alert('녹음된 음성이 없습니다.'); return; }
 
     generateSampleBtn.disabled = true;
     showMessage('샘플 생성 중입니다. 잠시만 기다려주세요...', 'blue');
@@ -135,9 +208,7 @@ generateSampleBtn.onclick = async () => {
             method: 'POST',
             body: formData,
             credentials: 'include',
-            headers: {
-                "X-CSRFToken": getCookie('csrftoken'),
-            },
+            headers: { "X-CSRFToken": getCookie('csrftoken') },
         });
         const data = await res.json();
 
@@ -156,6 +227,7 @@ generateSampleBtn.onclick = async () => {
     }
 };
 
+// 다시 만들기
 retryBtn.onclick = () => {
     recordedBlob = null;
     savedVoiceId = null;
@@ -168,30 +240,19 @@ retryBtn.onclick = () => {
     showMessage('');
 };
 
+// 저장
 saveBtn.onclick = async () => {
     showMessage('');
-    if (!savedVoiceId) {
-        alert('저장할 목소리가 없습니다.');
-        return;
-    }
+    if (!savedVoiceId) { alert('저장할 목소리가 없습니다.'); return; }
     const voiceName = voiceNameInput.value.trim();
-    if (!voiceName) {
-        alert('목소리 이름을 입력하세요.');
-        return;
-    }
+    if (!voiceName) { alert('목소리 이름을 입력하세요.'); return; }
 
     try {
         const res = await fetch("{% url 'cloning:voice_cloning_save' %}", {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'),
-            },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
             credentials: 'include',
-            body: JSON.stringify({
-                voice_id: savedVoiceId,
-                voice_name: voiceName,
-            }),
+            body: JSON.stringify({ voice_id: savedVoiceId, voice_name: voiceName }),
         });
         const data = await res.json();
         if (data.status === 'success') {
@@ -205,7 +266,7 @@ saveBtn.onclick = async () => {
     }
 };
 
-// CSRF token 가져오기 함수 (Django 기본 방식)
+// CSRF token 가져오기
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -221,6 +282,5 @@ function getCookie(name) {
     return cookieValue;
 }
 </script>
-
 </body>
 </html>

@@ -1,7 +1,7 @@
 import os
 import time
 import base64
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.http import JsonResponse,HttpResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
@@ -100,6 +100,11 @@ def make_ai(request):
             llm.llm_image.save(image_name, ContentFile(decoded_img))
             llm.save()
 
+
+        for key in ['custom_prompt']:
+            if key in request.session:
+                del request.session[key]
+
         # VoiceList 연결 및 업데이트 코드 (필요시 추가)
 
         return redirect("customer_ai:chat_view", llm_id=llm.id)
@@ -114,6 +119,42 @@ def make_ai(request):
     }
     return render(request, "customer_ai/make_ai.html", context)
 
+
+import openai
+import json
+@csrf_exempt
+def auto_prompt(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)  
+            user_prompt = data.get("prompt", '').strip()
+
+            if not user_prompt:
+                return JsonResponse({"status": "error", "error": "프롬프트가 비어 있습니다."})
+            
+            response = openai.chat.completions.create(
+                model = 'gpt-3.5-turbo',
+                messages=[
+                    {"role": "system", "content": (
+                        "Your role is 'Prompt Refiner'. "
+                        "When the user provides a short or vague prompt, your goal is to rewrite it into a more detailed, vivid, and context-rich prompt suitable for roleplay or storytelling. "
+                        "You must always expand and refine the prompt while preserving the user's intended direction.\n\n"
+                        "When rewriting, consider the following:\n"
+                        "1. Purpose of the conversation: Understand what the user might want and shape the prompt to fit roleplay, storytelling, or scenario development.\n"
+                        "2. Background: Add details like time, place, atmosphere, and relationships between characters.\n"
+                        "3. Expression: Enrich the characters’ tone, emotions, and dialogue style.\n"
+                        "4. Keep the user’s intention: Do not change the core idea, but expand it with richer context and sensory details.\n\n"
+                        "The output must always be a 'fully refined prompt' that the user can immediately use."
+                    )},
+                    {"role":"user",'content':user_prompt}
+                ]
+
+            )
+            refine_data = response.choices[0].message.content
+            return JsonResponse({"status":"success", "refine_data": refine_data})
+        except Exception as e:
+            return JsonResponse({"status": "error", "error": str(e)})
+    return JsonResponse({"status": "error","error":"POST 요청만 합니다."})
 
 
 @login_required
@@ -150,6 +191,19 @@ def vision_view(request,llm_id):
 
 
 logger = logging.getLogger(__name__)
+
+
+
+def novel_view(request, llm_id):
+    try:
+        llm = LLM.objects.get(id=llm_id)
+    except LLM.DoesNotExist:
+        llm = None
+    return render(request, "customer_ai/novel.html",{
+        "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
+        "llm_id": llm_id,
+        "llm": llm
+    })
 
 def not_in_voice_id(voice_id,eleven_client):
     url = f"https://api.elevenlabs.io/v1/voices/{voice_id}"
@@ -261,9 +315,9 @@ from django.conf import settings
 from uuid import uuid4
 import os
 import time
+from django.db.models import Q
 
 @csrf_exempt
-
 @login_required
 def generate_response(request):
     if request.method != 'POST':
@@ -279,12 +333,16 @@ def generate_response(request):
     llm_id = request.POST.get('llm_id') or request.GET.get('llm_id')
     if not llm_id:
         return JsonResponse({"error": "llm_id 값이 필요합니다."}, status=400)
+    
+
 
     try:
-        llm = LLM.objects.get(id=llm_id, user=user)
+        llm = LLM.objects.get(Q(id=llm_id) & (Q(user=user) | Q(is_public=True)))
     except LLM.DoesNotExist:
         return JsonResponse({"error": "해당 LLM이 없습니다."}, status=404)
 
+    if not (llm.is_public or llm.user == request.user):
+        return JsonResponse({"error": "권한 없음"}, status=403)
     # LLM 설정 가져오기
     custom_temperature = llm.temperature
     custom_prompt = llm.prompt
@@ -318,18 +376,39 @@ def generate_response(request):
     chat_history.append({"role": "user", "content": user_input})
 
 
-    system_prompt = f"""
-    You are an AI assistant that replies clearly and concisely to the user's input.
+    system_prompt = f""" 
+        You are an AI assistant that replies clearly and concisely to the user's input. 
+    
+        User's text: "{user_input}" 
+    
+        [VISUAL INPUT DESCRIPTION]
+        "{vision_result}"
 
-    User's text: "{user_input}"
+        RULES:
+        1. Visual input description must always be treated as an **objective, neutral description** of what is visible in the image.  
+        - Do not roleplay, embellish, or invent imaginary kingdoms when describing images.  
+        - Always keep visual analysis factual and grounded.  
+    
+        You are a friendly and engaging AI assistant.  
+    - Speak in a warm, approachable, and natural tone, like chatting with a friend.  
+    - Use casual language, short sentences, and emojis where appropriate.  
+    - After answering the user's question, ask one related follow-up question to keep the conversation going. 
+    - If the user provides visual input, include it in your response naturally.  
+    - Keep your responses concise but friendly.
 
-    Visual input description: "{vision_result}"
+        **Role-Playing & Interactive Scenarios:**
+    - If the user suggests role-playing, scenarios, or character interactions, enthusiastically participate!
+    - Adapt your personality and speech to match the requested character or situation naturally
+    - Stay in character while maintaining a helpful and engaging tone
+    - Respond immediately to the user's cues and adapt to the scenario they're creating
+    - If they want to pretend to be someone or somewhere specific, play along and build on their scenario
+    - Make the interaction feel immersive and fun while keeping responses appropriate
+    - When in role-play mode, still maintain the friendly, conversational tone but adjust to fit the character/situation
 
-  Respond in Korean.
-
-
-    {custom_prompt}
-    """.strip()
+        Respond in {custom_language}. 
+    
+        {custom_prompt} 
+        """.strip()
 
 
 
@@ -388,18 +467,12 @@ def generate_response(request):
 
         # 초 세기
 
-    audio_seconds = get_audio_duration_in_seconds(audio_path)
+        audio_seconds = get_audio_duration_in_seconds(audio_path)
 
-    print("여기까지는 무조건 실행됨")
-
-    if request.user.llm_set.filter(model="gpt-3.5-turbo").exists():
-        print("조건문 안에 들어옴")
-        print("second", audio_seconds)
 
         def consume_tokens(user, amount, model_name):
             # 모델별 배율
-            multiplier = 3 if model_name.startswith("gpt-4") else 1
-            required_tokens = amount * multiplier
+            required_tokens = amount
 
             token_obj = Token.objects.filter(user=user).latest("created_at")
             available_tokens = token_obj.total_token - token_obj.token_usage
@@ -407,12 +480,7 @@ def generate_response(request):
             if available_tokens < required_tokens:
                 return False
 
-            # 토큰 차감
-            token_obj.token_usage += required_tokens
-            token_obj.total_token -= required_tokens
-            if token_obj.total_token < 0:
-                token_obj.total_token = 0
-            token_obj.save()
+
 
             TokenHistory.objects.create(
                 user=user,
@@ -428,6 +496,10 @@ def generate_response(request):
             return JsonResponse({"error": "토큰이 부족합니다"}, status=403)
         
         print("success", success)
+        print("사용자 모델:", custom_model)
+        print("총 토큰:", Token.objects.filter(user=request.user).latest("created_at").total_token)
+        print("사용 토큰:", audio_seconds )
+
 
 
     audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
@@ -486,47 +558,6 @@ def upload_image(request):
     return render(request, "customer_ai/upload_image.html", {"llm_id": llm_id, "llm": llm})
 
 
-# @csrf_exempt
-# @login_required
-# def generate_ai_image(request, llm_id):
-#     if request.method == "POST":
-#         prompt = request.POST.get("prompt", "")
-#         if not prompt:
-#             return JsonResponse({"error": "이미지 생성 프롬프트가 없습니다."}, status=400)
-
-#         try:
-#             # OpenAI 이미지 생성 API 호출 (DALL·E 등)
-#             response = openai_client.images.generate(
-#                 model="dall-e-3",  # 또는 적절한 모델명
-#                 prompt=prompt,
-#                 n=1,
-#                 size="512x512"
-#             )
-
-#             image_url = response.data[0].url
-
-#             # 이미지 URL로부터 이미지 데이터 다운로드
-#             import requests
-#             img_data = requests.get(image_url).content
-
-#             # media/uploads/llm_images/ 경로에 저장
-#             save_dir = os.path.join(settings.MEDIA_ROOT, "uploads/llm_images")
-#             os.makedirs(save_dir, exist_ok=True)
-#             filename = f"{uuid4().hex}.png"
-#             file_path = os.path.join(save_dir, filename)
-#             with open(file_path, "wb") as f:
-#                 f.write(img_data)
-
-#             # LLM 객체에 이미지 경로 저장
-#             llm = LLM.objects.get(id=llm_id)
-#             llm.llm_image = f"uploads/llm_images/{filename}"
-#             llm.save()
-
-#             return JsonResponse({"image_url": llm.llm_image.url})
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=500)
-
-#     return JsonResponse({"error": "POST 요청만 허용됩니다."}, status=405)
 
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -578,7 +609,9 @@ def vision_process(request):
         response = openai_client.chat.completions.create(
             model=custom_model,
             messages=[
-                {"role": "system", "content": "You are an assistant that describes images in detail."},
+                {"role": "system", "content": "You are an assistant that describes images objectively, clearly, and factually. "
+                       "Do not roleplay, embellish, or add imaginative scenarios. "
+                       "Only state what is visibly present in the image."},
                 {
                     "role": "user",
                     "content": [
@@ -596,3 +629,73 @@ def vision_process(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": f"OpenAI Vision API error: {str(e)}"}, status=500)
+
+@csrf_exempt
+@login_required
+def novel_process(request):
+    if request.method == "POST":
+        user_input = request.POST.get('text', '')
+        user = request.user
+        llm_id = request.POST.get('llm_id') or request.GET.get('llm_id')
+        llm = get_object_or_404(LLM, Q(id=llm_id) & (Q(user=user) | Q(is_public=True)))
+
+        # 대화 기록 불러오기
+        db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:50][::-1]
+        chat_history = [{"role": "user", "content": convo.user_message} if convo.user_message else {} for convo in db_history]
+        chat_history.append({"role": "user", "content": user_input})
+
+        # 1️⃣ 소설체 생성
+        system_prompt = f"""
+        You are a novel-style narrator.
+        Generate exactly 3 sentences in response to the user's input:
+        1-2 sentences: narrative description that continues naturally from the user's input and previous conversation.
+        3rd sentence: a single line of dialogue from the AI character enclosed in quotes "", which directly responds to the user's input.
+        Keep the previous conversation in mind to maintain context.
+        Respond in {llm.language}.
+        """
+
+        response = openai_client.chat.completions.create(
+            model=llm.model,
+            messages=[{"role": "system", "content": system_prompt}] + chat_history,
+            temperature=llm.temperature,
+        )
+        ai_text = response.choices[0].message.content.strip()
+
+        # 2️⃣ 대사만 추출 (TTS용)
+        import re
+        dialogue_matches = re.findall(r'“([^”]+)”|\"([^"]+)\"', ai_text)
+        tts_text = " ".join([m[0] or m[1] for m in dialogue_matches]) if dialogue_matches else user_input
+
+        # 3️⃣ DB 저장 (전체 소설체)
+        Conversation.objects.create(user=user, llm=llm, user_message=user_input, llm_response=ai_text)
+
+        # 4️⃣ TTS 생성
+        audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
+        os.makedirs(audio_dir, exist_ok=True)
+        filename = f"response_{uuid4().hex}.mp3"
+        audio_path = os.path.join(audio_dir, filename)
+
+        audio_stream = eleven_client.text_to_speech.convert(
+            voice_id=llm.voice.voice_id,
+            model_id="eleven_flash_v2_5",
+            text=tts_text,
+            language_code=llm.language,
+            voice_settings={
+                "stability": llm.stability,
+                "style": llm.style,
+                "speed": llm.speed,
+                "use_speaker_boost": True
+            }
+        )
+
+        with open(audio_path, "wb") as f:
+            for chunk in audio_stream:
+                f.write(chunk)
+
+        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
+
+        return JsonResponse({
+            "novel_text": ai_text,   # 화면에 보여줄 소설체
+            "tts_audio_url": audio_url  # TTS 재생용
+        })
+

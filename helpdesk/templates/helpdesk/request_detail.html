@@ -37,6 +37,11 @@
             </div>
         </div>
 
+
+{% if request.user == request_list.user or request.user.is_superuser %}
+    <a href="{% url 'helpdesk:request_delete' request_list.id %}">삭제</a>
+{% endif %}
+
 {% if request.user.is_superuser %}
 <div class="response-form-container">
     <h2>관리자 응답 작성</h2>

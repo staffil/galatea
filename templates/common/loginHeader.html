@@ -3,178 +3,165 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GALATEA Header - Logged In</title>
-    <style>
- /* 기본 리셋 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GALATEA Header - AI Website</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #f8f9fa;
-    padding-top: 160px; /* 헤더 높이 만큼 여백 */
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    padding-top: 65px;
+    color: #e2e8f0;
 }
 
+/* 헤더 */
 header {
+    background: linear-gradient(135deg, rgba(15,15,35,0.95), rgba(26,26,46,0.95));
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(139,92,246,0.2);
+    box-shadow: 0 8px 32px rgba(139,92,246,0.15);
+    padding: 0 24px;
     position: fixed;
     top: 0; left: 0; right: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    padding: 20px 40px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    height: 100px;
-    gap: 20px;
+    align-items: center;
+    height: 65px;
+    z-index: 1000;
 }
 
 /* 로고 */
-.logo-container {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    z-index: 10;
+.logo-container { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
 }
 
-.logo-wrapper img {
-    width: 80px;
-    height: 80px;
-    transition: transform 0.3s ease;
+.logo-wrapper {
+    position: relative;
+    overflow: hidden;
+    padding: 2px;
+    transition: all 0.3s ease;
 }
 
-.logo-wrapper:hover img {
-    transform: scale(1.05);
+
+.logo-wrapper img { 
+    width: 60px; 
+    height: 60px; 
+    border-radius: 10px;
+    padding: 8px;
+    transition: all 0.3s ease;
 }
 
 .brand-name {
-    color: #1a1a1a;
     font-family: "Darker Grotesque", sans-serif;
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     letter-spacing: 3px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 50%, #10b981 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     user-select: none;
-}
-
-/* 중앙 영역: 검색 + 네비 */
-.search-and-nav {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    justify-content: center;
-    min-width: 0;
-    z-index: 1;
-    transition: all 0.4s ease;
-}
-
-.header-search-form {
-    flex: 0 0 auto;
-    max-width: 120px;
-    transition: max-width 0.4s ease, flex-grow 0.4s ease;
     position: relative;
-    cursor: pointer;
-    display: flex;
-    right: 60px;
 }
 
-.header-search-form.expanded {
-    max-width: 500px;
-    flex-grow: 1;
-    cursor: auto;
+.brand-name::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+    transition: width 0.3s ease;
 }
 
-.header-search-form input[type="search"] {
+.logo-container:hover .brand-name::after {
     width: 100%;
-    padding: 12px 20px;
-    font-size: 16px;
+}
+
+/* 검색창 */
+.search-container {
+    flex: 1 1 auto;
+    max-width: 500px;
+    margin: 0 20px;
+    position: relative;
+}
+
+.search-wrapper {
+    position: relative;
+    overflow: hidden;
     border-radius: 25px;
-    border: 1.5px solid #667eea;
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.1));
+    border: 1px solid rgba(139,92,246,0.3);
+    transition: all 0.3s ease;
+}
+
+.search-wrapper:focus-within {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(139,92,246,0.3);
+    transform: translateY(-1px);
+}
+
+.search-container input[type="search"] {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
     outline: none;
-    box-sizing: border-box;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    cursor: text;
+    background: transparent;
+    color: #e2e8f0;
+    font-weight: 400;
 }
 
-.header-search-form.expanded input[type="search"] {
-    opacity: 1;
-    pointer-events: auto;
-    cursor: text;
+.search-container input[type="search"]::placeholder { 
+    color: rgba(226,232,240,0.6); 
+    font-weight: 300;
 }
 
-/* 검색 버튼 역할 텍스트 */
-.search-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 44px;
-    padding: 0 20px;
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(139,92,246,0.7);
     font-size: 16px;
-    color: #4a5568;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 25px;
-    border: 1.5px solid #667eea;
-    user-select: none;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.3s ease, color 0.3s ease;
+    pointer-events: none;
 }
 
-.search-placeholder:hover {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-}
-
-/* 네비게이션 버튼 */
-.main-nav {
-    display: flex;
-    gap: 12px;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-    transition: all 0.4s ease;
+/* 오른쪽 영역 */
+.right-section { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
 }
 
 .nav-button {
-    padding: 12px 24px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 20px;
+    border: 1px solid rgba(139,92,246,0.4);
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.1));
+    color: #e2e8f0;
     text-decoration: none;
-    font-weight: 500;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    border: none;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.8);
-    color: #4a5568;
-    border-radius: 25px;
-    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    white-space: nowrap;
 }
 
 .nav-button::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-    transition: left 0.5s;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s ease;
 }
 
 .nav-button:hover::before {
@@ -182,57 +169,35 @@ header {
 }
 
 .nav-button:hover {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    border-color: #8b5cf6;
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-    border-color: transparent;
-}
-
-.nav-button.special {
-    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-    color: white;
-    font-weight: 600;
-}
-
-.nav-button.special:hover {
-    background: linear-gradient(135deg, #ff5252, #ff7043);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+    box-shadow: 0 8px 25px rgba(139,92,246,0.4);
 }
 
 /* 프로필 */
-.profile-section {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    z-index: 10;
-}
-
 .profile-circle {
-    width: 80px;
-    height: 80px;
+    width: 44px; 
+    height: 44px;
     border-radius: 50%;
     overflow: hidden;
-    display: flex;
-    align-items: center;
+    display: flex; 
+    align-items: center; 
     justify-content: center;
     cursor: pointer;
-    border: 3px solid rgba(102, 126, 234, 0.3);
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    padding: 2px;
     transition: all 0.3s ease;
-    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
     position: relative;
 }
 
 .profile-circle::before {
     content: '';
     position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
+    inset: -2px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
     z-index: -1;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -243,228 +208,372 @@ header {
 }
 
 .profile-circle:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(139,92,246,0.5);
 }
 
-.profile-avatar {
+.profile-inner {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    object-fit: cover;
-    display: block;
+    background: #1a1a2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.profile-placeholder {
-    color: #9ca3af;
-    font-size: 12px;
-    text-align: center;
+.profile-avatar { 
+    width: 100%; 
+    height: 100%; 
+    border-radius: 50%; 
+    object-fit: cover; 
+}
+
+.profile-placeholder { 
+    font-size: 10px; 
+    text-align: center; 
+    color: rgba(226,232,240,0.7);
     font-weight: 500;
 }
 
-/* 태블릿 이하 */
-@media (max-width: 900px) {
-    header {
-        flex-wrap: wrap;
-        height: auto;
-        padding: 15px 20px;
-        gap: 15px;
-    }
+/* 메인 콘텐츠 데모 */
+.main-content {
+    padding: 40px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-    /* 로고 축소 */
-    .logo-wrapper img {
-        width: 60px;
-        height: 60px;
-    }
+.demo-card {
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.05));
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
 
-    .brand-name {
-        font-size: 20px;
-    }
+.demo-title {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+}
 
-    /* 프로필 축소 */
-    .profile-circle {
-        width: 60px;
-        height: 60px;
-    }
+.demo-text {
+    font-size: 16px;
+    color: rgba(226,232,240,0.8);
+    line-height: 1.6;
+}
 
-    /* 검색창 항상 표시 */
-    .search-placeholder {
-        display: none !important;
+/* 반응형 */
+/* 대형 데스크톱 */
+@media (min-width: 1200px) {
+    header { 
+        padding: 0 32px; 
+        height: 70px; 
     }
-
-    .header-search-form {
-        max-width: none !important;
-        flex-grow: 1 !important;
+    body { 
+        padding-top: 70px; 
     }
+    .logo-wrapper img { 
+        width: 65px; 
+        height: 65px; 
+    }
+    .brand-name { 
+        font-size: 22px; 
+        letter-spacing: 3.5px; 
+    }
+    .search-container { 
+        max-width: 600px; 
+        margin: 0 24px; 
+    }
+    .search-container input[type="search"] { 
+        font-size: 15px; 
+        padding: 12px 24px; 
+    }
+    .nav-button { 
+        padding: 10px 22px; 
+        font-size: 14px; 
+    }
+    .profile-circle { 
+        width: 48px; 
+        height: 48px; 
+    }
+}
 
-    .header-search-form input[type="search"] {
+/* 태블릿 가로 */
+@media (max-width: 1024px) and (min-width: 769px) {
+    header { 
+        padding: 0 20px; 
+        height: 65px; 
+    }
+    body { 
+        padding-top: 65px; 
+    }
+    .logo-wrapper img { 
+        width: 55px; 
+        height: 55px; 
+    }
+    .brand-name { 
+        font-size: 18px; 
+        letter-spacing: 2.5px; 
+    }
+    .search-container { 
+        max-width: 400px; 
+        margin: 0 16px; 
+    }
+    .search-container input[type="search"] { 
+        font-size: 13px; 
+        padding: 9px 18px; 
+    }
+    .nav-button { 
+        padding: 7px 16px; 
+        font-size: 12px; 
+    }
+    .profile-circle { 
+        width: 40px; 
+        height: 40px; 
+    }
+    .right-section { 
+        gap: 10px; 
+    }
+}
+
+/* 태블릿 세로 */
+@media (max-width: 768px) and (min-width: 481px) {
+    header { 
+        padding: 0 16px; 
+        height: 60px; 
+    }
+    body { 
+        padding-top: 60px; 
+    }
+    .logo-wrapper img { 
+        width: 45px; 
+        height: 45px; 
+    }
+    .brand-name { 
+        font-size: 16px; 
+        letter-spacing: 2px; 
+    }
+    .search-container { 
+        max-width: 280px; 
+        margin: 0 12px; 
+    }
+    .search-container input[type="search"] { 
+        font-size: 13px; 
+        padding: 8px 16px; 
+    }
+    .search-icon {
+        right: 12px;
         font-size: 14px;
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        cursor: text !important;
-        width: 300px;
-        margin-left: 100px;
     }
-
-    /* 네비게이션 버튼 정렬 + 구분선 */
-    .search-and-nav {
-        flex-basis: 100%;
-        justify-content: center;
-        gap: 10px;
-        border-top: 1px solid #ddd; /* 구분선 */
-        padding-top: 10px;
+    .nav-button { 
+        padding: 6px 12px; 
+        font-size: 12px; 
     }
+    .profile-circle { 
+        width: 36px; 
+        height: 36px; 
+    }
+    .right-section { 
+        gap: 8px; 
+    }
+    .main-content { 
+        padding: 24px 16px; 
+    }
+}
 
-    .main-nav {
+/* 모바일 가로 */
+@media (max-width: 480px) and (min-width: 361px) {
+    header { 
+        padding: 0 12px; 
+        height: 55px; 
+    }
+    body { 
+        padding-top: 55px; 
+    }
+    .logo-container {
         gap: 8px;
-        flex-wrap: wrap;
-        justify-content: center;
     }
+    .logo-wrapper img { 
+        width: 35px; 
+        height: 35px; 
+        padding: 6px;
+    }
+    .brand-name { 
+        font-size: 14px; 
+        letter-spacing: 1.5px; 
+    }
+    .search-container { 
+        max-width: 180px; 
+        margin: 0 8px; 
+    }
+    .search-container input[type="search"] { 
+        font-size: 12px; 
+        padding: 6px 12px; 
+    }
+    .search-icon {
+        right: 10px;
+        font-size: 13px;
+    }
+    .nav-button { 
+        padding: 5px 10px; 
+        font-size: 11px; 
+    }
+    .profile-circle { 
+        width: 32px; 
+        height: 32px; 
+    }
+    .right-section { 
+        gap: 6px; 
+    }
+}
 
-    .nav-button {
-        padding: 10px 16px;
+/* 작은 모바일 */
+@media (max-width: 360px) {
+    header { 
+        padding: 0 8px; 
+        height: 50px; 
+    }
+    body { 
+        padding-top: 50px; 
+    }
+    .logo-container {
+        gap: 6px;
+    }
+    .logo-wrapper img { 
+        width: 28px; 
+        height: 28px; 
+        padding: 4px;
+    }
+    .brand-name { 
+        font-size: 12px; 
+        letter-spacing: 1px; 
+    }
+    .search-container { 
+        max-width: 140px; 
+        margin: 0 6px; 
+    }
+    .search-container input[type="search"] { 
+        font-size: 11px; 
+        padding: 5px 10px; 
+    }
+    .search-icon {
+        right: 8px;
         font-size: 12px;
     }
-}
-
-/* 모바일 */
-@media (max-width: 480px) {
-    body {
-        padding-top: 140px;
+    .nav-button { 
+        padding: 4px 8px; 
+        font-size: 10px; 
+        border-radius: 16px;
     }
-    header{
-        height: 220px !important;
-        }
-
-    .logo-wrapper img {
-        width: 40px;
-        height: 40px;
+    .profile-circle { 
+        width: 28px; 
+        height: 28px; 
     }
-
-    .brand-name {
-        font-size: 16px;
+    .profile-placeholder {
+        font-size: 8px;
     }
-
-    .profile-circle {
-        width: 40px;
-        height: 40px;
-    }
-
-    .nav-button {
-        padding: 8px 12px;
-        font-size: 10px;
+    .right-section { 
+        gap: 4px; 
     }
 }
 
-
-
-@media (max-width: 600px) {
-    .nav-button { padding: 8px 12px; font-size: 11px; }
-    .brand-name { font-size: 18px; letter-spacing: 2px; }
-    .profile-circle { width: 50px; height: 50px; }
-}
-
-@media (max-width: 480px) {
-    body { padding-top: 140px; }
-    header { padding: 10px 15px; gap: 10px; }
-    .logo-wrapper img { width: 40px; height: 40px; }
-    .brand-name { font-size: 16px; letter-spacing: 1px; }
-    .profile-circle { width: 40px; height: 40px; }
-    .nav-button { padding: 6px 10px; font-size: 10px; }
-    .search-and-nav { flex-direction: column; align-items: stretch; }
-    .main-nav {
-        justify-content: center;
-        gap: 6px;
-        border-top: 1px solid rgba(0,0,0,0.15); /* 모바일 구분선 */
-        padding-top: 8px;
-        margin-top: 8px;
+/* 초소형 모바일 (아이폰 SE 등) */
+@media (max-width: 320px) {
+    header { 
+        padding: 0 6px; 
+        height: 48px; 
     }
-.profile-section {
-    margin-left: auto;
-    align-self: flex-start;
-    position: relative;
-    top: -220px;
+    body { 
+        padding-top: 48px; 
+    }
+    .logo-container {
+        gap: 4px;
+    }
+    .logo-wrapper img { 
+        width: 24px; 
+        height: 24px; 
+        padding: 3px;
+    }
+    .brand-name { 
+        font-size: 11px; 
+        letter-spacing: 0.5px; 
+    }
+    .search-container { 
+        max-width: 120px; 
+        margin: 0 4px; 
+    }
+    .search-container input[type="search"] { 
+        font-size: 10px; 
+        padding: 4px 8px; 
+    }
+    .search-wrapper {
+        border-radius: 20px;
+    }
+    .search-icon {
+        right: 6px;
+        font-size: 11px;
+    }
+    .nav-button { 
+        padding: 3px 6px; 
+        font-size: 9px; 
+        border-radius: 14px;
+    }
+    .profile-circle { 
+        width: 24px; 
+        height: 24px; 
+    }
+    .profile-placeholder {
+        font-size: 7px;
+    }
+    .right-section { 
+        gap: 3px; 
+    }
 }
-
-}
-
-    </style>
+</style>
 </head>
 <body>
 <header>
     <div class="logo-container">
         <div class="logo-wrapper">
             <a href="{% url 'home:main' %}">
-                <img src="/static/img/Group 31.png" alt="Galatea Logo" />
+                <img src="/static/img/Group 31.png" alt="Galatea Logo">
             </a>
         </div>
         <h1 class="brand-name">GALATEA</h1>
     </div>
 
- 
-
-    <div class="search-and-nav">
-        <form class="header-search-form" action="/search/" method="get" role="search" aria-label="{% trans '검색' %}">
-            <div class="search-placeholder" tabindex="0" aria-label="{% trans '검색창 열기' %}">{% trans "검색어를 입력하세요..." %}</div>
-            <input type="search" name="q" placeholder="{% trans '검색어를 입력하세요...' %}" aria-hidden="true" />
-        </form>
-
-        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}">
-            <a href="{% url 'logout' %}" class="nav-button">{% trans "로그아웃" %}</a>
-            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
-            <a href="/cloning/" class="nav-button">{% trans "보이스 클로닝" %}</a>
-            <a href="/make_voice/" class="nav-button">{% trans "보이스 만들기" %}</a>
-            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
-            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
-        </nav>
+    <div class="search-container">
+        <div class="search-wrapper">
+            <form action="/search/" method="get">
+                <input type="search" name="q" placeholder="{% trans 'AI와 함께 검색해보세요...' %}">
+                <span class="search-icon">🔍</span>
+            </form>
+        </div>
     </div>
 
-       <div class="profile-section">
+    <div class="right-section">
+        <a href="{% url 'logout' %}" class="nav-button">{% trans "로그아웃" %}</a>
         <a href="{% url 'mypage:mypage' %}">
             <div class="profile-circle" title="{% trans '내 프로필' %}">
-                {% if user.user_image %}
-                    <img src="{{user.user_image.url }}" alt="{% trans '프로필 이미지' %}" class="profile-avatar" />
-                {% else %}
-                    <div class="profile-placeholder">{% trans "이미지 없음" %}</div>
-                {% endif %}
+                <div class="profile-inner">
+                    {% if user.user_image %}
+                        <img src="{{ user.user_image.url }}" alt="{% trans '프로필 이미지' %}" class="profile-avatar">
+                    {% else %}
+                        <div class="profile-placeholder">{% trans "이미지 없음" %}</div>
+                    {% endif %}
+                </div>
             </div>
         </a>
     </div>
 </header>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('.header-search-form');
-    const input = form.querySelector('input[type="search"]');
-    const placeholder = form.querySelector('.search-placeholder');
-
-    function expandSearch() {
-        form.classList.add('expanded');
-        input.setAttribute('aria-hidden', 'false');
-        input.focus();
-        placeholder.style.display = 'none';
-    }
-
-    function collapseSearch(e) {
-        if (!form.contains(e.target)) {
-            form.classList.remove('expanded');
-            input.setAttribute('aria-hidden', 'true');
-            placeholder.style.display = 'flex';
-            input.value = '';
-        }
-    }
-
-    placeholder.addEventListener('click', expandSearch);
-    placeholder.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            expandSearch();
-        }
-    });
-
-    document.addEventListener('click', collapseSearch);
-});
-</script>
 </body>
 </html>

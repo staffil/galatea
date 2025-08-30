@@ -89,7 +89,7 @@
                             <div class="llm-name">{{ item.title }}</div>
                             <div class="genre-tags">
                                 {% for genre in item.genres.all %}
-                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.display_name }}</div>
+                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
                                 {% empty %}
                                     <div class="genre-tag" style="background-color: #999;">장르 없음</div>
                                 {% endfor %}

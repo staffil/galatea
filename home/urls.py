@@ -16,7 +16,9 @@ urlpatterns = [
     path('search/', views.search_llm, name = 'search_llm'),
     path('genres/<int:genres_id>', views.genre_detail, name='genres_detail'),
     path('llm_sections/', views.llm_section, name='llm_section'),
-    path('comment_create/<int:llm_id>', views.comment_create, name="comment_create")
+    path('comment_create/<int:llm_id>', views.comment_create, name="comment_create"),
+
+    path("voice_all/", views.voice_all, name="voice_all")
 
     # path('like/<int:llm_id>/', views.like_toggle, name = "like_toggle"),
 ]

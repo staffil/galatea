@@ -281,7 +281,7 @@
     {% include "common/sidebar.html" %}
     
     <div class="request-container">
-        <h1 class="page-title">나의 음성 요청 목록</h1>
+        <h1 class="page-title">나의 요청글 목록</h1>
         
         {% if request_list %}
             {% for request in request_list %}
@@ -301,8 +301,7 @@
             {% endfor %}
         {% else %}
             <div class="empty-message">
-                <p>아직 요청한 음성 변환이 없습니다.</p>
-                <p>새로운 음성 요청을 시작해보세요! ✨</p>
+                <p>아직 요청글이 없습니다.</p>
             </div>
         {% endif %}
     </div>

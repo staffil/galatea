@@ -1,0 +1,31 @@
+{% load humanize %}
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>GALATEA 가격표</title>
+    <link rel="stylesheet" href="{% static 'css/payment/payment.css' %}?v=5" />
+</head>
+<body>
+
+<!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+{% if status == "paid" %}
+  <h2>결제가 완료되었습니다 🎉</h2>
+{% else %}
+  <h2>결제가 실패했거나 취소되었습니다 😢</h2>
+{% endif %}
+<a href="{% url 'home:main' %}">메인으로 가기</a>
+<a href="{% url 'payment:chocie' %}">결제 칸으로 가기</a>
+
+</body>
+</html>

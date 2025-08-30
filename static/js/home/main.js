@@ -1,40 +1,5 @@
 
-  
-  // 사이드바 토글 기능
-    function toggleSidebar() {
-        const sidebar = document.getElementById('voiceSidebar');
-        const toggle = document.getElementById('sidebarToggle');
-        const mainContent = document.getElementById('mainContent');
-        
-        const isMobile = window.innerWidth <= 1024;
-        
-        if (isMobile) {
-            sidebar.classList.toggle('show-mobile');
-            toggle.classList.toggle('show-mobile');
-            mainContent.classList.toggle('show-mobile');
-        } else {
-            sidebar.classList.toggle('collapsed');
-            toggle.classList.toggle('collapsed');
-        }
-    }
 
-    // 뉴스 슬라이더
-    let currentSlideIndex = 0;
-    let newsTab = null;
-    let newsImages = null;
-    let totalImages = 0;
-
-    function initNewsSlider() {
-        newsTab = document.querySelector('.news-tab');
-        newsImages = newsTab.querySelectorAll('div');
-        totalImages = newsImages.length;
-        
-        if (totalImages === 0) return;
-        
-        createIndicators();
-        updateSlider();
-        updateButtons();
-    }
 
     function createIndicators() {
         const indicatorsContainer = document.getElementById('indicators');
@@ -232,32 +197,13 @@
         if (modal) modal.remove();
     }
 
-    // 반응형 처리
-    function handleResize() {
-        const sidebar = document.getElementById('voiceSidebar');
-        const toggle = document.getElementById('sidebarToggle');
-        const mainContent = document.getElementById('mainContent');
-        
-        if (window.innerWidth <= 1024) {
-            // 모바일에서는 기본적으로 사이드바 숨김
-            sidebar.classList.remove('collapsed');
-            toggle.classList.remove('collapsed');
-            mainContent.classList.remove('expanded');
-        } else {
-            // 데스크톱에서는 모바일 클래스 제거
-            sidebar.classList.remove('show-mobile');
-            toggle.classList.remove('show-mobile');
-            mainContent.classList.remove('show-mobile');
-        }
-    }
 
     // 초기화
     document.addEventListener('DOMContentLoaded', () => {
         initNewsSlider();
-        handleResize();
     });
 
-    window.addEventListener('resize', handleResize);
+
 
 
 

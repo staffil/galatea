@@ -1,0 +1,352 @@
+/* 전체 초기화 */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+.brand-name{
+    margin:-10px;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    overflow-x: hidden;
+    position: relative;
+    padding: 0;
+}
+
+/* 배경 장식 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(139,92,246,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(6,182,212,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 메인 컨테이너 */
+.main-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 120px 20px 60px;
+    position: relative;
+    z-index: 1;
+}
+
+/* 제목 */
+h1 {
+    font-size: 32px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.3;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+    border-radius: 1.5px;
+}
+
+/* 결제 카드 */
+.payment-card {
+    background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08));
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 24px;
+    padding: 40px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        0 20px 60px rgba(139,92,246,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+}
+
+.payment-card:hover {
+    border-color: rgba(139,92,246,0.4);
+    box-shadow: 
+        0 25px 80px rgba(139,92,246,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+/* 결제 방법 제목 */
+.payment-methods-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e2e8f0;
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.payment-methods-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+    border-radius: 1px;
+}
+
+/* 결제 버튼 컨테이너 */
+.payment-buttons {
+    display: grid;
+    gap: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* 결제 버튼 */
+button[onclick*="requestPay"] {
+    width: 100%;
+    padding: 18px 30px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 16px;
+    color: #e2e8f0;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+}
+
+button[onclick*="requestPay"]:hover {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    border-color: #8b5cf6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139,92,246,0.4);
+    color: white;
+}
+
+button[onclick*="requestPay"]:active {
+    transform: translateY(0);
+}
+
+/* 버튼 애니메이션 효과 */
+button[onclick*="requestPay"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+button[onclick*="requestPay"]:hover::before {
+    left: 100%;
+}
+
+/* 결제 정보 박스 */
+.payment-info {
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.payment-info p {
+    font-size: 18px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin: 0;
+}
+
+.payment-info .price {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 보안 알림 */
+.security-notice {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 25px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(226,232,240,0.8);
+}
+
+.security-notice::before {
+    content: '🔒';
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+/* 로딩 상태 */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid #8b5cf6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .main-container {
+        padding: 100px 15px 40px;
+    }
+    
+    .payment-card {
+        padding: 30px 25px;
+        border-radius: 20px;
+    }
+    
+    h1 {
+        font-size: 26px;
+        margin-bottom: 30px;
+    }
+    
+    .payment-methods-title {
+        font-size: 18px;
+    }
+    
+    button[onclick*="requestPay"] {
+        padding: 16px 24px;
+        font-size: 15px;
+    }
+    
+    .payment-info {
+        padding: 16px;
+    }
+    
+    .payment-info p {
+        font-size: 16px;
+    }
+    
+    .payment-info .price {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        padding: 90px 12px 35px;
+    }
+    
+    .payment-card {
+        padding: 25px 20px;
+        border-radius: 18px;
+    }
+    
+    h1 {
+        font-size: 22px;
+        margin-bottom: 25px;
+    }
+    
+    .payment-methods-title {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    
+    button[onclick*="requestPay"] {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+    
+    .payment-info {
+        padding: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .payment-info p {
+        font-size: 15px;
+    }
+    
+    .payment-info .price {
+        font-size: 18px;
+    }
+    
+    .security-notice {
+        padding: 14px;
+        font-size: 13px;
+        margin-top: 20px;
+    }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 포커스 표시 개선 */
+button[onclick*="requestPay"]:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+}
+
+/* 다크모드 강화 */
+@media (prefers-color-scheme: dark) {
+    .security-notice {
+        color: rgba(226,232,240,0.7);
+    }
+}

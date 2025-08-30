@@ -20,6 +20,8 @@ class UserAuth(models.Model):
         unique_together = (('user', 'authority'),)
         verbose_name = 'User Authority'
         verbose_name_plural = 'User Authorities'
+
+        
 # 쿠폰 테이블
 class Coupon(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

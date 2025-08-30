@@ -12,6 +12,9 @@ from customer_ai import views as customer_ai_views
 from makeImage import views as make_image_view
 from register import views as login_view
 from home import views as main_view
+from makeVoice import views as make_voice_view
+from helpdesk import views as helpdesk_view
+from payment import views as payment_view
 
 def root_redirect(request):
     lang = get_language()
@@ -20,7 +23,6 @@ def root_redirect(request):
 
 urlpatterns = [
     path('', root_redirect),  # 루트 접속 시 언어별 URL로 리다이렉트
-    path('accounts/', include('allauth.urls')), 
     path('admin/', admin.site.urls),
     path('i18n/setlang/', set_language, name='set_language'),
 
@@ -29,9 +31,15 @@ urlpatterns = [
     path('upload_audio/', customer_ai_views.upload_audio, name='upload_audio'),
     path('generate_response/', customer_ai_views.generate_response, name='generate_response'),
     path('vision_process/', customer_ai_views.vision_process, name='vision_process'),
+    path('novel_process/', customer_ai_views.novel_process, name = "novel_process"),
+
     path("generate_image/", make_image_view.generate_image, name="generate_image"),
     path('proxy_image/', make_image_view.proxy_image, name='proxy_image'),  # 이미지 프록시용
     path('<int:llm_id>/introduce', main_view.distribute_llm, name='distribute_llm'),
+    path("auto_generate_prompt", make_voice_view.auto_generate_prompt, name="auto_generate_prompt") ,           
+    path("auto_prompt/", customer_ai_views.auto_prompt, name="auto_prompt"),
+    path("payment/complete/", payment_view.payment_complete, name="payment_complete")
+
 
 
 ]
@@ -46,11 +54,15 @@ urlpatterns += i18n_patterns(
     path('register/', include(('register.urls', 'register'), namespace='register')),
     path('logout/', home_views.user_logout, name='logout'),
     path('mypage/', include(("mypage.urls","mypage"), namespace="mypage")),
-    # path('cloning/', include(('cloning.urls', 'cloning'), namespace='cloning')),
+    path('cloning/', include(('cloning.urls', 'cloning'), namespace='cloning')),
     path('payment/', include(('payment.urls', 'payment'), namespace='payment')),
     path("distribute/", include(("distribute.urls", 'distribute'), namespace="distribute")),
     path('intro/<int:llm_id>/', main_view.llm_detail_partial, name='llm_detail_partial'),
     path('helpdesk/', include(("helpdesk.urls", 'helpdesk'), namespace='helpdesk')),
+    path('login/', include('social_django.urls', namespace='login')),
+    path('accounts/', include('allauth.urls')), 
+
+
 
 
 )

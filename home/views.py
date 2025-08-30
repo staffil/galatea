@@ -34,24 +34,36 @@ def main(request):
     now = datetime.now()
     hour_key = now.strftime('%Y%m%d_%H')
     cache_key = f'llm_random_list_{language}_{hour_key}'
+    llm_cache_key = f'llm_random_list_{language}_{hour_key}'
+    voice_cache_key = f'voice_random_list_{language}_{hour_key}'
 
-    llm_list_ids = cache.get(cache_key)
+
+    llm_list_ids = cache.get(llm_cache_key)
     if llm_list_ids is None:
         llm_list_ids = list(LLM.objects.filter(is_public=True).values_list('id', flat=True))
         random.shuffle(llm_list_ids)
-        cache.set(cache_key, llm_list_ids, timeout=10)
+        cache.set(llm_cache_key, llm_list_ids, timeout=10)
 
-
-    voice_list_ids = cache.get(cache_key)
+    voice_list_ids = cache.get(voice_cache_key)
     if voice_list_ids is None:
         voice_list_ids = list(VoiceList.objects.filter(is_public=True).values_list('id', flat=True))
         random.shuffle(voice_list_ids)
-        cache.set(cache_key, voice_list_ids, timeout=10)
+        cache.set(voice_cache_key, voice_list_ids, timeout=10)
+
 
     # 캐시된 순서대로 LLM 객체 가져오기
     llm_list = list(LLM.objects.filter(id__in=llm_list_ids).prefetch_related('genres'))
     llm_list.sort(key=lambda x: llm_list_ids.index(x.id))
-
+    if request.user.is_authenticated:
+        for llm in llm_list:
+            try:
+                like_obj = LlmLike.objects.get(user=request.user, llm=llm, is_like=True)
+                llm.user_has_liked = True
+            except LlmLike.DoesNotExist:
+                llm.user_has_liked = False
+    else:
+        for llm in llm_list:
+            llm.user_has_liked = False
     voice_list = list(VoiceList.objects.filter(id__in = voice_list_ids).prefetch_related('llm'))
     voice_list.sort(key=lambda x: voice_list_ids.index(x.id))
 
@@ -111,8 +123,29 @@ from customer_ai.models import LLM
 
 def llm_detail_partial(request, llm_id):
     llm = get_object_or_404(LLM, id=llm_id)
+    
+    # 좋아요 정보 추가!
+    if request.user.is_authenticated:
+        try:
+            like_obj = LlmLike.objects.get(user=request.user, llm=llm, is_like=True)
+
+            llm.user_has_liked = True
+        except LlmLike.DoesNotExist:
+            llm.user_has_liked = False
+    else:
+        llm.user_has_liked = False
+
+    if request.user.is_authenticated:
+        llm.user_is_following_user = Follow.objects.filter(follower=request.user, following=llm.user).exists()
+    else:
+        llm.user_is_following_user = False
+
+    
+    
     return render(request, 'home/llm_intro.html', {'llm_list': [llm]})
 
+
+# llm_intro에 들어갈 뷰
 def distribute_llm(request, llm_id=None):
     language = get_language()
     user = request.user
@@ -120,11 +153,17 @@ def distribute_llm(request, llm_id=None):
     genre_list = Genre.objects.all()
     llm_list = LLM.objects.filter(is_public=True).prefetch_related('genres')
 
-    # 로그인 유저 기준 좋아요 처리
+    # 각 LLM에 좋아요 정보 직접 추가
     if request.user.is_authenticated:
-        liked_llm_ids = set(LlmLike.objects.filter(user=user, is_like=True).values_list('llm_id', flat=True))
+        for llm in llm_list:
+            try:
+                like_obj = LlmLike.objects.get(user=user, llm=llm, is_like=True)
+                llm.user_has_liked = True
+            except LlmLike.DoesNotExist:
+                llm.user_has_liked = False
     else:
-        liked_llm_ids = set()
+        for llm in llm_list:
+            llm.user_has_liked = False
 
     # 장르 이름 처리
     for l in llm_list:
@@ -136,15 +175,11 @@ def distribute_llm(request, llm_id=None):
 
     voice_list = VoiceList.objects.filter(is_public=True)
 
-
-
-
     context = {
         "genre_list": genre_list,
         "user": user,
         "llm_list": llm_list,
         "voice_list": voice_list,
-        "liked_llm_ids": liked_llm_ids,
     }
 
     return render(request, 'home/llm_intro.html', context)
@@ -221,15 +256,20 @@ def like_toggle(request):
     return JsonResponse({'status': status, 'like_count': target_llm.llm_like_count})
 
 # views.py
-from django.shortcuts import render, get_object_or_404
-from customer_ai.models import LLM
+from django.http import Http404
 
 def llm_intro(request, llm_id):
-    llm = get_object_or_404(LLM, id=llm_id)
+    # id로 특정 LLM을 가져오면서 is_public=True 조건 적용
+    try:
+        llm = LLM.objects.get(id=llm_id, is_public=True)
+    except LLM.DoesNotExist:
+        raise Http404("LLM을 찾을 수 없습니다.")
+    
+    # 팔로우 여부 확인
     is_following = request.user in llm.user.followers.all()
     
     return render(request, 'home/llm_intro.html', {
-        'llm_list': [llm],
+        'llm_list': [llm],       # 템플릿에서는 for문으로 사용
         'followers_ids': is_following,
     })
 
@@ -282,7 +322,7 @@ def genre_detail(request, genres_id):
 def llm_section(request):
     
 
-    llm_list = LLM.objects.all()
+    llm_list = LLM.objects.filter(is_public=True)
 
     context ={
         
@@ -311,4 +351,14 @@ def comment_create(request, llm_id):
                 parent_comment = Comment.objects.get(id=parent_id)
                 comment.parent_comment = parent_comment
             comment.save()
-    return redirect('home:llm_intro', llm.id)
+    return redirect('home:main', llm.id)
+
+
+def voice_all(request):
+    voice = VoiceList.objects.filter(is_public=True)
+    context = {
+        "voice_list": voice
+
+    }
+    return render(request, "home/voice_all.html", context)
+

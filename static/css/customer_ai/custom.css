@@ -6,7 +6,7 @@
 
       body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #FAC3F3;
+    background-color: #3b0d69;
     min-height: 100vh;
 
 }
@@ -15,7 +15,7 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     text-align: center;
     height: 100%;
-    background-color: #FAC3F3; /* 또는 원하는 색 */
+            background-color: #681170;
     margin-top: -40px;
     display: flex;
     min-height: 300vh; /* 변경: 화면이 길어질 수 있도록 */
@@ -78,8 +78,8 @@
         /* 사이드바 - 향상된 디자인 */
         .sidebar {
             width: 280px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 195, 243, 0.3));
-            padding: 30px 25px;
+    background-color: #3b0d69;
+            padding: 60px 25px;
             backdrop-filter: blur(15px);
             border-radius: 0 25px 25px 0;
             box-shadow: 5px 0 20px rgba(0, 0, 0, 0.1);

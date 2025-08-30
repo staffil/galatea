@@ -521,18 +521,10 @@ body {
                         {% endif %}
                     </div>
                     <div class="genre-card-overlay"></div>
-                    <div class="genre-stats">
-                        {{ genre.character_count|default:0 }} {% trans "개" %}
-                    </div>
+
                     <div class="genre-card-content">
                         <h3 class="genre-name">{{ genre.name }}</h3>
-                        <p class="genre-description">
-                            {% if genre.description %}
-                                {{ genre.description }}
-                            {% else %}
-                                {% trans "이 장르의 다양한 AI 캐릭터들과 대화해보세요" %}
-                            {% endif %}
-                        </p>
+   
                     </div>
                 </div>
             {% empty %}

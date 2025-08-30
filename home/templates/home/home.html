@@ -1,7 +1,7 @@
 {% load static %} 
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{LANGUAGE_CODE}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,6 +36,10 @@
         <button class="btn btn-login" onclick="handleClick('login')">LOGIN</button>
     </div>
 </div>
+<script>
+    const URL_SIGNUP = "{% url 'register:signup' %}";
+    const URL_LOGIN = "{% url 'register:login' %}";
+</script>
 
  <script src="{% static 'js/home/home.js' %}"></script>
 

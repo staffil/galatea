@@ -9,6 +9,7 @@ urlpatterns = [
     path('chat/<int:llm_id>/', views.chat_view, name='chat_view'),
 
     path('vision/<int:llm_id>/', views.vision_view, name='vision_view'),
+    path('novel/<int:llm_id>/', views.novel_view, name ='novle_view'),
     path('make_ai/', views.make_ai, name='make_ai'),
 
     path('image-file/', views.is_allowed_image_file, name='image-file'),

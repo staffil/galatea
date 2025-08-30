@@ -22,7 +22,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     created_at = models.DateTimeField(default=timezone.now)
-    nickname = models.CharField(max_length=100)
+    nickname = models.CharField(max_length=100, default='user',null=False,)
     phonenumber = models.CharField(max_length=30)
     # name = models.CharField(max_length=100)
     # country = models.CharField(max_length=3)

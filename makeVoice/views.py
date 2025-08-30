@@ -1,6 +1,6 @@
 import os
 import base64
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -45,7 +45,16 @@ def is_voice_error(prompt, text):
         return "샘플 텍스트는 100자 이상이어야 합니다."
     return None 
 
+from payment.models import Token
+from payment.models import TokenHistory
+from pydub import AudioSegment
 
+def get_audio_duration(file_path):
+    audio = AudioSegment.from_file(file_path)
+    return int(audio.duration_seconds)
+
+from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
 @login_required 
 @require_http_methods(["POST"])
 def sample_voice(request):
@@ -75,6 +84,36 @@ def sample_voice(request):
 
             file_name = default_storage.save(f"audio_previews/{gen_id}.mp3", ContentFile(audio_data))
             file_url = default_storage.url(file_name)
+            file_path = default_storage.path(file_name)
+            audio_second = get_audio_duration(file_path)
+
+
+            def consume_token(user, amount):
+                with transaction.atomic():
+                    try:
+                        token_obj = Token.objects.select_for_update().get(user=user)
+                    except ObjectDoesNotExist:
+                        return False 
+
+                    avail_token = token_obj.total_token - token_obj.token_usage
+                    if avail_token < amount:
+                        return False
+
+                    token_obj.token_usage += amount
+                    token_obj.save()
+
+                    TokenHistory.objects.create(
+                        user=user,
+                        change_type=TokenHistory.CONSUME,
+                        amount=amount,
+                        total_voice_generated=amount
+                    )
+                    return True
+            
+            success = consume_token(request.user, audio_second)
+            if not success:
+                return JsonResponse({"error": "토큰이 부족합니다."}, status = 403)
+
 
             request.session['voice_prompt'] = voice_prompt
             request.session['sample_text'] = sample_text
@@ -161,3 +200,34 @@ def make_voice(request):
 
         except Exception as e:
             return JsonResponse({"status": "error", "error": str(e)})
+import openai
+import json
+@csrf_exempt
+def auto_generate_prompt(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            user_prompt = data.get("prompt", "").strip()
+
+            if not user_prompt:
+                return JsonResponse({"status": "error", "error": "프롬프트가 비어있습니다."})
+
+            # OpenAI API 호출 (1.0+ 방식)
+            response = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "당신은 음성 프롬프트를 전문적으로 개선하는 AI입니다. 다른 말은 넣지 말고 사용자가 적은 프롬프트를 elevenlabs 프롬프트 형식으로 만들고 영어로 만들어주세요. 그리고 프롬프트를 100자 넘게 만들어 주세요"},
+                    {"role": "user", "content": user_prompt}
+                ]
+            )
+
+            # ✅ 1.0+ 접근 방식
+            refined_prompt = response.choices[0].message.content
+
+            return JsonResponse({"status": "success", "refined_prompt": refined_prompt})
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "error": str(e)})
+
+    return JsonResponse({"status": "error", "error": "POST 요청만 허용됩니다."})
+

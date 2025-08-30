@@ -58,6 +58,7 @@
 
                 <script>
                     // 쿠키에서 CSRF 토큰 읽기 함수
+                    
                     function getCookie(name) {
                         let cookieValue = null;
                         if (document.cookie && document.cookie !== '') {
@@ -141,12 +142,48 @@
                     <div class="generate-container">
                         <button type="submit" class="btn generate-button">✨ {% trans '샘플 생성하기' %}</button>
                         <p style="margin-top: 20px; color: #888; font-size: 0.9rem;">
-                            💡 {% trans '팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!' %}
+                            💡 {% trans '팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다! 더 자세한 프롬프트를 만들고 싶다면 "대신 만들어줘!"를 클릭하세요' %}
                         </p>
                     </div>
                 </form>
+                                        <button type="submit" id="auto_generate_btn" class="btn generate-button">🤖 {% trans '대신 만들어줘' %}</button>
+
             {% endif %}
         </div>
     </div>
+
+    <script>
+        document.getElementById("auto_generate_btn").addEventListener("click", function(){
+            const userPrompt = document.getElementById("voice_prompt_input").value.trim();
+            const csrftoken = "{{ csrf_token }}";
+
+            if (!userPrompt){
+                alert("{% trans '먼저 음성 스타일을 입력해주세요!' %}");
+                return;
+            }
+            fetch("{% url 'auto_generate_prompt' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body:JSON.stringify({prompt:userPrompt})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success'){
+                document.getElementById('voice_prompt_input').value = data.refined_prompt;
+            alert("{% trans '음성 프롬프트가 좀 더 구체화되었습니다!' %}");
+                } else {
+                    alert("{% trans '프롬프트 생성 중 오류가 발생했습니다.' %}");
+                }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("서버 요청 중 오류 발생")
+        })
+        })
+    
+    </script>
 </body>
 </html>

@@ -1,0 +1,152 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '소설 모드' %}</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/novel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/vision.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+
+
+<body>
+    <!-- Header -->
+<header class="header">
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+
+
+</header>
+    <div class="hamburger" style="margin-top: 30px;" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-options">
+                <div class="mode-option">
+                    <input type="radio" name="mode"  onclick="location.href='/customer_ai/chat/{{llm_id}}';">
+                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode"  onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                </div>
+
+                <div class="mode-option active">
+                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/vision/{{llm_id}}';" checked>
+                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
+                </div>
+            </div>
+    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+        공유하기
+    </button>
+        </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="ai-showcase">
+            {% if llm.llm_image %}
+                <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image">
+            {% endif %}
+            <div class="chat-header">
+                <div class="ai-avatar">🤖</div>
+                <h1 class="chat-title">{{ llm.name }}</h1>
+            </div>
+        </div>
+
+        <!-- Novel Output -->
+        <div class="novel-output" id="novel-container">
+            <p>AI가 소설체로 답변할 예정입니다...</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <input type="text" id="text-input" placeholder="메시지를 입력하세요..." 
+                   onkeydown="if(event.key==='Enter'){ sendNovel(); }">
+            <button onclick="sendNovel()">전송</button>
+
+            <!-- Audio Player -->
+            <div class="audio-player" id="audio-container" style="display:none;">
+                <audio id="tts-audio" controls></audio>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+const llmId = "{{ llm_id }}";
+
+function sendNovel() {
+    const userText = document.getElementById("text-input").value.trim();
+    if(!userText) return;
+
+    const novelContainer = document.getElementById("novel-container");
+    
+    // 사용자 메시지 추가 (클래스 추가)
+    novelContainer.innerHTML += `<p class="user-message"><strong>사용자:</strong> ${userText}</p>`;
+
+    const formData = new FormData();
+    formData.append("text", userText);
+    formData.append("llm_id", llmId);
+
+    fetch("{% url 'novel_process' %}", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.novel_text){
+            // AI 메시지 추가 (클래스 추가)
+            novelContainer.innerHTML += `<p class="ai-message"><strong>AI:</strong> ${data.novel_text}</p>`;
+            novelContainer.scrollTop = novelContainer.scrollHeight;
+        }
+        if(data.tts_audio_url){
+            const audioElem = document.getElementById("tts-audio");
+            audioElem.src = data.tts_audio_url;
+            document.getElementById("audio-container").style.display = "block";
+            audioElem.play();
+        }
+    })
+    .catch(err => alert("오류 발생: " + err.message));
+
+    document.getElementById("text-input").value = "";
+}
+
+  const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.querySelector('.hamburger');
+        
+        sidebar.classList.toggle('active');
+        hamburger.classList.toggle('active');
+    }
+
+// 링크 복사하기
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("share-btn")) {
+        const link = e.target.getAttribute("data-link");
+        navigator.clipboard.writeText(link).then(() => {
+            alert("링크가 복사되었습니다!");
+        });
+    }
+});
+</script>
+
+</body>
+</html>

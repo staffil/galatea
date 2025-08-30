@@ -1,58 +1,74 @@
+{% load humanize %}
+{% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>아임포트 결제 테스트</title>
-    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <title>GALATEA 가격표</title>
+    <link rel="stylesheet" href="{% static 'css/payment/payment.css' %}?v=5" />
 </head>
 <body>
-    <h2>아임포트 테스트 결제</h2>
 
-    <!-- 전화번호 입력 -->
-    <input type="text" id="phoneNumber" placeholder="휴대폰 번호 입력">
-    <br><br>
+        <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+<h1>{{ plan.rankname }} 결제 - {{ plan.price }}원</h1>
 
-    <!-- 카카오페이 -->
-    <button onclick="requestPay('kakaopay')">카카오페이 결제</button>
-    <!-- 토스페이먼츠 -->
-    <button onclick="requestPay('tosspayments')">토스 결제</button>
-    <!-- 페이팔 -->
-    <button onclick="requestPay('paypal')">페이팔 결제</button>
+{% for pg in available_pgs %}
+<button data-price="{{ plan.price }}" data-rank-id="{{ plan.id }}" onclick="requestPay('{{ pg }}', this)" style="background-image: {{ pg.payment_image.url }};">
+    {{ pg|title }} {{ plan.price }}원
+</button>
 
-    <script>
-        const IMP = window.IMP;
-        IMP.init("imp28654630"); // 가맹점 식별코드 (테스트용)
+{% endfor %}
 
-        function requestPay(pg) {
-            const phone = document.getElementById("phoneNumber").value || "010-0000-0000";
-            const merchant_uid = "order_" + new Date().getTime();
 
-            const data = {
-                pg: pg,
-                pay_method: "card",
-                merchant_uid: merchant_uid,
-                name: "테스트 상품",
-                amount: pg === "tosspayments" || pg === "paypal" ? 0 : 100,
-                buyer_email: "test@example.com",
-                buyer_name: "테스터",
-                buyer_tel: phone
-            };
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 
-            // toss와 paypal은 빌링키 테스트 위해 customer_uid 추가
-            if (pg === "tosspayments" || pg === "paypal") {
-                data.customer_uid = "test_user_001";
-            }
+<script>
+const IMP = window.IMP;
+IMP.init("imp28654630"); // 테스트 가맹점 코드
 
-            IMP.request_pay(data, function(rsp) {
-                if (rsp.success) {
-                    fetch(`/verify_payment/?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}`)
-                        .then(res => res.json())
-                        .then(data => alert(JSON.stringify(data)));
+function requestPay(pg, btn) {
+    const VERIFY_PAYMENT_URL = "{% url 'payment:verify_payment' %}";
+    const merchant_uid = "order_" + new Date().getTime();
+    const amount = parseInt(btn.getAttribute("data-price"));
+    const rank_id = btn.getAttribute("data-rank-id");
+
+    const data = {
+        pg: pg,
+        pay_method: "card",
+        customer_uid: "user_{{ request.user.id }}",
+        merchant_uid: merchant_uid,
+        name: "GALATEA 등급 결제",
+        amount: amount,
+        buyer_email: "{{ request.user.email }}",
+        buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+        buyer_tel: "{{ request.user.profile.phone_number|default:'010-3161-5706' }}"
+    };
+
+    IMP.request_pay(data, function(rsp) {
+        if (rsp.success) {
+            fetch(`${VERIFY_PAYMENT_URL}?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}&rank_id=${rank_id}`)
+            .then(res => res.json())
+            .then(result => {
+                if(result.status){
+                    alert(`결제 성공! 상태: ${result.status}`);
+                    window.location.href = "/payment/complete/";
                 } else {
-                    alert("결제 실패: " + rsp.error_msg);
+                    alert("결제 처리 실패: " + JSON.stringify(result));
                 }
             });
+        } else {
+            alert("결제 실패: " + rsp.error_msg);
         }
-    </script>
+    });
+}
+</script>
 </body>
 </html>

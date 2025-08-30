@@ -33,7 +33,7 @@ class Conversation(models.Model):
 # llm 좋아요 테이블
 class LlmLike(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    llm = models.ForeignKey('customer_ai.LLM', on_delete=models.CASCADE, related_name='voice_lists')
+    llm = models.ForeignKey('customer_ai.LLM', on_delete=models.CASCADE, related_name='like')
     is_like = models.BooleanField(default=True) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -80,10 +80,18 @@ class LLM(models.Model):
 
 
 
+
 class Prompt(models.Model):
+    PROMPT_TYPE_CHOICES = [
+        ('text', '일반 프롬프트'),
+        ('voice', '목소리 프롬프트'),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    prompt_title= models.CharField(max_length=100,verbose_name="프롬프트 제목 적는칸")
+    prompt_title = models.CharField(max_length=100, verbose_name="프롬프트 제목 적는칸")
     prompt = models.TextField(verbose_name="프롬프트 적는 칸")
+    prompt_type = models.CharField(max_length=10, choices=PROMPT_TYPE_CHOICES, default='text')
+    created_at = models.DateTimeField(auto_now_add=True)    
 
     class Meta:
         db_table = "prompt"

@@ -8,88 +8,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans '비전 모드' %}</title>
     <link rel="stylesheet" href="{% static 'css/customer_ai/vision.css' %}">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body>
-    <!-- 헤더 -->
-    <header>
-        {% if not user.is_authenticated %}
-          {% include "common/notLoginHeader.html" %}
-        {% else %}
-          {% include "common/loginHeader.html" %}
-        {% endif %}
-    </header>
 
-    <div class="container">
-        <!-- 사이드바 -->
-        <aside class="sidebar">
-            <h3>🎯 {% trans '모드 선택' %}</h3>
-            <div class="mode-option">
-                <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';">
-                <label>💬 TEXT MODE</label>
-            </div>
-            <div class="mode-option active">
-                <input type="radio" name="mode" checked onclick="location.href='/customer_ai/vision/{{llm_id}}';">
-                <label>👁️ VISION MODE</label>
-            </div>
-        </aside>
-         <div class="chat-container">
-    <div class="background" 
-         {% if llm.llm_background_image %}
-         style="background-image: url('{{ llm.llm_background_image.url }}');"
-         {% endif %}>
+
+
+<body>
+    <!-- Header -->
+<header class="header">
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+
+
+</header>
+    <div class="hamburger" style="margin-top: 30px;" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
-        <!-- 메인 채팅 영역 -->
-        <main class="chat-container">
+
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-options">
+                <div class="mode-option">
+                    <input type="radio" name="mode"  onclick="location.href='/customer_ai/chat/{{llm_id}}';">
+                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
+                </div>
+
+                <div class="mode-option active">
+                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/vision/{{llm_id}}';" checked>
+                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
+                </div>
+            </div>
+
+    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+        공유하기
+    </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Section -->
             <div class="chat-header">
                 <div class="ai-avatar">👁️</div>
                 <h1 class="chat-title">{{ llm.name }} {% trans '비전 대화하기' %}</h1>
             </div>
-            
             <p class="chat-subtitle">{% trans '카메라로 실시간 대화해보세요' %}</p>
 
-            <!-- 비디오 컨테이너 - 좌우 분할 -->
+            <!-- Video Container -->
             <div class="video-container">
-                <!-- AI 이미지 섹션 -->
-                <div class="ai-image-section">
-                    <div class="section-title">🤖 {% trans 'AI 캐릭터' %}</div>
+                <!-- AI Image Section -->
+                <div class="video-section">
+                    <div class="section-title">
+                        <i class="fas fa-robot"></i>
+                        {% trans 'AI 캐릭터' %}
+                    </div>
                     {% if llm.llm_image %}
                         <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image" />
                     {% else %}
-                        <div class="no-image">{% trans '생성된 이미지가 없습니다' }</div>
+                        <div class="no-image">{% trans '생성된 이미지가 없습니다' %}</div>
                     {% endif %}
                 </div>
 
-                <!-- 웹캠 섹션 -->
-                <div class="webcam-section">
-                    <div class="section-title">📹 {% trans '실시간 카메라' %}</div>
+                <!-- Webcam Section -->
+                <div class="video-section">
+                    <div class="section-title">
+                        <i class="fas fa-video"></i>
+                        {% trans '실시간 카메라' %}
+                    </div>
                     <video id="webcam" autoplay playsinline></video>
                 </div>
             </div>
-
-            <button id="toggle-vision-btn">{% trans '비전 모드 시작' %}</button>
-            
-            <div id="vision-result">{% trans '비전 모드 준비 중...' %}</div>
-
-            <hr>
-<div id="recognized-text"></div>
-<div id="response"></div>
-              <!-- 오디오 플레이어를 텍스트 입력창 위로 이동 -->
-            <div class="audio-player" id="audio-container" style="display: none;">
-                <audio id="tts-audio" controls></audio>
+            <!-- Audio Section -->
+            <div class="audio-section">
+                <div class="audio-controls">
+                    <button class="record-btn" id="record-btn" onclick="toggleRecording()">
+                        <i class="fas fa-microphone" id="record-icon"></i>
+                    </button>
+                    <div class="record-status" id="record-status">
+                        {% trans '녹음을 시작하려면 버튼을 누르세요' %}
+                    </div>
+                </div>
+                
+                <div class="recognized-text" id="recognized-text-display"></div>
+                
+                <!-- Audio Player -->
+                <div class="audio-player" id="audio-container" style="display: none;">
+                    <audio id="tts-audio" controls></audio>
+                </div>
+            </div>
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="control-row">
+                    <button class="vision-toggle" id="toggle-vision-btn">
+                        <i class="fas fa-play"></i>
+                        {% trans '비전 모드 시작' %}
+                    </button>
+                    <div class="vision-status" id="vision-result">
+                        {% trans '비전 모드 준비 중...' %}
+                    </div>
+                </div>
             </div>
 
-              <!-- 마이크를 텍스트 입력창 아래로 이동 -->
-            <div class="record-container">
-                <button class="record-button" id="record-btn" onclick="toggleRecording()">
-                    <span class="record-icon" id="record-icon">🎤</span>
-                </button>
+            <!-- Results Section -->
+            <div class="results-section">
+                <div class="result-card">
+                    <div class="result-title">
+                        <i class="fas fa-microphone"></i>
+                        {% trans '음성 인식 결과' %}
+                    </div>
+                    <div class="result-content" id="recognized-text">
+                        {% trans '음성 인식 대기 중...' %}
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">
+                        <i class="fas fa-robot"></i>
+                        {% trans 'AI 응답' %}
+                    </div>
+                    <div class="result-content" id="response">
+                        {% trans 'AI 응답 대기 중...' %}
+                    </div>
+                </div>
             </div>
-            <div class="record-status" id="record-status">{% trans '녹음을 시작하려면 버튼을 누르세요' %}</div>
+
+
         </main>
     </div>
 
-  <script>
+<script>
 const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
 
 const video = document.getElementById('webcam');
@@ -98,23 +157,38 @@ const toggleBtn = document.getElementById('toggle-vision-btn');
 const visionResult = document.getElementById('vision-result');
 const ttsAudio = document.getElementById('tts-audio');
 const responseDiv = document.getElementById('response');
+const recognizedText = document.getElementById('recognized-text');
+const recognizedTextDisplay = document.getElementById('recognized-text-display');
 
 let streaming = false;
 let intervalId = null;
 let isVisionRunning = false;
 let latestVisionResult = '';
 
-let isProcessingVision = false; // 이미지 분석 중복 방지용
-let isPlayingAudio = false;     // 음성 재생 상태
+let isProcessingVision = false;
+let isPlayingAudio = false;
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    
+    sidebar.classList.toggle('active');
+    hamburger.classList.toggle('active');
+}
 
 // 웹캠 시작
 async function startWebcam() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
         video.srcObject = stream;
+        video.classList.add('active');
         streaming = true;
+        visionResult.textContent = "{% trans '웹캠이 시작되었습니다' %}";
+        visionResult.className = "vision-status active";
     } catch (err) {
-        alert("{% trans '웹캠 접근 실패: '%}" + err);
+        alert("{% trans '웹캠 접근 실패: ' %}" + err);
+        visionResult.textContent = "{% trans '웹캠 접근 실패' %}";
+        visionResult.className = "vision-status";
     }
 }
 
@@ -123,6 +197,7 @@ function stopWebcam() {
     if (video.srcObject) {
         video.srcObject.getTracks().forEach(track => track.stop());
     }
+    video.classList.remove('active');
     streaming = false;
 }
 
@@ -130,9 +205,11 @@ function stopWebcam() {
 async function sendFrameToServer() {
     if (!streaming) return;
     if (isProcessingVision) return;
-    if (isPlayingAudio) return;  // 음성 재생 중일 때 분석 중단
+    if (isPlayingAudio) return;
 
     isProcessingVision = true;
+    visionResult.textContent = "{% trans '이미지 분석 중...' %}";
+    visionResult.className = "vision-status processing";
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -155,25 +232,26 @@ async function sendFrameToServer() {
             });
             if (!response.ok) throw new Error("{% trans '서버 응답 오류' %}");
             const data = await response.json();
-            visionResult.innerText = "{% trans '분석 결과: '%}" + data.result;
+            visionResult.textContent = "{% trans '분석 완료: ' %}" + data.result;
+            visionResult.className = "vision-status active";
             latestVisionResult = data.result;
         } catch (err) {
             console.error('Vision error:', err);
-            visionResult.innerText = "{% trans '분석 오류 발생' %}";
+            visionResult.textContent = "{% trans '분석 오류 발생' %}";
+            visionResult.className = "vision-status";
         } finally {
             isProcessingVision = false;
         }
     }, 'image/jpeg');
 }
 
-// GPT 응답 요청 (Vision 결과 포함)
+// GPT 응답 요청
 async function sendText(text) {
     if (!text || !text.trim()) return;
     const currentLlmId = "{{ llm_id }}";
-    console.log("sendText 호출됨, text:", text);
-    console.log("latestVisionResult:", latestVisionResult);
-
-    isPlayingAudio = true;  // 음성 재생 플래그 설정
+    
+    isPlayingAudio = true;
+    responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
 
     const formData = new FormData();
     formData.append('text', text);
@@ -188,13 +266,14 @@ async function sendText(text) {
         if (!res.ok) throw new Error('응답 실패');
         const data = await res.json();
 
-        responseDiv.innerText = 'AI: ' + data.ai_text;
+        responseDiv.textContent = data.ai_text;
         if (data.audio_url) {
-            ttsAudio.src = data.audio_url + '?t=' + new Date().getTime(); // 캐싱 방지
+            ttsAudio.src = data.audio_url + '?t=' + new Date().getTime();
+            document.getElementById('audio-container').style.display = 'block';
             await ttsAudio.play();
         }
     } catch (err) {
-        responseDiv.innerText = '응답 중 오류 발생';
+        responseDiv.textContent = '응답 중 오류 발생: ' + err.message;
         console.error(err);
     }
 }
@@ -204,81 +283,43 @@ ttsAudio.addEventListener('ended', () => {
     isPlayingAudio = false;
 });
 
-// 녹음 및 무음 감지
-async function startRecording() {
-    try {
-        const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(micStream, { mimeType: 'audio/webm;codecs=opus' });
-        let audioChunks = [];
-
-        mediaRecorder.ondataavailable = e => {
-            if (e.data && e.data.size > 0) {
-                audioChunks.push(e.data);
-            }
-        };
-
-        mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            const formData = new FormData();
-            formData.append('audio', audioBlob, 'recorded.webm');
-
-            try {
-                const response = await fetch(`${baseUrl}/upload_audio/`, {
-                    method: 'POST',
-                    body: formData,
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    console.log('Transcription:', data.text);
-                    sendText(data.text);
-                } else {
-                    console.error('Error:', data.error);
-                }
-            } catch (err) {
-                console.error('Fetch error:', err);
-            }
-        };
-
-        mediaRecorder.start();
-
-        // 예: 5초 후 녹음 중지
-        setTimeout(() => {
-            mediaRecorder.stop();
-            micStream.getTracks().forEach(track => track.stop());
-        }, 5000);
-
-    } catch (err) {
-        console.error('Could not start recording:', err);
-    }
-}
-
-// 비전 모드 토글 버튼 이벤트
+// 비전 모드 토글
 toggleBtn.addEventListener('click', () => {
     if (!isVisionRunning) {
         startVisionMode();
     } else {
         stopVisionMode();
     }
-    isVisionRunning = !isVisionRunning;
 });
 
 // 비전 모드 시작
 async function startVisionMode() {
     if (!streaming) await startWebcam();
-    visionResult.innerText = "{% trans '비전 모드 실행 중...' %}";
-    intervalId = setInterval(sendFrameToServer, 1500); // 1.5초마다 프레임 분석
-    await startRecording();
-    toggleBtn.innerText = "{% trans '비전 모드 중지' %}";
+    
+    isVisionRunning = true;
+    intervalId = setInterval(sendFrameToServer, 1500);
+    
+    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> {% trans "비전 모드 중지" %}';
+    toggleBtn.classList.add('active');
+    
+    visionResult.textContent = "{% trans '비전 모드 실행 중...' %}";
+    visionResult.className = "vision-status processing";
 }
 
 // 비전 모드 중지
 function stopVisionMode() {
     clearInterval(intervalId);
     stopWebcam();
-    visionResult.innerText = "{% trans '비전 모드 중지됨' %}";
-    toggleBtn.innerText = "{% trans '비전 모드 시작' %}";
+    isVisionRunning = false;
+    
+    toggleBtn.innerHTML = '<i class="fas fa-play"></i> {% trans "비전 모드 시작" %}';
+    toggleBtn.classList.remove('active');
+    
+    visionResult.textContent = "{% trans '비전 모드 중지됨' %}";
+    visionResult.className = "vision-status";
 }
 
+// 녹음 관련
 let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
@@ -286,6 +327,7 @@ let stream;
 
 function toggleRecording() {
     const recordBtn = document.getElementById("record-btn");
+    const recordIcon = document.getElementById("record-icon");
     const recordStatus = document.getElementById("record-status");
 
     if (!isRecording) {
@@ -298,9 +340,8 @@ function toggleRecording() {
                 mediaRecorder.start();
                 isRecording = true;
 
-                recordBtn.querySelector(".record-icon").textContent = "⏹";
+                recordIcon.className = "fas fa-stop";
                 recordBtn.classList.add("recording");
-                recordBtn.parentElement.classList.add("recording");
                 recordStatus.textContent = "{% trans '녹음 중... 다시 누르면 종료됩니다' %}";
 
                 mediaRecorder.addEventListener("dataavailable", (event) => {
@@ -318,25 +359,79 @@ function toggleRecording() {
                     })
                     .then((res) => res.json())
                     .then((data) => {
-                        document.getElementById("recognized-text").textContent = "인식된 텍스트: " + data.text;
+                        recognizedText.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
+                        recognizedTextDisplay.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
+                        recognizedTextDisplay.style.display = "block";
+                        
+                        setTimeout(() => {
+                            recognizedTextDisplay.style.display = "none";
+                        }, 3000);
+                        
                         sendText(data.text);
+                    })
+                    .catch((error) => {
+                        alert("{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}" + error.message);
                     });
                 });
             })
             .catch((err) => {
-                alert("마이크 권한을 허용해주세요.");
+                alert("{% trans '마이크 권한을 허용해주세요.' %}");
                 console.error(err);
             });
     } else {
         mediaRecorder.stop();
         isRecording = false;
-        recordBtn.querySelector(".record-icon").textContent = "🎤";
+        recordIcon.className = "fas fa-microphone";
         recordBtn.classList.remove("recording");
-        recordBtn.parentElement.classList.remove("recording");
         recordStatus.textContent = "{% trans '녹음을 시작하려면 버튼을 누르세요' %}";
+        
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
     }
 }
 
-    </script>
+// 모바일에서 사이드바 외부 클릭 시 닫기
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    
+    if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+        if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+            sidebar.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+    }
+});
+
+// 화면 크기 변경 시 사이드바 상태 리셋
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    
+    if (window.innerWidth > 1024) {
+        sidebar.classList.remove('active');
+        hamburger.classList.remove('active');
+    }
+});
+
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', () => {
+    // 초기 상태 설정
+    visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
+    recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
+    responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
+});
+
+// 링크 복사하기
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("share-btn")) {
+        const link = e.target.getAttribute("data-link");
+        navigator.clipboard.writeText(link).then(() => {
+            alert("링크가 복사되었습니다!");
+        });
+    }
+});
+</script>
 </body>
 </html>

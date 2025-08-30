@@ -1,306 +1,379 @@
- * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f8d7da, #e8c5e8, #d4c5f9);
-            min-height: 100vh;
-            display: flex;
-        }
+:root {
+    --primary: #667eea;
+    --primary-dark: #5a6fd8;
+    --secondary: #764ba2;
+    --accent: #f093fb;
+    --bg-primary: #0f0f23;
+    --bg-secondary: #1a1a2e;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --glow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
 
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
 
-        .ai-config-container {
-            background: linear-gradient(135deg, #ff69b4, #ff91c7);
-            border-radius: 30px;
-            padding: 40px;
-            width: 100%;
-            max-width: 1000px;
-            box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
-        }
+/* Animated Background - 텍스트 모드와 동일 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
+}
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
 
-        .form-group label {
-            color: white;
-            font-size: 24px;
-            font-weight: 300;
-            margin-bottom: 15px;
-            display: block;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+/* 배경 원형들 숨김 */
+.circle-bg {
+    display: none;
+}
 
-        .form-group select {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            padding: 15px 20px;
-            color: white;
-            font-size: 16px;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .form-group select:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .form-group select option {
-            background: #ff69b4;
-            color: white;
-        }
-
-        .config-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin: 30px 0;
-        }
-
-        .prompt-section {
-            display: flex;
-            flex-direction: column;
-            max-height: 400px;
-
-
-        }
-
-        .prompt-section label {
-            color: white;
-            font-size: 28px;
-            font-weight: 300;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .prompt-textarea {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 15px;
-            padding: 20px;
-            height: 400px;
-
-            font-size: 14px;
-            font-family: inherit;
-            resize: vertical;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        .prompt-textarea:focus {
-            outline: none;
-            background: white;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-        }
-
-        .controls-section {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .language-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .language-group label {
-            color: white;
-            font-size: 28px;
-            font-weight: 300;
-            margin-bottom: 10px;
-        }
-
-        .language-description {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .language-selector {
-            background: rgba(134, 239, 172, 0.9);
-            border: none;
-            border-radius: 20px;
-            padding: 10px 20px;
-            color: #065f46;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            max-width: 150px;
-        }
-
-
-
-        .voice-section {
-            margin: 30px 0;
-        }
-
-        .voice-section label {
-            color: white;
-            font-size: 28px;
-            font-weight: 300;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .voice-id-input {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            padding: 15px 20px;
-            color: white;
-            font-size: 16px;
-            backdrop-filter: blur(10px);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .voice-id-input:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 30px;
-        }
-
-        .model-section {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .model-section label {
-            color: white;
-            font-size: 28px;
-            font-weight: 300;
-            margin-bottom: 5px;
-        }
-
-        .model-description {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .model-selector {
-            background: rgba(134, 239, 172, 0.9);
-            border: none;
-            border-radius: 15px;
-            padding: 15px 20px;
-            color: #065f46;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 16px;
-            min-width: 200px;
-        }
-
-        .create-button {
-            background: rgba(255, 255, 255, 0.9);
-            color: #ff69b4;
-            border: none;
-            border-radius: 25px;
-            padding: 15px 40px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-        }
-
-        .create-button:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
-        }
-
-        /* 기존 input들은 숨김 */
-        .form-group input[type="text"] {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                padding: 20px;
-            }
-            
-            .main-content {
-                padding: 20px;
-            }
-
-            .config-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            .bottom-section {
-                flex-direction: column;
-                gap: 20px;
-                align-items: stretch;
-            }
-        }
-        input{
-            border: none;
-            border-radius: 20px;
-            padding: 10px 20px;
-            color: #065f46;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            width:100%;
-        }
-
-        button {
-            border: none;
-        }
-
-        .action-button {
-    display: inline-block;
-    padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #ff69b4;
-    font-weight: 600;
-    border-radius: 25px;
-    text-decoration: none;
-    font-size: 16px;
+/* 햄버거 메뉴 */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    backdrop-filter: blur(20px);
+    display: none;
+    flex-direction: column;
+    gap: 4px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.menu-toggle span {
+    width: 24px;
+    height: 3px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    display: none;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+    margin-left: 280px;
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* AI 설정 컨테이너 */
+.ai-config-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* 좌측 섹션 */
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+#noImageText {
+    color: var(--text-secondary);
+    text-align: center;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* 셀렉트 박스 */
+#llmSelect {
+    width: 100%;
+    padding: 12px 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#llmSelect:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+#llmSelect option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* 프롬프트 섹션 */
+.prompt-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.prompt-section label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.prompt-textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.prompt-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 우측 섹션 */
+.right-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 언어 그룹 */
+.language-group {
+    padding: 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.language-group label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.language-description {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.language-selector {
+    padding: 8px 12px;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* 슬라이더 컨테이너 - 숫자만 표시 */
+.slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.slider-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* 슬라이더 숨김 */
+.slider-container input.text {
+    display: none;
+}
+
+/* 숫자 값만 표시 */
+.slider-container span {
+    padding: 6px 10px;
+    background: var(--primary);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Voice 섹션 */
+.voice-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.voice-section label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.voice-id-input {
+    width: 100%;
+    padding: 12px 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.voice-id-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 하단 버튼 섹션 */
+.bottom-section {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+/* 액션 버튼 */
+.action-button {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: center;
 }
 
 .action-button:hover {
-    background: white;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
+    box-shadow: var(--glow);
 }
 
-.delete-button {
-    background: rgba(255, 99, 132, 0.9);
-    color: white;
+.action-button.delete-button {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-.delete-button:hover {
-    background: #ff4d6d;
-    box-shadow: 0 6px 20px rgba(255, 99, 132, 0.4);
+.action-button.delete-button:hover {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+    
+    .menu-toggle {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .ai-config-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .sidebar-profile img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .bottom-section {
+        flex-direction: column;
+    }
+    
+    .action-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    .ai-config-container {
+        padding: 15px;
+    }
+    
+    .prompt-textarea {
+        min-height: 120px;
+    }
+}
+
+/* 숨김 입력 필드 */
+input[type="hidden"] {
+    display: none;
 }

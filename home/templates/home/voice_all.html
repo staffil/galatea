@@ -1,0 +1,63 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <script src="{% static 'js/home/main.js' %}"></script>
+</head>
+<style>
+
+    </style>
+
+
+
+<body >
+
+        <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+   <div class="cv-container">
+        <div class="cv-scroll">
+            {% for voice in voice_list|slice:":7" %}
+                <div class="voice-wrapper">
+                    <div class="cv-header">
+                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
+
+                            <div class="cv-play-overlay">
+                                <div class="cv-play-icon"></div>
+                            </div>
+                        </div>
+                        <div class="cv-info">
+                            <p>{{ voice.voice_name }}</p>
+                            <input type="hidden" value="{{ voice.voice_id }}">
+                        </div>
+                    </div>
+                    <div class="voice-progress" onclick="seekAudio(event, this)">
+                        <div class="cv-progress-bar"></div>
+                    </div>
+                    <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button>
+                    {% if voice.sample_url %}
+                        <audio class="voice-audio" controls>
+                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                        </audio>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

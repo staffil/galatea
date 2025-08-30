@@ -11,46 +11,38 @@
 @import url("{% static 'css/distribute/distribute.css' %}");
 @import url("{% static 'css/sidebar.css' %}");
 
-/* 기본 바디 */
 body {
     position: relative;
-    left: 360px;
 }
 
-/* 컨테이너 */
+/* 카드 컨테이너 */
 .glt2-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     max-width: 100vw;
+    gap: 20px;
 }
 
 /* 카드 */
 .glt2-card {
     position: relative;
     width: 700px;
-    height: 1000px;
     background-color: #222;
     border-radius: 15px;
-
     box-shadow: 0 4px 15px rgba(0,0,0,0.6);
     transition: transform 0.2s;
     display: flex;
     flex-direction: column;
-    bottom: 100px;
-}
-.glt2-card:hover {
     cursor: pointer;
-    transform: scale(1.02);
 }
+.glt2-card:hover { transform: scale(1.02); }
 
 /* 카드 배경 */
 .glt2-bg {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background-size: cover;
     background-position: center;
     opacity: 0.3;
@@ -62,269 +54,144 @@ body {
     position: relative;
     z-index: 1;
     padding: 15px;
-    padding-top: 100px;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    
-
-
+    gap: 15px;
 }
 
-/* 카드 헤더 이미지 */
+/* 헤더 이미지 */
 .glt2-header img {
-    width: 120%;
-    height: 500px;
+    width: 100%;
+    height: 400px;
     object-fit: cover;
-    position: relative;
     border-radius: 10px;
-    margin-top: 10px;
-    left: -20px;
-
 }
 
-/* 제목 */
-.glt2-title {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-top: 10px;
-    color: #fff;
-}
-
-/* 설명 */
-.glt2-description {
-    margin-top: 10px;
-    line-height: 1.4;
-    font-size: 1rem;
-    max-height: 120px;
-    overflow-y: auto;
-    padding-right: 5px;
-    color: #fff;
-}
-
-/* 통계 */
-.glt2-stats {
-    margin-top: 10px;
-    font-size: 0.9rem;
-    color: #ccc;
-}
-
-/* 유저 정보 */
-.glt2-user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.glt2-user-info img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+/* 제목, 설명, 통계, 유저 정보 */
+.glt2-title { font-weight: bold; font-size: 1.2rem; color: #fff; }
+.glt2-description { font-size: 1rem; color: #fff; max-height: 120px; overflow-y: auto; }
+.glt2-stats { font-size: 0.9rem; color: #ccc; }
+.glt2-user-info { display: flex; align-items: center; gap: 10px; }
+.glt2-user-info img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 
 /* 장르 태그 */
-.glt2-genre-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-}
-
-.glt2-genre-tag {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    color: #fff;
-}
+.glt2-genre-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.glt2-genre-tag { padding: 4px 10px; border-radius: 6px; font-size: 0.9rem; color: #fff; }
 
 /* 버튼 */
 .glt2-chat-btn, .glt2-like-btn, .glt2-follow-btn {
-    margin-top: 10px;
     padding: 6px 12px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
 }
-
-.glt2-like-btn {
-    background: transparent;
-    font-size: 1.2rem;
-    color: #ff4d6d;
-}
+.glt2-like-btn { background: transparent; color: #ff4d6d; font-size: 1.2rem; }
+.heart-filled::before { content:"♥"; }
+.heart-empty::before { content:"♡"; }
 
 /* 모달 */
 .glt2-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(0,0,0,0.85);
     display: none;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; align-items: center;
     z-index: 1000;
+    padding: 20px;
 }
-
 .glt2-modal-card {
     background: #222;
     border-radius: 15px;
     width: 90%;
-    max-width: 600px;
-    max-height: 90%;
+    max-width: 700px;
     overflow: hidden;
-    position: relative;
     display: flex;
     flex-direction: column;
-    animation: glt2-fadeIn 0.3s ease;
+    position: relative;
 }
-
-.glt2-modal-card .glt2-content {
-    padding: 15px;
+.glt2-modal-content {
     flex: 1 1 auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 90vh;
     overflow-y: auto;
-    color: #fff;
 }
-
 .glt2-modal-close {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 2rem;
-    font-weight: bold;
+    top: 10px; right: 10px;
+    font-size: 1.8rem; font-weight: bold;
+    color: #fff; background: transparent; border: none;
     cursor: pointer;
-    color: #fff;
-    background: transparent;
-    border: none;
     z-index: 10;
 }
-
-
-
-
-@keyframes glt2-fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-
-
-
-
-
 </style>
 </head>
-<body>
 
-<div class="glt2-container" >
+<body>
+<div class="glt2-container">
 {% for item in llm_list %}
 <div class="glt2-card">
     {% if item.llm_background_image %}
         <div class="glt2-bg" style="background-image: url('{{ item.llm_background_image.url }}');"></div>
-    {% else %}
-        <div style="background-color:#fff"></div>
     {% endif %}
-    <div class="glt2-content">
+    <div class="glt2-content" style="background:linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
         <div class="glt2-header">
-
             {% if item.llm_image %}
             <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="LLM 이미지">
-            {% else %}
-            <div style="background-color: #fff;"></div>
             {% endif %}
-
+            AI LIKE:
             {% if user.is_authenticated and user != item.user %}
             <button class="glt2-like-btn" data-id="{{ item.id }}">
-{% if item.user_has_liked %}
-    ❤️
-{% else %}
-    ♡
-{% endif %}
+                {% if item.user_has_liked %}<span class="heart-filled"></span>{% else %}<span class="heart-empty"></span>{% endif %}
             </button>
+
             {% endif %}
-        </div>
-            <div class="glt2-title">{{ item.title }}</div>
 
-        <div class="glt2-description">
-            {{ item.description }}
         </div>
-
+        <div class="glt2-title">{{ item.title }}</div>
+        <div class="glt2-description">{{ item.description }}</div>
         <div class="glt2-stats">
+
+
+
             👁️‍🗨️ 조회수: {{ item.invest_count }}
             ❤️ 좋아요: {{ item.llm_like_count }}
             👤 팔로우: {{ item.user.follow_count }}
         </div>
-
         <div class="glt2-user-info">
-    {% if item.user.user_image %}
-        <img src="{{ item.user.user_image.url }}" alt="">
-    {% else %}
-        <img src="{% static 'images/default_user.png' %}" alt="기본 이미지">
-    {% endif %}
-
+            {% if item.user.user_image %}
+            <img src="{{ item.user.user_image.url }}" alt="">
+            {% else %}
+            <img src="{% static 'images/default_user.png' %}" alt="">
+            {% endif %}
             <span style="color:#fff;">{{ item.user.username }}</span>
-{% if user.is_authenticated and user != item.user %}
-    {% with item.user.id|stringformat:"s" as user_id %}
-{% for item in llm_list %}
-    <button class="glt2-follow-btn" data-id="{{ item.user.id }}">
-{% if item.user_is_following %}
-    Following
-{% else %}
-    Follow
-{% endif %}
-    </button>
-{% endfor %}
-    {% endwith %}
-{% endif %}
+            {% if user.is_authenticated and user != item.user %}
+            <button class="glt2-follow-btn" data-id="{{ item.user.id }}">
+                {% if item.user_is_following_user %}Following{% else %}Follow{% endif %}
+            </button>
+            {% endif %}
         </div>
-
-<button class="glt2-chat-btn" onclick="window.location.href='/customer_ai/chat/{{ item.id }}/'">
-    대화하기
-</button>
-
+        <button class="glt2-chat-btn" onclick="window.location.href='/customer_ai/chat/{{ item.id }}/'">대화하기</button>
         <div class="glt2-genre-tags">
             {% for genre in item.genres.all %}
-                <div class="glt2-genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+            <div class="glt2-genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
             {% empty %}
-                <div class="glt2-genre-tag" style="background-color: #999;">장르 없음</div>
+            <div class="glt2-genre-tag" style="background-color: #999;">장르 없음</div>
             {% endfor %}
         </div>
     </div>
-    
-
-
-{% for item in llm_list %}
-<div class="llm-item">
-
-
-    <!-- 댓글창 include -->
-    {% include 'home/comment.html' with item=item comments=item.comments.all %}
 </div>
 {% endfor %}
-
-
-
-
-</div>
-{% endfor %}
-
-
-
 </div>
 
 <!-- 모달 -->
 <div class="glt2-modal-overlay" id="glt2ModalOverlay">
-    <div class="glt2-modal-card" id="glt2ModalCard">
-        <span class="glt2-modal-close" id="glt2ModalClose">&times;</span>
+    <div class="glt2-modal-card">
+        <button class="glt2-modal-close" id="glt2ModalClose">&times;</button>
         <div class="glt2-modal-content" id="glt2ModalContent"></div>
     </div>
 </div>
@@ -335,33 +202,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalContent = document.getElementById('glt2ModalContent');
     const modalClose = document.getElementById('glt2ModalClose');
 
-    // 카드 클릭 시 모달 열기
     document.querySelectorAll('.glt2-card').forEach(card => {
         card.addEventListener('click', (e) => {
-            // 버튼 클릭이면 모달 열지 않음
             if (e.target.closest('.glt2-follow-btn') || e.target.closest('.glt2-like-btn') || e.target.closest('.glt2-chat-btn')) return;
 
-            // 카드 내용 모달로 복사
-            modalContent.innerHTML = card.innerHTML;
+            const contentClone = card.querySelector('.glt2-content').cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(contentClone);
+
             modalOverlay.style.display = 'flex';
+
+            // 모달 내부 버튼 활성화
+            modalContent.querySelectorAll('.glt2-like-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const heart = btn.querySelector('span');
+                    heart.classList.toggle('heart-filled');
+                    heart.classList.toggle('heart-empty');
+                });
+            });
+            modalContent.querySelectorAll('.glt2-follow-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btn.innerText = btn.innerText === 'Follow' ? 'Following' : 'Follow';
+                });
+            });
         });
     });
 
-    // 모달 닫기 버튼
     modalClose.addEventListener('click', () => {
-    if (
-        e.target.closest('.glt2-follow-btn') ||
-        e.target.closest('.glt2-like-btn') ||
-        e.target.closest('.glt2-chat-btn') ||
-        e.target.closest('form') ||  // <-- 추가
-        e.target.closest('textarea') // <-- 추가
-    ) return;
-
         modalOverlay.style.display = 'none';
         modalContent.innerHTML = '';
     });
 
-    // 모달 바깥 클릭 시 닫기
     modalOverlay.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
             modalOverlay.style.display = 'none';
@@ -369,7 +240,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-</script>
 
+
+
+</script>
 </body>
 </html>
