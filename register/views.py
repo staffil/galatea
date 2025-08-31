@@ -61,3 +61,14 @@ def get_github_name(user):
     except SocialAccount.DoesNotExist:
         return None
 
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def google_callback(request):
+    if request.method == 'POST':
+        credential = request.POST.get('credential')
+        # JWT 토큰 검증 및 사용자 생성/로그인 처리
+        # (구글 라이브러리로 JWT 디코딩 필요)
+        return JsonResponse({'success': True})

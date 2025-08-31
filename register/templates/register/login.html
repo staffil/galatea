@@ -9,7 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login UI</title>
   <link rel="stylesheet" href="{% static 'css/register/login.css' %}?v=5">
-
 </head>
 <body>
 
@@ -60,39 +59,52 @@
         </div>
       {% endif %}
     </div>
- <!-- Google 로그인 버튼 -->
-<a href="{% provider_login_url 'google' next=request.path %}">
-    <img src="{% static 'img/google.png' %}" alt="Google Login" width="40">
-</a>
 
-<!-- GitHub 로그인 버튼 -->
-<a href="{% provider_login_url 'github' next=request.path %}">
-    <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40">
-</a>
+    <!-- 소셜 로그인 버튼들 -->
+    <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0; ">
+      <button type="button" onclick="openSocialLogin('google')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
+        <img src="{% static 'img/google.png' %}" alt="Google Login" width="40" style="border-radius: 50%;">
+      </button>
 
-
+      <button type="button" onclick="openSocialLogin('github')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
+        <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius: 50%;">
+      </button>
+    </div>
 
     <!-- 기본 로그인 버튼 -->
-
-    
-     
     <button type="submit">LOGIN</button>
   </form>
-  
 
   <a href="{% url 'register:signup' %}" class="signup">SIGN UP</a>
   <a href="{% url 'home:main' %}" class="main">main</a>
-  <!-- GitHub 소셜 로그인 버튼 -->
-
-
-
-
-
-
 </div>
+
 <script>
-  const GOOGLE_CLIENT_ID = "{{ google_client_id }}";  // 문제: 이대로 쓰면 JS에서 변수명으로 인식할 수도 있어요.
-  console.log("GOOGLE_CLIENT_ID:", GOOGLE_CLIENT_ID);
+function openSocialLogin(provider) {
+    let url;
+    if (provider === 'google') {
+        url = "{% provider_login_url 'google' next=request.path %}";
+    } else if (provider === 'github') {
+        url = "{% provider_login_url 'github' next=request.path %}";
+    }
+    
+    const popup = window.open(
+        url, 
+        `${provider}_login`, 
+        'width=480,height=600,scrollbars=no,resizable=no,left=' + (screen.width/2 - 240) + ',top=' + (screen.height/2 - 300)
+    );
+    
+    const interval = setInterval(() => {
+        if (popup.closed) {
+            clearInterval(interval);
+            window.location.reload();
+        }
+    }, 1000);
+}
+
+// 디버깅용 (필요시 제거)
+const GOOGLE_CLIENT_ID = "{{ google_client_id }}";
+console.log("GOOGLE_CLIENT_ID:", GOOGLE_CLIENT_ID);
 </script>
 
 </body>
