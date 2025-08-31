@@ -1,6 +1,7 @@
 {% load static %}
 {% load i18n %}
 {% load socialaccount %}
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -59,15 +60,14 @@
         </div>
       {% endif %}
     </div>
-<a href="{% provider_login_url 'google' process='login' %}?next={{ request.path }}"
-   style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: black;">
-    <img src="{% static 'img/google.png' %}" alt="GitHub" style="width: 35px; height: 35px; border-radius: 50%; opacity: 0.3;">
- 
+ <!-- Google 로그인 버튼 -->
+<a href="{% provider_login_url 'google' next=request.path %}">
+    <img src="{% static 'img/google.png' %}" alt="Google Login" width="40">
 </a>
-<a href="{% provider_login_url 'github' process='login' %}?next={{ request.path %}" 
-   style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: black;">
-    <img src="{% static 'img/github.png' %}" alt="GitHub" style="width: 35px; height: 35px; border-radius: 50%; opacity: 0.3;">
 
+<!-- GitHub 로그인 버튼 -->
+<a href="{% provider_login_url 'github' next=request.path %}">
+    <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40">
 </a>
 
 

@@ -439,6 +439,12 @@ main {
     .nav-btn.next {
         right: 0.5rem;
     }
+    #sidebar-toggle{
+        width: 30px;
+        height: 30px;
+        padding: 7px
+
+    }
 }
 
 /* ===========================================

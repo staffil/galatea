@@ -25,6 +25,7 @@ urlpatterns = [
     path('', root_redirect),  # 루트 접속 시 언어별 URL로 리다이렉트
     path('admin/', admin.site.urls),
     path('i18n/setlang/', set_language, name='set_language'),
+    path('accounts/', include('allauth.urls')), 
 
     path('celebrity/celebrity_audio/', celebrity_views.celebrity_audio, name='celebrity_audio'),
     path('celebrity/<int:celebrity_id>/response/', celebrity_views.celebrity_response, name='celebrity_response'),
@@ -60,7 +61,7 @@ urlpatterns += i18n_patterns(
     path('intro/<int:llm_id>/', main_view.llm_detail_partial, name='llm_detail_partial'),
     path('helpdesk/', include(("helpdesk.urls", 'helpdesk'), namespace='helpdesk')),
     path('login/', include('social_django.urls', namespace='login')),
-    path('accounts/', include('allauth.urls')), 
+
 
 
 

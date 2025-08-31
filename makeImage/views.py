@@ -7,6 +7,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from django.contrib.auth.decorators import login_required
 from pathlib import Path
+from payment.models import TokenHistory, Token
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -31,11 +32,37 @@ def generate_image(request):
             size="1024x1024",
             quality="hd"
         )
+        def consume_tokens(user, amount):
+            # 모델별 배율
+            required_tokens = amount
+
+            token_obj = Token.objects.filter(user=user).latest("created_at")
+            available_tokens = token_obj.total_token - (token_obj.token_usage * 10)
+
+            if available_tokens < required_tokens:
+                return False
+
+
+
+            TokenHistory.objects.create(
+                user=user,
+                change_type=TokenHistory.CONSUME,
+                amount=required_tokens,
+                total_voice_generated=required_tokens
+            )
+            return True
+
+
+        success = consume_tokens(request.user, response)
+        if not success:
+            return JsonResponse({"error": "토큰이 부족합니다"}, status=403)
 
         image_url = response.data[0].url
         return JsonResponse({"image_url": image_url})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
 @login_required
 def proxy_image(request):
     image_url = request.GET.get("url")
