@@ -933,11 +933,12 @@ msgstr "Your profile details>"
 
 #: .\templates\common\sidebar.html
 msgid "팔로우 목록>"
-msgstr "AI you like>"
+msgstr "Follow List>"
+
 
 #: .\templates\common\sidebar.html
 msgid "당신이 좋아하는 AI>"
-msgstr "Follow List>"
+msgstr "AI you like>"
 
 #: .\mypage\templates\mypage\my_ai_models.html:31
 #: .\templates\common\sidebar.html
