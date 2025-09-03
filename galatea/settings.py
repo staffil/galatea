@@ -101,10 +101,7 @@ INSTALLED_APPS = [
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 USE_X_FORWARDED_HOST = True
-
-from django.contrib.sites.models import Site
-SITE_ID = Site.objects.get(domain='galatea.website').id
-
+SITE_ID = 1
 SOCIALACCOUNT_AUTO_SIGNUP = True
 
 AUTHENTICATION_BACKENDS = (
