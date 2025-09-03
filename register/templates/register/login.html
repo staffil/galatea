@@ -72,14 +72,15 @@
     </div>
 <script>
   const socialLoginUrls = {
-    google: "{% provider_login_url 'google' next=request.path %}",
-    github: "{% provider_login_url 'github' next=request.path %}"
+    google: "{% provider_login_url 'google' site=site next=request.path %}",
+    github: "{% provider_login_url 'github' site=site next=request.path %}"
   };
 
   function openSocialLogin(provider) {
     window.location.href = socialLoginUrls[provider];
   }
 </script>
+
 
     <!-- 기본 로그인 버튼 -->
     <button type="submit">LOGIN</button>
