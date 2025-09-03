@@ -405,7 +405,7 @@
 
             .ai-card,
             .prompt-card {
-                min-width: 220px;
+                max-width: 160px;
             }
 
             .modal-card {
