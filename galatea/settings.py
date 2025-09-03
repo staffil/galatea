@@ -144,6 +144,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "galatea.wsgi.application"
 
+SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
 
 SESSION_COOKIE_AGE = 3600 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
