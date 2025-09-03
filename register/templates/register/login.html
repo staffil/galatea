@@ -72,8 +72,8 @@
     </div>
 <script>
   const socialLoginUrls = {
-    google: "{% provider_login_url 'google' site=site next=request.path %}",
-    github: "{% provider_login_url 'github' site=site next=request.path %}"
+    google: "{% provider_login_url 'google' next=request.path %}",
+    github: "{% provider_login_url 'github' next=request.path %}"
   };
 
   function openSocialLogin(provider) {
