@@ -1,0 +1,349 @@
+/* 전체 초기화 */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #fafafa;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* 메인 컨테이너 */
+.faq-page {
+    max-width: 900px;
+    margin: 100px auto;
+    padding: 0 20px;
+}
+
+/* 페이지 제목 */
+.faq-page h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+}
+
+.faq-page h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 1.5px;
+}
+
+/* 폼 카드 */
+.faq-page form {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.faq-page form:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+}
+
+/* Django 폼 필드 스타일링 */
+.faq-page form p {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 폼 라벨 */
+.faq-page form label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* 입력 필드 */
+.faq-page form input[type="text"],
+.faq-page form textarea {
+    width: 100%;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    color: #374151;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    line-height: 1.6;
+}
+
+.faq-page form input[type="text"]:focus,
+.faq-page form textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #f0f9ff;
+    box-shadow: 
+        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.faq-page form textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Select 드롭다운 */
+.faq-page form select {
+    width: 100%;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    color: #374151;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.faq-page form select:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #f0f9ff;
+    box-shadow: 
+        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+/* 액션 버튼 컨테이너 */
+.action-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 3px solid #f3f4f6;
+}
+
+/* 저장 버튼 */
+.faq-page form button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: #10b981;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    position: relative;
+    overflow: hidden;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.faq-page form button[type="submit"]:hover {
+    background: #059669;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.faq-page form button[type="submit"]::before {
+    font-size: 16px;
+}
+
+/* 취소 링크 - 원본에서 누락된 스타일 추가 */
+.faq-page a[href*="detail"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: #6b7280;
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(107, 114, 128, 0.3);
+    position: relative;
+    overflow: hidden;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.faq-page a[href*="detail"]:hover {
+    background: #4b5563;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(107, 114, 128, 0.4);
+}
+
+.faq-page a[href*="detail"]::before {
+    font-size: 16px;
+}
+
+/* 버튼 애니메이션 효과 */
+.faq-page form button[type="submit"]::after,
+.faq-page a[href*="detail"]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.faq-page form button[type="submit"]:hover::after,
+.faq-page a[href*="detail"]:hover::after {
+    left: 100%;
+}
+
+/* Django 폼 에러 메시지 */
+.faq-page form .errorlist {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 8px 0;
+    color: #dc2626;
+    font-size: 14px;
+    list-style: none;
+}
+
+.faq-page form .errorlist li {
+    margin: 0;
+}
+
+/* 도움말 텍스트 */
+.faq-page form .helptext {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* 필수 필드 표시 */
+.faq-page form label:after {
+    content: '';
+}
+
+.faq-page form .required label:after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: 700;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .faq-page {
+        margin: 80px auto;
+        padding: 0 15px;
+    }
+    
+    .faq-page form {
+        padding: 30px 25px;
+        border-radius: 16px;
+    }
+    
+    .faq-page h1 {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+    
+    .faq-page form input[type="text"],
+    .faq-page form textarea,
+    .faq-page form select {
+        padding: 14px 18px;
+        font-size: 14px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .faq-page form button[type="submit"],
+    .faq-page a[href*="detail"] {
+        padding: 14px 24px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .faq-page {
+        margin: 60px auto;
+        padding: 0 12px;
+    }
+    
+    .faq-page form {
+        padding: 25px 20px;
+    }
+    
+    .faq-page h1 {
+        font-size: 24px;
+    }
+    
+    .faq-page form input[type="text"],
+    .faq-page form textarea,
+    .faq-page form select {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+    
+    .faq-page form textarea {
+        min-height: 120px;
+    }
+    
+    .faq-page form button[type="submit"],
+    .faq-page a[href*="detail"] {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    
+    .faq-page form label {
+        font-size: 15px;
+    }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* 포커스 상태 */
+.faq-page form button[type="submit"]:focus-visible,
+.faq-page a:focus-visible,
+.faq-page form input:focus-visible,
+.faq-page form textarea:focus-visible,
+.faq-page form select:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}

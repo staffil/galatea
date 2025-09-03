@@ -1,7 +1,7 @@
 {% load static %} 
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +36,7 @@
                 <div class="sidebar-profile">
                     <img id="llmImage" 
                          src="{% if llm_list|length > 0 and llm_list.0.llm_image %}{{ llm_list.0.llm_image.url }}{% endif %}" 
-                         alt="AI 이미지"/>
+                         alt="{% trans 'AI 이미지' %}"/>
                     <p id="noImageText" style="display: none; color: white;">{% trans '생성된 이미지가 없습니다.' %}</p>
                 </div>
                 <select id="llmSelect" name="llm_id" onchange="updatePromptAndVoice()">

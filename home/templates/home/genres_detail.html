@@ -36,7 +36,7 @@
         <!-- LLM 추천 섹션 -->
         <div class="main-content">
             <div class="llm-container">
-                <h2 class="section-title">추천</h2>
+                <h2 class="section-title">{% trans "추천" %}</h2>
                 <div class="llm-cards-container">
                     {% for item in llm_list|slice:":10" %}
                     <div class="llm-card" onclick="openModal({{ item.id }})">

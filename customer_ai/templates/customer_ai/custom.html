@@ -675,7 +675,7 @@ body::before {
 
 
 </header>
-    <div class="hamburger" style="margin-top: 30px;" onclick="toggleSidebar()">
+    <div class="hamburger" style="margin-top: 30px;  margin-left: 30px;" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
@@ -703,7 +703,7 @@ body::before {
             </div>
 
     <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-        공유하기
+        {% trans '공유하기' %}
     </button>
         </aside>
 
@@ -727,7 +727,7 @@ body::before {
                 <div class="message ai">
                     <div class="message-avatar">🤖</div>
                     <div class="message-content">
-                        안녕하세요! 무엇을 도와드릴까요?
+                        {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
                     </div>
                 </div>
             </div>

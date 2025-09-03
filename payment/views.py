@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from payment.models import Payment,PaymentMethod,PaymentRank,PaymentStats
+from django.utils.translation import gettext_lazy as _
 
 class PaymentView(LoginRequiredMixin, TemplateView):
     template_name = 'payment/payment.html'
@@ -53,7 +54,7 @@ def verify_payment(request):
     try:
         plan = PaymentRank.objects.get(id=rank_id)
     except PaymentRank.DoesNotExist:
-        return JsonResponse({"error": "잘못된 등급 ID"}, status=400)
+        return JsonResponse({"error": _("잘못된 등급 ID")}, status=400)
 
     # 아임포트에서 결제 정보 가져오기
     access_token = get_access_token()
@@ -63,7 +64,7 @@ def verify_payment(request):
     res_json = response.json()
 
     if res_json["code"] != 0:
-        return JsonResponse({"error": "결제 검증 실패", "detail": res_json}, status=400)
+        return JsonResponse({"error": _("결제 검증 실패"), "detail": res_json}, status=400)
 
     payment_data = res_json["response"]
     payment_status = payment_data.get("status")
@@ -111,7 +112,7 @@ def verify_payment(request):
         stats.refunded_count += 1
     stats.save()
 
-    return JsonResponse({"message": "결제 처리 완료", "status": payment_status})
+    return JsonResponse({"message": _("결제 처리 완료"), "status": payment_status})
 
 from payment.models import PaymentMethod
 @login_required
@@ -149,7 +150,7 @@ def auto_charge(request, rank_id):
     # 가장 최근 카드 토큰 가져오기
     last_payment = Payment.objects.filter(user=user, customer_uid__isnull=False).order_by('-paid_at').first()
     if not last_payment:
-        return JsonResponse({"error": "자동 결제 가능한 카드가 없습니다."}, status=400)
+        return JsonResponse({"error": _("자동 결제 가능한 카드가 없습니다.")}, status=400)
 
     # 아임포트 재결제 요청
     data = {
@@ -167,7 +168,7 @@ def auto_charge(request, rank_id):
     res_json = response.json()
 
     if res_json["code"] != 0:
-        return JsonResponse({"error": "자동 결제 실패", "detail": res_json}, status=400)
+        return JsonResponse({"error": _("자동 결제 실패"), "detail": res_json}, status=400)
 
     # DB 업데이트
     Payment.objects.create(
@@ -177,4 +178,4 @@ def auto_charge(request, rank_id):
         payment_rank=plan,
         customer_uid=last_payment.customer_uid
     )
-    return JsonResponse({"message": "자동 결제 완료"})
+    return JsonResponse({"message": _("자동 결제 완료")})

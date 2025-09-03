@@ -36,6 +36,18 @@ class Coupon(models.Model):
         db_table = 'coupon'
 
 
+# 친구 초대 기록 
+class Referral(models.Model):
+    inviter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_invites")
+    invitee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_invites")
+    created_at = models.DateTimeField(auto_now_add=True)
+    code = models.CharField(max_length=10, blank=True, null=True) 
+
+    class Meta:
+        db_table = 'referral'
+        unique_together = ("invitee",)
+
+
 # FAQ 테이블
 class Faq(models.Model):
     title = models.CharField(max_length=1000)

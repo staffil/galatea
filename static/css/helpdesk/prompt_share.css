@@ -1,0 +1,581 @@
+/* 프롬프트 공유 페이지 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.prompt-share-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    position: relative;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.page-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.page-title::after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 20px auto;
+    border-radius: 2px;
+}
+
+.page-description {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    font-weight: 400;
+}
+
+.prompt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+}
+
+.prompt-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 30px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.prompt-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffd93d);
+    background-size: 300% 100%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.prompt-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+.prompt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.prompt-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.author-info {
+    flex: 1;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.author-role {
+    font-size: 0.85rem;
+    color: #718096;
+    margin: 2px 0 0 0;
+}
+
+.prompt-type-badge {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(79, 172, 254, 0.3);
+}
+
+.prompt-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+    word-break: keep-all;
+}
+
+.prompt-preview {
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.prompt-stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.prompt-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #718096;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.stat-icon {
+    font-size: 1rem;
+}
+
+.prompt-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.action-button:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.1);
+}
+
+.action-button.liked {
+    background: #ff6b6b;
+    color: white;
+}
+
+.action-button.bookmarked {
+    background: #ffd93d;
+    color: #333;
+}
+
+/* 빈 상태 */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.empty-description {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 로딩 애니메이션 */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 검색 및 필터 */
+.search-filter-bar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px 20px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 25px;
+    font-size: 0.95rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+}
+
+.filter-select {
+    padding: 12px 20px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 25px;
+    background: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .prompt-share-page {
+        padding: 40px 15px;
+    }
+    
+    .page-title {
+        font-size: 2.2rem;
+    }
+    
+    .page-description {
+        font-size: 1rem;
+    }
+    
+    .prompt-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .prompt-card {
+        padding: 25px;
+    }
+    
+    .prompt-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .search-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-input,
+    .filter-select {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .prompt-card {
+        padding: 20px;
+    }
+    
+    .prompt-title {
+        font-size: 1.2rem;
+    }
+    
+    .author-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* 다크모드 대응 */
+@media (prefers-color-scheme: dark) {
+    .prompt-card {
+        background: rgba(45, 55, 72, 0.95);
+        color: #e2e8f0;
+    }
+    
+    .prompt-title,
+    .author-name {
+        color: #f7fafc;
+    }
+    
+    .prompt-preview {
+        color: #cbd5e0;
+    }
+    
+    .prompt-stat {
+        color: #a0aec0;
+    }
+}
+
+/* 프롬프트 쓰기 버튼 스타일 */
+.prompt-write-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0 40px 0;
+    position: relative;
+}
+
+.prompt-write-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 18px 36px;
+    border-radius: 50px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 8px 32px rgba(255, 107, 107, 0.4),
+        0 0 0 0 rgba(255, 107, 107, 0.7);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.prompt-write-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: left 0.5s ease;
+}
+
+.prompt-write-button:hover::before {
+    left: 100%;
+}
+
+.prompt-write-button:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 
+        0 15px 45px rgba(255, 107, 107, 0.6),
+        0 0 0 8px rgba(255, 107, 107, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.prompt-write-button:active {
+    transform: translateY(-2px) scale(1.02);
+    transition: all 0.1s ease;
+}
+
+.write-button-icon {
+    font-size: 1.3rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-3px);
+    }
+    60% {
+        transform: translateY(-2px);
+    }
+}
+
+.write-button-text {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+}
+
+/* 버튼 주변 장식 효과 */
+.prompt-write-section::before,
+.prompt-write-section::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    top: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.prompt-write-section::before {
+    left: calc(50% - 200px);
+}
+
+.prompt-write-section::after {
+    right: calc(50% - 200px);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scaleX(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scaleX(1.2);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .prompt-write-button {
+        font-size: 1rem;
+        padding: 16px 32px;
+    }
+    
+    .prompt-write-section::before,
+    .prompt-write-section::after {
+        width: 60px;
+    }
+    
+    .prompt-write-section::before {
+        left: calc(50% - 120px);
+    }
+    
+    .prompt-write-section::after {
+        right: calc(50% - 120px);
+    }
+}
+
+@media (max-width: 480px) {
+    .prompt-write-button {
+        font-size: 0.95rem;
+        padding: 14px 28px;
+        gap: 10px;
+    }
+    
+    .write-button-icon {
+        font-size: 1.1rem;
+    }
+    
+    .prompt-write-section::before,
+    .prompt-write-section::after {
+        display: none;
+    }
+}
+
+/* 대체 버튼 스타일들 */
+.prompt-write-button.style-2 {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 
+        0 8px 32px rgba(79, 172, 254, 0.4),
+        0 0 0 0 rgba(79, 172, 254, 0.7);
+}
+
+.prompt-write-button.style-2:hover {
+    box-shadow: 
+        0 15px 45px rgba(79, 172, 254, 0.6),
+        0 0 0 8px rgba(79, 172, 254, 0.2);
+}
+
+.prompt-write-button.style-3 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 
+        0 8px 32px rgba(102, 126, 234, 0.4),
+        0 0 0 0 rgba(102, 126, 234, 0.7);
+}
+
+.prompt-write-button.style-3:hover {
+    box-shadow: 
+        0 15px 45px rgba(102, 126, 234, 0.6),
+        0 0 0 8px rgba(102, 126, 234, 0.2);
+}

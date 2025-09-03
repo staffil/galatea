@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from django.contrib.auth.decorators import login_required
 from pathlib import Path
 from payment.models import TokenHistory, Token
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -23,7 +24,7 @@ def generate_image(request):
     if request.method == "POST":
         user_input = request.POST.get("prompt")
         if not user_input:
-            return JsonResponse({"error": "No prompt provided"}, status=400)
+            return JsonResponse({"error": _("프롬프트가 제공되지 않았습니다.")}, status=400)
 
         response = client.images.generate(
             model="dall-e-3",
@@ -55,23 +56,23 @@ def generate_image(request):
 
         success = consume_tokens(request.user, response)
         if not success:
-            return JsonResponse({"error": "토큰이 부족합니다"}, status=403)
+            return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
 
         image_url = response.data[0].url
         return JsonResponse({"image_url": image_url})
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    return JsonResponse({"error": _("잘못된 요청입니다.")}, status=400)
 
 
 @login_required
 def proxy_image(request):
     image_url = request.GET.get("url")
     if not image_url:
-        return HttpResponse("No URL provided", status=400)
+        return HttpResponse(_("URL이 제공되지 않았습니다."), status=400)
     
     resp = requests.get(image_url)
     if resp.status_code != 200:
-        return HttpResponse("Failed to fetch image", status=400)
+        return HttpResponse(_("이미지를 가져오는데 실패했습니다."), status=400)
     
     content_type = resp.headers.get('Content-Type', 'image/png')
     return HttpResponse(resp.content, content_type=content_type)

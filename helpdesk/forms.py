@@ -33,4 +33,5 @@ from customer_ai.models import Prompt
 class PromptForm(forms.ModelForm):
     class Meta:
         model = Prompt
-        fields = ['prompt_title', 'prompt', 'prompt_type']
+        # fields = ['prompt_title', 'prompt', 'prompt_type']
+        fields = ['prompt_title', 'prompt']

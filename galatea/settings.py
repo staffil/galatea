@@ -97,7 +97,7 @@ INSTALLED_APPS = [
 'modeltranslation',
 'distribute',
 "helpdesk",
-
+"invest",
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 USE_X_FORWARDED_HOST = True

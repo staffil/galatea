@@ -1,0 +1,121 @@
+@import url("{% static 'css/distribute/distribute.css' %}");
+@import url("{% static 'css/sidebar.css' %}");
+
+body {
+    position: relative;
+}
+
+/* 카드 컨테이너 */
+.glt2-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100vw;
+    gap: 20px;
+        max-height: 80vh; /* 또는 원하는 높이 */
+    overflow-y: auto;
+}
+
+/* 카드 */
+.glt2-card {
+    position: relative;
+    width: 700px;
+    background-color: #222;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+.glt2-card:hover { transform: scale(1.02); }
+
+/* 카드 배경 */
+.glt2-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+/* 카드 콘텐츠 */
+.glt2-content {
+    position: relative;
+    z-index: 1;
+    padding: 15px;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 헤더 이미지 */
+.glt2-header img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* 제목, 설명, 통계, 유저 정보 */
+.glt2-title { font-weight: bold; font-size: 1.2rem; color: #fff; }
+.glt2-description { font-size: 1rem; color: #fff; max-height: 120px; overflow-y: auto; }
+.glt2-stats { font-size: 0.9rem; color: #ccc; }
+.glt2-user-info { display: flex; align-items: center; gap: 10px; }
+.glt2-user-info img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+/* 장르 태그 */
+.glt2-genre-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.glt2-genre-tag { padding: 4px 10px; border-radius: 6px; font-size: 0.9rem; color: #fff; }
+
+/* 버튼 */
+.glt2-chat-btn, .glt2-like-btn, .glt2-follow-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.glt2-like-btn { background: transparent; color: #ff4d6d; font-size: 1.2rem; }
+.heart-filled::before { content:"♥"; }
+.heart-empty::before { content:"♡"; }
+
+/* 모달 */
+.glt2-modal-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    justify-content: center; align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+.glt2-modal-card {
+    background: #222;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.glt2-modal-content {
+    flex: 1 1 auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.glt2-modal-close {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 1.8rem; font-weight: bold;
+    color: #fff; background: transparent; border: none;
+    cursor: pointer;
+    z-index: 10;
+}

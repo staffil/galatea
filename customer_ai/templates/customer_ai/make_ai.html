@@ -52,7 +52,7 @@
             {% else %}
             <tr>
                 <td colspan="6" class="empty-state">{% trans '저장된 음성이 없습니다.' %}</td>
-                <button><a href="{% url 'makeVoice:make_voice' %}">{% trans '목소리 만들기->'%}</a></button>
+                <button><a href="{% url 'home:voice_all' %}">{% trans '목소리 선택하기->'%}</a></button>
             </tr>
             {% endif %}
         </tbody>

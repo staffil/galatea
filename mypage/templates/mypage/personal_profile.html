@@ -1,0 +1,139 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mypage/personal_profile.css' %}">
+    <style>
+
+    </style>
+</head>
+<body>
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+
+    <div class="main-content">
+        <!-- LLM 섹션 -->
+        <div class="section">
+            <h2 class="section-title">{% trans "당신이 공유한 AI" %}</h2>
+            <div id="llm-container">
+                {% for llm in llm_list %}
+                <div class="llm-card llm-item">
+                    <div class="llm-info">
+                        <div class="llm-name">{{ llm.name }}</div>
+                        <div class="llm-likes">{{ llm.llm_like_count }}</div>
+                                                       {% if llm.is_public %}
+                    <a href="{% url 'mypage:unpublish_llm' llm.id %}" class="action-button" onclick="return confirm('{% trans '공유를 취소하시겠습니까?' %}')">{% trans '공유취소하기' %}</a>
+                {% endif %}
+                    </div>
+                </div>
+ 
+                {% empty %}
+                <div class="empty-state">{% trans "공유한 AI가 없습니다" %}</div>
+                {% endfor %}
+            </div>
+    
+
+            <!-- 페이지네이션 -->
+{% if llm_list.has_other_pages %}
+    <div class="pagination">
+        {% if llm_list.has_previous %}
+            <a href="?llm_page={{ llm_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
+        {% else %}
+            <span class="disabled">&laquo; {% trans "이전" %}</span>
+        {% endif %}
+
+        {% for page_num in llm_list.paginator.page_range %}
+            {% if page_num == llm_list.number %}
+                <span class="current">{{ page_num }}</span>
+            {% else %}
+                <a href="?llm_page={{ page_num }}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if llm_list.has_next %}
+            <a href="?llm_page={{ llm_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
+        {% else %}
+            <span class="disabled">{% trans "다음" %} &raquo;</span>
+        {% endif %}
+    </div>
+{% endif %}
+
+
+        </div>
+        
+        <!-- 프롬프트 섹션 -->
+        <div class="section">
+            <h2 class="section-title">{% trans "내가 공유한 프롬프트" %}</h2>
+            <div id="prompt-container">
+                {% for prompt in prompt_list %}
+                <div class="prompt-card prompt-item">
+                    <div class="prompt-header">
+                        <div class="prompt-type">{{ prompt.prompt_type }}</div>
+                        <div class="prompt-date">{{ prompt.created_at|date:"Y.m.d" }}</div>
+                    </div>
+                    <div class="prompt-title">{{ prompt.prompt_title }}</div>
+                    <div class="prompt-content">{{ prompt.prompt }}</div>
+                    {% if request.user == prompt.user or request.user.is_superuser %}
+    <a href="{% url 'helpdesk:prompt_share_delete' prompt.id %}">{% trans "삭제" %}</a>
+    <a href="{% url 'helpdesk:prompt_share_update' prompt.id %}">{% trans "수정" %}</a>
+{% endif %}
+                </div>
+                
+                {% empty %}
+                <div class="empty-state">{% trans "작성한 프롬프트가 없습니다" %}</div>
+                {% endfor %}
+            </div>
+            <!-- 페이지네이션 -->
+{% if prompt_list.has_other_pages %}
+    <div class="pagination">
+        {% if prompt_list.has_previous %}
+            <a href="?prompt_page={{ prompt_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
+        {% else %}
+            <span class="disabled">&laquo; {% trans "이전" %}</span>
+        {% endif %}
+
+        {% for page_num in prompt_list.paginator.page_range %}
+            {% if page_num == prompt_list.number %}
+                <span class="current">{{ page_num }}</span>
+            {% else %}
+                <a href="?prompt_page={{ page_num }}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if prompt_list.has_next %}
+            <a href="?prompt_page={{ prompt_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
+        {% else %}
+            <span class="disabled">{% trans "다음" %} &raquo;</span>
+        {% endif %}
+    </div>
+{% endif %}
+        </div>
+
+
+<script src="{% static 'js/sidebar.js' %}"></script>
+
+</body>
+</html>

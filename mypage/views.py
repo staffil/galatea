@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from payment.models import Payment, PaymentMethod, PaymentRank, PaymentStats,Token, TokenHistory, TotalToken
 from user_auth.models import Requests
+from django.utils.translation import gettext_lazy as _
 
 # Create your views here.
 @login_required(login_url='/register/login/')
@@ -38,7 +39,7 @@ def mypage_update(request):
         user_image = request.FILES.get('user_image')
 
         if password1 != password2:
-            messages.error(request, "비밀번호가 일치하지 않습니다.")
+            messages.error(request, _("비밀번호가 일치하지 않습니다."))
             return redirect('mypage:mypage_update')
 
         user.email = email
@@ -50,7 +51,7 @@ def mypage_update(request):
             user.password = make_password(password1)
 
         user.save()
-        messages.success(request, "프로필이 성공적으로 수정되었습니다.")
+        messages.success(request, _("프로필이 성공적으로 수정되었습니다."))
         return redirect('mypage:mypage')
 
     context = {
@@ -64,7 +65,7 @@ def mypage_update(request):
 def my_voice(request):
     user = request.user
 
-    voice_list = VoiceList.objects.filter(user=request.user).order_by('created_at')
+    voice_list = VoiceList.objects.filter(user=request.user).select_related("celebrity")
     paginator = Paginator(voice_list, 5) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number) 
@@ -78,6 +79,22 @@ def my_voice(request):
     }
     return render(request, "mypage/my_voice.html",context)
 
+
+@login_required
+def my_voice_delete(request, voice_id):
+
+    if request.method == 'POST':
+        user = request.user
+        try:
+            voice = VoiceList.objects.get(id=voice_id, user=user)
+            voice.delete()
+            messages.success(request, _("보이스가 삭제되었습니다."))
+        except VoiceList.DoesNotExist:
+            messages.error(request, _("해당 보이스가 없습니다."))
+        
+        return redirect('mypage:my_voice')
+            
+
 @login_required
 def my_ai_models(request, llm_id):
     user = request.user
@@ -89,13 +106,13 @@ def my_ai_models(request, llm_id):
     }
     return render(request, "mypage/my_ai_models.html", context)
 
-@login_required
-def toggle_voice_public(request, voice_id):
-    voice = get_object_or_404(VoiceList, id=voice_id, user=request.user)
+# @login_required
+# def toggle_voice_public(request, voice_id):
+#     voice = get_object_or_404(VoiceList, id=voice_id, user=request.user)
 
-    voice.is_public = not voice.is_public
-    voice.save()
-    return redirect(request.META.get('HTTP_REFERER', 'mypage:my_voice'))
+#     voice.is_public = not voice.is_public
+#     voice.save()
+#     return redirect(request.META.get('HTTP_REFERER', 'mypage:my_voice'))
 
 
 from django.views.decorators.http import require_POST
@@ -156,7 +173,7 @@ def my_ai_models_update(request, llm_id):
         llm.update_at = timezone.now()
         llm.save()
 
-        messages.success(request, 'AI 설정이 수정되었습니다.')
+        messages.success(request, _('AI 설정이 수정되었습니다.'))
         return redirect("mypage:my_ai_models", llm_id=llm.id)
 
     voice_list = VoiceList.objects.filter(user=request.user).order_by('created_at')
@@ -177,25 +194,13 @@ def my_ai_models_delete(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id, user=user)
         llm.delete()
+        messages.success(request, _("AI가 삭제되었습니다."))
     except LLM.DoesNotExist:
-        messages.error("해당 AI 가 없습니다.")
+        messages.error(request, _("해당 AI가 없습니다."))
 
     return redirect("mypage:mypage")
 
-@login_required
-def my_voice_delete(request, voice_id):
 
-    if request.method == 'POST':
-        user = request.user
-        try:
-            voice = VoiceList.objects.get(id=voice_id, user=user)
-            voice.delete()
-            messages.success(request, "보이스가 삭제되었습니다.")
-        except VoiceList.DoesNotExist:
-            messages.error("해당 보이스가 없습니다.")
-        
-        return redirect('mypage:my_voice')
-            
 
 @login_required
 @require_POST
@@ -206,9 +211,9 @@ def upload_profile_image(request):
     if image_file:
         user.profile_image = image_file
         user.save()
-        messages.success(request, "프로필 이미지가 업데이트되었습니다.")
+        messages.success(request, _("프로필 이미지가 업데이트되었습니다."))
     else:
-        messages.error(request, "이미지 파일을 선택해주세요.")
+        messages.error(request, _("이미지 파일을 선택해주세요."))
 
     return redirect("mypage:mypage")
 
@@ -285,7 +290,7 @@ def my_coupon(request):
     return render(request, "mypage/my_coupon.html", context)
 
 
-from customer_ai.models import Conversation
+from customer_ai.models import Conversation, Prompt
 @login_required
 def my_ai_conversation(request, llm_id):
     user = request.user
@@ -296,3 +301,144 @@ def my_ai_conversation(request, llm_id):
         "llm":llm
     }
     return render(request, "mypage/my_ai_conversation.html", context)
+
+
+from register.models import Follow
+from customer_ai.models import LlmLike
+@login_required
+def personal_profile(request):
+    user = request.user
+    llm_list = LLM.objects.filter(user= user, is_public=True)
+    prompt_list = Prompt.objects.filter(user= user)
+    voice_list = VoiceList.objects.filter(user=user, is_public=True)
+    llm = LLM.objects.filter(user=request.user).first()
+
+    llm_paginator = Paginator(llm_list, 3)
+    llm_page_number = request.GET.get('llm_page')
+    llm_page_obj = llm_paginator.get_page(llm_page_number)
+
+    voice_paginator = Paginator(voice_list, 3)
+    voice_page_number = request.GET.get('voice_page')
+    voice_page_obj = voice_paginator.get_page(voice_page_number)
+
+    prompt_paginator = Paginator(prompt_list, 3)
+    prompt_page_number = request.GET.get('prompt_page')
+    prompt_page_obj = prompt_paginator.get_page(prompt_page_number)
+
+    context ={
+        "llm_list": llm_page_obj,
+        "prompt_list": prompt_page_obj,
+        "voice_list": voice_page_obj,
+        "llm":llm,
+  
+    }
+    return render(request, "mypage/personal_profile.html", context)
+
+
+
+from register.models import Follow
+from customer_ai.models import LlmLike
+from mypage.models import Genre
+from django.utils.translation import get_language
+from django.conf import settings
+@login_required
+def llm_like(request):
+    user = request.user
+    liked_llms = (
+        LlmLike.objects.filter(user=user, is_like=True)
+        .select_related("llm")
+        .prefetch_related("llm__genres")
+    )
+    llms = [rel.llm for rel in liked_llms]  
+
+    language = get_language()
+    for l in llms:  # 좋아요한 LLM만 돌면 됨
+        for g in l.genres.all():
+            name_field = f"name_{language}"
+            g.display_name = getattr(g, name_field, g.name)
+
+    llm = LLM.objects.filter(user=user).first()
+
+
+    context = {
+        "liked_list": llms,
+        "languages": settings.LANGUAGES,
+        "llm":llm
+    }
+    return render(request, "mypage/llm_like.html", context)
+
+# views.py
+from django.shortcuts import render, get_object_or_404
+from .models import LLM
+
+def llm_intro(request, llm_id):
+    llm = get_object_or_404(LLM, id=llm_id)
+    return render(request, "llm/intro_partial.html", {"llm": llm})
+
+
+
+@login_required
+def follow_list(request):
+    user = request.user
+    following_list = Follow.objects.filter(follower=user).select_related("following")
+
+    follower_list = Follow.objects.filter(following=user).select_related("follower")
+
+    following_ids = set(user.following_set.values_list('following_id', flat=True))
+    follower_ids = set(user.follower_set.values_list('follower_id', flat=True))  
+
+    llm = LLM.objects.filter(user=user).first()
+
+
+    context = {
+        "following_list":following_list,
+        "follower_list":follower_list,
+        "following_ids":following_ids,
+        "follower_ids":follower_ids,
+        "llm":llm
+
+    }
+    return render(request, "mypage/follow_list.html", context)
+
+
+@login_required
+def unpublish_llm(request, llm_id):
+    llm = get_object_or_404(LLM, id=llm_id, user=request.user)
+    llm.is_public = False
+    llm.save()
+    return redirect('mypage:personal_profile', llm.id)
+
+
+@login_required
+def prompt_share_delete(request, prompt_id):
+    prompt = get_object_or_404(Prompt ,id=prompt_id)
+
+    if request.user != prompt.user:
+        messages.error(request, _("삭제 권한이 없습니다."))
+        return redirect("mypage/personal_profile.html")
+    prompt.delete()
+    messages.success(request, _("프롬프트가 삭제되었습니다."))
+    return redirect("mypage/personal_profile.html")
+
+
+
+from helpdesk.forms import Prompt,PromptForm
+@login_required
+def prompt_share_update(request, prompt_id):
+    prompt = get_object_or_404(Prompt, id= prompt_id)
+
+    if request.user != prompt.user:
+        messages.error(request, _("수정 권한이 없습니다."))
+        return redirect("mypage/personal_profile.html")
+    
+    if request.method =="POST":
+        form = PromptForm(request.POST , instance=prompt)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("프롬프트가 수정되었습니다."))
+            return redirect("mypage/personal_profile.html")
+        
+    else:
+        form = PromptForm(instance=prompt)
+
+    return render(request, "mypage/personal_profile.html")

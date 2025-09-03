@@ -51,15 +51,16 @@ urlpatterns += i18n_patterns(
     path('celebrity/', include(('celebrity.urls', 'celebrity'), namespace='celebrity')),
     path('customer_ai/', include(('customer_ai.urls', 'customer_ai'), namespace='customer_ai')),
     path('image/', include(('makeImage.urls', 'makeImage'), namespace='makeImage')),
-    path('make_voice/', include(('makeVoice.urls', 'makeVoice'), namespace='makeVoice')),
+    # path('make_voice/', include(('makeVoice.urls', 'makeVoice'), namespace='makeVoice')),
     path('register/', include(('register.urls', 'register'), namespace='register')),
     path('logout/', home_views.user_logout, name='logout'),
     path('mypage/', include(("mypage.urls","mypage"), namespace="mypage")),
-    path('cloning/', include(('cloning.urls', 'cloning'), namespace='cloning')),
+    # path('cloning/', include(('cloning.urls', 'cloning'), namespace='cloning')),
     path('payment/', include(('payment.urls', 'payment'), namespace='payment')),
     path("distribute/", include(("distribute.urls", 'distribute'), namespace="distribute")),
     path('intro/<int:llm_id>/', main_view.llm_detail_partial, name='llm_detail_partial'),
     path('helpdesk/', include(("helpdesk.urls", 'helpdesk'), namespace='helpdesk')),
+    path('invest/', include(("invest.urls", 'invest'), namespace='invest')),
     path('login/', include('social_django.urls', namespace='login')),
 
 

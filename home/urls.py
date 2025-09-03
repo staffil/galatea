@@ -18,7 +18,9 @@ urlpatterns = [
     path('llm_sections/', views.llm_section, name='llm_section'),
     path('comment_create/<int:llm_id>', views.comment_create, name="comment_create"),
 
-    path("voice_all/", views.voice_all, name="voice_all")
+    path("voice_all/", views.voice_all, name="voice_all"),
+    path("save_voice/", views.save_voice, name="save_voice"),
+    path("user_intro/<int:user_id>/", views.user_intro, name="user_intro")
 
     # path('like/<int:llm_id>/', views.like_toggle, name = "like_toggle"),
 ]

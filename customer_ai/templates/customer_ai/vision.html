@@ -24,7 +24,7 @@
 
 
 </header>
-    <div class="hamburger" style="margin-top: 30px;" onclick="toggleSidebar()">
+    <div class="hamburger" style="margin-top: 30px; margin-left: 30px;" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
@@ -53,7 +53,7 @@
             </div>
 
     <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-        공유하기
+        {% trans '공유하기' %}
     </button>
         </aside>
 

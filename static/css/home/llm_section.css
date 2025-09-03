@@ -1,0 +1,313 @@
+/* 메인 컨텐츠 */
+.main-content {
+   padding: 60px 20px;
+   max-width: 1200px;
+   margin: 0 auto;
+   background: transparent;
+}
+
+/* 섹션 제목 */
+.section-title {
+   font-size: 2.5rem;
+   font-weight: 900;
+   color: #8b5cf6;
+   margin-bottom: 40px;
+   text-align: center;
+   background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   background-clip: text;
+}
+
+/* LLM 컨테이너 */
+.llm-container {
+   width: 100%;
+}
+
+/* LLM 카드 컨테이너 - 5개씩 한 줄 */
+.llm-cards-container {
+   display: grid;
+   grid-template-columns: repeat(5, 1fr);
+   gap: 20px;
+   padding: 20px 0;
+}
+
+/* LLM 카드 */
+.llm-card {
+   background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+   border-radius: 16px;
+   padding: 0;
+   cursor: pointer;
+   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+   box-shadow: 
+       0 8px 32px rgba(0, 0, 0, 0.3),
+       0 0 0 1px rgba(139, 92, 246, 0.2);
+   backdrop-filter: blur(10px);
+   border: 1px solid rgba(139, 92, 246, 0.2);
+   overflow: hidden;
+   position: relative;
+   min-height: 350px;
+}
+
+.llm-card::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: linear-gradient(135deg, 
+       rgba(139, 92, 246, 0.1) 0%, 
+       rgba(6, 182, 212, 0.1) 50%,
+       rgba(168, 85, 247, 0.1) 100%);
+   opacity: 0;
+   transition: opacity 0.3s ease;
+   pointer-events: none;
+}
+
+.llm-card:hover::before {
+   opacity: 1;
+}
+
+.llm-card:hover {
+   transform: translateY(-8px) scale(1.02);
+   box-shadow: 
+       0 20px 50px rgba(139, 92, 246, 0.3),
+       0 0 0 1px rgba(139, 92, 246, 0.4);
+   border-color: rgba(139, 92, 246, 0.5);
+}
+
+.llm-card:active {
+   transform: translateY(-4px) scale(0.98);
+}
+
+/* LLM 카드 바디 */
+.llm-card-body {
+   padding: 0;
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+}
+
+/* LLM 이미지 컨테이너 */
+.llm-image-container {
+   width: 100%;
+   height: 200px;
+   overflow: hidden;
+   border-radius: 16px 16px 0 0;
+   position: relative;
+   background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+}
+
+.llm-image-container::after {
+   content: '';
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   height: 60px;
+   background: linear-gradient(transparent, rgba(0, 0, 0, 0.4));
+}
+
+.llm-image-container img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   transition: transform 0.3s ease;
+}
+
+.llm-card:hover .llm-image-container img {
+   transform: scale(1.05);
+}
+
+/* LLM 이름 */
+.llm-name {
+   font-size: 1.1rem;
+   font-weight: 700;
+   color: #e2e8f0;
+   padding: 16px 16px 12px 16px;
+   line-height: 1.4;
+   text-align: left;
+   flex: 1;
+}
+
+/* 장르 태그들 */
+.genre-tags {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 6px;
+   padding: 0 16px 16px 16px;
+   justify-content: flex-start;
+}
+
+/* 장르 태그 */
+.genre-tag {
+   padding: 4px 10px;
+   border-radius: 12px;
+   font-size: 0.75rem;
+   font-weight: 600;
+   color: white;
+   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+   transition: all 0.2s ease;
+   white-space: nowrap;
+}
+
+.genre-tag:hover {
+   transform: translateY(-1px);
+   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+}
+
+/* 모달 스타일 */
+#llm-modal {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   z-index: 1000;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.modal-overlay {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.7);
+   backdrop-filter: blur(8px);
+}
+
+.modal-content {
+   position: relative;
+   background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+   backdrop-filter: blur(20px);
+   border-radius: 20px;
+   max-width: 90vw;
+   max-height: 90vh;
+   overflow-y: auto;
+   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+   border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.close-btn {
+   position: absolute;
+   top: 20px;
+   right: 20px;
+   background: rgba(0, 0, 0, 0.8);
+   color: white;
+   border: none;
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   font-size: 20px;
+   font-weight: bold;
+   cursor: pointer;
+   z-index: 1001;
+   transition: all 0.3s ease;
+   backdrop-filter: blur(10px);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.close-btn:hover {
+   background: rgba(0, 0, 0, 0.95);
+   transform: scale(1.1) rotate(90deg);
+   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+   .llm-cards-container {
+       grid-template-columns: repeat(4, 1fr);
+   }
+}
+
+@media (max-width: 1024px) {
+   .llm-cards-container {
+       grid-template-columns: repeat(3, 1fr);
+       gap: 18px;
+   }
+}
+
+@media (max-width: 768px) {
+   .main-content {
+       padding: 40px 15px;
+   }
+   
+   .section-title {
+       font-size: 2rem;
+       margin-bottom: 30px;
+   }
+   
+   /* 모바일에서 3개씩 한 줄로 표시 */
+   .llm-cards-container {
+       grid-template-columns: repeat(3, 1fr);
+       gap: 12px;
+   }
+   
+   .llm-card {
+       min-height: 280px;
+   }
+   
+   .llm-image-container {
+       height: 140px;
+   }
+   
+   .llm-name {
+       font-size: 0.9rem;
+       padding: 12px 12px 8px 12px;
+       line-height: 1.3;
+   }
+   
+   .genre-tags {
+       padding: 0 12px 12px 12px;
+   }
+   
+   .genre-tag {
+       font-size: 0.65rem;
+       padding: 3px 6px;
+   }
+}
+
+@media (max-width: 480px) {
+   .main-content {
+       padding: 30px 10px;
+   }
+   
+   /* 모바일 소형 화면에서도 3개씩 유지 */
+   .llm-cards-container {
+       grid-template-columns: repeat(3, 1fr);
+       gap: 8px;
+   }
+   
+   .llm-card {
+       min-height: 240px;
+   }
+   
+   .section-title {
+       font-size: 1.8rem;
+       margin-bottom: 25px;
+   }
+   
+   .llm-image-container {
+       height: 120px;
+   }
+   
+   .llm-name {
+       font-size: 0.8rem;
+       padding: 10px 8px 6px 8px;
+   }
+   
+   .genre-tags {
+       padding: 0 8px 8px 8px;
+   }
+   
+   .genre-tag {
+       font-size: 0.6rem;
+       padding: 2px 5px;
+   }
+}

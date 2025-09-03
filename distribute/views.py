@@ -9,6 +9,7 @@ from customer_ai.models import LLM, LlmLike
 from register.models import Follow
 from django.utils.translation import get_language
 from home.models import Users
+from django.utils.translation import gettext_lazy as _
 
 @csrf_exempt
 @login_required
@@ -21,8 +22,17 @@ def distribute(request, llm_id):
         distribute_text = request.POST.get('distribute')
         selected_genres = request.POST.getlist('genre')
 
+        from django.contrib import messages
+
         if not distribute_text or not title:
-            return JsonResponse({"error": "해당 AI 설명을 해주세요"})
+            messages.error(request, _("해당 AI 설명을 해주세요"))
+            return redirect("distribute:distribute", llm_id=llm.id)
+        elif len(title) > 50:
+            messages.error(request, _("AI 제목은 50자 이내입니다."))
+            return redirect("distribute:distribute", llm_id=llm.id)
+        elif len(genre_list) < 5:
+            messages.error(request, _("장르는 5개 까지 선택가능합니다."))
+            return redirect("distribute:distribute", llm_id=llm.id)
 
         llm.title = title
         llm.description = distribute_text
@@ -59,5 +69,3 @@ def unpublish_llm(request, llm_id):
     llm.is_public = False
     llm.save()
     return redirect('mypage:my_ai_models', llm.id)
-
-

@@ -14,7 +14,11 @@ from mypage.models import Genre
 from customer_ai.models import LLM, LlmLike
 from makeVoice.models import VoiceList, VoiceLike
 from register.models import Follow
+from django.views.decorators.csrf import csrf_exempt
+
 from distribute.models import Comment
+from django.db.models import Count
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -29,6 +33,7 @@ def main(request):
     voice_list = VoiceList.objects.filter(is_public=True)
     celebrity_voice_list = CelebrityVoice.objects.all()
     news_list = News.objects.all()
+    total_follow_count = User.objects.annotate(follower_count = Count('follower_set', distinct=True)).order_by("-follower_count")[:10]
 
     # LLM 랜덤 캐시 처리
     now = datetime.now()
@@ -92,7 +97,8 @@ def main(request):
         "llm_list": llm_list,
         "voice_list": voice_list,
         "celebrity_voice_list": celebrity_voice_list,
-        "news_list": news_list
+        "news_list": news_list,
+        "total_follow_count":total_follow_count,
     }
 
     return render(request, 'home/main.html', context)
@@ -187,16 +193,16 @@ def distribute_llm(request, llm_id=None):
 @login_required
 def follow_toggle(request):
     if request.method != 'POST':
-        return JsonResponse({'status': 'error', 'message': '요청할 수 없습니다.'}, status=405)
+        return JsonResponse({'status': 'error', 'message': _('요청할 수 없습니다.')}, status=405)
 
     user_id = request.POST.get('user_id')
     if not user_id:
-        return JsonResponse({'status': 'error', 'message': 'user_id가 필요합니다.'}, status=400)
+        return JsonResponse({'status': 'error', 'message': _('user_id가 필요합니다.')}, status=400)
 
     try:
         target_user = User.objects.get(id=user_id)
     except User.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': '존재하지 않는 사용자입니다.'}, status=404)
+        return JsonResponse({'status': 'error', 'message': _('존재하지 않는 사용자입니다.')}, status=404)
 
     follow_relation = Follow.objects.filter(follower=request.user, following=target_user).first()
     if follow_relation:
@@ -223,16 +229,16 @@ from customer_ai.models import LLM, LlmLike
 @login_required
 def like_toggle(request):
     if request.method != "POST":
-        return JsonResponse({'status': 'error', 'message': '요청할 수 없습니다.'}, status=405)
+        return JsonResponse({'status': 'error', 'message': _('요청할 수 없습니다.')}, status=405)
 
     llm_id = request.POST.get("llm_id")
     if not llm_id:
-        return JsonResponse({'status': 'error', 'message': 'llm_id가 필요합니다.'}, status=400)
+        return JsonResponse({'status': 'error', 'message': _('llm_id가 필요합니다.')}, status=400)
 
     try:
         target_llm = LLM.objects.get(id=llm_id)
     except LLM.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': '존재하지 않는 LLM입니다.'}, status=404)
+        return JsonResponse({'status': 'error', 'message': _('존재하지 않는 LLM입니다.')}, status=404)
 
     user = request.user
 
@@ -263,7 +269,7 @@ def llm_intro(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id, is_public=True)
     except LLM.DoesNotExist:
-        raise Http404("LLM을 찾을 수 없습니다.")
+        raise Http404(_("LLM을 찾을 수 없습니다."))
     
     # 팔로우 여부 확인
     is_following = request.user in llm.user.followers.all()
@@ -353,12 +359,79 @@ def comment_create(request, llm_id):
             comment.save()
     return redirect('home:main', llm.id)
 
-
+@login_required
 def voice_all(request):
-    voice = VoiceList.objects.filter(is_public=True)
+    voice = CelebrityVoice.objects.all()
     context = {
         "voice_list": voice
 
     }
     return render(request, "home/voice_all.html", context)
 
+import json
+@csrf_exempt
+@login_required
+def save_voice(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": _("로그인이 필요합니다.")}, status=401)  
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        celebrity_id = data.get("celebrity_id")
+
+        try:
+            celeb = CelebrityVoice.objects.get(id=celebrity_id)
+        except CelebrityVoice.DoesNotExist:
+            return JsonResponse({"error": _("CelebrityVoice가 존재하지 않습니다.")}, status=404)
+
+        voice, created = VoiceList.objects.get_or_create(
+            user=request.user,
+            celebrity=celeb,
+            defaults={
+                "voice_name": celeb.name,        
+                "voice_id": celeb.celebrity_voice_id,  
+                "voice_image": celeb.celebrity_voice_image if celeb.celebrity_voice_image else None,
+                "sample_url": celeb.sample_url.url if celeb.sample_url else None 
+            }
+        )
+
+        if not created:
+            return JsonResponse({"status": "exists", "voice_id": voice.voice_id})
+
+        return JsonResponse({"status": "ok", "voice_id": voice.voice_id, "voice_name": voice.voice_name})
+    return JsonResponse({"error": _("잘못된 요청입니다.")}, status=400)
+
+
+from customer_ai.models import Prompt
+from django.db.models import Count
+from django.shortcuts import get_object_or_404, render
+
+def user_intro(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    total_follow_count = User.objects.filter(id=user_id)\
+        .annotate(follower_count=Count('follower_set', distinct=True))\
+        .order_by('-follower_count')[:10]
+
+    llm_list = LLM.objects.filter(user_id=user_id, is_public=True)
+    prompt_list = Prompt.objects.filter(user_id=user_id)
+
+    if request.user.is_authenticated:
+        is_following = Follow.objects.filter(follower=request.user, following=user).exists()
+    else:
+        is_following = False
+
+    # user와 팔로우 여부를 같이 리스트로 만들어서 넘김
+    user_list = [{
+        'user': user,
+        'is_following': is_following
+    }]
+
+    context = {
+        "user_list": user_list,
+        "total_follow_count": total_follow_count,
+        "llm_list": llm_list,
+        "prompt_list": prompt_list,
+    }
+
+    return render(request, "home/user_intro.html", context)

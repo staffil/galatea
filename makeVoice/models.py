@@ -5,6 +5,7 @@ from home.models import Users
 
 from django.utils import timezone
 from django.conf import settings
+from celebrity.models import CelebrityVoice
 
 class VoiceList(models.Model):
     id = models.AutoField(primary_key=True)
@@ -17,10 +18,16 @@ class VoiceList(models.Model):
     is_public = models.BooleanField(default=False, null=True, blank=True)
     voice_id = models.CharField(max_length=200)
     voice_like_count = models.IntegerField(default=0, verbose_name='보이스가 받은 좋아요 갯수')
-
+    celebrity = models.ForeignKey(
+        CelebrityVoice,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="voices"
+    )
     class Meta:
         db_table = "voice_list"
         verbose_name = "voice 리스트"
+        unique_together = ("user", "celebrity")
 
     def __str__(self):
         return self.voice_name

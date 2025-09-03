@@ -1,0 +1,403 @@
+/* 보이스 섹션 메인 컨테이너 */
+.cv-main-content {
+    padding: 50px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(15, 15, 35, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 40px;
+}
+
+/* 섹션 제목 */
+.cv-section-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: white;
+    text-align: center;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+}
+
+.cv-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    border-radius: 1.5px;
+    box-shadow: 0 2px 10px rgba(79, 172, 254, 0.3);
+}
+
+/* 컨테이너 */
+.cv-container {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+/* 그리드 레이아웃 - 데스크톱 5개 */
+.cv-scroll {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    padding: 10px 5px 20px;
+}
+
+/* 개별 보이스 래퍼 */
+.voice-wrapper {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+}
+
+.voice-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.voice-wrapper:hover::before {
+    left: 100%;
+}
+
+.voice-wrapper:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(79, 172, 254, 0.2);
+    border-color: rgba(79, 172, 254, 0.4);
+}
+
+/* 헤더 */
+.cv-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* 보이스 캐릭터/아바타 */
+.voice-character {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    border: 3px solid transparent;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    padding: 2px;
+}
+
+.voice-character:hover {
+    transform: scale(1.1);
+}
+
+.voice-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* 플레이 오버레이 */
+.cv-play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 50%;
+}
+
+.voice-character:hover .cv-play-overlay {
+    opacity: 1;
+}
+
+/* 플레이 아이콘 */
+.cv-play-icon {
+    width: 0;
+    height: 0;
+    border-left: 15px solid white;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-left: 3px;
+}
+
+/* 보이스 정보 */
+.cv-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cv-info p {
+    color: white;
+    margin: 0 0 5px 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cv-info p:last-child {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.cv-info input[type="hidden"] {
+    display: none;
+}
+
+/* 프로그레스 바 */
+.voice-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    margin: 15px 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.voice-progress::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(79, 172, 254, 0.3), rgba(0, 242, 254, 0.3));
+    animation: shimmer 2s infinite;
+}
+
+.cv-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+/* 저장하기 버튼 */
+.copy-id-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.copy-id-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.copy-id-btn:hover::before {
+    left: 100%;
+}
+
+.copy-id-btn:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.copy-id-btn:active {
+    transform: translateY(0);
+}
+
+/* 오디오 컨트롤 숨기기 */
+.voice-audio {
+    display: none;
+}
+
+/* 애니메이션 */
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.voice-wrapper {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.voice-wrapper:nth-child(even) {
+    animation-delay: 0.1s;
+}
+
+.voice-wrapper:nth-child(3n) {
+    animation-delay: 0.2s;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+    .cv-scroll {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .cv-scroll {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cv-main-content {
+        padding: 30px 15px;
+        margin: 0 10px 30px;
+    }
+    
+    .cv-section-title {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+    }
+    
+    /* 모바일에서 3개씩 한 줄로 표시 */
+    .cv-scroll {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .voice-wrapper {
+        padding: 20px;
+        height: 180px;
+    }
+    
+    .voice-character {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .cv-info p {
+        font-size: 1rem;
+    }
+    
+    .copy-id-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cv-main-content {
+        padding: 25px 10px;
+        margin: 0 5px 25px;
+        border-radius: 15px;
+    }
+    
+    .cv-container {
+        width: 100%;
+    }
+    
+    .cv-section-title {
+        font-size: 1.6rem;
+        margin-bottom: 25px;
+    }
+    
+    /* 소형 모바일에서도 3개씩 유지 */
+    .cv-scroll {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .voice-wrapper {
+        padding: 15px;
+        height: 160px;
+    }
+    
+    .cv-header {
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .voice-character {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .cv-info p {
+        font-size: 0.95rem;
+    }
+    
+    .cv-info p:last-child {
+        font-size: 0.85rem;
+    }
+    
+    .copy-id-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* 접근성 향상 */
+@media (prefers-reduced-motion: reduce) {
+    .voice-wrapper,
+    .voice-character,
+    .copy-id-btn {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* 포커스 상태 */
+.voice-character:focus-visible,
+.copy-id-btn:focus-visible {
+    outline: 3px solid #4facfe;
+    outline-offset: 2px;
+}

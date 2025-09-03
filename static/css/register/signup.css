@@ -1,152 +1,204 @@
-        @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;700&display=swap');
-
-        :root {
-            --main-pink: #F359DE;
-            --pink-light-1: rgba(243, 89, 222, 0.12);
-            --pink-light-2: rgba(243, 89, 222, 0.28);
-            --pink-light-3: rgba(243, 89, 222, 0.51);
+  :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --accent-secondary: #06b6d4;
+            --accent-tertiary: #10b981;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --glow: 0 0 20px rgba(102, 126, 234, 0.3);
+            --glow-strong: 0 0 40px rgba(102, 126, 234, 0.5);
+            --error: #ff5252;
+            --success: #4caf50;
         }
 
-        /* 스크롤 가능한 body 설정 */
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 상단 정렬로 변경 */
-            background: white;
+            align-items: center;
             position: relative;
-            overflow-x: hidden; /* 가로 스크롤만 숨김 */
-            overflow-y: auto; /* 세로 스크롤 허용 */
-            font-family: 'Black Han Sans', sans-serif;
-            padding: 40px 0; /* 상하 패딩 추가 */
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 40px 0;
+            color: var(--text-primary);
         }
 
-        /* 배경 원들 - 스크롤 시 고정 */
-        .container {
+        /* Animated Background */
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            pointer-events: none;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
+            animation: backgroundFloat 20s ease-in-out infinite;
+            z-index: 1;
         }
 
-        .circle-bg {
-            position: absolute;
-            border-radius: 50%;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 20px 30px, rgba(102, 126, 234, 0.4), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(139, 92, 246, 0.4), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(6, 182, 212, 0.4), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(240, 147, 251, 0.4), transparent);
+            background-size: 200px 150px;
+            animation: sparkle 15s linear infinite;
+            z-index: 1;
         }
 
-        .circle-1 {
-            width: 3000px;
-            height: 3000px;
-            background: var(--pink-light-1);
+        @keyframes backgroundFloat {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px); 
+                opacity: 0.8; 
+            }
+            50% { 
+                transform: translateY(-30px) translateX(20px); 
+                opacity: 1; 
+            }
         }
 
-        .circle-2 {
-            width: 2400px;
-            height: 2400px;
-            background: var(--pink-light-2);
+        @keyframes sparkle {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px); 
+                opacity: 0.8; 
+            }
+            50% { 
+                transform: translateY(-200px) translateX(100px); 
+                opacity: 0.3; 
+            }
         }
 
-        .circle-3 {
-            width: 1800px;
-            height: 1800px;
-            background: var(--pink-light-3);
-        }
-
-        .circle-4 {
-            width: 1200px;
-            height: 1200px;
-            background: var(--pink-light-2);
-        }
-
-        .circle-5 {
-            width: 800px;
-            height: 800px;
-            background: var(--main-pink);
-        }
-
-        /* Main Content Container */
+        /* Main Container */
         .main-container {
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 상단 정렬 */
+            align-items: flex-start;
             width: 1200px;
             max-width: 95%;
-            gap: 60px; /* 좌우 간격 조정 */
-            z-index: 1;
-            margin-top: 40px; /* 상단 마진 */
-            flex-wrap: wrap; /* 반응형을 위한 래핑 허용 */
+            gap: 60px;
+            z-index: 10;
+            margin-top: 40px;
+            flex-wrap: wrap;
         }
 
         /* Left Text Section */
         .text-section {
             flex: 1;
-            min-width: 300px; /* 최소 너비 설정 */
+            min-width: 300px;
             max-width: 450px;
             padding: 20px;
-            color: #333;
+            color: var(--text-primary);
             text-align: left;
+            animation: fadeInLeft 0.8s ease-out;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .text-section h1 {
-            font-family: 'Black Han Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 48px;
             margin-bottom: 20px;
             line-height: 1.2;
-            color: white; /* 원본에서 흰색으로 설정됨 */
             font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(240, 147, 251, 0.5));
+            }
         }
 
         .text-section p {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 16px;
             line-height: 1.6;
-            color: white; /* 원본에서 흰색으로 설정됨 */
+            color: var(--text-secondary);
             word-break: keep-all;
+            font-weight: 400;
         }
 
         /* Sign-up Box */
         .signin-box {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 30px 40px 50px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 40px;
             width: 600px;
             max-width: 100%;
             box-sizing: border-box;
             text-align: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
         }
 
-         .main{
-      background-color: rgb(194, 31, 75);
-            border-radius: 20px;
-            width: 600px;
-            padding: 10px 40px 10px;
-            margin-top: 10px;
-            max-width: 100%;
-            box-sizing: border-box;
-            text-align: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            color: white;
-                  text-decoration: none;
-                  font-size: 25px;
+        .signin-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
 
-    }
-        /* 로고 섹션 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo Container */
         .img-wapper {
             display: flex;
             flex-direction: column;
@@ -158,136 +210,264 @@
         .img-wapper img {
             width: 80px;
             height: 80px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.4));
+            transition: all 0.3s ease;
+            animation: logoFloat 4s ease-in-out infinite;
+        }
+
+        .img-wapper:hover img {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 25px rgba(102, 126, 234, 0.6));
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
         }
 
         .img-wapper h1 {
             margin: 0;
-            font-family: "Darker Grotesque", sans-serif;
-            font-size: 24px;
-            font-style: normal;
+            font-family: "Inter", sans-serif;
+            font-size: 28px;
             font-weight: 700;
-            line-height: normal;
-            letter-spacing: 2.04px;
-            color: #333;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* 구분선 */
-        .divider-section {
-            text-align: center;
-            border-bottom: 2px solid var(--main-pink);
-            line-height: 0;
+        /* Divider */
+        .divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             margin: 20px 0;
+            border-radius: 1px;
+            animation: shimmer 3s ease-in-out infinite;
         }
 
-        .divider-section span {
-            background: #fff;
-            padding: 0 15px;
-            font-family: 'Black Han Sans', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--main-pink);
+        @keyframes shimmer {
+            0%, 100% {
+                background: linear-gradient(135deg, var(--primary), var(--accent));
+            }
+            50% {
+                background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            }
         }
 
-        /* 메시지 스타일 */
-        .messages {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 15px 0;
+        /* Input Groups */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
         }
 
-        .messages li {
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            font-family: 'Noto Sans KR', sans-serif;
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
         }
 
-        .messages li.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .input-group svg {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            fill: var(--text-secondary);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            margin-top: 12px;
         }
 
-        .messages li.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        /* 폼 입력 필드 */
-        form div {
-            margin-bottom: 15px;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="email"],
-        input[type="tel"] {
+        /* Input Fields */
+        .input-group input[type="text"],
+        .input-group input[type="password"],
+        .input-group input[type="email"],
+        .input-group input[type="tel"] {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            padding: 15px 15px 15px 50px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
             font-size: 16px;
-            outline-offset: 2px;
-            outline-color: var(--main-pink);
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Inter', sans-serif;
             box-sizing: border-box;
-            color: #333;
-            background: white;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
-        input::placeholder {
-            color: #bbb;
+        .input-group input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 0 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .input-group input:focus + svg,
+        .input-group input:focus ~ svg {
+            fill: var(--primary);
             opacity: 1;
         }
 
-        input:focus {
-            border-color: var(--main-pink);
-            outline: 2px solid var(--pink-light-2);
+        /* Error Messages */
+        .error-message {
+            color: var(--error) !important;
+            font-size: 14px !important;
+            font-family: 'Inter', sans-serif !important;
+            margin-top: 8px;
+            text-align: left;
+            font-weight: 500;
+            background: rgba(255, 82, 82, 0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--error);
+            backdrop-filter: blur(10px);
+            animation: errorSlide 0.3s ease;
         }
 
-        /* 에러 메시지 스타일 */
-        .error-message {
-            color: #e74c3c !important;
-            font-size: 14px !important;
-            font-family: 'Noto Sans KR', sans-serif !important;
-            margin-top: 5px;
-            text-align: left;
-            font-weight: 400;
+        @keyframes errorSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Submit Button */
         button[type="submit"] {
-            margin-top: 25px;
+            margin-top: 10px;
             width: 100%;
-            background: var(--main-pink);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            font-weight: 900;
-            font-size: 18px;
+            font-weight: 700;
+            font-size: 16px;
             border: none;
-            padding: 15px 0;
-            border-radius: 10px;
+            padding: 18px 0;
+            border-radius: 15px;
             cursor: pointer;
             user-select: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(243, 89, 222, 0.4);
-            font-family: 'Black Han Sans', sans-serif;
+            transition: all 0.4s ease;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.8s ease;
+        }
+
+        button[type="submit"]:hover::before {
+            left: 100%;
         }
 
         button[type="submit"]:hover {
-            background: #d43bcf;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(243, 89, 222, 0.5);
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
         }
 
-        /* 태블릿 반응형 */
+        button[type="submit"]:active {
+            transform: translateY(-1px);
+            transition: all 0.1s ease;
+        }
+
+        /* Main Link */
+        .main {
+            display: inline-block;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            padding: 12px 25px;
+            font-family: 'Inter', sans-serif;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .main:hover::before {
+            left: 100%;
+        }
+
+        .main:hover {
+            background: linear-gradient(135deg, #0891b2, var(--accent-tertiary));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        }
+
+        /* Google Button Styling */
+        .g_id_signin {
+            margin: 10px auto !important;
+            border-radius: 12px !important;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+
+        .g_id_signin:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(66, 133, 244, 0.5);
+        }
+
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .main-container {
-                width: 100%;
-                gap: 40px;
                 flex-direction: column;
                 align-items: center;
+                gap: 40px;
                 margin-top: 20px;
             }
 
@@ -298,8 +478,6 @@
             }
 
             .signin-box {
-                width: 90%;
-                max-width: 600px;
                 order: 2;
             }
 
@@ -308,10 +486,9 @@
             }
         }
 
-        /* 모바일 반응형 */
         @media (max-width: 768px) {
             body {
-                padding: 20px 10px;
+                padding: 20px 0;
             }
 
             .main-container {
@@ -334,9 +511,9 @@
             }
 
             .signin-box {
-                width: 100%;
-                padding: 25px 30px 40px;
-                gap: 12px;
+                width: 95%;
+                padding: 30px 25px;
+                gap: 18px;
             }
 
             .img-wapper img {
@@ -345,56 +522,40 @@
             }
 
             .img-wapper h1 {
-                font-size: 20px;
-                letter-spacing: 1.5px;
+                font-size: 24px;
+                letter-spacing: 2px;
             }
 
-            .divider-section span {
-                font-size: 16px;
-                padding: 0 12px;
+            .input-group input[type="text"],
+            .input-group input[type="password"],
+            .input-group input[type="email"],
+            .input-group input[type="tel"] {
+                font-size: 15px;
+                padding: 12px 12px 12px 45px;
             }
 
-            input[type="text"],
-            input[type="password"],
-            input[type="email"],
-            input[type="tel"] {
-                font-size: 14px;
-                padding: 10px 12px;
+            .input-group svg {
+                width: 18px;
+                height: 18px;
+                left: 12px;
             }
 
             button[type="submit"] {
-                font-size: 16px;
-                padding: 12px 0;
+                font-size: 15px;
+                padding: 15px 0;
             }
 
-            .error-message {
-                font-size: 12px !important;
+            .main {
+                font-size: 13px;
+                padding: 10px 20px;
             }
-
-            /* 배경 원 크기 조정 */
-            .circle-1 { width: 2000px; height: 2000px; }
-            .circle-2 { width: 1600px; height: 1600px; }
-            .circle-3 { width: 1200px; height: 1200px; }
-            .circle-4 { width: 800px; height: 800px; }
-            .circle-5 { width: 500px; height: 500px; }
         }
 
-        /* 작은 모바일 */
         @media (max-width: 480px) {
-            body {
-                padding: 15px 5px;
-            }
-
-            .text-section h1 {
-                font-size: 28px;
-            }
-
-            .text-section p {
-                font-size: 13px;
-            }
-
             .signin-box {
-                padding: 20px 20px 30px;
+                width: 95%;
+                padding: 25px 20px;
+                gap: 15px;
             }
 
             .img-wapper img {
@@ -403,72 +564,63 @@
             }
 
             .img-wapper h1 {
-                font-size: 18px;
-                letter-spacing: 1px;
+                font-size: 20px;
+                letter-spacing: 1.5px;
             }
 
-            .divider-section span {
+            .input-group input[type="text"],
+            .input-group input[type="password"],
+            .input-group input[type="email"],
+            .input-group input[type="tel"] {
                 font-size: 14px;
-                padding: 0 10px;
+                padding: 10px 10px 10px 40px;
+                border-radius: 12px;
             }
 
-            input[type="text"],
-            input[type="password"],
-            input[type="email"],
-            input[type="tel"] {
-                font-size: 13px;
-                padding: 9px 10px;
+            .input-group svg {
+                width: 16px;
+                height: 16px;
+                left: 10px;
             }
 
             button[type="submit"] {
                 font-size: 14px;
-                padding: 11px 0;
+                padding: 12px 0;
+                border-radius: 12px;
             }
 
-            form div {
-                margin-bottom: 12px;
+            .main {
+                font-size: 12px;
+                padding: 8px 16px;
+                border-radius: 10px;
+            }
+
+            .input-group label {
+                font-size: 12px;
             }
         }
 
-        /* 큰 화면 대응 */
-        @media (min-width: 1400px) {
-            .main-container {
-                width: 1400px;
-                gap: 80px;
-            }
+        /* Hide original container */
+        .container {
+            display: none;
+        }
 
-            .text-section h1 {
-                font-size: 56px;
-            }
+        /* Focus Accessibility */
+        *:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
 
-            .text-section p {
-                font-size: 18px;
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
-
-            .signin-box {
-                width: 700px;
-                padding: 40px 50px 60px;
-            }
-
-            .img-wapper img {
-                width: 90px;
-                height: 90px;
-            }
-
-            .img-wapper h1 {
-                font-size: 28px;
-            }
-
-            input[type="text"],
-            input[type="password"],
-            input[type="email"],
-            input[type="tel"] {
-                font-size: 18px;
-                padding: 14px 18px;
-            }
-
-            button[type="submit"] {
-                font-size: 20px;
-                padding: 16px 0;
+            
+            body::before,
+            body::after {
+                animation: none;
             }
         }

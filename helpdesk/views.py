@@ -6,6 +6,7 @@ from django.contrib import messages
 from user_auth.models import Requests
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
+from django.utils.translation import gettext_lazy as _
 
 # Create your views here.
 
@@ -27,7 +28,7 @@ def request_write(request):
             if request.user.is_authenticated:
                 req.user = request.user
             req.save()
-            messages.success(request, "요청이 정상적으로 제출되었습니다.")
+            messages.success(request, _("요청이 정상적으로 제출되었습니다."))
             return redirect('helpdesk:request')
     else:
         form = RequestForm()
@@ -48,7 +49,7 @@ def request_detail(request, pk):
 
     # 비밀글 권한 체크
     if request_board.is_secret and not (request.user.is_superuser or request.user == request_board.user):
-        messages.error(request, "이 글에 접근할 권한이 없습니다.")
+        messages.error(request, _("이 글에 접근할 권한이 없습니다."))
         return redirect('helpdesk:request')
 
     if request.user.is_superuser:
@@ -56,7 +57,7 @@ def request_detail(request, pk):
             form = ResponseForm(request.POST, instance=request_board)
             if form.is_valid():
                 form.save()
-                messages.success(request, "응답이 저장되었습니다.")
+                messages.success(request, _("응답이 저장되었습니다."))
                 return redirect('helpdesk:request_detail', pk=pk)
         else:
             form = ResponseForm(instance=request_board)
@@ -72,10 +73,10 @@ def request_detail(request, pk):
 def request_delete(request, pk):
     request_form = get_object_or_404(Requests, id = pk)
     if request.user != request_form.user:
-        messages.error(request, "수정 권한이 없습니다.")
+        messages.error(request, _("수정 권한이 없습니다."))
         return redirect('helpdesk:request', pk=pk)
     request_form.delete()
-    messages.success(request, "요청사항이 삭제 되었습니다")
+    messages.success(request, _("요청사항이 삭제 되었습니다"))
     return redirect("helpdesk:request")
 
 
@@ -143,10 +144,10 @@ def prompt_share_delete(request, prompt_id):
     prompt = get_object_or_404(Prompt ,id=prompt_id)
 
     if request.user != prompt.user:
-        messages.error(request, "삭제 권한이 없습니다.")
+        messages.error(request, _("삭제 권한이 없습니다."))
         return redirect('helpdesk:prompt_share_detail', prompt_id=prompt.id)
     prompt.delete()
-    messages.success(request, "프롬프트가 삭제 되었습니다.")
+    messages.success(request, _("프롬프트가 삭제 되었습니다."))
     return redirect("helpdesk:prompt_share")
 
 
@@ -155,14 +156,14 @@ def prompt_share_update(request, prompt_id):
     prompt = get_object_or_404(Prompt, id= prompt_id)
 
     if request.user != prompt.user:
-        messages.error(request, "수정 권한이 없습니다.")
+        messages.error(request, _("수정 권한이 없습니다."))
         return redirect('helpdesk:prompt_share_detail', prompt_id=prompt.id)
     
     if request.method =="POST":
         form = PromptForm(request.POST , instance=prompt)
         if form.is_valid():
             form.save()
-            messages.success(request, "프롬프트가 수정되었습니다.")
+            messages.success(request, _("프롬프트가 수정되었습니다."))
             return redirect('helpdesk:prompt_share_detail', prompt_id=prompt.id)
         
     else:

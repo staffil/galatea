@@ -1,0 +1,310 @@
+        /* 전체 초기화 */
+        @import url("{% static 'css/distribute/distribute.css' %}");
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            position: relative;
+                overflow-y: auto;
+
+        }
+
+        /* 배경 원형 장식 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, rgba(139,92,246,0.05) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-1 { width: 300px; height: 300px; top: -150px; right: -150px; animation-delay: 0s; }
+        .circle-2 { width: 200px; height: 200px; bottom: -100px; left: -100px; animation-delay: -5s; 
+                   background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, rgba(6,182,212,0.05) 50%, transparent 100%); }
+        .circle-3 { width: 150px; height: 150px; top: 30%; left: 10%; animation-delay: -10s; }
+        .circle-4 { width: 250px; height: 250px; top: 60%; right: 20%; animation-delay: -15s; 
+                   background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, rgba(6,182,212,0.03) 50%, transparent 100%); }
+        .circle-5 { width: 100px; height: 100px; bottom: 20%; right: 15%; animation-delay: -8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+
+        /* 메인 컨텐츠 영역 */
+        .main-content {
+            margin-left: 280px;
+            padding: 100px 40px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 섹션 제목 */
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 35px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            text-align: center;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            border-radius: 2px;
+        }
+
+        /* 섹션 구분 */
+        .section {
+            margin-bottom: 50px;
+        }
+
+        /* LLM 카드 - 메인 페이지와 동일한 스타일 */
+        .llm-card {
+            background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
+            border: 1px solid rgba(139,92,246,0.3);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(25px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(139,92,246,0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .llm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+        }
+
+        .llm-card:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 15px 40px rgba(139,92,246,0.3);
+            transform: translateY(-5px);
+        }
+
+        .llm-card-body {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .llm-image-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(6,182,212,0.1));
+            flex-shrink: 0;
+        }
+
+        .llm-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+
+        .llm-card:hover .llm-image-container img {
+            transform: scale(1.08);
+        }
+
+        .llm-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .llm-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .genre-tag {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* 빈 상태 메시지 */
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            background: rgba(139,92,246,0.08);
+            border: 2px dashed rgba(139,92,246,0.3);
+            border-radius: 20px;
+            color: rgba(226,232,240,0.7);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .empty-state::before {
+            content: '📭';
+            font-size: 40px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* 모달 */
+        #llm-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+        }
+
+        #llm-modal .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        #llm-modal .modal-content {
+            position: relative;
+            z-index: 1001;
+            max-width: 600px;
+            margin: auto;
+
+            border-radius: 16px;
+            padding: 20px;
+            color: #fff;
+            overflow-y: auto;
+        }
+
+        #llm-modal .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    color: #e2e8f0;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10002;
+
+        }
+#liked-container {
+    width: 100%;
+    max-height: 600px; /* 원하는 높이 */
+    overflow-y: auto;   /* 내용이 넘치면 스크롤 */
+}
+
+        /* 반응형 디자인 */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 100px 25px 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 90px 20px 30px;
+            }
+            
+            .section-title {
+                font-size: 26px;
+                margin-bottom: 28px;
+            }
+            
+            .llm-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .llm-card-body {
+                gap: 15px;
+            }
+
+            .llm-image-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .llm-name {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 80px 15px 25px;
+            }
+            
+            .section-title {
+                font-size: 22px;
+                margin-bottom: 25px;
+            }
+            
+            .llm-card {
+                padding: 18px;
+                margin-bottom: 15px;
+            }
+
+            .llm-card-body {
+                gap: 12px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .llm-image-container {
+                width: 50px;
+                height: 50px;
+                margin: 0 auto;
+            }
+            
+            .llm-name {
+                font-size: 16px;
+            }
+        }
+
+        /* 접근성 개선 */
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+            .circle-bg { animation: none; }
+        }

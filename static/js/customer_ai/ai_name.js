@@ -15,3 +15,7 @@
             btn.style.transform = 'scale(0.95)';
             btn.innerHTML = '처리 중...';
         });
+
+
+
+        

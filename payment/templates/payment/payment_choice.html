@@ -2,10 +2,10 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>GALATEA 가격표</title>
+    <title>GALATEA {% trans "가격표" %}</title>
     <link rel="stylesheet" href="{% static 'css/payment/payment_choice.css' %}?v=5" />
 </head>
 <body>
@@ -18,18 +18,18 @@
             {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
-<h1>등급 선택</h1>
+<h1>{% trans "등급 선택" %}</h1>
 <div>
     {% for plan in plans %}
     <div class="plan-card">
         <h3 >{{ plan.rankname }}</h3>
-        <p>가격: {{ plan.price }}원</p>
-        <p  style="background-color: {{ plan.color }};">음성: {{ plan.voicetime }}</p>
-        <p  style="background-color: {{ plan.color }};">토큰: {{ plan.freetoken }}</p>
+        <p>{% trans "가격" %}: {{ plan.price }}{% trans "원" %}</p>
+        <p  style="background-color: {{ plan.color }};">{% trans "음성" %}: {{ plan.voicetime }}</p>
+        <p  style="background-color: {{ plan.color }};">{% trans "토큰" %}: {{ plan.freetoken }}</p>
         <form action="{% url 'payment:payment_charge' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="rank_id" value="{{ plan.id }}">
-<button type="submit">UPGRADE</button>
+<button type="submit">{% trans "UPGRADE" %}</button>
         </form>
     </div>
     {% endfor %}

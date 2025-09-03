@@ -29,6 +29,7 @@ from customer_ai.models import Conversation
 from pathlib import Path
 import requests
 from payment.models import Token, TokenHistory
+from django.utils.translation import gettext_lazy as _
 
 
 
@@ -49,7 +50,7 @@ def make_ai(request):
     if request.method == "POST":
         ai_name = request.session.get('llm_name')
         if not ai_name:
-            return JsonResponse({"error": "AI 이름이 세션에 없습니다."}, status=400)
+            return JsonResponse({"error": _("AI 이름이 세션에 없습니다.")}, status=400)
 
         style_prompt = request.POST.get("prompt")
         temperature = float(request.POST.get("temperature", 1))
@@ -71,7 +72,7 @@ def make_ai(request):
         request.session['chat_history'] = []
         
         if not voice_id:
-            return JsonResponse({"error": "voice_id 값이 없습니다."}, status=400)
+            return JsonResponse({"error": _("voice_id 값이 없습니다.")}, status=400)
 
         voice, created = VoiceList.objects.get_or_create(user=request.user, voice_id=voice_id)
 
@@ -110,7 +111,7 @@ def make_ai(request):
         return redirect("customer_ai:chat_view", llm_id=llm.id)
 
     # GET 요청시 (페이지 렌더링용)
-    voice_list = VoiceList.objects.filter(user=request.user).order_by('created_at')
+    voice_list = VoiceList.objects.filter(user=request.user,).select_related("celebrity")
     paginator = Paginator(voice_list, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -130,7 +131,7 @@ def auto_prompt(request):
             user_prompt = data.get("prompt", '').strip()
 
             if not user_prompt:
-                return JsonResponse({"status": "error", "error": "프롬프트가 비어 있습니다."})
+                return JsonResponse({"status": "error", "error": _("프롬프트가 비어 있습니다.")})
             
             response = openai.chat.completions.create(
                 model = 'gpt-3.5-turbo',
@@ -142,8 +143,8 @@ def auto_prompt(request):
                         "When rewriting, consider the following:\n"
                         "1. Purpose of the conversation: Understand what the user might want and shape the prompt to fit roleplay, storytelling, or scenario development.\n"
                         "2. Background: Add details like time, place, atmosphere, and relationships between characters.\n"
-                        "3. Expression: Enrich the characters’ tone, emotions, and dialogue style.\n"
-                        "4. Keep the user’s intention: Do not change the core idea, but expand it with richer context and sensory details.\n\n"
+                        "3. Expression: Enrich the characters' tone, emotions, and dialogue style.\n"
+                        "4. Keep the user's intention: Do not change the core idea, but expand it with richer context and sensory details.\n\n"
                         "The output must always be a 'fully refined prompt' that the user can immediately use."
                     )},
                     {"role":"user",'content':user_prompt}
@@ -154,7 +155,7 @@ def auto_prompt(request):
             return JsonResponse({"status":"success", "refine_data": refine_data})
         except Exception as e:
             return JsonResponse({"status": "error", "error": str(e)})
-    return JsonResponse({"status": "error","error":"POST 요청만 합니다."})
+    return JsonResponse({"status": "error","error": _("POST 요청만 합니다.")})
 
 
 @login_required
@@ -166,7 +167,7 @@ def chat_view(request, llm_id):
         llm= None
 
     if llm.user != request.user and not llm.is_public:
-        return HttpResponseForbidden("이 LLM에 접근할 권한이 없습니다.")
+        return HttpResponseForbidden(_("이 LLM에 접근할 권한이 없습니다."))
 
 
 
@@ -229,11 +230,11 @@ def get_audio_duration_in_seconds(file_path):
 def upload_audio(request):
 
     if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request method'}, status=400)
+        return JsonResponse({'error': _('잘못된 요청 방법입니다.')}, status=400)
 
     audio_file = request.FILES.get('audio')
     if not audio_file:
-        return JsonResponse({'error': 'No audio file uploaded'}, status=400)
+        return JsonResponse({'error': _('오디오 파일이 업로드되지 않았습니다.')}, status=400)
 
     audio_dir = os.path.join('media', 'audio')
     os.makedirs(audio_dir, exist_ok=True)
@@ -249,7 +250,7 @@ def upload_audio(request):
         logger.info(f"Saved WebM audio to {webm_path}")
     except Exception as e:
         logger.error(f"Error saving WebM file: {e}")
-        return JsonResponse({'error': 'Failed to save uploaded audio'}, status=500)
+        return JsonResponse({'error': _('업로드된 오디오를 저장하지 못했습니다.')}, status=500)
 
     # 2) webm → wav 변환 (ffmpeg)
     wav_filename = webm_filename.replace('.webm', '.wav')
@@ -266,7 +267,7 @@ def upload_audio(request):
     except subprocess.CalledProcessError as e:
         error_msg = e.stderr.decode() if e.stderr else str(e)
         logger.error(f"FFmpeg conversion failed: {error_msg}")
-        return JsonResponse({'error': 'Audio format conversion failed'}, status=500)
+        return JsonResponse({'error': _('오디오 형식 변환에 실패했습니다.')}, status=500)
 
     # 3) wav → mp3 변환 (ffmpeg)
     mp3_filename = wav_filename.replace('.wav', '.mp3')
@@ -283,7 +284,7 @@ def upload_audio(request):
     except subprocess.CalledProcessError as e:
         error_msg = e.stderr.decode() if e.stderr else str(e)
         logger.error(f"FFmpeg MP3 conversion failed: {error_msg}")
-        return JsonResponse({'error': 'MP3 conversion failed'}, status=500)
+        return JsonResponse({'error': _('MP3 변환에 실패했습니다.')}, status=500)
 
     # 4) Whisper API 호출 (wav 파일로)
     try:
@@ -295,7 +296,7 @@ def upload_audio(request):
         logger.info("Whisper transcription successful")
     except Exception as e:
         logger.error(f"Whisper API error: {e}")
-        return JsonResponse({'error': 'Transcription failed'}, status=500)
+        return JsonResponse({'error': _('음성 인식에 실패했습니다.')}, status=500)
 
     mp3_url = os.path.join(settings.MEDIA_URL, 'audio', mp3_filename)
 
@@ -321,28 +322,28 @@ from django.db.models import Q
 @login_required
 def generate_response(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=405)
+        return JsonResponse({'error': _('POST 요청만 허용됩니다.')}, status=405)
 
     user_input = request.POST.get('text', '')
     vision_result = request.POST.get('vision', '').strip()
     if len(vision_result) > 1000:
-        vision_result = vision_result[:1000].replace('"', '“')
-    vision_result = vision_result.replace('"', '“')
+        vision_result = vision_result[:1000].replace('"', '"')
+    vision_result = vision_result.replace('"', '"')
 
     user = request.user
     llm_id = request.POST.get('llm_id') or request.GET.get('llm_id')
     if not llm_id:
-        return JsonResponse({"error": "llm_id 값이 필요합니다."}, status=400)
+        return JsonResponse({"error": _("llm_id 값이 필요합니다.")}, status=400)
     
 
 
     try:
         llm = LLM.objects.get(Q(id=llm_id) & (Q(user=user) | Q(is_public=True)))
     except LLM.DoesNotExist:
-        return JsonResponse({"error": "해당 LLM이 없습니다."}, status=404)
+        return JsonResponse({"error": _("해당 LLM이 없습니다.")}, status=404)
 
     if not (llm.is_public or llm.user == request.user):
-        return JsonResponse({"error": "권한 없음"}, status=403)
+        return JsonResponse({"error": _("권한이 없습니다.")}, status=403)
     # LLM 설정 가져오기
     custom_temperature = llm.temperature
     custom_prompt = llm.prompt
@@ -362,7 +363,7 @@ def generate_response(request):
 
     if not custom_voice_id.strip() or not is_valid_voice_id(custom_voice_id.strip(), ELEVEN_API_KEY):
         return JsonResponse({
-            "error": "voice_id 값이 맞지 않습니다. 목소리를 다시 생성하거나 다른 목소리로 바꿔 주세요."
+            "error": _("voice_id 값이 맞지 않습니다. 목소리를 다시 생성하거나 다른 목소리로 바꿔 주세요.")
         }, status=400)
 
     # 대화 내역 불러오기 (최근 50개)
@@ -493,7 +494,7 @@ def generate_response(request):
 
         success = consume_tokens(request.user, audio_seconds, custom_model)
         if not success:
-            return JsonResponse({"error": "토큰이 부족합니다"}, status=403)
+            return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
         
         print("success", success)
         print("사용자 모델:", custom_model)
@@ -520,7 +521,7 @@ def input_ai_name(request):
         user_image = request.FILES.get('user_image')
 
         if not llm_name or not user_image:
-            return render(request, 'customer_ai/ai_name.html', {'error': '이름과 이미지를 모두 입력해주세요.'})
+            return render(request, 'customer_ai/ai_name.html', {'error': _('이름과 이미지를 모두 입력해주세요.')})
 
         # 이미지와 이름을 세션에 저장
         request.session['llm_name'] = llm_name
@@ -540,12 +541,12 @@ def upload_image(request):
     llm_id = request.GET.get('llm_id', '') if request.method == 'GET' else request.POST.get('llm_id')
 
     if not llm_id:
-        return JsonResponse({"error": "llm_id 값이 없습니다."}, status=400)
+        return JsonResponse({"error": _("llm_id 값이 없습니다.")}, status=400)
 
     try:
         llm = LLM.objects.get(id=int(llm_id))
     except (LLM.DoesNotExist, ValueError):
-        return JsonResponse({"error": "해당 LLM이 존재하지 않거나, llm_id가 올바르지 않습니다."}, status=404)
+        return JsonResponse({"error": _("해당 LLM이 존재하지 않거나, llm_id가 올바르지 않습니다.")}, status=404)
 
     if request.method == "POST" and request.FILES.get('image'):
         image_file = request.FILES['image']
@@ -573,28 +574,28 @@ def is_allowed_image_file(filename):
 @csrf_exempt
 def vision_process(request):
     if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request method'}, status=400)
+        return JsonResponse({'error': _('잘못된 요청 방법입니다.')}, status=400)
 
     if 'image' not in request.FILES:
-        return JsonResponse({'error': 'No image file provided'}, status=400)
+        return JsonResponse({'error': _('이미지 파일이 제공되지 않았습니다.')}, status=400)
 
     image_file = request.FILES['image']
 
     if not is_allowed_image_file(image_file.name):
-        return JsonResponse({'error': '지원되지 않는 이미지 형식입니다.'}, status=400)
+        return JsonResponse({'error': _('지원되지 않는 이미지 형식입니다.')}, status=400)
 
     if not image_file.content_type.startswith("image/"):
-        return JsonResponse({'error': '유효한 이미지 파일이 아닙니다.'}, status=400)
+        return JsonResponse({'error': _('유효한 이미지 파일이 아닙니다.')}, status=400)
 
     if image_file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024:
-        return JsonResponse({'error': '이미지 파일이 너무 큽니다. (최대 5MB)'}, status=400)
+        return JsonResponse({'error': _('이미지 파일이 너무 큽니다. (최대 5MB)')}, status=400)
 
     try:
         image_bytes = image_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
     except Exception:
         traceback.print_exc()
-        return JsonResponse({'error': '이미지를 읽는 중 오류 발생'}, status=500)
+        return JsonResponse({'error': _('이미지를 읽는 중 오류 발생')}, status=500)
 
     # 세션에서 모델명과 프롬프트 가져오기 (기본값 지정)
     custom_model = request.session.get('custom_model', 'gpt-4o-mini')
@@ -663,7 +664,7 @@ def novel_process(request):
 
         # 2️⃣ 대사만 추출 (TTS용)
         import re
-        dialogue_matches = re.findall(r'“([^”]+)”|\"([^"]+)\"', ai_text)
+        dialogue_matches = re.findall(r'"([^"]+)"|\"([^"]+)\"', ai_text)
         tts_text = " ".join([m[0] or m[1] for m in dialogue_matches]) if dialogue_matches else user_input
 
         # 3️⃣ DB 저장 (전체 소설체)
@@ -698,4 +699,3 @@ def novel_process(request):
             "novel_text": ai_text,   # 화면에 보여줄 소설체
             "tts_audio_url": audio_url  # TTS 재생용
         })
-

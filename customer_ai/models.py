@@ -80,7 +80,7 @@ class LLM(models.Model):
 
 
 
-
+# 프롬프트 테이블 
 class Prompt(models.Model):
     PROMPT_TYPE_CHOICES = [
         ('text', '일반 프롬프트'),

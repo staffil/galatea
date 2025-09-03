@@ -2,10 +2,10 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>GALATEA 가격표</title>
+    <title>GALATEA {% trans "가격표" %}</title>
     <link rel="stylesheet" href="{% static 'css/payment/payment.css' %}?v=5" />
 </head>
 <body>
@@ -18,11 +18,11 @@
             {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
-<h1>{{ plan.rankname }} 결제 - {{ plan.price }}원</h1>
+<h1>{{ plan.rankname }} {% trans "결제" %} - {{ plan.price }}{% trans "원" %}</h1>
 
 {% for pg in available_pgs %}
 <button data-price="{{ plan.price }}" data-rank-id="{{ plan.id }}" onclick="requestPay('{{ pg }}', this)" style="background-image: {{ pg.payment_image.url }};">
-    {{ pg|title }} {{ plan.price }}원
+    {{ pg|title }} {{ plan.price }}{% trans "원" %}
 </button>
 
 {% endfor %}
@@ -45,7 +45,7 @@ function requestPay(pg, btn) {
         pay_method: "card",
         customer_uid: "user_{{ request.user.id }}",
         merchant_uid: merchant_uid,
-        name: "GALATEA 등급 결제",
+        name: "GALATEA {% trans '등급 결제' %}",
         amount: amount,
         buyer_email: "{{ request.user.email }}",
         buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
@@ -58,14 +58,14 @@ function requestPay(pg, btn) {
             .then(res => res.json())
             .then(result => {
                 if(result.status){
-                    alert(`결제 성공! 상태: ${result.status}`);
+                    alert(`{% trans "결제 성공! 상태:" %} ${result.status}`);
                     window.location.href = "/payment/complete/";
                 } else {
-                    alert("결제 처리 실패: " + JSON.stringify(result));
+                    alert("{% trans '결제 처리 실패:' %} " + JSON.stringify(result));
                 }
             });
         } else {
-            alert("결제 실패: " + rsp.error_msg);
+            alert("{% trans '결제 실패:' %} " + rsp.error_msg);
         }
     });
 }

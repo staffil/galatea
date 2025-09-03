@@ -12,6 +12,7 @@ class Celebrity(models.Model):
     class Meta:
         db_table = 'celebrity'
         verbose_name = 'celebrity 커스텀'
+from django.conf import settings
 
 # celebirty voice 테이블
 class CelebrityVoice(models.Model):
