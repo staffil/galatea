@@ -315,7 +315,7 @@
         }
 
         .modal-content {
-            padding: 30px;
+            padding: 10px;
             overflow-y: auto;
             max-height: 700px;
             width: 900px;
