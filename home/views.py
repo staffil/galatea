@@ -330,7 +330,7 @@ def llm_section(request):
     
 
     llm_list = LLM.objects.filter(is_public=True)
-
+    print("LANGUAGE_CODE:", get_language())
     context ={
         
         "llm_list": llm_list,
