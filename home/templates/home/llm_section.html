@@ -64,8 +64,8 @@
 
 
 <script>
-    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:get_language }}";
-    console.log("LANGUAGE_CODE=", LANGUAGE_CODE);
+    // // const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:get_language }}";
+    // console.log("LANGUAGE_CODE=", LANGUAGE_CODE);
       // LLM 모달
     function openModal(llm_id) {
         const modalHTML = `
@@ -78,12 +78,18 @@
         </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
+            const url = "{% url 'llm_detail_partial' llm_id=0 %}".replace("0", llm_id);
+    fetch(url)
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        });
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
 
 
         const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-fetch(`${window.location.origin}/ko/intro/${llm_id}/`)
+fetch(`${window.location.origin}/${LANGUAGE_CODE}/intro/${llm_id}/`)
         .then(response => response.text())
         .then(html => {
             document.getElementById('llm-container').innerHTML = html;
