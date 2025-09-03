@@ -126,103 +126,7 @@
         <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius: 50%;">
       </button>
     </div>
-{% load static %}
-{% load i18n %}
-{% load socialaccount %}
 
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login UI</title>
-  <link rel="stylesheet" href="{% static 'css/register/login.css' %}?v=5">
-</head>
-<body>
-
-<div class="container">
-  <div class="circle-bg circle-1"></div>
-  <div class="circle-bg circle-2"></div>
-  <div class="circle-bg circle-3"></div>
-  <div class="circle-bg circle-4"></div>
-  <div class="circle-bg circle-5"></div>
-</div>
-
-<div class="login-box" role="main" aria-label="로그인 폼">
-  <div class="img-wapper">
-    <img src="{% static 'img/Group 31.png' %}" alt="Galatea Logo">
-    <h1>GALATEA</h1>
-  </div>
-
-  <hr class="divider" />
-
-  <form method="POST" novalidate>
-    {% csrf_token %}
-
-    <!-- 아이디 필드 -->
-    <label for="{{ form.username.id_for_label }}">{% trans '로그인' %}</label>
-    <div class="input-group">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-      </svg>
-      {{ form.username }}
-      {% if form.username.errors %}
-        <div class="error" style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-          {{ form.username.errors.0 }}
-        </div>
-      {% endif %}
-    </div>
-    <br>
-
-    <!-- 비밀번호 필드 -->
-    <label for="{{ form.password.id_for_label }}">{% trans '비밀번호' %}</label>
-    <div class="input-group">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-6h-1V7a5 5 0 00-10 0v4H6a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2zm-6-4a3 3 0 013 3v4H9v-4a3 3 0 013-3z"/>
-      </svg>
-      {{ form.password }}
-      {% if form.password.errors %}
-        <div class="error" style="color:red; font-size: 15px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-          {{ form.password.errors.0 }}
-        </div>
-      {% endif %}
-    </div>
-
-    <!-- 소셜 로그인 버튼들 -->
-    <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0; ">
-      <button type="button" onclick="openSocialLogin('google')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
-        <img src="{% static 'img/google.png' %}" alt="Google Login" width="40" style="border-radius: 50%;">
-      </button>
-
-      <button type="button" onclick="openSocialLogin('github')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
-        <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius: 50%;">
-      </button>
-    </div>
-<script>
-  const socialLoginUrls = {
-    google: "{% provider_login_url 'google' next=request.path %}",
-    github: "{% provider_login_url 'github' next=request.path %}"
-  };
-
-  function openSocialLogin(provider) {
-    window.location.href = socialLoginUrls[provider];
-  }
-</script>
-
-    <!-- 기본 로그인 버튼 -->
-    <button type="submit">LOGIN</button>
-  </form>
-
-  <a href="{% url 'register:signup' %}" class="signup">SIGN UP</a>
-  <a href="{% url 'home:main' %}" class="main">main</a>
-</div>
-
-<script src="{% static 'js/register/login.js' %}">
-
-</script>
-
-</body>
-</html>
 
                 <button type="submit" aria-label="{% trans '회원가입 버튼' %}">{% trans "CREATE ACCOUNT" %}</button>
                 
@@ -232,7 +136,7 @@
     </div>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="{% static 'js/register/signup.js' %}">
+    <script src="{% static 'js/register/signup.js ' %}">
 
 
 </script>
