@@ -79,8 +79,10 @@ const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
     document.documentElement.style.overflow = "hidden";
 
 
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-fetch(`${window.location.origin}/${LANGUAGE_CODE}/intro/${llm_id}`)
+    const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;
+    console.log("Fetching URL:", url);
+
+    fetch(url)
         .then(response => response.text())
         .then(html => {
             document.getElementById('llm-container').innerHTML = html;
