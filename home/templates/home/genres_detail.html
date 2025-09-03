@@ -62,40 +62,38 @@
         </div>
 
 <script>
-const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-  // LLM 모달
-    function openModal(llm_id) {
-        const modalHTML = `
-        <div id="llm-modal">
-            <div class="modal-overlay" onclick="closeModal()"></div>
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal()">X</button>
-                <div id="llm-container" class="llm-container"></div>
-            </div>
+function openModal(llm_id) {
+    const modalHTML = `
+    <div id="llm-modal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">X</button>
+            <div id="llm-container" class="llm-container"></div>
         </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    </div>`;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
 
-
+    // 항상 안정적인 URL
     const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;
     console.log("Fetching URL:", url);
 
     fetch(url)
-        .then(response => response.text())
+        .then(res => res.text())
         .then(html => {
             document.getElementById('llm-container').innerHTML = html;
-        });
-    }
+        })
+        .catch(err => console.error("LLM fetch error:", err));
+}
 
-    function closeModal() {
-        const modal = document.getElementById('llm-modal');
-        if (modal) modal.remove();
+function closeModal() {
+    const modal = document.getElementById('llm-modal');
+    if (modal) modal.remove();
     document.body.style.overflow = "auto";
     document.documentElement.style.overflow = "auto";
-
-    }
+}
         // 초기화
     document.addEventListener('DOMContentLoaded', () => {
         initNewsSlider();
