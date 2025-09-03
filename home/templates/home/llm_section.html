@@ -83,7 +83,7 @@
 
 
         const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-fetch(`${window.location.origin}/${LANGUAGE_CODE}/intro/${llm_id}`)
+fetch(`${window.location.origin}/ko/intro/${llm_id}`)
         .then(response => response.text())
         .then(html => {
             document.getElementById('llm-container').innerHTML = html;
