@@ -64,39 +64,94 @@
 
 
 <script>
-function openModal(llm_id) {
-    const modalHTML = `
-    <div id="llm-modal">
-        <div class="modal-overlay" onclick="closeModal()"></div>
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">X</button>
-            <div id="llm-container" class="llm-container"></div>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;
+console.log("fetching url:", url);
+      // LLM 모달
+    function openModal(llm_id) {
+        const modalHTML = `
+        <div id="llm-modal">
+            <div class="modal-overlay" onclick="closeModal()"></div>
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">X</button>
+                <div id="llm-container" class="llm-container"></div>
+            </div>
         </div>
-    </div>`;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-
-    // 안정적으로 URL 생성
-    const url = "{% url 'llm_detail_partial' llm_id=0 %}".replace("0", llm_id);
-    console.log("fetching url:", url);
-    
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+            const url = "{% url 'llm_detail_partial' llm_id=0 %}".replace("0", llm_id);
     fetch(url)
         .then(res => res.text())
         .then(html => {
             document.getElementById('llm-container').innerHTML = html;
-        })
-        .catch(err => console.error("LLM fetch error:", err));
-}
+        });
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
-function closeModal() {
-    const modal = document.getElementById('llm-modal');
-    if (modal) modal.remove();
+
+        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+fetch(`${window.location.origin}/${LANGUAGE_CODE}/intro/${llm_id}/`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('llm-modal');
+        if (modal) modal.remove();
     document.body.style.overflow = "auto";
     document.documentElement.style.overflow = "auto";
-}
-</script>
 
+    }
+        // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        initNewsSlider();
+    });
+
+// 팔로우 버튼
+document.addEventListener('click', e => {
+    const followBtn = e.target.closest('.glt2-follow-btn');
+    if (!followBtn) return;
+
+    const userId = followBtn.dataset.id;
+
+    fetch("{% url 'home:toggle_follow' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `user_id=${userId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        followBtn.textContent = data.status === 'follow' ? 'Following' : 'Follow';
+    })
+    .catch(err => console.error('팔로우 토글 오류:', err));
+});
+
+// 좋아요 버튼
+document.addEventListener('click', e => {
+    const likeBtn = e.target.closest('.glt2-like-btn');
+    if (!likeBtn) return;
+
+    const llmId = likeBtn.dataset.id;
+
+    fetch("{% url 'home:like_toggle' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `llm_id=${llmId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        likeBtn.textContent = data.status === 'like' ? '❤️' : '♡';
+    })
+    .catch(err => console.error('좋아요 토글 오류:', err));
+});
+</script>
 </body>
 </html>
