@@ -334,6 +334,7 @@ def llm_section(request):
     context ={
         
         "llm_list": llm_list,
+        "LANGUAGE_CODE": get_language(),
     }
 
     return render (request, "home/llm_section.html",context)
