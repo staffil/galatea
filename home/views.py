@@ -330,11 +330,12 @@ def llm_section(request):
     
 
     llm_list = LLM.objects.filter(is_public=True)
+    language_code = getattr(request, 'LANGUAGE_CODE', get_language()) or 'ko'
 
     context ={
         
         "llm_list": llm_list,
-        "LANGUAGE_CODE": get_language(),
+        "LANGUAGE_CODE": language_code,
     }
 
     return render (request, "home/llm_section.html",context)

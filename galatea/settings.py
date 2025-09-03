@@ -122,7 +122,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-
 ]
 LANGUAGE_COOKIE_NAME = 'django_language'
 ROOT_URLCONF = "galatea.urls"

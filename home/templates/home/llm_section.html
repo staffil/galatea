@@ -1,9 +1,8 @@
 {% load static %}
 {% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE|default:'ko' }}">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -61,7 +60,8 @@
     </div>
 
 <script>
-const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";  // Django에서 처리한 언어 코드
+// JS에서 안전하게 LANGUAGE_CODE 사용
+const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
 console.log("LANGUAGE_CODE=", LANGUAGE_CODE);
 
 function openModal(llm_id) {
@@ -73,19 +73,21 @@ function openModal(llm_id) {
             <div id="llm-container" class="llm-container"></div>
         </div>
     </div>`;
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
 
-const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;
-fetch(url)
-    .then(res => res.text())
-    .then(html => {
-        document.getElementById('llm-container').innerHTML = html;
-    })
-    .catch(err => console.error("LLM fetch error:", err));
+    // 항상 안정적인 URL
+    const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;
+    console.log("Fetching URL:", url);
 
+    fetch(url)
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        })
+        .catch(err => console.error("LLM fetch error:", err));
 }
 
 function closeModal() {
@@ -94,55 +96,6 @@ function closeModal() {
     document.body.style.overflow = "auto";
     document.documentElement.style.overflow = "auto";
 }
-
-// 팔로우 버튼
-document.addEventListener('click', e => {
-    const followBtn = e.target.closest('.glt2-follow-btn');
-    if (!followBtn) return;
-
-    const userId = followBtn.dataset.id;
-
-    fetch("{% url 'home:toggle_follow' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `user_id=${userId}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        followBtn.textContent = data.status === 'follow' ? 'Following' : 'Follow';
-    })
-    .catch(err => console.error('팔로우 토글 오류:', err));
-});
-
-// 좋아요 버튼
-document.addEventListener('click', e => {
-    const likeBtn = e.target.closest('.glt2-like-btn');
-    if (!likeBtn) return;
-
-    const llmId = likeBtn.dataset.id;
-
-    fetch("{% url 'home:like_toggle' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `llm_id=${llmId}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        likeBtn.textContent = data.status === 'like' ? '❤️' : '♡';
-    })
-    .catch(err => console.error('좋아요 토글 오류:', err));
-});
-
-// 초기화
-document.addEventListener('DOMContentLoaded', () => {
-    initNewsSlider();
-});
 </script>
 </body>
 </html>
