@@ -78,15 +78,14 @@ function openModal(llm_id) {
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
 
-    const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;  // JS 변수 사용
-    console.log("Fetching URL:", url);
+const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;
+fetch(url)
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('llm-container').innerHTML = html;
+    })
+    .catch(err => console.error("LLM fetch error:", err));
 
-    fetch(url)
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('llm-container').innerHTML = html;
-        })
-        .catch(err => console.error("LLM fetch error:", err));
 }
 
 function closeModal() {
