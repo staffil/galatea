@@ -186,6 +186,7 @@ def distribute_llm(request, llm_id=None):
         "user": user,
         "llm_list": llm_list,
         "voice_list": voice_list,
+        "LANGUAGE_CODE": language, 
     }
 
     return render(request, 'home/llm_intro.html', context)

@@ -64,8 +64,9 @@
 
 
 <script>
-const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-  // LLM 모달
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:get_language }}";
+    console.log("LANGUAGE_CODE=", LANGUAGE_CODE);
+      // LLM 모달
     function openModal(llm_id) {
         const modalHTML = `
         <div id="llm-modal">
