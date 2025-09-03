@@ -28,8 +28,11 @@ def signup(request):
     return render(request, 'register/signup.html', {'form': form})
 
 
+from django.contrib.sites.models import Site
+
 def login_view(request):
     language = get_language()
+    site = Site.objects.get(id=settings.SITE_ID) 
 
     if request.method == "POST":
         form = LoginForm(request.POST)
@@ -39,18 +42,19 @@ def login_view(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:
-                print("로그인 성공")
                 auth_login(request, user)
                 return redirect('home:main')
             else:
                 form.add_error(None, "아이디 또는 비밀번호가 올바르지 않습니다.")
     else:
         form = LoginForm()
+
     return render(request, 'register/login.html', {
         'form': form,
         'google_client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'],
+        'site': site,  # 여기 추가
         "LANGUAGE_CODE": language,
-        })
+    })
 
 from allauth.socialaccount.models import SocialAccount
 
