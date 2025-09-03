@@ -82,10 +82,8 @@ function openModal(llm_id) {
     document.documentElement.style.overflow = "hidden";
 
     // 안정적으로 URL 생성
-    const url = `/${LANGUAGE_CODE}/intro/${llm_id}/`;
-    console.log("fetching url:", url);
 
-    fetch(url)
+fetch(`/{% get_current_language as LANGUAGE_CODE %}intro/${llm_id}`)
         .then(res => res.text())
         .then(html => {
             document.getElementById('llm-container').innerHTML = html;
