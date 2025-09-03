@@ -101,7 +101,7 @@ INSTALLED_APPS = [
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 USE_X_FORWARDED_HOST = True
-SITE_ID = 2
+SITE_ID = 6
 SOCIALACCOUNT_AUTO_SIGNUP = True
 
 AUTHENTICATION_BACKENDS = (
