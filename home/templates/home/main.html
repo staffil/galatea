@@ -431,7 +431,7 @@ function closeModal() {
             <div class="llm-container">
                 <h2 class="section-title">{% trans '추천' %}</h2>
                 <div class="llm-cards-container">
-                    {% for item in llm|slice:":20" %}
+                    {% for item in llm|slice:":10" %}
                     <div class="llm-card" onclick="openModal({{ item.id }})">
                         <div class="llm-card-body">
                             <div class="llm-image-container">
