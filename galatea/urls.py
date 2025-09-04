@@ -61,7 +61,7 @@ urlpatterns += i18n_patterns(
     path('intro/<int:llm_id>/', main_view.llm_detail_partial, name='llm_detail_partial'),
     path('helpdesk/', include(("helpdesk.urls", 'helpdesk'), namespace='helpdesk')),
     path('invest/', include(("invest.urls", 'invest'), namespace='invest')),
-    # path('login/', include('social_django.urls', namespace='login')),
+    path('login/', include('social_django.urls', namespace='login')),
 
 
 
