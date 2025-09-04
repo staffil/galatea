@@ -140,8 +140,10 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 # allauth 설정
-SOCIALACCOUNT_ADAPTER = "register.adapter.MySocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
 SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_SIGNUP_FORM_CLASS = None
+
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         'APP': {

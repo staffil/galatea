@@ -10,3 +10,9 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
         if apps.exists():
             return apps.first()  # 첫 번째 SocialApp만 사용
         return None
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+
+class MySocialAccountAdapter(DefaultSocialAccountAdapter):
+    def is_open_for_signup(self, request, sociallogin):
+        # True이면 자동으로 회원가입 가능
+        return True
