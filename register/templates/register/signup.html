@@ -117,16 +117,16 @@
 
 
     <!-- 소셜 로그인 버튼들 -->
-    <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0; ">
-      <button type="button" onclick="openSocialLogin('google')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
-        <img src="{% static 'img/google.png' %}" alt="Google Login" width="40" style="border-radius: 50%;">
-      </button>
+    <div style="display: flex; gap: 15px; justify-content: center; margin: 20px 0;">
+<a href="{% provider_login_url 'google' %}">
+    <img src="{% static 'img/google.png' %}" alt="Google Login" width="40" style="border-radius: 50%;">
+</a>
 
-      <button type="button" onclick="openSocialLogin('github')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
-        <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius: 50%;">
-      </button>
+<a href="{% provider_login_url 'github' %}">
+    <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius: 50%;">
+</a>
+
     </div>
-
 
                 <button type="submit" aria-label="{% trans '회원가입 버튼' %}">{% trans "CREATE ACCOUNT" %}</button>
                 
