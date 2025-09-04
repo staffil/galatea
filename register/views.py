@@ -54,14 +54,12 @@ def login_view(request):
         form = LoginForm()
 
 
-    google_url = reverse('socialaccount_login', args=['google'])
-    github_url = reverse('socialaccount_login', args=['github'])
+
 
     return render(request, 'register/login.html', {
     'form': form,
     'site': site,
-        'google_login_url': google_url,
-        'github_login_url': github_url,
+
                 "LANGUAGE_CODE": language,
     })
 
