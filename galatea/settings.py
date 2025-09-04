@@ -11,7 +11,7 @@ DB_USER = os.getenv("DB_USER")
 
 # 보안 설정
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
