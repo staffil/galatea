@@ -36,31 +36,24 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.models import SocialApp
 def login_view(request):
     language = get_language()
-    site = Site.objects.get(id=settings.SITE_ID) 
-
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                auth_login(request, user)
-                return redirect('home:main')
-            else:
-                form.add_error(None, "아이디 또는 비밀번호가 올바르지 않습니다.")
-    else:
-        form = LoginForm()
-
-
-
+    site = Site.objects.get(id=settings.SITE_ID)
+    form = LoginForm()
+    
+   
+    try:
+        google_url = reverse('socialaccount_login', args=['google'])
+        github_url = reverse('socialaccount_login', args=['github'])
+    except Exception as e:
+        google_url = '#'
+        github_url = '#'
+        print("Reverse Error:", e)
 
     return render(request, 'register/login.html', {
-    'form': form,
-    'site': site,
-
-                "LANGUAGE_CODE": language,
+        'form': form,
+        'site': site,
+        'google_login_url': google_url,
+        'github_login_url': github_url,
+        "LANGUAGE_CODE": language,
     })
 
 from allauth.socialaccount.models import SocialAccount
