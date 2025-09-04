@@ -52,8 +52,9 @@ def login_view(request):
     return render(request, 'register/login.html', {
     'form': form,
     'site': site,
-    'google_client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'],
-    "LANGUAGE_CODE": language,
+        "google_client_id": settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'],
+        "github_client_id": settings.SOCIALACCOUNT_PROVIDERS['github']['APP']['client_id'],
+                "LANGUAGE_CODE": language,
     })
 
 from allauth.socialaccount.models import SocialAccount

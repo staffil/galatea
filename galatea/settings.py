@@ -44,7 +44,7 @@ USE_I18N = True
 USE_TZ = True
 
 # 사이트 설정 (allauth 필요)
-SITE_ID = 1
+SITE_ID = 2
 
 # 애플리케이션
 INSTALLED_APPS = [
@@ -144,14 +144,22 @@ SOCIALACCOUNT_ADAPTER = "register.adapter.MySocialAccountAdapter"
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
-        "SCOPE": ["profile", "email"],
-        "AUTH_PARAMS": {"access_type": "online"},
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'}
     },
     "github": {
-        # GitHub은 기본적으로 이메일/프로필 제공
+        'APP': {
+            'client_id': os.getenv("SOCIAL_AUTH_GITHUB_KEY"),
+            'secret': os.getenv("SOCIAL_AUTH_GITHUB_SECRET"),
+            'key': ''
+        }
     },
 }
-
 # 세션 / 캐시
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False

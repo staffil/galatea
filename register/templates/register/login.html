@@ -61,25 +61,25 @@
     </div>
 
     <!-- 소셜 로그인 버튼들 -->
-    <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0; ">
-      <button type="button" onclick="openSocialLogin('google')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
-        <img src="{% static 'img/google.png' %}" alt="Google Login" width="40" style="border-radius: 50%;">
-      </button>
+<button type="button" onclick="openSocialLogin('google')">
+    <img src="{% static 'img/google.png' %}" alt="Google Login" width="40">
+</button>
 
-      <button type="button" onclick="openSocialLogin('github')" style="border: none; background: none; cursor: pointer; padding: 8px; border-radius: 8px; transition: background 0.3s;">
-        <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius: 50%;">
-      </button>
-    </div>
+<button type="button" onclick="openSocialLogin('github')">
+    <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40">
+</button>
+
 <script>
-  const socialLoginUrls = {
-    google: "{% provider_login_url 'google' next=request.path %}",
-    github: "{% provider_login_url 'github' next=request.path %}"
-  };
+const socialLoginUrls = {
+    google: "{% provider_login_url 'google' %}",
+    github: "{% provider_login_url 'github' %}"
+};
 
-  function openSocialLogin(provider) {
+function openSocialLogin(provider) {
     window.location.href = socialLoginUrls[provider];
-  }
+}
 </script>
+
 
 
     <!-- 기본 로그인 버튼 -->
