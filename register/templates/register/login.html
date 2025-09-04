@@ -61,26 +61,16 @@
     </div>
 
     <!-- 소셜 로그인 버튼들 -->
-<button type="button" onclick="openSocialLogin('google')">
-    <img src="{% static 'img/google.png' %}" alt="Google Login" width="40">
-</button>
-
-<button type="button" onclick="openSocialLogin('github')">
-    <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40">
-</button>
-
-<script>
-const socialLoginUrls = {
-    google: "{% provider_login_url 'google' %}",
-    github: "{% provider_login_url 'github' %}"
-};
-
-function openSocialLogin(provider) {
-    window.location.href = socialLoginUrls[provider];
-}
-</script>
-
-
+    <div style="display: flex; gap: 15px; justify-content: center; margin: 20px 0;">
+      <!-- Google -->
+      <a href="{% provider_login_url 'google' %}" style="display:inline-block;">
+        <img src="{% static 'img/google.png' %}" alt="Google Login" width="40" style="border-radius:50%;">
+      </a>
+      <!-- GitHub -->
+      <a href="{% provider_login_url 'github' %}" style="display:inline-block;">
+        <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius:50%;">
+      </a>
+    </div>
 
     <!-- 기본 로그인 버튼 -->
     <button type="submit">LOGIN</button>
@@ -90,9 +80,7 @@ function openSocialLogin(provider) {
   <a href="{% url 'home:main' %}" class="main">main</a>
 </div>
 
-<script src="{% static 'js/register/login.js' %}">
-
-</script>
+<script src="{% static 'js/register/login.js' %}"></script>
 
 </body>
 </html>

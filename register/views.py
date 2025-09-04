@@ -29,7 +29,11 @@ def signup(request):
 
 
 from django.contrib.sites.models import Site
-
+from django.urls import reverse
+from allauth.socialaccount.helpers import complete_social_login
+from allauth.socialaccount.providers.google.views import OAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from allauth.socialaccount.models import SocialApp
 def login_view(request):
     language = get_language()
     site = Site.objects.get(id=settings.SITE_ID) 
@@ -49,11 +53,15 @@ def login_view(request):
     else:
         form = LoginForm()
 
+
+    google_url = reverse('socialaccount_login', args=['google'])
+    github_url = reverse('socialaccount_login', args=['github'])
+
     return render(request, 'register/login.html', {
     'form': form,
     'site': site,
-        "google_client_id": settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'],
-        "github_client_id": settings.SOCIALACCOUNT_PROVIDERS['github']['APP']['client_id'],
+        'google_login_url': google_url,
+        'github_login_url': github_url,
                 "LANGUAGE_CODE": language,
     })
 
