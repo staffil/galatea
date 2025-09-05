@@ -17,6 +17,10 @@ from helpdesk import views as helpdesk_view
 from payment import views as payment_view
 from django.contrib.sitemaps.views import sitemap
 from home.sitemaps import StaticViewSitemap
+from django.views.generic import TemplateView
+
+
+
 
 def root_redirect(request):
     lang = get_language()
@@ -45,10 +49,16 @@ urlpatterns = [
     path("auto_prompt/", customer_ai_views.auto_prompt, name="auto_prompt"),
     path("payment/complete/", payment_view.payment_complete, name="payment_complete"),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+    path("robots.txt", TemplateView.as_view(
+        template_name="robots.txt",
+        content_type="text/plain"
+    )),
 
 
 
 ]
+
+
 
 urlpatterns += i18n_patterns(
     
