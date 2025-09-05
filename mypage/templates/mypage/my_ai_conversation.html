@@ -79,6 +79,7 @@
                 llmId: {{ conversation.llm.id }},
                 userMessage: "{{ conversation.user_message|escapejs }}",
                 llmResponse: "{{ conversation.llm_response|escapejs }}",
+                responseAudio: "{% if conversation.response_audio %}{{ conversation.response_audio|escapejs }}{% else %}''{% endif %}",
                 createdAt: "{{ conversation.created_at|date:'c' }}"
             }{% if not forloop.last %},{% endif %}
             {% endfor %}
@@ -208,6 +209,14 @@
                             <div class="ai-message">
                                 <div class="message-text">${conversation.llmResponse}</div>
                             </div>
+                        <div class="ai-message">
+                            ${conversation.responseAudio ? `
+                                <audio controls>
+                                    <source src="${conversation.responseAudio}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            ` : ''}
+                        </div>
                         </div>
                     </div>
                 `).join('');
@@ -234,7 +243,8 @@
             const ai = aiList[selectedAiId];
             const filteredConversations = ai.conversations.filter(conversation => 
                 conversation.userMessage.toLowerCase().includes(query.toLowerCase()) ||
-                conversation.llmResponse.toLowerCase().includes(query.toLowerCase())
+                conversation.llmResponse.toLowerCase().includes(query.toLowerCase()) ||
+                conversation.responseAudio.toLowerCase().includes(query.toLowerCase())
             );
             
             // 필터링된 결과로 임시 AI 객체 생성

@@ -17,6 +17,7 @@ class Conversation(models.Model):
     llm = models.ForeignKey('customer_ai.LLM', on_delete=models.CASCADE)
     user_message = models.TextField()
     llm_response = models.TextField()
+    response_audio = models.FileField(upload_to='audio/', null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:

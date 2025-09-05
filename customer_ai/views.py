@@ -439,7 +439,6 @@ def generate_response(request):
     request.session["chat_history"] = chat_history
 
     # DB에 저장
-    Conversation.objects.create(user=user, llm=llm, user_message=user_input, llm_response=ai_text)
 
     # ElevenLabs 음성 생성
     audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
@@ -504,7 +503,20 @@ def generate_response(request):
 
 
     audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
+    # 브라우저에서 접근할 수 있는 URL 생성
+    audio_url = os.path.join('audio', filename).replace("\\", "/")  # 'audio/response_xxx.mp3'
+    audio_url = settings.MEDIA_URL + audio_url  # '/media/audio/response_xxx.mp3'
 
+    # DB에 URL 저장
+    Conversation.objects.create(
+        user=user,
+        llm=llm,
+        user_message=user_input,
+        llm_response=ai_text,
+        response_audio=audio_url 
+    )
+
+    # 클라이언트에 반환
     return JsonResponse({"ai_text": ai_text, "audio_url": audio_url})
 
 
