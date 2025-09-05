@@ -186,6 +186,8 @@
             const selectedLlmId = selectedOption.value;
             const currentPath = window.location.pathname;
             const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
+            const llmNameDisplay = document.getElementById("llmNameDisplay");
+
             if (window.location.pathname !== newUrl) window.location.href = newUrl;
             document.getElementById("promptDisplay").value = selectedOption.dataset.prompt || "";
 
