@@ -88,7 +88,7 @@ INSTALLED_APPS = [
 "makeImage",
 "payment",
 "home",
-"cloning",
+# "cloning",
 "makeVoice",
 "register",
 "mypage",
@@ -99,7 +99,7 @@ INSTALLED_APPS = [
 ]
 
 
-SITE_ID = 1
+SITE_ID = 2
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -231,3 +231,5 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+# 소셜 로그인 시 바로 회원가입 후 로그인
+SOCIALACCOUNT_AUTO_SIGNUP = True
