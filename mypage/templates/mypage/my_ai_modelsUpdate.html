@@ -146,10 +146,9 @@
                 <div class="form-group">
                     <label for="model">{% trans "모델" %}</label>
                     <select name="model" id="model">
-                        <option value="gpt-3.5-turbo" {% if llm.model == "gpt-3.5-turbo" %}selected{% endif %}>GPT 3.5 Turbo</option>
-                        <option value="gpt-4o-mini" {% if llm.model == "gpt-4o-mini" %}selected{% endif %}>GPT 4o-mini</option>
-                        <option value="gpt-4o" {% if llm.model == "gpt-4o" %}selected{% endif %}>GPT 4o</option>
-                        <option value="gpt-4o-vision" {% if llm.model == "gpt-4o-vision" %}selected{% endif %}>GPT 4o Vision</option>
+                                <option value="gpt:gpt-4o-mini">GPT4o-mini</option>
+                                <option value="gpt:gpt-4o">GPT4o</option>
+                                <option value="grok:grok-4">Grok-4</option>
                     </select>
                 </div>
 
