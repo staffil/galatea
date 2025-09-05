@@ -57,6 +57,8 @@
                     </option>
                     {% endfor %}
                 </select>
+                <p id="llmNameDisplay">{{ llm_list.0.name }}</p>
+
                 <div class="prompt-section">
                     <label>{% trans '프롬프트' %}</label>
                     <textarea class="prompt-textarea" id="promptDisplay" readonly></textarea>
