@@ -52,20 +52,15 @@ def login_view(request):
     else:
         form = LoginForm()
 
-    try:
-        google_url = reverse('socialaccount_login', args=['google'])
-        github_url = reverse('socialaccount_login', args=['github'])
-    except Exception as e:
-        google_url = '#'
-        github_url = '#'
-        print("Reverse Error:", e)
+
+    google_login_url = reverse('socialaccount_login', args=['google'])
+    github_login_url = reverse('socialaccount_login', args=['github'])
 
     return render(request, 'register/login.html', {
         'form': form,
-        'site': site,
-        'google_login_url': google_url,
-        'github_login_url': github_url,
-        "LANGUAGE_CODE": language,
+        'google_login_url': google_login_url,
+        'github_login_url': github_login_url,
+        'LANGUAGE_CODE': language,
     })
 
 from allauth.socialaccount.models import SocialAccount
