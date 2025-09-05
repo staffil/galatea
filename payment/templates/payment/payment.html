@@ -49,7 +49,8 @@ function requestPay(pg, btn) {
         amount: amount,
         buyer_email: "{{ request.user.email }}",
         buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-        buyer_tel: "{{ request.user.profile.phone_number|default:'010-3161-5706' }}"
+        buyer_tel: "{{ request.user.profile.phone_number|default:'010-3161-5706' }}",
+        m_redirect_url: "https://galatea.website/payment/complete/" 
     };
 
     IMP.request_pay(data, function(rsp) {

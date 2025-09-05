@@ -403,13 +403,23 @@
                 font-size: 1.5rem;
             }
 
-            .ai-card,
-            .prompt-card {
-                max-width: 160px;
-            }
+    .ai-card,
+    .prompt-card {
+        min-width: 180px;  /* max-width를 min-width로 변경하고 크기 조정 */
+        max-width: 180px;
+    }
+            
+        .ai-image {
+        height: 120px;  /* 기본 200px에서 120px로 축소 */
+    }
+    
+    /* AI 카드 내부 패딩도 줄이기 */
+    .ai-content {
+        padding: 15px;  /* 기본 20px에서 15px로 축소 */
+    }
 
             .modal-card {
-                width: 95%;
+                width: 40%;
             }
         }
 
