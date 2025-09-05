@@ -123,105 +123,101 @@
     </div>
 
     <script src="{% static 'js/sidebar.js' %}"></script>
-    <script>
-        // JS 기능 그대로 유지
-        function initializeUIWithCurrentLlm() {
-            const initialLlm = {
-                id: "{{ llm.id|default:''|escapejs }}",
-                prompt: "{{ llm.prompt|default:''|escapejs }}",
-                voiceId: "{% if llm.voice %}{{ llm.voice.voice_id|default:''|escapejs }}{% else %}{% endif %}",
-                language: "{{ llm.language|default:''|escapejs }}",
-                stability: "{{ llm.stability|default:0.5|escapejs }}",
-                speed: "{{ llm.speed|default:0.5|escapejs }}",
-                style: "{{ llm.style|default:0.5|escapejs }}",
-                temperature: "{{ llm.temperature|default:0.5|escapejs }}",
-                model: "{{ llm.model|default:''|escapejs }}",
-                llmImage: "{% if llm.llm_image %}{{ llm.llm_image.url }}{% else %}{% endif %}"
-            };
+<script>
+    // 선택한 AI의 UI 업데이트
+    function updateUIForSelectedLlm() {
+        const llmSelect = document.getElementById("llmSelect");
+        const selectedOption = llmSelect.options[llmSelect.selectedIndex];
 
-            const llmImageElem = document.getElementById("llmImage");
-            const noImageText = document.getElementById("noImageText");
-            if (initialLlm.llmImage) {
-                llmImageElem.src = initialLlm.llmImage;
+        // 이름
+        const llmNameDisplay = document.getElementById("llmNameDisplay");
+        if (llmNameDisplay) {
+            llmNameDisplay.textContent = selectedOption.text;
+        }
+
+        // 프롬프트
+        const promptDisplay = document.getElementById("promptDisplay");
+        const promptInput = document.getElementById("promptInput");
+        if (promptDisplay) promptDisplay.value = selectedOption.dataset.prompt || "";
+        if (promptInput) promptInput.value = selectedOption.dataset.prompt || "";
+
+        // Voice ID
+        const voiceDisplay = document.getElementById("voiceIdDisplay");
+        const voiceInput = document.getElementById("voiceIdInput");
+        if (voiceDisplay) voiceDisplay.value = selectedOption.dataset.voiceId || "";
+        if (voiceInput) voiceInput.value = selectedOption.dataset.voiceId || "";
+
+        // 언어
+        const languageDisplay = document.getElementById("languageDisplay");
+        const languageInput = document.getElementById("languageInput");
+        if (languageDisplay) languageDisplay.textContent = selectedOption.dataset.language || "";
+        if (languageInput) languageInput.value = selectedOption.dataset.language || "";
+
+        // 슬라이더 값
+        const sliders = ["stability", "speed", "style", "temperature"];
+        sliders.forEach(key => {
+            const slider = document.getElementById(`${key}Slider`);
+            const valueDisplay = document.getElementById(`${key}Value`);
+            const hiddenInput = document.getElementById(`${key}Input`);
+            const value = selectedOption.dataset[key] || 0.5;
+            if (slider) slider.value = value;
+            if (valueDisplay) valueDisplay.textContent = value;
+            if (hiddenInput) hiddenInput.value = value;
+        });
+
+        // 이미지
+        const llmImageElem = document.getElementById("llmImage");
+        const noImageText = document.getElementById("noImageText");
+        const imageUrl = selectedOption.dataset.llmImage || "";
+        if (llmImageElem) {
+            if (imageUrl) {
+                llmImageElem.src = imageUrl;
                 llmImageElem.style.display = "block";
-                noImageText.style.display = "none";
+                if (noImageText) noImageText.style.display = "none";
             } else {
                 llmImageElem.style.display = "none";
-                noImageText.style.display = "block";
-            }
-
-            document.getElementById("promptInput").value = initialLlm.prompt;
-            document.getElementById("promptDisplay").value = initialLlm.prompt;
-            document.getElementById("voiceIdInput").value = initialLlm.voiceId;
-            document.getElementById("voiceIdDisplay").value = initialLlm.voiceId;
-            document.getElementById("languageInput").value = initialLlm.language;
-            document.getElementById("languageDisplay").textContent = initialLlm.language;
-            document.getElementById("stabilityInput").value = initialLlm.stability;
-            document.getElementById("stabilitySlider").value = initialLlm.stability;
-            document.getElementById("stabilityValue").textContent = initialLlm.stability;
-            document.getElementById("speedInput").value = initialLlm.speed;
-            document.getElementById("speedSlider").value = initialLlm.speed;
-            document.getElementById("speedValue").textContent = initialLlm.speed;
-            document.getElementById("styleInput").value = initialLlm.style;
-            document.getElementById("styleSlider").value = initialLlm.style;
-            document.getElementById("styleValue").textContent = initialLlm.style;
-            document.getElementById("temperatureInput").value = initialLlm.temperature;
-            document.getElementById("temperatureSlider").value = initialLlm.temperature;
-            document.getElementById("temperatureValue").textContent = initialLlm.temperature;
-            document.getElementById("modelInput").value = initialLlm.model;
-            document.getElementById("modelDisplay").textContent = initialLlm.model;
-
-            const llmSelect = document.getElementById("llmSelect");
-            if (llmSelect && initialLlm.id) {
-                for (let i = 0; i < llmSelect.options.length; i++) {
-                    if (llmSelect.options[i].value === initialLlm.id) {
-                        llmSelect.selectedIndex = i;
-                        break;
-                    }
-                }
+                if (noImageText) noImageText.style.display = "block";
             }
         }
 
-        function updatePromptAndVoice() {
-            const llmSelect = document.getElementById("llmSelect");
-            const selectedOption = llmSelect.options[llmSelect.selectedIndex];
-            const selectedLlmId = selectedOption.value;
-            const currentPath = window.location.pathname;
-            const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
-            const llmNameDisplay = document.getElementById("llmNameDisplay");
-            if (llmNameDisplay) {
-                llmNameDisplay.textContent = selectedOption.text;
+        // 모델
+        const modelDisplay = document.getElementById("modelDisplay");
+        const modelInput = document.getElementById("modelInput");
+        if (modelDisplay) modelDisplay.textContent = selectedOption.dataset.model || "";
+        if (modelInput) modelInput.value = selectedOption.dataset.model || "";
+    }
+
+    // 슬라이더 이벤트 설정
+    function setupSliderListeners() {
+        const sliders = ["stability", "speed", "style", "temperature"];
+        sliders.forEach(key => {
+            const slider = document.getElementById(`${key}Slider`);
+            const valueDisplay = document.getElementById(`${key}Value`);
+            const hiddenInput = document.getElementById(`${key}Input`);
+            if (slider) {
+                slider.oninput = function () {
+                    if (valueDisplay) valueDisplay.textContent = this.value;
+                    if (hiddenInput) hiddenInput.value = this.value;
+                };
             }
+        });
+    }
 
-            if (window.location.pathname !== newUrl) window.location.href = newUrl;
-            document.getElementById("promptDisplay").value = selectedOption.dataset.prompt || "";
+    window.onload = function () {
+        // 초기 UI 설정
+        updateUIForSelectedLlm();
 
+        // 슬라이더 이벤트
+        setupSliderListeners();
+
+        // select 변경 시 UI 업데이트
+        const llmSelect = document.getElementById("llmSelect");
+        if (llmSelect) {
+            llmSelect.addEventListener("change", updateUIForSelectedLlm);
         }
+    };
+</script>
 
-        function setupSliderListeners() {
-            document.getElementById("stabilitySlider").oninput = function () {
-                document.getElementById("stabilityValue").textContent = this.value;
-                document.getElementById("stabilityInput").value = this.value;
-            };
-            document.getElementById("speedSlider").oninput = function () {
-                document.getElementById("speedValue").textContent = this.value;
-                document.getElementById("speedInput").value = this.value;
-            };
-            document.getElementById("styleSlider").oninput = function () {
-                document.getElementById("styleValue").textContent = this.value;
-                document.getElementById("styleInput").value = this.value;
-            };
-            document.getElementById("temperatureSlider").oninput = function () {
-                document.getElementById("temperatureValue").textContent = this.value;
-                document.getElementById("temperatureInput").value = this.value;
-            };
-        }
-
-        window.onload = function () {
-            initializeUIWithCurrentLlm();
-            setupSliderListeners();
-        };
-    </script>
 
 </body>
 </html>
