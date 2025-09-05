@@ -57,7 +57,7 @@ LOCALE_PATHS = [
 SECRET_KEY = "django-insecure-_fcy$35d^qgcdkj6@pvo$!baii%3gz=2vphd#bs$ns4$-f@1wo"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
