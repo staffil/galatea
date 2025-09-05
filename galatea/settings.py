@@ -210,3 +210,4 @@ LOGGING = {
         },
     },
 }
+SOCIALACCOUNT_AUTO_SIGNUP = True
