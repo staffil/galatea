@@ -15,12 +15,16 @@ from home import views as main_view
 from makeVoice import views as make_voice_view
 from helpdesk import views as helpdesk_view
 from payment import views as payment_view
+from django.contrib.sitemaps.views import sitemap
+from home.sitemaps import StaticViewSitemap
 
 def root_redirect(request):
     lang = get_language()
     return redirect(f'/{lang}/')
 
-
+sitemaps = {
+    "static": StaticViewSitemap,
+}
 urlpatterns = [
     path('', root_redirect),  # 루트 접속 시 언어별 URL로 리다이렉트
     path('admin/', admin.site.urls),
@@ -39,7 +43,8 @@ urlpatterns = [
     path('<int:llm_id>/introduce', main_view.distribute_llm, name='distribute_llm'),
     path("auto_generate_prompt", make_voice_view.auto_generate_prompt, name="auto_generate_prompt") ,           
     path("auto_prompt/", customer_ai_views.auto_prompt, name="auto_prompt"),
-    path("payment/complete/", payment_view.payment_complete, name="payment_complete")
+    path("payment/complete/", payment_view.payment_complete, name="payment_complete"),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
 
 
 
