@@ -57,7 +57,7 @@ LOCALE_PATHS = [
 SECRET_KEY = "django-insecure-_fcy$35d^qgcdkj6@pvo$!baii%3gz=2vphd#bs$ns4$-f@1wo"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
@@ -78,8 +78,6 @@ INSTALLED_APPS = [
 'allauth.account',
 'allauth.socialaccount',
 'allauth.socialaccount.providers.google',
-'allauth.socialaccount.providers.github',
-
 "django.contrib.contenttypes",
 "django.contrib.sessions",
 "django.contrib.messages",
@@ -90,7 +88,7 @@ INSTALLED_APPS = [
 "makeImage",
 "payment",
 "home",
-"cloning",
+# "cloning",
 "makeVoice",
 "register",
 "mypage",
@@ -233,5 +231,4 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# 소셜 로그인 시 바로 회원가입 후 로그인
 SOCIALACCOUNT_AUTO_SIGNUP = True
