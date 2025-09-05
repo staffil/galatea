@@ -24,6 +24,7 @@
     <div class="plan-card">
         <h3 >{{ plan.rankname }}</h3>
         <p>{% trans "가격" %}: {{ plan.price }}{% trans "원" %}</p>
+        <p>{% trans "$" %}: {{ plan.daller_price }}</p>
         <p  style="background-color: {{ plan.color }};">{% trans "음성" %}: {{ plan.voicetime }}</p>
         <p  style="background-color: {{ plan.color }};">{% trans "토큰" %}: {{ plan.freetoken }}</p>
         <form action="{% url 'payment:payment_charge' %}" method="post">
