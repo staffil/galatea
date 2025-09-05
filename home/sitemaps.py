@@ -8,7 +8,7 @@ class StaticViewSitemap(Sitemap):
 
     def items(self):
         # urls.py에서 name 으로 등록된 뷰 이름
-        return ["main", "home"]
+        return ["home:home", "home:main"]
 
     def location(self, item):
         return reverse(item)
