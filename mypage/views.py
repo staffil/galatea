@@ -147,7 +147,7 @@ def my_ai_models_update(request, llm_id):
 
         if voice_id:
             try:
-                voice = VoiceList.objects.get(voice_id=voice_id)
+                voice = VoiceList.objects.filter(voice_id=voice_id).first()
             except VoiceList.DoesNotExist:
                 voice = VoiceList.objects.create(user=request.user, voice_id=voice_id)
             llm.voice = voice
