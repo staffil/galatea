@@ -470,3 +470,7 @@ def user_intro(request, user_id):
 
     return render(request, "home/user_intro.html", context)
 
+
+
+def soon(request):
+    return render(request, "home/soon.html")
