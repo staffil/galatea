@@ -1134,7 +1134,7 @@ main {
 .event_list img {
     min-width: 100%;
     width: 280px;
-    height: 180px;
+    height: 300px;
     object-fit: cover;
     border-radius: 16px;
     border: 1px solid rgba(139,92,246,0.2);
