@@ -1658,10 +1658,10 @@ msgid "자동 결제 완료"
 msgstr "Paiement automatique effectué"
 
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "친구초대하기"
 msgstr "Inviter des Amis" 
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "이벤트"
 msgstr "Événement"  

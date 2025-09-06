@@ -1657,10 +1657,10 @@ msgstr "Ошибка автоматического платежа"
 msgid "자동 결제 완료"
 msgstr "Автоматический платеж завершен"
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "친구초대하기"
 msgstr "Пригласить друзей"
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "이벤트"
 msgstr "Событие"  

@@ -1657,10 +1657,10 @@ msgstr "स्वचालित भुगतान विफल"
 msgid "자동 결제 완료"
 msgstr "स्वचालित भुगतान पूर्ण"
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "친구초대하기"
 msgstr "दोस्तों को आमंत्रित करें"
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "이벤트"
 msgstr "ईवेंट"      

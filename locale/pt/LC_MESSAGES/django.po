@@ -1657,11 +1657,11 @@ msgstr "Falha no pagamento automático"
 msgid "자동 결제 완료"
 msgstr "Pagamento automático concluído"
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "친구초대하기"
 msgstr "Convidar Amigos"  
 
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "이벤트"
 msgstr "Evento"    

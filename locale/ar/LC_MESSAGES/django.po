@@ -1657,10 +1657,10 @@ msgstr "فشل الدفع التلقائي"
 msgid "자동 결제 완료"
 msgstr "اكتمل الدفع التلقائي"
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "친구초대하기"
 msgstr "دعوة الأصدقاء"   
 
-#: .\home\templates\home\main.html:9
+#: .\home\templates\home\main.html
 msgid "이벤트"
 msgstr "حدث" 
