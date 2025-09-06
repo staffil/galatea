@@ -1155,14 +1155,14 @@ main {
 @media (max-width: 1024px) {
     .event_list img {
         width:100%;
-        height: 150px;
+        height: 300px;
     }
 }
 
 @media (max-width: 768px) {
     .event_list img {
         width: 100%;
-        height: 130px;
+        height: 300px;
         border-radius: 12px;
     }
 }
