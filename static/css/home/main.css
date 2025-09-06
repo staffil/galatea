@@ -148,7 +148,7 @@ main {
    뉴스 섹션 - 기존 CSS 완전 유지
    =========================================== */
 .news-section {
-    max-width: 1600px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1rem;
 
