@@ -148,7 +148,7 @@ main {
    뉴스 섹션 - 기존 CSS 완전 유지
    =========================================== */
 .news-section {
-    max-width: 1800px;
+    max-width: 1500px;
     margin: 0 auto;
     padding: 2rem 1rem;
 
@@ -184,7 +184,7 @@ main {
 .news-slide {
     min-width: 100%;
     position: relative;
-    height: 700px;
+    height: 600px;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
