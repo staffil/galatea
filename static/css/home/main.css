@@ -148,9 +148,10 @@ main {
    뉴스 섹션 - 기존 CSS 완전 유지
    =========================================== */
 .news-section {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 2rem 1rem;
+
 }
 
 .news-section .section-title {
@@ -1095,3 +1096,81 @@ main {
     }
 }
 
+
+
+/* 이벤트 섹션 */
+.event_list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 0;
+    margin-bottom: 25px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139,92,246,0.5) transparent;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    cursor: grab;
+}
+
+.event_list:active {
+    cursor: grabbing;
+}
+
+.event_list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.event_list::-webkit-scrollbar-track {
+    background: rgba(139,92,246,0.1);
+    border-radius: 4px;
+}
+
+.event_list::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+    border-radius: 4px;
+}
+
+.event_list img {
+    min-width: 100%;
+    width: 280px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid rgba(139,92,246,0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.05));
+}
+
+.event_list img:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 45px rgba(139,92,246,0.4);
+    border-color: #8b5cf6;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .event_list img {
+        width:100%;
+        height: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .event_list img {
+        width: 100%;
+        height: 130px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .event_list img {
+        width: 100%;
+        height: 110px;
+        border-radius: 10px;
+    }
+}

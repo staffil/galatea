@@ -6,7 +6,7 @@ from customer_ai.models import Conversation, LLM
 from celebrity.models import Celebrity,CelebrityVoice
 from distribute.models import Genre
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from user_auth.models import Faq, Requests, Notice
+from user_auth.models import Faq, Requests, Notice, Gift
 from cloning.models import CloningAgreement
 
 User = get_user_model()
@@ -285,6 +285,21 @@ class NoticeAdmin(admin.ModelAdmin):
     @admin.display(description="올린 관리자")
     def get_author(self, obj):
         return obj.author.username if obj.author else "-"
+    
+
+@admin.register(Gift)
+class GiftAdmin(admin.ModelAdmin):
+    list_display = ("get_title", "get_gift_img", )
+
+    @admin.display(description="이벤트 제목")
+    def get_title(self, obj):
+        return obj.title
+    
+    @admin.display(description="이벤트 사진")
+    def get_gift_img(self, obj):
+        return obj.gift_img
+    
+    
         
 from django.contrib import admin
 from payment.models import (
@@ -344,3 +359,4 @@ class PaymentStatsAdmin(admin.ModelAdmin):
 @admin.register(CloningAgreement)
 class CloningAgreementAdmin(admin.ModelAdmin):
     list_display = ('voice_text', 'third_text', 'share_text')
+

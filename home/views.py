@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 from distribute.models import Comment
 from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
+from user_auth.models import Gift
 
 User = get_user_model()
 
@@ -72,6 +73,8 @@ def main(request):
     voice_list = list(VoiceList.objects.filter(id__in = voice_list_ids).prefetch_related('llm'))
     voice_list.sort(key=lambda x: voice_list_ids.index(x.id))
 
+    gift_list = Gift.objects.all()
+
     # 다국어 이름/설명 처리
     for c in celebrity_list:
         name_field = f'celebrity_name_{language}'
@@ -99,6 +102,7 @@ def main(request):
         "celebrity_voice_list": celebrity_voice_list,
         "news_list": news_list,
         "total_follow_count":total_follow_count,
+        "gift_list" : gift_list,
     }
 
     return render(request, 'home/main.html', context)
@@ -440,3 +444,4 @@ def user_intro(request, user_id):
     }
 
     return render(request, "home/user_intro.html", context)
+

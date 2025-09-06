@@ -20,8 +20,9 @@ urlpatterns = [
 
     path("voice_all/", views.voice_all, name="voice_all"),
     path("save_voice/", views.save_voice, name="save_voice"),
-    path("user_intro/<int:user_id>/", views.user_intro, name="user_intro")
+    path("user_intro/<int:user_id>/", views.user_intro, name="user_intro"),
 
     # path('like/<int:llm_id>/', views.like_toggle, name = "like_toggle"),
+
 ]
 

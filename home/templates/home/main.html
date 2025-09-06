@@ -392,6 +392,20 @@
     </div>
 </div>
 
+<!-- 이벤트 -->
+<div class="popular-users-section">
+    <h2 class="section-title">{% trans '이벤트' %}</h2>
+    <div class="event_list">
+        {% for gift in gift_list %}
+                {% if gift.gift_img %}
+                    <img src="{{  gift.gift_img.url }}" alt="">
+                {% else %}
+                    <img src="{% static 'images/default_user.png' %}" alt="">
+                {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
 <script>
 function openUserModal(user_id) {
     const modalHTML = `

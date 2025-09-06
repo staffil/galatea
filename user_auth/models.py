@@ -66,7 +66,7 @@ class Gift(models.Model):
 
     class Meta:
         db_table = 'gift'
-        verbose_name = '사은품 및 광고'
+        verbose_name = '이벤트'
 
 
 
