@@ -149,6 +149,9 @@ SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_SIGNUP_FORM_CLASS = None
 
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'  # 이메일 인증 스킵
+SOCIALACCOUNT_LOGIN_ON_GET = True 
+
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         'APP': {
@@ -165,6 +168,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': os.getenv("SOCIAL_AUTH_GITHUB_SECRET"),
             'key': ''
         }
+        
     },
 }
 # 세션 / 캐시
