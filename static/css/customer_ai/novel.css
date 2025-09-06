@@ -179,7 +179,7 @@ body::before {
 }
 
 .ai-image {
-    max-width: 100%;
+    max-width: 70%;
     max-height: 800px;
     border-radius: 20px;
     box-shadow: var(--shadow);
