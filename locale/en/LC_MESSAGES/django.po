@@ -1713,3 +1713,13 @@ msgstr "Automatic payment failed"
 #: .\payment\views.py:
 msgid "자동 결제 완료"
 msgstr "Automatic payment completed"
+
+
+#: .\home\templates\home\main.html:9
+msgid "친구초대하기"
+msgstr "INVITE FRIEND"
+
+
+#: .\home\templates\home\main.html:9
+msgid "이밴트"
+msgstr "Event"

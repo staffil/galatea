@@ -1656,3 +1656,11 @@ msgstr "فشل الدفع التلقائي"
 #: .\payment\views.py:
 msgid "자동 결제 완료"
 msgstr "اكتمل الدفع التلقائي"
+
+#: .\home\templates\home\main.html:9
+msgid "친구초대하기"
+msgstr "دعوة الأصدقاء"   
+
+#: .\home\templates\home\main.html:9
+msgid "이밴트"
+msgstr "حدث" 

@@ -1656,3 +1656,11 @@ msgstr "Ошибка автоматического платежа"
 #: .\payment\views.py:
 msgid "자동 결제 완료"
 msgstr "Автоматический платеж завершен"
+
+#: .\home\templates\home\main.html:9
+msgid "친구초대하기"
+msgstr "Пригласить друзей"
+
+#: .\home\templates\home\main.html:9
+msgid "이밴트"
+msgstr "Событие"  

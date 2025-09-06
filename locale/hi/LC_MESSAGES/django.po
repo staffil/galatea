@@ -1656,3 +1656,11 @@ msgstr "स्वचालित भुगतान विफल"
 #: .\payment\views.py:
 msgid "자동 결제 완료"
 msgstr "स्वचालित भुगतान पूर्ण"
+
+#: .\home\templates\home\main.html:9
+msgid "친구초대하기"
+msgstr "दोस्तों को आमंत्रित करें"
+
+#: .\home\templates\home\main.html:9
+msgid "이밴트"
+msgstr "ईवेंट"      

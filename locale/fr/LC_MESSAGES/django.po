@@ -1656,3 +1656,12 @@ msgstr "Échec du paiement automatique"
 #: .\payment\views.py:
 msgid "자동 결제 완료"
 msgstr "Paiement automatique effectué"
+
+
+#: .\home\templates\home\main.html:9
+msgid "친구초대하기"
+msgstr "Inviter des Amis" 
+
+#: .\home\templates\home\main.html:9
+msgid "이밴트"
+msgstr "Événement"  
