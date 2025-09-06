@@ -1721,5 +1721,5 @@ msgstr "INVITE FRIEND"
 
 
 #: .\home\templates\home\main.html:9
-msgid "이밴트"
+msgid "이벤트"
 msgstr "Event"

@@ -1663,5 +1663,5 @@ msgid "친구초대하기"
 msgstr "Inviter des Amis" 
 
 #: .\home\templates\home\main.html:9
-msgid "이밴트"
+msgid "이벤트"
 msgstr "Événement"  
