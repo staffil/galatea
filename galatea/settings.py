@@ -33,7 +33,7 @@ LANGUAGES = [
     ('en', 'English'),
     ('ja', '日本語'),
     ('zh', '中文'),
-    ('fr', 'Français'),
+    # ('fr', 'Français'),
     ('es', 'Español'),
     ('pt', 'Português'),    
     ('ru', 'Русский'),      
