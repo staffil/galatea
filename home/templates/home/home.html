@@ -1,25 +1,25 @@
 {% load static %} 
+{% load i18n %}
 
 <!DOCTYPE html>
-<html lang="{LANGUAGE_CODE}">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-<meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
-    <title>Welcome to GALATEA AI</title>
+    <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
+    <title>{% trans "Welcome to GALATEA AI" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
-    <meta property="og:title" content="GALATEA AI" />
-    <meta property="og:description" content="Welcome to GALATEA AI - AI 서비스 소개 사이트" />
-<meta property="og:image" content="https://galatea.website/static/img/logo.png">
+    <meta property="og:title" content="{% trans 'GALATEA AI' %}" />
+    <meta property="og:description" content="{% trans 'Welcome to GALATEA AI - AI 서비스 소개 사이트' %}" />
+    <meta property="og:image" content="https://galatea.website/static/img/intro.png">
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
-    <meta name="description" content="GALATEA AI - AI 대화형 쳇봇 서비스">
-
+    <meta name="description" content="{% trans 'GALATEA AI - AI 대화형 쳇봇 서비스' %}">
 </head>
 <body>
 <div class="wrapper">
     <div class="logo">        
-        <img src="/static/img/logo.png" alt="Galatea Logo" style="width: 100px; height: 100px;">
+        <img src="/static/img/logo.png" alt="{% trans 'Galatea Logo' %}" style="width: 100px; height: 100px;">
         <h1>GALATEA</h1>
     </div>
 
@@ -29,17 +29,17 @@
         <div class="circle-bg circle-3"></div>
         <div class="circle-bg circle-4"></div>
         <div class="circle-bg circle-5">
-            <img src="/static/img/logo.png" alt="Galatea Logo">
+            <img src="/static/img/logo.png" alt="{% trans 'Galatea Logo' %}">
         </div>
 
-        <div class="welcome-text">welcome to</div>
+        <div class="welcome-text">{% trans "welcome to" %}</div>
         <div class="galatea-text">GALATEA</div>
     </div>
 
     <div class="button-container">
-        <button class="btn btn-main" onclick="handleClick('main')">MAIN</button>
-        <button class="btn btn-signup" onclick="handleClick('signup')">SIGN UP</button>
-        <button class="btn btn-login" onclick="handleClick('login')">LOGIN</button>
+        <button class="btn btn-main" onclick="handleClick('main')">{% trans "MAIN" %}</button>
+        <button class="btn btn-signup" onclick="handleClick('signup')">{% trans "SIGN UP" %}</button>
+        <button class="btn btn-login" onclick="handleClick('login')">{% trans "LOGIN" %}</button>
     </div>
 </div>
 <script>
@@ -47,7 +47,7 @@
     const URL_LOGIN = "{% url 'register:login' %}";
 </script>
 
- <script src="{% static 'js/home/home.js' %}"></script>
+<script src="{% static 'js/home/home.js' %}"></script>
 
 </body>
 </html>
