@@ -1,6 +1,10 @@
 from django.urls import path
 from customer_ai import views
+from customer_ai.sitemaps import StaticViewSitemap as CustomerAISitemap
 
+sitemaps = {
+    "customer_ai": CustomerAISitemap(),
+}
 
 urlpatterns = [
     path('upload_audio/', views.upload_audio, name='upload_audio'),

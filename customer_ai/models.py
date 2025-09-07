@@ -79,6 +79,8 @@ class LLM(models.Model):
         db_table = 'LLM'
         verbose_name = 'ai 정보'
 
+        
+
 
 
 # 프롬프트 테이블 
