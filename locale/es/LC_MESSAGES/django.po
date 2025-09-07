@@ -1664,3 +1664,13 @@ msgstr "Invitar Amigos"
 #: .\home\templates\home\main.html
 msgid "이벤트"
 msgstr "Evento"  
+
+#: .\home\templates\home\main.html
+#: .\home\templates\home\home.html
+msgid "Welcome to GALATEA AI - AI 서비스 소개 사이트"
+msgstr "Bienvenido a GALATEA AI - Sitio de presentación de servicios de IA"
+
+#: .\home\templates\home\main.html
+#: .\home\templates\home\home.html
+msgid "GALATEA AI - AI 대화형 쳇봇 서비스"
+msgstr "GALATEA AI - Servicio de chatbot conversacional de IA" 
