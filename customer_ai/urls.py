@@ -1,10 +1,17 @@
 from django.urls import path
 from customer_ai import views
 from customer_ai.sitemaps import StaticViewSitemap as CustomerAISitemap
+from django.contrib.sitemaps.views import sitemap
+from customer_ai.sitemaps import LLMSitemapAllModes
 
 sitemaps = {
-    "customer_ai": CustomerAISitemap(),
+    'customer_ai': LLMSitemapAllModes(),
 }
+
+urlpatterns = [
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+]
+
 
 urlpatterns = [
     path('upload_audio/', views.upload_audio, name='upload_audio'),

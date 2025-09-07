@@ -16,10 +16,9 @@ from makeVoice import views as make_voice_view
 from helpdesk import views as helpdesk_view
 from payment import views as payment_view
 from django.contrib.sitemaps.views import sitemap
+from home.sitemaps import StaticViewSitemap
+from django.views.generic import TemplateView
 
-
-from django.contrib.sitemaps.views import sitemap
-from customer_ai.sitemaps import LLMSitemapAllModes
 
 
 
@@ -27,9 +26,8 @@ def root_redirect(request):
     lang = get_language()
     return redirect(f'/{lang}/')
 
-
 sitemaps = {
-    'customer_ai': LLMSitemapAllModes(),
+    "static": StaticViewSitemap,
 }
 urlpatterns = [
     path('', root_redirect),  # 루트 접속 시 언어별 URL로 리다이렉트
