@@ -1,6 +1,5 @@
 from django.urls import path
 from customer_ai import views
-from customer_ai.sitemaps import StaticViewSitemap as CustomerAISitemap
 from django.contrib.sitemaps.views import sitemap
 from customer_ai.sitemaps import LLMSitemapAllModes
 
