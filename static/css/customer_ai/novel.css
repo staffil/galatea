@@ -179,13 +179,13 @@ body::before {
 }
 
 .ai-image {
-    max-width: 70%;
-    max-height: 800px;
-    border-radius: 20px;
-    box-shadow: var(--shadow);
-    border: 2px solid var(--border);
-    margin-bottom: 20px;
-     object-fit: cover;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 20px 20px 20px 5px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+            text-align: left;
+            width: 30%;
 
 }
 
@@ -265,7 +265,7 @@ body::before {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
     border-bottom-right-radius: 6px;
-    max-width: 70%;
+    max-width: 100%;
     margin-left: auto;
 }
 
@@ -282,7 +282,7 @@ body::before {
     border: 1px solid var(--border);
     color: #1a1a1a;
     border-bottom-left-radius: 6px;
-    max-width: 70%;
+    max-width: 100%;
 }
 
 .novel-output p.ai-message strong {
@@ -505,6 +505,7 @@ body::before {
     }
 }
 
+
 /* 공유 버튼 스타일 */
 .share-btn {
     display: inline-flex;
@@ -526,16 +527,16 @@ body::before {
     box-shadow: 0 4px 15px rgba(139,92,246,0.3);
     text-decoration: none;
     min-width: 120px;
+    margin-top: 20px;
+    width: 100%;
 }
 
-/* 공유 아이콘 추가 */
 .share-btn::before {
     content: '🔗';
     font-size: 16px;
     margin-right: 4px;
 }
 
-/* 호버 효과 */
 .share-btn:hover {
     background: linear-gradient(135deg, #7c3aed, #0891b2);
     transform: translateY(-2px);
@@ -547,7 +548,6 @@ body::before {
     box-shadow: 0 4px 15px rgba(139,92,246,0.3);
 }
 
-/* 빛나는 효과 */
 .share-btn::after {
     content: '';
     position: absolute;
@@ -563,7 +563,6 @@ body::before {
     left: 100%;
 }
 
-/* 클릭 시 성공 피드백 */
 .share-btn.copied {
     background: linear-gradient(135deg, #22c55e, #16a34a);
     animation: success-bounce 0.3s ease;
@@ -629,3 +628,188 @@ body::before {
     background: rgba(107,114,128,0.5);
     box-shadow: none;
 }
+
+        /* 한 페이지 종이 책 디자인 */
+        .novel-output {
+            flex: 1;
+            max-height: 600px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            position: relative;
+            
+            /* 종이 책 스타일 */
+            background: #f9f6f1;
+            border: 1px solid #e0d4b7;
+            border-radius: 8px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 -1px 0 rgba(139, 69, 19, 0.1);
+            
+            /* 책 패딩과 타이포그래피 */
+            padding: 60px 50px 80px;
+            font-family: 'Crimson Text', Georgia, serif;
+            line-height: 1.8;
+            font-size: 16px;
+            color: #2c2416;
+            text-align: justify;
+        }
+
+        /* 종이 질감 효과 */
+        .novel-output::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(160, 82, 45, 0.02) 0%, transparent 50%);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        /* 왼쪽 바인딩 라인 */
+        .novel-output::after {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 40px;
+            bottom: 40px;
+            width: 1px;
+            background: rgba(139, 69, 19, 0.2);
+            box-shadow: 0 0 2px rgba(139, 69, 19, 0.1);
+        }
+
+        /* 스크롤바 스타일링 */
+        .novel-output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .novel-output::-webkit-scrollbar-track {
+            background: rgba(139, 69, 19, 0.1);
+            border-radius: 4px;
+        }
+
+        .novel-output::-webkit-scrollbar-thumb {
+            background: rgba(139, 69, 19, 0.3);
+            border-radius: 4px;
+        }
+
+        .novel-output::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 69, 19, 0.5);
+        }
+
+        /* 기본 안내 텍스트 */
+        .novel-output p:first-child {
+            text-align: center;
+            font-style: italic;
+            color: rgba(44, 36, 22, 0.6);
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px dashed rgba(139, 69, 19, 0.2);
+            border-radius: 6px;
+            background: rgba(139, 69, 19, 0.03);
+        }
+
+        /* 사용자 메시지 스타일 */
+        .novel-output p.user-message {
+            background: rgba(102, 126, 234, 0.08);
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 6px;
+            font-style: italic;
+            color: #4a5568;
+            font-size: 15px;
+            animation: fadeInText 0.5s ease-out;
+        }
+
+        .novel-output p.user-message strong {
+            color: #667eea;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* AI 메시지 (소설 내용) 스타일 */
+        .novel-output p.ai-message {
+            margin-bottom: 25px;
+            text-indent: 2em;
+            word-break: keep-all;
+            hyphens: auto;
+            animation: fadeInText 0.8s ease-out;
+            position: relative;
+        }
+
+        .novel-output p.ai-message strong {
+            display: none; /* AI: 라벨 숨기기 */
+        }
+
+        /* 첫 번째 AI 응답에 장식적 첫 글자 */
+        .novel-output p.ai-message:first-of-type::first-letter {
+            float: left;
+            font-family: 'Playfair Display', serif;
+            font-size: 4em;
+            line-height: 0.8;
+            margin: 0.1em 0.1em 0 0;
+            color: #8b4513;
+            font-weight: 700;
+        }
+
+        /* 텍스트 애니메이션 */
+        @keyframes fadeInText {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        /* 페이지 번호 (하단 중앙) */
+        .page-number {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: rgba(44, 36, 22, 0.5);
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* 반응형 조정 */
+        @media (max-width: 768px) {
+            .novel-output {
+                padding: 40px 30px 60px;
+                font-size: 15px;
+                max-height: 500px;
+            }
+            
+            .novel-output::after {
+                left: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .novel-output {
+                padding: 30px 20px 50px;
+                font-size: 14px;
+                max-height: 400px;
+            }
+            
+            .novel-output p.user-message {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            
+            .novel-output::after {
+                left: 15px;
+            }
+        }

@@ -1,0 +1,267 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '통화 모드' %}</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/phone.css' %}">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+
+
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+    
+    <div class="hamburger" style="margin-top: 80px;" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-options">
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';">
+                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
+                </div>
+
+                <div class="mode-option active">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/phone/{{llm_id}}';" checked>
+                    <label><i class="fas fa-phone"></i> PHONE MODE</label>
+                </div>
+            </div>
+            <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+                {% trans '공유하기' %}
+            </button>
+        </aside>
+
+        <div class="background-blur"></div>
+        
+        <div class="phone-container">
+            <!-- 상태바 -->
+            <div class="status-bar">
+                <div class="status-left">
+                    <span id="currentTime">10:30</span>
+                </div>
+                <div class="status-right">
+                    <div class="signal-bars">
+                        <div class="signal-bar"></div>
+                        <div class="signal-bar"></div>
+                        <div class="signal-bar"></div>
+                        <div class="signal-bar"></div>
+                    </div>
+                    <span>📶</span>
+                    <span>🔋</span>
+                </div>
+            </div>
+
+            <!-- 통화 상태 -->
+            <div class="call-status">
+                <div class="call-type">{% trans '음성 통화' %}</div>
+                <div class="call-duration" id="callDuration">00:00</div>
+            </div>
+
+            <!-- 메인 통화 정보 -->
+            <div class="call-info">
+                {% if llm.llm_image %}
+                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
+                    <div class="speaking-ring" id="speakingRing"></div>
+                {% else %}
+                    <div class="caller-avatar">
+                        <div class="speaking-ring" id="speakingRing"></div>
+                        🤖
+                    </div>
+                {% endif %}
+                
+                <div class="caller-name">{{ llm.name }}</div>
+                <div class="caller-subtitle" id="callStatusText">{% trans '연결 대기 중...' %}</div>
+                <div class="call-quality">
+                    <div class="signal-bars">
+                        <div class="signal-bar"></div>
+                        <div class="signal-bar"></div>
+                        <div class="signal-bar"></div>
+                        <div class="signal-bar"></div>
+                    </div>
+                    <span>{% trans '고음질' %}</span>
+                </div>
+            </div>
+
+
+            <!-- 메인 통화 컨트롤 -->
+            <div class="call-controls">
+                <button class="control-btn speaker" id="speakerBtn" onclick="toggleSpeaker()" title="{% trans '스피커' %}">🔊</button>
+                <button class="control-btn call-toggle" id="callToggleBtn" onclick="toggleCall()" title="{% trans '통화 시작/종료' %}">📞</button>
+                <button class="control-btn mute" id="muteBtn" onclick="toggleMute()" title="{% trans '음소거' %}">🎤</button>
+            </div>
+
+            <!-- 음성 인식 텍스트 -->
+            <div class="voice-transcript" id="voiceTranscript"></div>
+
+            <!-- 홈 인디케이터 -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+
+   <script>
+        const llmId = "{{ llm_id }}";
+        let isCallActive = false;
+        let isSpeakerOn = false;
+        let isMuted = false;
+        let callStartTime = null;
+        let callTimer = null;
+        let mediaRecorder = null;
+        let audioStream = null;
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        async function startMicrophone() {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(audioStream);
+            mediaRecorder.start(1000); // 1초 단위 청크
+
+            mediaRecorder.ondataavailable = async (event) => {
+                if (!event.data || event.data.size === 0) return;
+                if (isMuted) return;
+
+                const chunkBlob = event.data;
+                const formData = new FormData();
+                formData.append('audio_chunk', chunkBlob);
+                formData.append('llm_id', llmId);
+
+                try {
+                    const response = await fetch("{% url 'phone_process' %}", { method:'POST', body:formData });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.tts_url) playAudio(data.tts_url);
+                        if (data.transcript) showVoiceTranscript(data.transcript);
+                    }
+                } catch(err) { console.error('오디오 전송 실패:', err); }
+            };
+        }
+
+        function stopMicrophone() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+            if (audioStream) audioStream.getTracks().forEach(track => track.stop());
+        }
+
+        function playAudio(url) {
+            fetch(url)
+            .then(res => res.arrayBuffer())
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+            .then(audioBuffer => {
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+                source.start();
+            }).catch(err => console.error('TTS 재생 실패:', err));
+        }
+
+        function toggleCall() {
+            isCallActive = !isCallActive;
+            const callToggleBtn = document.getElementById('callToggleBtn');
+            const callStatusText = document.getElementById('callStatusText');
+            const speakingRing = document.getElementById('speakingRing');
+
+            if (isCallActive) {
+                callToggleBtn.classList.add('active');
+                callStatusText.textContent = '{% trans "통화 중..." %}';
+                speakingRing.classList.add('active');
+                callStartTime = Date.now();
+                startCallTimer();
+                showVoiceTranscript('{% trans "음성 통화가 시작되었습니다." %}');
+                startMicrophone();
+            } else {
+                callToggleBtn.classList.remove('active');
+                callStatusText.textContent = '{% trans "연결 대기 중..." %}';
+                speakingRing.classList.remove('active');
+                stopCallTimer();
+                showVoiceTranscript('{% trans "통화가 종료되었습니다." %}');
+                stopMicrophone();
+            }
+        }
+
+        function toggleSpeaker() {
+            isSpeakerOn = !isSpeakerOn;
+            const speakerBtn = document.getElementById('speakerBtn');
+            if (isSpeakerOn) {
+                speakerBtn.classList.add('active');
+                showVoiceTranscript('{% trans "스피커가 켜졌습니다." %}');
+            } else {
+                speakerBtn.classList.remove('active');
+                showVoiceTranscript('{% trans "스피커가 꺼졌습니다." %}');
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const muteBtn = document.getElementById('muteBtn');
+            if (isMuted) {
+                muteBtn.classList.add('active');
+                muteBtn.innerHTML = '🔇';
+                showVoiceTranscript('{% trans "마이크가 꺼졌습니다." %}');
+            } else {
+                muteBtn.classList.remove('active');
+                muteBtn.innerHTML = '🎤';
+                showVoiceTranscript('{% trans "마이크가 켜졌습니다." %}');
+            }
+        }
+
+        function startCallTimer() {
+            callTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - callStartTime)/1000);
+                const minutes = Math.floor(elapsed/60).toString().padStart(2,'0');
+                const seconds = (elapsed%60).toString().padStart(2,'0');
+                document.getElementById('callDuration').textContent = `${minutes}:${seconds}`;
+            },1000);
+        }
+
+        function stopCallTimer() {
+            if(callTimer){ clearInterval(callTimer); callTimer=null; }
+            document.getElementById('callDuration').textContent='00:00';
+        }
+
+        function showVoiceTranscript(text) {
+            const transcript = document.getElementById('voiceTranscript');
+            transcript.textContent = text;
+            transcript.style.display = 'block';
+            setTimeout(()=>{ transcript.style.display='none'; }, 3000);
+        }
+
+        // 현재 시간 표시
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2,'0');
+            const minutes = now.getMinutes().toString().padStart(2,'0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+        }
+
+        updateTime();
+        setInterval(updateTime,1000);
+    </script>
+</body>
+</html>

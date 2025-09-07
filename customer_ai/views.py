@@ -209,6 +209,20 @@ def novel_view(request, llm_id):
         "llm": llm
     })
 
+
+def phone_view(request, llm_id):
+    try:
+        llm = LLM.objects.get(id=llm_id)
+    except LLM.DoesNotExist:
+        llm = None
+    return render(request, "customer_ai/phone.html",{
+        "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
+        "llm_id": llm_id,
+        "llm": llm
+    })
+
+
+
 def not_in_voice_id(voice_id,eleven_client):
     url = f"https://api.elevenlabs.io/v1/voices/{voice_id}"
     header ={
@@ -649,13 +663,23 @@ def novel_process(request):
 
     # 시스템 프롬프트
     system_prompt = f"""
-You are a novel-style narrator.
-Generate exactly 3 sentences in response to the user's input:
-1-2 sentences: narrative description that continues naturally from the user's input and previous conversation.
-3rd sentence: a single line of dialogue from the AI character enclosed in quotes "", which directly responds to the user's input.
-Keep the previous conversation in mind to maintain context.
-Respond in {llm.language}.
-"""
+    You are a novel-style narrator.
+    and your name is {llm.name} not AI character
+
+    Your response must always consist of exactly 3 sentences:
+    - The first 1–2 sentences must be written in third-person narrative, like a novel, continuing naturally from the user's input and prior conversation context.
+    - The final 3rd sentence must always be a single line of dialogue from the AI character, enclosed in double quotes ("..."), directly addressing the user’s input.
+
+    Strict rules:
+    - Never use dialogue outside of the 3rd sentence.
+    - Never write the 1–2 narrative sentences in non-novel styles (no plain explanations, no bullet points, no assistant-like answers).
+    - Always preserve the story-like tone in narration and maintain contextual consistency across turns.
+
+    
+
+    Respond in {llm.language}.
+    """
+
 
     # 모델 및 API provider 분리
     if ":" not in llm.model:
@@ -727,3 +751,5 @@ Respond in {llm.language}.
         "novel_text": ai_text,
         "tts_audio_url": audio_url
     })
+
+
