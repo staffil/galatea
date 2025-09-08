@@ -43,7 +43,7 @@ function requestPay(pg, btn) {
     const data = {
         pg: pg,
         pay_method: "card",
-        customer_uid: "user_{{ request.user.id }}",
+        // customer_uid: "user_{{ request.user.id }}",
         merchant_uid: merchant_uid,
         name: "GALATEA {% trans '등급 결제' %}",
         amount: amount,
