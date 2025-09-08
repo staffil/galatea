@@ -34,6 +34,7 @@
             padding: 0 20px;
             width: 100%;
             overflow-y: auto;
+            margin-bottom: 300px;
         }
 
         /* 상단 상태바 */
