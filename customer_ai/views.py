@@ -385,7 +385,7 @@ def generate_response(request):
         }, status=400)
 
     # 최근 대화 내역 불러오기
-    db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:20][::-1]
+    db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:10][::-1]
     chat_history = []
     for convo in db_history:
         if convo.user_message:
