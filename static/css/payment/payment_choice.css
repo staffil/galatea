@@ -202,15 +202,7 @@ div:has(.plan-card) {
     left: 100%;
 }
 
-/* 특별 플랜 강조 (중간 카드) */
-.plan-card:nth-child(2) {
-    transform: scale(1.05);
-    border-width: 2px;
-    border-color: rgba(139,92,246,0.4);
-    box-shadow: 
-        0 25px 70px rgba(139,92,246,0.2),
-        inset 0 1px 0 rgba(255,255,255,0.15);
-}
+
 
 .plan-card:nth-child(2)::before {
     height: 6px;
