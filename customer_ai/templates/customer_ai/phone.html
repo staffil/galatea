@@ -170,9 +170,9 @@
         </div>
 
         <div class="call-controls">
-            <button class="control-btn speaker" id="speakerBtn" onclick="toggleSpeaker()">🔊</button>
+            <!-- <button class="control-btn speaker" id="speakerBtn" onclick="toggleSpeaker()">🔊</button> -->
             <button class="control-btn call-toggle" id="callToggleBtn" onclick="toggleCall()">📞</button>
-            <button class="control-btn mute" id="muteBtn" onclick="toggleMute()">🎤</button>
+            <!-- <button class="control-btn mute" id="muteBtn" onclick="toggleMute()">🎤</button> -->
         </div>
 
         <div class="voice-transcript" id="voiceTranscript"></div>
@@ -338,20 +338,20 @@ function stopCallTimer() {
 }
 
 // ------------------ 스피커/마이크 ------------------
-function toggleSpeaker() {
-    isSpeakerOn = !isSpeakerOn;
-    const btn = document.getElementById('speakerBtn');
-    btn.classList.toggle('active', isSpeakerOn);
-    showVoiceTranscript(isSpeakerOn ? '{% trans "스피커 켜짐" %}' : '{% trans "스피커 꺼짐" %}');
-}
+// function toggleSpeaker() {
+//     isSpeakerOn = !isSpeakerOn;
+//     const btn = document.getElementById('speakerBtn');
+//     btn.classList.toggle('active', isSpeakerOn);
+//     showVoiceTranscript(isSpeakerOn ? '{% trans "스피커 켜짐" %}' : '{% trans "스피커 꺼짐" %}');
+// }
 
-function toggleMute() {
-    isMuted = !isMuted;
-    const btn = document.getElementById('muteBtn');
-    btn.classList.toggle('active', isMuted);
-    btn.textContent = isMuted ? '🔇' : '🎤';
-    showVoiceTranscript(isMuted ? '{% trans "마이크 꺼짐" %}' : '{% trans "마이크 켜짐" %}');
-}
+// function toggleMute() {
+//     isMuted = !isMuted;
+//     const btn = document.getElementById('muteBtn');
+//     btn.classList.toggle('active', isMuted);
+//     btn.textContent = isMuted ? '🔇' : '🎤';
+//     showVoiceTranscript(isMuted ? '{% trans "마이크 꺼짐" %}' : '{% trans "마이크 켜짐" %}');
+// }
 
 // ------------------ 화면 텍스트 표시 ------------------
 function showVoiceTranscript(text) {
