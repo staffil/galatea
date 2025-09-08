@@ -8,6 +8,16 @@
     <title>Voice Chat UI</title>
     <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
+    <title>{% trans "Welcome to GALATEA AI" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+    <meta property="og:title" content="{% trans 'GALATEA AI' %}" />
+    <meta property="og:description" content="{{ llm.name }}" />
+    <meta property="og:image" content="{{ llm.llm_image.url }}">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+    <meta name="description" content="{% trans 'GALATEA AI - AI 대화형 쳇봇 서비스' %}">
 </head>
 
 <style>
@@ -50,12 +60,6 @@
                 <div class="mode-option">
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
                     <label><i class="fas fa-book"></i> NOVEL MODE</label>
-                </div>
-
-                
-                <div class="mode-option">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/phone/{{llm_id}}';">
-                    <label><i class="fas fa-phone"></i> PHONE MODE</label>
                 </div>
             </div>
 
@@ -100,7 +104,14 @@
                     </button>
                 </div>
                 
-
+                <div class="controls-row">
+                    <button class="record-btn" id="record-btn" onclick="toggleRecording()">
+                        <i class="fas fa-microphone" id="record-icon"></i>
+                    </button>
+                    <div class="record-status" id="record-status">
+                        {% trans '녹음을 시작하려면 버튼을 누르세요' %}
+                    </div>
+                </div>
                 
                 <div class="recognized-text" id="recognized-text"></div>
                 
