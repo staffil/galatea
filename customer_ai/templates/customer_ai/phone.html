@@ -69,15 +69,13 @@
 
             <!-- 통화 상태 -->
             <div class="call-status">
-                <div class="call-type">{% trans '음성 통화' %}</div>
-                <div class="call-type">{% trans '마이크와 소리를 미리 켜두세요!' %}</div>
                 <div class="call-duration" id="callDuration">00:00</div>
             </div>
 
             <!-- 메인 통화 정보 -->
             <div class="call-info">
                 {% if llm.llm_image %}
-                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" style="            border-radius: 50%;"/>
+                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" style="border-radius: 50%;"/>
                     <div class="speaking-ring" id="speakingRing"></div>
                 {% else %}
                     <div class="caller-avatar">
@@ -87,7 +85,8 @@
                 {% endif %}
                 
                 <div class="caller-name">{{ llm.name }}</div>
-                <div class="caller-subtitle" id="callStatusText">{% trans '연결 대기 중...' %}</div>
+                <div class="caller-subtitle" id="callStatusText">{% trans '녹음 대기 중...' %}</div>
+                <div class="caller-subtitle" id="callStatusText">{% trans '녹음버튼을 누르면 시작, 한번더 누르면 종료가 됩니다!' %}</div>
                 <div class="call-quality">
 
                 </div>
@@ -96,9 +95,7 @@
 
             <!-- 메인 통화 컨트롤 -->
             <div class="call-controls">
-                <button class="control-btn speaker" id="speakerBtn" onclick="toggleSpeaker()" title="{% trans '스피커' %}">🔊</button>
-                <button class="control-btn call-toggle" id="callToggleBtn" onclick="toggleCall()" title="{% trans '통화 시작/종료' %}">📞</button>
-                <button class="control-btn mute" id="muteBtn" onclick="toggleMute()" title="{% trans '음소거' %}">🎤</button>
+                <button class="control-btn call-toggle" id="callToggleBtn" onclick="toggleCall()" title="{% trans '통화 시작/종료' %}">🎙️</button>
             </div>
 
             <!-- 음성 인식 텍스트 -->
@@ -132,10 +129,7 @@
     </header>
 
     <div class="phone-container">
-        <div class="call-status">
-            <div class="call-type">{% trans '음성 통화' %}</div>
-            <div class="call-duration" id="callDuration">00:00</div>
-        </div>
+     
 
         <div class="call-info">
             {% if llm.llm_image %}
@@ -152,9 +146,7 @@
         </div>
 
         <div class="call-controls">
-            <!-- <button class="control-btn speaker" id="speakerBtn" onclick="toggleSpeaker()">🔊</button> -->
-            <button class="control-btn call-toggle" id="callToggleBtn" onclick="toggleCall()">📞</button>
-            <!-- <button class="control-btn mute" id="muteBtn" onclick="toggleMute()">🎤</button> -->
+            <button class="control-btn call-toggle" id="callToggleBtn" onclick="toggleCall()">🎙️</button>
         </div>
 
         <div class="voice-transcript" id="voiceTranscript"></div>
@@ -173,9 +165,10 @@ let mediaStream = null;
 let mediaRecorder = null;
 let audioChunks = [];
 let silenceTimeout = null;
-const SILENCE_THRESHOLD = 0.01; // 소리 감지 민감도
-const SILENCE_DELAY = 1200; // 1.2초 침묵 감지
-
+const SILENCE_THRESHOLD = 0.02; // 소리 감지 민감도
+const SILENCE_DELAY = 350; // 1.2초 침묵 감지
+let isAISpeaking = false;
+let isProcessing = false;
 // ------------------ 통화 버튼 ------------------
 function toggleCall() {
     isCallActive = !isCallActive;
@@ -185,18 +178,18 @@ function toggleCall() {
 
     if (isCallActive) {
         btn.classList.add('active');
-        status.textContent = '{% trans "통화 중..." %}';
+        status.textContent = '{% trans "녹음 중..." %}';
         ring.classList.add('active');
         callStartTime = Date.now();
         startCallTimer();
-        showVoiceTranscript('{% trans "음성 통화가 시작되었습니다." %}');
+        showVoiceTranscript('{% trans "녹음이 시작되었습니다." %}');
         startVADRecording();
     } else {
         btn.classList.remove('active');
-        status.textContent = '{% trans "연결 대기 중..." %}';
+        status.textContent = '{% trans "녹음 대기 중..." %}';
         ring.classList.remove('active');
         stopCallTimer();
-        showVoiceTranscript('{% trans "통화가 종료되었습니다." %}');
+        showVoiceTranscript('{% trans "녹음이 종료되었습니다." %}');
         stopVADRecording();
     }
 }
@@ -212,7 +205,7 @@ async function startVADRecording() {
     processor.connect(audioContext.destination);
 
     processor.onaudioprocess = function(e) {
-        if (isMuted) return;
+    if (isMuted || isAISpeaking) return
 
         const input = e.inputBuffer.getChannelData(0);
         const max = Math.max(...input.map(Math.abs));
@@ -220,11 +213,13 @@ async function startVADRecording() {
         if (max > SILENCE_THRESHOLD) {
             // 소리 감지됨 → 녹음 시작
             if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-                audioChunks = [];
-                mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm;codecs=opus' });
-                mediaRecorder.ondataavailable = event => { if(event.data.size > 0) audioChunks.push(event.data); };
-                mediaRecorder.onstop = handleChunkUpload;
-                mediaRecorder.start();
+                if (!isAISpeaking) { // AI가 말하지 않을 때만 녹음 시작
+                    audioChunks = [];
+                    mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm;codecs=opus' });
+                    mediaRecorder.ondataavailable = event => { if(event.data.size > 0) audioChunks.push(event.data); };
+                    mediaRecorder.onstop = handleChunkUpload;
+                    mediaRecorder.start();
+                }
             }
 
             // 침묵 타이머 초기화
@@ -293,6 +288,10 @@ async function handleLLMResponse(userText, llmId, whisperMp3) {
 
 // ------------------ TTS 재생 ------------------
 function playAudio(url) {
+    isAISpeaking = true; // AI 발화 시작
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop(); // AI가 말할 때 기존 녹음 종료
+    }
     fetch(url)
     .then(res => res.arrayBuffer())
     .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
@@ -301,9 +300,12 @@ function playAudio(url) {
         source.buffer = audioBuffer;
         source.connect(audioContext.destination);
         source.start();
+
+        source.onended = () => { // AI 발화 종료 시
+            isAISpeaking = false;
+        };
     }).catch(err => console.error('TTS 재생 실패:', err));
 }
-
 // ------------------ 통화 시간 ------------------
 function startCallTimer() {
     callTimer = setInterval(() => {
