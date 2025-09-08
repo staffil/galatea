@@ -439,7 +439,7 @@ Respond in {custom_language}.
                 ],
                 "temperature": custom_temperature
             }
-            resp = requests.post(grok_url, json=payload, headers=headers)
+            resp = requests.post(grok_url, json=payload, headers=headers, timeout=30)
             resp.raise_for_status()
             resp_json = resp.json()
             ai_text = resp_json["choices"][0]["message"]["content"].strip()
