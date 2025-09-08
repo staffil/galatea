@@ -123,8 +123,8 @@ def payment_charge(request):
         payment_method = PaymentMethod.objects.all()
 
         # 모든 PG사 허용
-        available_pgs = ['kakaopay', 'paypal', 'html5_inicis']
-
+        available_pgs = ['kakaopay', 'paypaltest', ]
+# 'html5_inicis'
         context = {
             "plan": plan,
             "available_pgs": available_pgs,
