@@ -67,7 +67,6 @@
             <!-- 상태바 -->
             <div class="status-bar">
                 <div class="status-left">
-                    <span id="currentTime">10:30</span>
                 </div>
                 <div class="status-right">
                     <div class="signal-bars">
@@ -90,7 +89,7 @@
             <!-- 메인 통화 정보 -->
             <div class="call-info">
                 {% if llm.llm_image %}
-                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
+                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" style="            border-radius: 50%;"/>
                     <div class="speaking-ring" id="speakingRing"></div>
                 {% else %}
                     <div class="caller-avatar">
@@ -128,140 +127,241 @@
         </div>
     </div>
 
-   <script>
-        const llmId = "{{ llm_id }}";
-        let isCallActive = false;
-        let isSpeakerOn = false;
-        let isMuted = false;
-        let callStartTime = null;
-        let callTimer = null;
-        let mediaRecorder = null;
-        let audioStream = null;
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+{% load static %} 
+{% load i18n %}
 
-        async function startMicrophone() {
-            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(audioStream);
-            mediaRecorder.start(1000); // 1초 단위 청크
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '통화 모드' %}</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/phone.css' %}">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        {% if user.is_authenticated %}
+            {% include "common/loginHeader.html" %}
+        {% else %}
+            {% include "common/notLoginHeader.html" %}
+        {% endif %}
+    </header>
 
-            mediaRecorder.ondataavailable = async (event) => {
-                if (!event.data || event.data.size === 0) return;
-                if (isMuted) return;
+    <div class="phone-container">
+        <div class="call-status">
+            <div class="call-type">{% trans '음성 통화' %}</div>
+            <div class="call-duration" id="callDuration">00:00</div>
+        </div>
 
-                const chunkBlob = event.data;
-                const formData = new FormData();
-                formData.append('audio_chunk', chunkBlob);
-                formData.append('llm_id', llmId);
+        <div class="call-info">
+            {% if llm.llm_image %}
+                <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
+                <div class="speaking-ring" id="speakingRing"></div>
+            {% else %}
+                <div class="caller-avatar">
+                    <div class="speaking-ring" id="speakingRing"></div>
+                    🤖
+                </div>
+            {% endif %}
+            <div class="caller-name">{{ llm.name }}</div>
+            <div class="caller-subtitle" id="callStatusText">{% trans '연결 대기 중...' %}</div>
+        </div>
 
-                try {
-                    const response = await fetch("{% url 'phone_process' %}", { method:'POST', body:formData });
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.tts_url) playAudio(data.tts_url);
-                        if (data.transcript) showVoiceTranscript(data.transcript);
-                    }
-                } catch(err) { console.error('오디오 전송 실패:', err); }
-            };
+        <div class="call-controls">
+            <button class="control-btn speaker" id="speakerBtn" onclick="toggleSpeaker()">🔊</button>
+            <button class="control-btn call-toggle" id="callToggleBtn" onclick="toggleCall()">📞</button>
+            <button class="control-btn mute" id="muteBtn" onclick="toggleMute()">🎤</button>
+        </div>
+
+        <div class="voice-transcript" id="voiceTranscript"></div>
+    </div>
+
+<script>
+const llmId = "{{ llm_id }}";
+let isCallActive = false;
+let isMuted = false;
+let isSpeakerOn = false;
+let callStartTime = null;
+let callTimer = null;
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+let mediaStream = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let silenceTimeout = null;
+const SILENCE_THRESHOLD = 0.01; // 소리 감지 민감도
+const SILENCE_DELAY = 1200; // 1.2초 침묵 감지
+
+// ------------------ 통화 버튼 ------------------
+function toggleCall() {
+    isCallActive = !isCallActive;
+    const btn = document.getElementById('callToggleBtn');
+    const status = document.getElementById('callStatusText');
+    const ring = document.getElementById('speakingRing');
+
+    if (isCallActive) {
+        btn.classList.add('active');
+        status.textContent = '{% trans "통화 중..." %}';
+        ring.classList.add('active');
+        callStartTime = Date.now();
+        startCallTimer();
+        showVoiceTranscript('{% trans "음성 통화가 시작되었습니다." %}');
+        startVADRecording();
+    } else {
+        btn.classList.remove('active');
+        status.textContent = '{% trans "연결 대기 중..." %}';
+        ring.classList.remove('active');
+        stopCallTimer();
+        showVoiceTranscript('{% trans "통화가 종료되었습니다." %}');
+        stopVADRecording();
+    }
+}
+
+// ------------------ 음성 활동 기반 녹음 ------------------
+async function startVADRecording() {
+    if (!isCallActive) return;
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const source = audioContext.createMediaStreamSource(mediaStream);
+    const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+    source.connect(processor);
+    processor.connect(audioContext.destination);
+
+    processor.onaudioprocess = function(e) {
+        if (isMuted) return;
+
+        const input = e.inputBuffer.getChannelData(0);
+        const max = Math.max(...input.map(Math.abs));
+
+        if (max > SILENCE_THRESHOLD) {
+            // 소리 감지됨 → 녹음 시작
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                audioChunks = [];
+                mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm;codecs=opus' });
+                mediaRecorder.ondataavailable = event => { if(event.data.size > 0) audioChunks.push(event.data); };
+                mediaRecorder.onstop = handleChunkUpload;
+                mediaRecorder.start();
+            }
+
+            // 침묵 타이머 초기화
+            if (silenceTimeout) clearTimeout(silenceTimeout);
+            silenceTimeout = setTimeout(() => {
+                if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+            }, SILENCE_DELAY);
         }
+    };
+}
 
-        function stopMicrophone() {
-            if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
-            if (audioStream) audioStream.getTracks().forEach(track => track.stop());
-        }
+function stopVADRecording() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;
+    }
+}
 
-        function playAudio(url) {
-            fetch(url)
-            .then(res => res.arrayBuffer())
-            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-            .then(audioBuffer => {
-                const source = audioContext.createBufferSource();
-                source.buffer = audioBuffer;
-                source.connect(audioContext.destination);
-                source.start();
-            }).catch(err => console.error('TTS 재생 실패:', err));
-        }
+// ------------------ 청크 업로드 및 LLM 처리 ------------------
+async function handleChunkUpload() {
+    if (!audioChunks.length) return;
 
-        function toggleCall() {
-            isCallActive = !isCallActive;
-            const callToggleBtn = document.getElementById('callToggleBtn');
-            const callStatusText = document.getElementById('callStatusText');
-            const speakingRing = document.getElementById('speakingRing');
+    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+    const formData = new FormData();
+    formData.append('audio', blob);
+    formData.append('llm_id', llmId);
 
-            if (isCallActive) {
-                callToggleBtn.classList.add('active');
-                callStatusText.textContent = '{% trans "통화 중..." %}';
-                speakingRing.classList.add('active');
-                callStartTime = Date.now();
-                startCallTimer();
-                showVoiceTranscript('{% trans "음성 통화가 시작되었습니다." %}');
-                startMicrophone();
-            } else {
-                callToggleBtn.classList.remove('active');
-                callStatusText.textContent = '{% trans "연결 대기 중..." %}';
-                speakingRing.classList.remove('active');
-                stopCallTimer();
-                showVoiceTranscript('{% trans "통화가 종료되었습니다." %}');
-                stopMicrophone();
+    try {
+        // 1) Whisper 처리
+        const resp = await fetch("{% url 'upload_audio' %}", { method:'POST', body: formData });
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data.text) {
+                showVoiceTranscript(data.text); // 화면에 Whisper 텍스트 표시
+                // 2) LLM 호출
+                await handleLLMResponse(data.text, llmId, data.mp3_file);
             }
         }
+    } catch(err) {
+        console.error('청크 업로드 실패', err);
+    }
 
-        function toggleSpeaker() {
-            isSpeakerOn = !isSpeakerOn;
-            const speakerBtn = document.getElementById('speakerBtn');
-            if (isSpeakerOn) {
-                speakerBtn.classList.add('active');
-                showVoiceTranscript('{% trans "스피커가 켜졌습니다." %}');
-            } else {
-                speakerBtn.classList.remove('active');
-                showVoiceTranscript('{% trans "스피커가 꺼졌습니다." %}');
-            }
+    audioChunks = []; // 초기화
+}
+
+// ------------------ LLM 호출 ------------------
+async function handleLLMResponse(userText, llmId, whisperMp3) {
+    const formData = new FormData();
+    formData.append('text', userText);
+    formData.append('llm_id', llmId);
+
+    try {
+        const response = await fetch("{% url 'generate_response' %}", { method:'POST', body: formData });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.audio_url) playAudio(data.audio_url);        // AI TTS 재생
+            if (data.ai_text) showVoiceTranscript(data.ai_text);   // AI 텍스트 표시
+        } else {
+            console.error('LLM 호출 실패', response.status);
         }
+    } catch(err) {
+        console.error('LLM 호출 에러', err);
+    }
+}
 
-        function toggleMute() {
-            isMuted = !isMuted;
-            const muteBtn = document.getElementById('muteBtn');
-            if (isMuted) {
-                muteBtn.classList.add('active');
-                muteBtn.innerHTML = '🔇';
-                showVoiceTranscript('{% trans "마이크가 꺼졌습니다." %}');
-            } else {
-                muteBtn.classList.remove('active');
-                muteBtn.innerHTML = '🎤';
-                showVoiceTranscript('{% trans "마이크가 켜졌습니다." %}');
-            }
-        }
+// ------------------ TTS 재생 ------------------
+function playAudio(url) {
+    fetch(url)
+    .then(res => res.arrayBuffer())
+    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    .then(audioBuffer => {
+        const source = audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContext.destination);
+        source.start();
+    }).catch(err => console.error('TTS 재생 실패:', err));
+}
 
-        function startCallTimer() {
-            callTimer = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - callStartTime)/1000);
-                const minutes = Math.floor(elapsed/60).toString().padStart(2,'0');
-                const seconds = (elapsed%60).toString().padStart(2,'0');
-                document.getElementById('callDuration').textContent = `${minutes}:${seconds}`;
-            },1000);
-        }
+// ------------------ 통화 시간 ------------------
+function startCallTimer() {
+    callTimer = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - callStartTime)/1000);
+        const minutes = String(Math.floor(elapsed/60)).padStart(2,'0');
+        const seconds = String(elapsed%60).padStart(2,'0');
+        document.getElementById('callDuration').textContent = `${minutes}:${seconds}`;
+    },1000);
+}
 
-        function stopCallTimer() {
-            if(callTimer){ clearInterval(callTimer); callTimer=null; }
-            document.getElementById('callDuration').textContent='00:00';
-        }
+function stopCallTimer() {
+    if(callTimer){ clearInterval(callTimer); callTimer=null; }
+    document.getElementById('callDuration').textContent='00:00';
+}
 
-        function showVoiceTranscript(text) {
-            const transcript = document.getElementById('voiceTranscript');
-            transcript.textContent = text;
-            transcript.style.display = 'block';
-            setTimeout(()=>{ transcript.style.display='none'; }, 3000);
-        }
+// ------------------ 스피커/마이크 ------------------
+function toggleSpeaker() {
+    isSpeakerOn = !isSpeakerOn;
+    const btn = document.getElementById('speakerBtn');
+    btn.classList.toggle('active', isSpeakerOn);
+    showVoiceTranscript(isSpeakerOn ? '{% trans "스피커 켜짐" %}' : '{% trans "스피커 꺼짐" %}');
+}
 
-        // 현재 시간 표시
-        function updateTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2,'0');
-            const minutes = now.getMinutes().toString().padStart(2,'0');
-            document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
-        }
+function toggleMute() {
+    isMuted = !isMuted;
+    const btn = document.getElementById('muteBtn');
+    btn.classList.toggle('active', isMuted);
+    btn.textContent = isMuted ? '🔇' : '🎤';
+    showVoiceTranscript(isMuted ? '{% trans "마이크 꺼짐" %}' : '{% trans "마이크 켜짐" %}');
+}
 
-        updateTime();
-        setInterval(updateTime,1000);
-    </script>
+// ------------------ 화면 텍스트 표시 ------------------
+function showVoiceTranscript(text) {
+    const t = document.getElementById('voiceTranscript');
+    t.textContent = text;
+    t.style.display = 'block';
+    setTimeout(()=>{ t.style.display='none'; }, 2000);
+}
+
+</script>
+
 </body>
 </html>

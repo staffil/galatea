@@ -197,7 +197,7 @@ def vision_view(request,llm_id):
 logger = logging.getLogger(__name__)
 
 
-
+@login_required
 def novel_view(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
@@ -209,7 +209,7 @@ def novel_view(request, llm_id):
         "llm": llm
     })
 
-
+@login_required
 def phone_view(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
@@ -751,5 +751,7 @@ def novel_process(request):
         "novel_text": ai_text,
         "tts_audio_url": audio_url
     })
+
+
 
 
