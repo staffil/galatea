@@ -123,7 +123,7 @@ def payment_charge(request):
         payment_method = PaymentMethod.objects.all()
 
         # 모든 PG사 허용
-        available_pgs = ['kakaopay', 'tosspayments', 'paypal']
+        available_pgs = ['kakaopay', 'paypal', 'KG']
 
         context = {
             "plan": plan,
