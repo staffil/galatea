@@ -83,6 +83,7 @@
             <!-- 통화 상태 -->
             <div class="call-status">
                 <div class="call-type">{% trans '음성 통화' %}</div>
+                <div class="call-type">{% trans '마이크와 소리를 미리 켜두세요!' %}</div>
                 <div class="call-duration" id="callDuration">00:00</div>
             </div>
 
@@ -360,6 +361,13 @@ function showVoiceTranscript(text) {
     t.style.display = 'block';
     setTimeout(()=>{ t.style.display='none'; }, 2000);
 }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.querySelector('.hamburger');
+        
+        sidebar.classList.toggle('active');
+        hamburger.classList.toggle('active');
+    }
 
 </script>
 

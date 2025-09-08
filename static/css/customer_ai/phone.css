@@ -186,7 +186,7 @@
 
         /* 통화 컨트롤 */
         .call-controls {
-            padding: 40px 0 60px;
+            padding: 40px 0 140px;
             display: flex;
             justify-content: center;
             gap: 60px;

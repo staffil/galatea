@@ -79,19 +79,47 @@ body::before {
     -webkit-text-fill-color: transparent;
 }
 
+/* 햄버거 메뉴 버튼 */
 .hamburger {
     display: none;
     flex-direction: column;
     cursor: pointer;
     gap: 4px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: linear-gradient(145deg, #7b006b, #E91E63);
+    padding: 12px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(243, 89, 222, 0.4);
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(243, 89, 222, 0.6);
 }
 
 .hamburger span {
-    width: 25px;
-    height: 3px;
-    background: var(--text-primary);
+    width: 20px;
+    height: 2px;
+    background: white;
     border-radius: 2px;
     transition: all 0.3s ease;
+}
+
+/* 햄버거 애니메이션 */
+.hamburger.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
 }
 
 /* Sidebar */
