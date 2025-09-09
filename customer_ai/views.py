@@ -738,7 +738,7 @@ def novel_process(request):
 
     audio_stream = eleven_client.text_to_speech.convert(
         voice_id=llm.voice.voice_id,
-        model_id="eleven_flash_v2_5",
+        model_id="eleven_v3",
         text=tts_text,
         language_code=llm.language,
         voice_settings={
