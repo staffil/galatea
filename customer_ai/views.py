@@ -352,6 +352,7 @@ def generate_response(request):
     llm_id = request.POST.get('llm_id') or request.GET.get('llm_id')
     if not llm_id:
         return JsonResponse({"error": _("llm_id 값이 필요합니다.")}, status=400)
+    
 
     # LLM 객체 가져오기 및 권한 확인
     try:
@@ -371,6 +372,8 @@ def generate_response(request):
     custom_language = llm.language
     custom_speed = llm.speed
     custom_model = llm.model
+
+    
 
     # ElevenLabs voice 유효성 체크
     def is_valid_voice_id(voice_id, api_key):
@@ -727,6 +730,12 @@ def novel_process(request):
     os.makedirs(audio_dir, exist_ok=True)
     filename = f"response_{uuid4().hex}.mp3"
     audio_path = os.path.join(audio_dir, filename)
+
+    audio_seconds = get_audio_duration_in_seconds(audio_path)
+    token_obj = Token.objects.filter(user=user).latest("created_at")
+    if token_obj.total_token - token_obj.token_usage < audio_seconds:
+        return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
+    
 
     audio_stream = eleven_client.text_to_speech.convert(
         voice_id=llm.voice.voice_id,
