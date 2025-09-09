@@ -30,7 +30,7 @@ def main(request):
     language = get_language()
     user = request.user
     celebrity_list = Celebrity.objects.all()
-    genre_list = Genre.objects.all()
+    genre_list = Genre.objects.all().order_by("?")
     voice_list = VoiceList.objects.filter(is_public=True)
     celebrity_voice_list = CelebrityVoice.objects.all().order_by("?")
     news_list = News.objects.all()
@@ -287,7 +287,7 @@ def llm_intro(request, llm_id):
 
 
 def gerne_all(request):
-    genre = Genre.objects.all().order_by("?")
+    genre = Genre.objects.all()
     llm_list = LLM.objects.all()
     language = get_language()
 
