@@ -643,6 +643,9 @@ def vision_process(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": f"OpenAI Vision API error: {str(e)}"}, status=500)
+    
+
+
 @csrf_exempt
 @login_required
 def novel_process(request):
@@ -730,12 +733,6 @@ def novel_process(request):
     os.makedirs(audio_dir, exist_ok=True)
     filename = f"response_{uuid4().hex}.mp3"
     audio_path = os.path.join(audio_dir, filename)
-
-    audio_seconds = get_audio_duration_in_seconds(audio_path)
-    token_obj = Token.objects.filter(user=user).latest("created_at")
-    if token_obj.total_token - token_obj.token_usage < audio_seconds:
-        return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
-    
 
     audio_stream = eleven_client.text_to_speech.convert(
         voice_id=llm.voice.voice_id,
