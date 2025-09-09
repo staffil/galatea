@@ -760,16 +760,17 @@ def novel_process(request):
         if token_obj.total_token - token_obj.token_usage < audio_seconds:
             return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
 
-        token_obj.token_usage += audio_seconds
-        token_obj.save(update_fields=["token_usage"])
-
         TokenHistory.objects.create(
             user=user,
             change_type=TokenHistory.CONSUME,
             amount=audio_seconds,
-            total_voice_generated=audio_seconds
+            total_voice_generated=token_obj.token_usage
         )
         audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
+
+    print("audio_seconds", audio_seconds)
+    print("token_usage before", token_obj.token_usage)
+
 
     return JsonResponse({
         "novel_text": ai_text,
