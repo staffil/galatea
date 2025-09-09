@@ -395,7 +395,7 @@ def comment_create(request, llm_id):
 
 @login_required
 def voice_all(request):
-    voice = CelebrityVoice.objects.all()
+    voice = CelebrityVoice.objects.all().order_by("?")
     context = {
         "voice_list": voice
 
