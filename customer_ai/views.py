@@ -431,12 +431,12 @@ Respond in {custom_language}.
         elif api_provider == "grok":
             grok_url = "https://api.x.ai/v1/chat/completions"
             headers = {"Authorization": f"Bearer {grok_api_key}"}
+
+            messages = [{"role": "system", "content": system_prompt}]
+            messages.extend(chat_history)
             payload = {
                 "model": model_name,
-                "messages": [
-                    {"role": "system", "content": system_prompt + chat_history},
-                    {"role": "user", "content": user_input}
-                ],
+                "messages": messages,
                 "temperature": custom_temperature
             }
             resp = requests.post(grok_url, json=payload, headers=headers, timeout=60)
