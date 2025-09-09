@@ -32,7 +32,7 @@ def main(request):
     celebrity_list = Celebrity.objects.all()
     genre_list = Genre.objects.all()
     voice_list = VoiceList.objects.filter(is_public=True)
-    celebrity_voice_list = CelebrityVoice.objects.all()
+    celebrity_voice_list = CelebrityVoice.objects.all().order_by("?")
     news_list = News.objects.all()
     total_follow_count = User.objects.annotate(follower_count = Count('follower_set', distinct=True)).order_by("-follower_count")[:10]
 
@@ -70,14 +70,10 @@ def main(request):
     else:
         for llm in llm_list:
             llm.user_has_liked = False
-    # voice_list = list(VoiceList.objects.filter(id__in = voice_list_ids).prefetch_related('llm'))
-    # voice_list.sort(key=lambda x: voice_list_ids.index(x.id))
+    voice_list = list(VoiceList.objects.filter(id__in = voice_list_ids).prefetch_related('llm'))
+    voice_list.sort(key=lambda x: voice_list_ids.index(x.id))
 
     gift_list = Gift.objects.all()
-
-    celebrity_voice_list = list(CelebrityVoice.objects.filter(id__in = voice_list_ids).prefetch_related('llm'))
-    celebrity_voice_list.sort(key=lambda x: voice_list_ids.index(x.id))
-
 
     # 다국어 이름/설명 처리
     for c in celebrity_list:
