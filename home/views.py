@@ -287,7 +287,7 @@ def llm_intro(request, llm_id):
 
 
 def gerne_all(request):
-    genre = Genre.objects.all()
+    genre = Genre.objects.all().order_by("?")
     llm_list = LLM.objects.all()
     language = get_language()
 
