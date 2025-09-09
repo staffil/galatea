@@ -62,8 +62,8 @@
     function toggleAudio(character) {
         const wrapper = character.closest('.voice-wrapper');
         const audio = wrapper.querySelector('.voice-audio');
-        const playOverlay = character.querySelector('.play-overlay');
-        const progressBar = wrapper.querySelector('.voice-progress-bar');
+const playOverlay = character.querySelector('.cv-play-overlay');
+const progressBar = wrapper.querySelector('.cv-progress-bar');
         const timeDisplay = wrapper.querySelector('.voice-time');
 
         if (currentAudio && currentAudio !== audio) {
