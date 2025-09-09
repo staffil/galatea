@@ -434,7 +434,7 @@ Respond in {custom_language}.
             payload = {
                 "model": model_name,
                 "messages": [
-                    {"role": "system", "content": system_prompt},
+                    {"role": "system", "content": system_prompt + chat_history},
                     {"role": "user", "content": user_input}
                 ],
                 "temperature": custom_temperature
