@@ -475,7 +475,7 @@ main {
 /* 장르 섹션 */
 .genre-tags-container {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     overflow-x: auto;
     overflow-y: hidden;
     padding: 10px 0;

@@ -617,7 +617,7 @@ function closeModal() {
             <div class="genre-container">
                 <h2 class="section-title">{% trans "장르" %}</h2>
                 <div class="genre-tags-container">
-                    {% for genre in genre_list|slice:":12" %}
+                    {% for genre in genre_list|slice:":15" %}
                     <a href="{% url 'home:genres_detail' genre.id %}">
 
                         <div class="genre-tag-box">
