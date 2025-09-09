@@ -27,6 +27,7 @@
         <p>{% trans "$" %}: {{ plan.daller_price }}</p>
         <p  style="background-color: {{ plan.color }};">{% trans "음성" %}: {{ plan.voicetime }}</p>
         <p  style="background-color: {{ plan.color }};">{% trans "토큰" %}: {{ plan.freetoken }}</p>
+        <p  style="background-color: {{ plan.color }};">{% trans "결제기간" %}: {% trans '결제시 토큰 즉시 제공(일부 처리 지연 가능)”' %}</p>
         <form action="{% url 'payment:payment_charge' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="rank_id" value="{{ plan.id }}">
