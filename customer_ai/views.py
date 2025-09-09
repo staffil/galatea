@@ -385,7 +385,7 @@ def generate_response(request):
         }, status=400)
 
     # 최근 대화 내역 불러오기
-    db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:10][::-1]
+    db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:50][::-1]
     chat_history = []
     for convo in db_history:
         if convo.user_message:
@@ -439,7 +439,7 @@ Respond in {custom_language}.
                 ],
                 "temperature": custom_temperature
             }
-            resp = requests.post(grok_url, json=payload, headers=headers, timeout=30)
+            resp = requests.post(grok_url, json=payload, headers=headers, timeout=60)
             resp.raise_for_status()
             resp_json = resp.json()
             ai_text = resp_json["choices"][0]["message"]["content"].strip()
