@@ -8,6 +8,180 @@
     <title>GALATEA {% trans "가격표" %}</title>
     <link rel="stylesheet" href="{% static 'css/payment/payment_complete.css' %}?v=5" />
 </head>
+<style>
+    /* 링크 컨테이너 */
+.link-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* 기본 링크 스타일 */
+a {
+    display: inline-block;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
+    border: 2px solid rgba(139,92,246,0.3);
+    border-radius: 16px;
+    color: #e2e8f0;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(139,92,246,0.2);
+}
+
+/* 메인으로 가기 - 기본 스타일 */
+a[href*="main"] {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-color: #22c55e;
+    color: white;
+}
+
+a[href*="main"]:hover {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(34,197,94,0.4);
+}
+
+a[href*="main"]::before {
+    content: '🏠';
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* 결제 칸으로 가기 - 주황색 */
+a[href*="chocie"] {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-color: #f59e0b;
+    color: white;
+}
+
+a[href*="chocie"]:hover {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(245,158,11,0.4);
+}
+
+a[href*="chocie"]::before {
+    content: '💳';
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* 토큰 내역 창으로 가기 - 보라색 */
+a[href*="token"] {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    border-color: #8b5cf6;
+    color: white;
+}
+
+a[href*="token"]:hover {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(139,92,246,0.4);
+}
+
+a[href*="token"]::before {
+    content: '🪙';
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* 공통 호버 효과 */
+a:hover {
+    border-color: rgba(255,255,255,0.4);
+}
+
+/* 활성화 효과 */
+a:active {
+    transform: translateY(-1px);
+}
+
+/* 빛나는 효과 */
+a::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+a:hover::after {
+    left: 100%;
+}
+
+/* 포커스 효과 */
+a:focus-visible {
+    outline: 3px solid rgba(255,255,255,0.5);
+    outline-offset: 3px;
+}
+
+/* 반응형 디자인 - 태블릿 */
+@media (max-width: 768px) {
+    .link-container {
+        gap: 18px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+    
+    a {
+        padding: 14px 28px;
+        font-size: 15px;
+        border-radius: 14px;
+    }
+}
+
+/* 반응형 디자인 - 모바일 */
+@media (max-width: 480px) {
+    .link-container {
+        gap: 15px;
+        margin: 25px auto;
+        padding: 0 12px;
+    }
+    
+    a {
+        padding: 12px 24px;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+    
+    a::before {
+        font-size: 16px;
+        margin-right: 6px;
+    }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+    a {
+        transition: none;
+    }
+    
+    a::after {
+        display: none;
+    }
+}
+
+/* 다크모드 강화 */
+@media (prefers-color-scheme: dark) {
+    a {
+        color: #f1f5f9;
+    }
+}
+</style>
 <body>
 
 <!-- 헤더 -->
