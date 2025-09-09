@@ -754,21 +754,22 @@ def novel_process(request):
             f.write(chunk)
 
     audio_seconds = get_audio_duration_in_seconds(audio_path)
-    token_obj = Token.objects.select_for_update().filter(user=user).latest("created_at")
-    if token_obj.total_token - token_obj.token_usage < audio_seconds:
-        return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
+    from django.db import transaction
+    with transaction.atomic():
+        token_obj = Token.objects.select_for_update().filter(user=user).latest("created_at")
+        if token_obj.total_token - token_obj.token_usage < audio_seconds:
+            return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
 
-    token_obj.token_usage += audio_seconds
-    token_obj.save(update_fields=["token_usage"])
+        token_obj.token_usage += audio_seconds
+        token_obj.save(update_fields=["token_usage"])
 
-    TokenHistory.objects.create(
-        user=user,
-        change_type=TokenHistory.CONSUME,
-        amount=audio_seconds,
-        total_voice_generated=audio_seconds
-    )
-
-    audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
+        TokenHistory.objects.create(
+            user=user,
+            change_type=TokenHistory.CONSUME,
+            amount=audio_seconds,
+            total_voice_generated=audio_seconds
+        )
+        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
 
     return JsonResponse({
         "novel_text": ai_text,
