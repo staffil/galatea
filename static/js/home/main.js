@@ -69,7 +69,7 @@ const progressBar = wrapper.querySelector('.cv-progress-bar');
         if (currentAudio && currentAudio !== audio) {
             currentAudio.pause();
             currentCharacter.classList.remove('playing');
-            currentCharacter.querySelector('.play-overlay').innerHTML = '<div class="play-icon"></div>';
+currentCharacter.querySelector('.cv-play-overlay').innerHTML = '<div class="play-icon"></div>';
         }
 
         if (audio.paused) {
