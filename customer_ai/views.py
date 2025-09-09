@@ -474,7 +474,7 @@ Respond in {custom_language}.
     try:
         audio_stream = eleven_client.text_to_speech.convert(
             voice_id=custom_voice_id,
-            model_id="eleven_flash_v2_5",
+        model_id="eleven_v3",
             text=ai_text,
             language_code=custom_language,
             voice_settings={
