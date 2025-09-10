@@ -17,29 +17,55 @@ class ConversationInline(admin.TabularInline):
     extra=0
     readonly_fields= ('created_at',)
 
-@admin.register(User)
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import Users  # 실제 모델 이름
+
+# 이미 등록되어 있으면 제거
+try:
+    admin.site.unregister(Users)
+except admin.sites.NotRegistered:
+    pass
+
+# 기존 이름 그대로 UserAdmin 사용
+@admin.register(Users)
 class UserAdmin(BaseUserAdmin):
+    list_display = ('사용자_번호', '사용자_아이디', '이메일_주소', 'is_staff', 'is_active')
+    list_filter = ('is_staff', 'is_active', 'status')
 
-    list_display = ('사용자_번호', '사용자_아이디', '이메일_주소') 
-  
-    @admin.display(description='사용자 번호') # 여기에 원하는 헤더 이름을 적습니다.
+    # 컬럼 이름 한글화
+    @admin.display(description='사용자 번호')
     def 사용자_번호(self, obj):
-        return obj.id # 실제 객체의 id 값을 반환합니다.
+        return obj.id
 
-    # 'username' 필드의 헤더를 '사용자 아이디'로 변경
-    @admin.display(description='사용자 아이디') # 여기에 원하는 헤더 이름을 적습니다.
+    @admin.display(description='사용자 아이디')
     def 사용자_아이디(self, obj):
-        return obj.username # 실제 객체의 username 값을 반환합니다.
+        return obj.username
 
-    # 'email' 필드의 헤더를 '이메일 주소'로 변경
-    @admin.display(description='이메일 주소') # 여기에 원하는 헤더 이름을 적습니다.
+    @admin.display(description='이메일 주소')
     def 이메일_주소(self, obj):
         return obj.email
-    inlines = [ConversationInline]
-    fieldsets = BaseUserAdmin.fieldsets
-    add_fieldsets = BaseUserAdmin.add_fieldsets
 
+    # inlines 설정
+    inlines = [ConversationInline]  # ConversationInline 정의 필요
 
+    # Users 모델 필드 기준으로 fieldsets 커스터마이즈
+    fieldsets = (
+        (None, {'fields': ('email', 'username', 'password')}),
+        ('권한', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('프로필', {'fields': ('nickname', 'phonenumber', 'user_image', 'status', 'followers')}),
+        ('로그인 정보', {'fields': ('last_login',)}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'username', 'password1', 'password2', 'is_staff', 'is_active')}
+        ),
+    )
+
+    search_fields = ('email', 'username')
+    ordering = ('email',)
 
 
 class LLMConversationInline(admin.TabularInline):
