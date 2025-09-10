@@ -47,7 +47,7 @@
             {% else %}
             <img src="{% static 'images/default_user.png' %}" alt="">
             {% endif %}
-            <span style="color:#fff;">{{ item.user.username }}</span>
+            <span style="color:#fff;">{{ item.user.nickname }}</span>
             {% if user.is_authenticated and user != item.user %}
             <button class="glt2-follow-btn" data-id="{{ item.user.id }}">
                 {% if item.user_is_following_user %}{% trans "Following" %}{% else %}{% trans "Follow" %}{% endif %}

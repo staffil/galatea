@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ user.username }}의 {% trans "프로필" %} - GALATEA</title>
+    <title>{{ user.nickname }}의 {% trans "프로필" %} - GALATEA</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/home/user_intro.css' %}">
 
@@ -19,7 +19,7 @@
 {% for item in user_list %}
 <div class="user-header">
     <div class="user-info">
-        <h1>{{ item.user.username }}</h1>
+        <h1>{{ item.user.nickname }}</h1>
         <div class="user-stats">
             {% for follow in total_follow_count %}
                 {% if follow.id == item.user.id %}
