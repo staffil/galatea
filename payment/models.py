@@ -4,7 +4,7 @@ from django.conf import settings
 
 # 결제 수단 테이블
 class PaymentMethod(models.Model):
-    name = models.CharField(max_length=50, unique=True)  # ex) KakaoPay, TossPayments, PayPal
+    name = models.CharField(max_length=50, unique=True)  
     description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     payment_image = models.ImageField( null=True, blank=True)
