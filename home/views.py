@@ -29,7 +29,6 @@ def home(request):
 def main(request):
     language = get_language()
     user = request.user
-    celebrity_list = Celebrity.objects.all()
     genre_list = Genre.objects.all().order_by("?")
     voice_list = VoiceList.objects.filter(is_public=True)
     celebrity_voice_list = CelebrityVoice.objects.all().order_by("?")
@@ -76,11 +75,7 @@ def main(request):
     gift_list = Gift.objects.all()
 
     # 다국어 이름/설명 처리
-    for c in celebrity_list:
-        name_field = f'celebrity_name_{language}'
-        desc_field = f'description_{language}'
-        c.display_name = getattr(c, name_field, c.celebrity_name)
-        c.display_description = getattr(c, desc_field, c.description)
+
 
     for l in llm_list:
         l.display_genres = []
@@ -90,7 +85,6 @@ def main(request):
             l.display_genres.append(g)
 
     context = {
-        "celebrity_list": celebrity_list,
         "languages": settings.LANGUAGES,
         "LANGUAGE_CODE": language,
         "request": request,
