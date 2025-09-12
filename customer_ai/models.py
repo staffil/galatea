@@ -44,6 +44,13 @@ class LlmLike(models.Model):
         verbose_name = 'AI 좋아요'
         unique_together = ('user', 'llm')
 
+from django.core.exceptions import ValidationError
+
+def validate_webp(file):
+    if not file.name.lower().endswith('.webp'):
+        raise ValidationError("WebP 파일만 업로드 가능합니다.")
+
+
 #llm 테이블
 class LLM(models.Model):
     MODEL_CHOICES = [
@@ -59,7 +66,7 @@ class LLM(models.Model):
     prompt = models.TextField(verbose_name='user 가 지정한 프롬프트')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='user 가 LLM 을 만든 시기')
     update_at = models.DateTimeField(null=True, blank=True, auto_now=True, verbose_name='user 가 프롬프트, 목소리 변형을 했을 경우 나중에 문제가 생겼을때 원인을 찾을 수 있음')
-    llm_image = models.ImageField(upload_to='uploads/llm_images/', null=True, blank=True, max_length=500)
+    llm_image = models.ImageField(upload_to='uploads/llm_images/', null=True, blank=True, max_length=500, validators=[validate_webp])
     response_mp3 = models.CharField(max_length=255, null=True, blank=True, verbose_name='해당 보이스를 저장할 수 있는 mp3 파일 -> 목소리는 ai가 대답할 떄마다 기록이 덮어씌워짐')
     model = models.CharField(max_length=20, choices=MODEL_CHOICES, default='gpt-3.5-turbo', verbose_name='gpt 모델 중 하나를 선택해서 사용할 수 있음')
     language = models.CharField(max_length=10, default='en')
