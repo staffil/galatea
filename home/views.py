@@ -34,6 +34,7 @@ def main(request):
     celebrity_voice_list = CelebrityVoice.objects.all().order_by("?")
     news_list = News.objects.all()
     total_follow_count = User.objects.annotate(follower_count = Count('follower_set', distinct=True)).order_by("-follower_count")[:10]
+    
 
     # LLM 랜덤 캐시 처리
     now = datetime.now()
@@ -101,6 +102,10 @@ def main(request):
 
     return render(request, 'home/main.html', context)
 
+
+def ajax_llm_list(request):
+    llms = LLM.objects.all()[:18]  # 처음 18개만
+    return render(request, 'home/main.html', {'llm': llms})
 
 def user_logout(request):
     logout(request)
