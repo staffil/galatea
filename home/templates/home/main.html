@@ -359,6 +359,7 @@
             <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
             <a href="/soon/" class="nav-button">{% trans "보이스 클로닝" %}</a>
             <a href="/soon/" class="nav-button">{% trans "보이스 만들기" %}</a>
+            <a href="/voice_all/" class="nav-button">{% trans "보이스 선택하기" %}</a>
             <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
             <a href="/soon/" class="nav-button">{% trans "친구초대하기" %}</a>
             <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
@@ -571,48 +572,6 @@ function closeModal() {
 </div> -->
 
 
-        <!-- celebrity voice 목록 -->
-        <div class="cv-main-content">
-            <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!' %}</h2>
-            <div class="cv-container">
-                <div class="cv-scroll">
-                    {% for voice in celebrity_voice_list|slice:":15" %}
-                        <div class="voice-wrapper">
-                            <div class="cv-header">
-                                <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
-                                    {% if voice.celebrity_voice_image %}
-                                        <img src="{{ voice.celebrity_voice_image.url }}" alt="">
-                                    {% else %}
-                                        <img src="{% static 'images/default_voice.png' %}" alt="">
-                                    {% endif %}
-                                    <div class="cv-play-overlay"><div class="cv-play-icon"></div></div>
-                                </div>
-                                <div class="cv-info">
-                                    <p>{{ voice.name }}</p>
-                                    <input type="hidden" value="{{ voice.celebrity_voice_id }}">
-                                    <p>{{ voice.voice_name }}</p>
-                                </div>
-                            </div>
-                            <div class="voice-progress" onclick="seekAudio(event, this)">
-                                <div class="cv-progress-bar"></div>
-                            </div>
-                            <!-- <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">{% trans "복사" %}</button> -->
-                             <button class="copy-id-btn" onclick="saveVoice({{ voice.id }})" title="Voice ID 복사">{% trans "저장하기" %}</button>
-
-                            {% if voice.sample_url %}
-                                <audio class="voice-audio" controls>
-                                    <source src="{{ voice.sample_url.url }}" type="audio/mpeg">
-                                </audio>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-                                <a href="{% url 'home:voice_all' %}" class="view-all-btn" style="margin-top: 20px;">{% trans '전체 보기' %}</a>
-
-        </div>
-
-
         <!-- 장르 섹션 -->
         <div class="main-content">
             <div class="genre-container">
@@ -715,37 +674,6 @@ function closeModal() {
         toggleBtn.innerHTML = collapsed ? '&#9660;' : '&#9650;'; // ▼ / ▲
     });
 
-// //팔로우 토글
-// document.addEventListener('click', (e) => {
-//     const followBtn = e.target.closest('.glt2-follow-btn');
-//     if (!followBtn) return;
-
-//     const userId = followBtn.dataset.id;
-//     if (!userId) return;
-
-//     fetch("{% url 'home:toggle_follow' %}", {
-//         method: "POST",
-//         headers: {
-//             "X-CSRFToken": "{{ csrf_token }}",
-//             "Content-Type": "application/x-www-form-urlencoded"
-//         },
-//         body: `user_id=${encodeURIComponent(userId)}`
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.status === 'follow') {
-//             followBtn.textContent = 'Following';
-//             followBtn.classList.add('following');
-//         } else if (data.status === 'unfollow') {
-//             followBtn.textContent = 'Follow';
-//             followBtn.classList.remove('following');
-//         } else {
-//             alert(data.message);
-//         }
-//     })
-//     .catch(err => console.error('팔로우 토글 오류:', err));
-// });
-  
 
   // 가로 스크롤 개선 스크립트
 document.addEventListener('DOMContentLoaded', function() {
@@ -1045,28 +973,6 @@ document.addEventListener("click", function(e) {
         });
     }
 });
-
-// 목소리 저장하기
-function saveVoice(celebrityId){
-    fetch("{% url 'home:save_voice' %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie('csrftoken') // CSRF 처리
-        },
-        body: JSON.stringify({ "celebrity_id": celebrityId })
-    })
-    .then(res => res.json())
-    .then(data=>{
-        if (data.status === "ok") {
-            alert("{% trans '보이스가 저장되었습니다!' %}");
-        }else if (data.status === "exists") alert("{% trans '이미 저장된 보이스입니다.' %}");
-        else alert(data.error);
-        })
-        
-    .catch(error => console.error("Error:", error));
-}
-
 
     // 팔로우 토글
     document.addEventListener('click', (e) => {
