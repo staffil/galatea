@@ -103,10 +103,6 @@ def main(request):
     return render(request, 'home/main.html', context)
 
 
-def ajax_llm_list(request):
-    llms = LLM.objects.all()[:18]  # 처음 18개만
-    return render(request, 'home/main.html', {'llm': llms})
-
 def user_logout(request):
     logout(request)
     return redirect('register:login') 

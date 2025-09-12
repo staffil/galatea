@@ -1004,23 +1004,6 @@ document.addEventListener("click", function(e) {
         })
         .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
     });
-const llmContainer = document.querySelector('.llm-cards-container');
-let llmLoaded = false;
-
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && !llmLoaded) {
-            fetch('/ajax/llm_list/')
-                .then(res => res.text())
-                .then(html => {
-                    llmContainer.innerHTML += html;  // 기존 6개 뒤에 추가
-                    llmLoaded = true;
-                });
-        }
-    });
-}, { threshold: 0.5 });
-
-observer.observe(llmContainer);
 
 </script>
 
