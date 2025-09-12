@@ -122,105 +122,138 @@
 
     <script src="{% static 'js/sidebar.js' %}"></script>
     <script>
-  
-        function initializeUIWithCurrentLlm() {
-            const initialLlm = {
-                id: "{{ llm.id|default:''|escapejs }}",
-                prompt: "{{ llm.prompt|default:''|escapejs }}",
-                voiceId: "{% if llm.voice %}{{ llm.voice.voice_id|default:''|escapejs }}{% else %}{% endif %}",
-                language: "{{ llm.language|default:''|escapejs }}",
-                stability: "{{ llm.stability|default:0.5|escapejs }}",
-                speed: "{{ llm.speed|default:0.5|escapejs }}",
-                style: "{{ llm.style|default:0.5|escapejs }}",
-                temperature: "{{ llm.temperature|default:0.5|escapejs }}",
-                model: "{{ llm.model|default:''|escapejs }}",
-                llmImage: "{% if llm.llm_image %}{{ llm.llm_image.url }}{% else %}{% endif %}"
-            };
+        // 초기 UI 세팅
+function initializeUIWithCurrentLlm() {
+    const initialLlm = {
+        id: "{{ llm.id|default:''|escapejs }}",
+        prompt: "{{ llm.prompt|default:''|escapejs }}",
+        voiceId: "{% if llm.voice %}{{ llm.voice.voice_id|default:''|escapejs }}{% endif %}",
+        language: "{{ llm.language|default:''|escapejs }}",
+        stability: "{{ llm.stability|default:0.5|escapejs }}",
+        speed: "{{ llm.speed|default:0.5|escapejs }}",
+        style: "{{ llm.style|default:0.5|escapejs }}",
+        temperature: "{{ llm.temperature|default:0.5|escapejs }}",
+        model: "{{ llm.model|default:''|escapejs }}",
+        llmImage: "{% if llm.llm_image %}{{ llm.llm_image.url }}{% endif %}"
+    };
 
-            const llmImageElem = document.getElementById("llmImage");
-            const noImageText = document.getElementById("noImageText");
-            if (initialLlm.llmImage) {
-                llmImageElem.src = initialLlm.llmImage;
-                llmImageElem.style.display = "block";
-                noImageText.style.display = "none";
-            } else {
-                llmImageElem.style.display = "none";
-                noImageText.style.display = "block";
-            }
+    // 이미지 처리
+    const llmImageElem = document.getElementById("llmImage");
+    const noImageText = document.getElementById("noImageText");
+    if (initialLlm.llmImage) {
+        llmImageElem.src = initialLlm.llmImage;
+        llmImageElem.style.display = "block";
+        noImageText.style.display = "none";
+    } else {
+        llmImageElem.style.display = "none";
+        noImageText.style.display = "block";
+    }
 
-            document.getElementById("promptInput").value = initialLlm.prompt;
-            document.getElementById("promptDisplay").value = initialLlm.prompt;
-            document.getElementById("voiceIdInput").value = initialLlm.voiceId;
-            document.getElementById("voiceIdDisplay").value = initialLlm.voiceId;
-            document.getElementById("languageInput").value = initialLlm.language;
-            document.getElementById("languageDisplay").textContent = initialLlm.language;
-            document.getElementById("stabilityInput").value = initialLlm.stability;
-            document.getElementById("stabilitySlider").value = initialLlm.stability;
-            document.getElementById("stabilityValue").textContent = initialLlm.stability;
-            document.getElementById("speedInput").value = initialLlm.speed;
-            document.getElementById("speedSlider").value = initialLlm.speed;
-            document.getElementById("speedValue").textContent = initialLlm.speed;
-            document.getElementById("styleInput").value = initialLlm.style;
-            document.getElementById("styleSlider").value = initialLlm.style;
-            document.getElementById("styleValue").textContent = initialLlm.style;
-            document.getElementById("temperatureInput").value = initialLlm.temperature;
-            document.getElementById("temperatureSlider").value = initialLlm.temperature;
-            document.getElementById("temperatureValue").textContent = initialLlm.temperature;
-            document.getElementById("modelInput").value = initialLlm.model;
-            document.getElementById("modelDisplay").textContent = initialLlm.model;
+    // 텍스트/Voice/Language/Model 설정
+    document.getElementById("promptInput").value = initialLlm.prompt;
+    document.getElementById("promptDisplay").value = initialLlm.prompt;
+    document.getElementById("voiceIdInput").value = initialLlm.voiceId;
+    document.getElementById("voiceIdDisplay").value = initialLlm.voiceId;
+    document.getElementById("languageInput").value = initialLlm.language;
+    document.getElementById("languageDisplay").textContent = initialLlm.language;
+    document.getElementById("modelInput").value = initialLlm.model;
+    if(document.getElementById("modelDisplay")){
+        document.getElementById("modelDisplay").textContent = initialLlm.model;
+    }
 
-            const llmSelect = document.getElementById("llmSelect");
-            if (llmSelect && initialLlm.id) {
-                for (let i = 0; i < llmSelect.options.length; i++) {
-                    if (llmSelect.options[i].value === initialLlm.id) {
-                        llmSelect.selectedIndex = i;
-                        break;
-                    }
-                }
+    // 슬라이더 초기화
+    const sliders = ["stability", "speed", "style", "temperature"];
+    sliders.forEach(slider => {
+        const sliderElem = document.getElementById(`${slider}Slider`);
+        const valueElem = document.getElementById(`${slider}Value`);
+        const inputElem = document.getElementById(`${slider}Input`);
+        if(sliderElem && valueElem && inputElem){
+            sliderElem.value = initialLlm[slider];
+            valueElem.textContent = initialLlm[slider];
+            inputElem.value = initialLlm[slider];
+        }
+    });
+
+    // select 초기값 설정
+    const llmSelect = document.getElementById("llmSelect");
+    if (llmSelect && initialLlm.id) {
+        for (let i = 0; i < llmSelect.options.length; i++) {
+            if (llmSelect.options[i].value === initialLlm.id) {
+                llmSelect.selectedIndex = i;
+                break;
             }
         }
+    }
+}
 
-        function updatePromptAndVoice() {
-            const llmSelect = document.getElementById("llmSelect");
-            const selectedOption = llmSelect.options[llmSelect.selectedIndex];
-            const selectedLlmId = selectedOption.value;
-            const currentPath = window.location.pathname;
-            const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
-            const llmNameDisplay = document.getElementById("llmNameDisplay");
+// 선택된 LLM 업데이트
+function updatePromptAndVoice() {
+    const llmSelect = document.getElementById("llmSelect");
+    const selectedOption = llmSelect.options[llmSelect.selectedIndex];
 
-            if (llmNameDisplay) {
-            llmNameDisplay.textContent = selectedOption.textContent;
-            }
+    // URL 업데이트
+    const selectedLlmId = selectedOption.value;
+    const currentPath = window.location.pathname;
+    const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
+    if (window.location.pathname !== newUrl) window.location.href = newUrl;
 
+    // 프롬프트/Voice 업데이트
+    document.getElementById("promptDisplay").value = selectedOption.dataset.prompt || "";
+    document.getElementById("voiceIdDisplay").value = selectedOption.dataset.voiceId || "";
+    document.getElementById("voiceIdInput").value = selectedOption.dataset.voiceId || "";
+    document.getElementById("languageDisplay").textContent = selectedOption.dataset.language || "";
+    document.getElementById("languageInput").value = selectedOption.dataset.language || "";
 
-            if (window.location.pathname !== newUrl) window.location.href = newUrl;
-            document.getElementById("promptDisplay").value = selectedOption.dataset.prompt || "";
-
+    // 슬라이더 업데이트
+    const sliders = ["stability", "speed", "style", "temperature"];
+    sliders.forEach(slider => {
+        const value = selectedOption.dataset[slider] || 0.5;
+        const sliderElem = document.getElementById(`${slider}Slider`);
+        const valueElem = document.getElementById(`${slider}Value`);
+        const inputElem = document.getElementById(`${slider}Input`);
+        if(sliderElem && valueElem && inputElem){
+            sliderElem.value = value;
+            valueElem.textContent = value;
+            inputElem.value = value;
         }
+    });
 
-        function setupSliderListeners() {
-            document.getElementById("stabilitySlider").oninput = function () {
-                document.getElementById("stabilityValue").textContent = this.value;
-                document.getElementById("stabilityInput").value = this.value;
-            };
-            document.getElementById("speedSlider").oninput = function () {
-                document.getElementById("speedValue").textContent = this.value;
-                document.getElementById("speedInput").value = this.value;
-            };
-            document.getElementById("styleSlider").oninput = function () {
-                document.getElementById("styleValue").textContent = this.value;
-                document.getElementById("styleInput").value = this.value;
-            };
-            document.getElementById("temperatureSlider").oninput = function () {
-                document.getElementById("temperatureValue").textContent = this.value;
-                document.getElementById("temperatureInput").value = this.value;
+    // 이미지 업데이트
+    const llmImageElem = document.getElementById("llmImage");
+    const noImageText = document.getElementById("noImageText");
+    if (selectedOption.dataset.llmImage) {
+        llmImageElem.src = selectedOption.dataset.llmImage;
+        llmImageElem.style.display = "block";
+        noImageText.style.display = "none";
+    } else {
+        llmImageElem.style.display = "none";
+        noImageText.style.display = "block";
+    }
+}
+
+// 슬라이더 이벤트 리스너 설정
+function setupSliderListeners() {
+    const sliders = ["stability", "speed", "style", "temperature"];
+    sliders.forEach(slider => {
+        const sliderElem = document.getElementById(`${slider}Slider`);
+        const valueElem = document.getElementById(`${slider}Value`);
+        const inputElem = document.getElementById(`${slider}Input`);
+        if(sliderElem && valueElem && inputElem){
+            sliderElem.oninput = () => {
+                valueElem.textContent = sliderElem.value;
+                inputElem.value = sliderElem.value;
             };
         }
+    });
+}
 
-        window.onload = function () {
-            initializeUIWithCurrentLlm();
-            setupSliderListeners();
-        };
+// 초기화
+window.onload = function () {
+    initializeUIWithCurrentLlm();
+    setupSliderListeners();
+};
+
+
     </script>
 
 </body>
