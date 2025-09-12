@@ -76,6 +76,9 @@ def make_ai(request):
         
         if not voice_id:
             return JsonResponse({"error": _("voice_id 값이 없습니다.")}, status=400)
+        
+        if not style_prompt:
+            return JsonResponse({"error": _("prompt 값이 없습니다.")}, status=400)
 
         voice, created = VoiceList.objects.get_or_create(user=request.user, voice_id=voice_id)
 
@@ -103,6 +106,8 @@ def make_ai(request):
             decoded_img = base64.b64decode(image_content)
             llm.llm_image.save(image_name, ContentFile(decoded_img))
             llm.save()
+        else :
+            return JsonResponse({"error": _("이미지가 없습니다.")}, status=400)
 
 
         for key in ['custom_prompt']:

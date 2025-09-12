@@ -1,210 +1,141 @@
-
-
-
-    function createIndicators() {
-        const indicatorsContainer = document.getElementById('indicators');
-        indicatorsContainer.innerHTML = '';
-        
-        for (let i = 0; i < totalImages; i++) {
-            const indicator = document.createElement('div');
-            indicator.className = 'indicator';
-            indicator.onclick = () => goToSlide(i);
-            indicatorsContainer.appendChild(indicator);
-        }
-    }
-
-    function updateSlider() {
-        if (!newsTab) return;
-        const translateX = -(currentSlideIndex * 100);
-        newsTab.style.transform = `translateX(${translateX}%)`;
-        updateIndicators();
-    }
-
-    function updateIndicators() {
-        const indicators = document.querySelectorAll('.indicator');
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentSlideIndex);
-        });
-    }
-
-    function updateButtons() {
-        const prevBtn = document.querySelector('.slider-btn.prev');
-        const nextBtn = document.querySelector('.slider-btn.next');
-        
-        if (prevBtn) prevBtn.disabled = currentSlideIndex <= 0;
-        if (nextBtn) nextBtn.disabled = currentSlideIndex >= totalImages - 1;
-    }
-
-    function slideNews(direction) {
-        const newIndex = currentSlideIndex + direction;
-        
-        if (newIndex < 0 || newIndex >= totalImages) {
-            return;
-        }
-        
-        currentSlideIndex = newIndex;
-        updateSlider();
-        updateButtons();
-    }
-
-    function goToSlide(index) {
-        if (index < 0 || index >= totalImages) return;
-        
-        currentSlideIndex = index;
-        updateSlider();
-        updateButtons();
-    }
-
-    // 음성 플레이어
-    let currentAudio = null;
-    let currentCharacter = null;
-
-    function toggleAudio(character) {
-        const wrapper = character.closest('.voice-wrapper');
-        const audio = wrapper.querySelector('.voice-audio');
-const playOverlay = character.querySelector('.cv-play-overlay');
-const progressBar = wrapper.querySelector('.cv-progress-bar');
-        const timeDisplay = wrapper.querySelector('.voice-time');
-
-        if (currentAudio && currentAudio !== audio) {
-            currentAudio.pause();
-            currentCharacter.classList.remove('playing');
-currentCharacter.querySelector('.cv-play-overlay').innerHTML = '<div class="play-icon"></div>';
-        }
-
-        if (audio.paused) {
-            audio.play();
-            character.classList.add('playing');
-            playOverlay.innerHTML = '<div class="pause-icon"></div>';
-            currentAudio = audio;
-            currentCharacter = character;
-            setupAudioEvents(audio, character, progressBar, timeDisplay);
-        } else {
-            audio.pause();
-            character.classList.remove('playing');
-            playOverlay.innerHTML = '<div class="play-icon"></div>';
-            currentAudio = null;
-            currentCharacter = null;
-        }
-    }
-
-    function setupAudioEvents(audio, character, progressBar, timeDisplay) {
-        const playOverlay = character.querySelector('.play-overlay');
-        
-        audio.removeEventListener('timeupdate', audio._timeUpdateHandler);
-        audio.removeEventListener('ended', audio._endedHandler);
-
-        audio._timeUpdateHandler = function() {
-            if (audio.duration) {
-                const progress = (audio.currentTime / audio.duration) * 100;
-                progressBar.style.width = progress + '%';
-                
-                const currentMin = Math.floor(audio.currentTime / 60);
-                const currentSec = Math.floor(audio.currentTime % 60);
-                const durationMin = Math.floor(audio.duration / 60);
-                const durationSec = Math.floor(audio.duration % 60);
-                
-                timeDisplay.textContent = 
-                    `${currentMin.toString().padStart(2, '0')}:${currentSec.toString().padStart(2, '0')} / ` +
-                    `${durationMin.toString().padStart(2, '0')}:${durationSec.toString().padStart(2, '0')}`;
+// ===== 공통 유틸 =====
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
-        };
-
-        audio._endedHandler = function() {
-            character.classList.remove('playing');
-            playOverlay.innerHTML = '<div class="play-icon"></div>';
-            progressBar.style.width = '0%';
-            timeDisplay.textContent = '00:00 / 00:00';
-            currentAudio = null;
-            currentCharacter = null;
-        };
-
-        audio.addEventListener('timeupdate', audio._timeUpdateHandler);
-        audio.addEventListener('ended', audio._endedHandler);
-    }
-
-    function seekAudio(event, progressContainer) {
-        event.stopPropagation();
-        const wrapper = progressContainer.closest('.voice-wrapper');
-        const audio = wrapper.querySelector('.voice-audio');
-        
-        if (audio.duration) {
-            const rect = progressContainer.getBoundingClientRect();
-            const clickX = event.clientX - rect.left;
-            const progress = clickX / rect.width;
-            audio.currentTime = progress * audio.duration;
         }
     }
+    return cookieValue;
+}
 
-    function copyVoiceId(button) {
-        const wrapper = button.closest('.voice-wrapper');
-        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
-        
-        if (hiddenInput && hiddenInput.value) {
-            navigator.clipboard.writeText(hiddenInput.value).then(() => {
-                const originalText = button.textContent;
-                button.textContent = '✓';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                const textArea = document.createElement('textarea');
-                textArea.value = hiddenInput.value;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    button.textContent = '✓';
-                    button.classList.add('copied');
-                    setTimeout(() => {
-                        button.textContent = '복사';
-                        button.classList.remove('copied');
-                    }, 2000);
-                } catch (err) {
-                    alert('복사에 실패했습니다.');
-                }
-                document.body.removeChild(textArea);
-            });
-        }
-    }
-
-    // LLM 모달
-    function openModal(llm_id) {
-        const modalHTML = `
-        <div id="llm-modal">
-            <div class="modal-overlay" onclick="closeModal()"></div>
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal()">X</button>
-                <div id="llm-container" class="llm-container"></div>
-            </div>
+// ===== 모달 =====
+window.openModal = function(llm_id) {
+    const modalHTML = `
+    <div id="llm-modal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">X</button>
+            <div id="llm-container" class="llm-container"></div>
         </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-        fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
+fetch(`/${window.LANGUAGE_CODE}/intro/${llm_id}`)
+
         .then(response => response.text())
         .then(html => {
             document.getElementById('llm-container').innerHTML = html;
         });
-    }
+};
 
-    function closeModal() {
-        const modal = document.getElementById('llm-modal');
-        if (modal) modal.remove();
-    }
+function closeModal() {
+    const modal = document.getElementById('llm-modal');
+    if (modal) modal.remove();
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
+}
 
+// ===== 사이드바 토글 =====
+const toggleBtn = document.getElementById('sidebar-toggle');
+const sidebarContent = document.getElementById('sidebar-content');
 
-    // 초기화
-    document.addEventListener('DOMContentLoaded', () => {
-        initNewsSlider();
+if (toggleBtn && sidebarContent) {
+    toggleBtn.addEventListener('click', () => {
+        const collapsed = sidebarContent.classList.contains('collapsed');
+        sidebarContent.classList.toggle('collapsed');
+        toggleBtn.classList.toggle('collapsed');
+        toggleBtn.classList.toggle('expanded');
+        toggleBtn.innerHTML = collapsed ? '&#9660;' : '&#9650;';
     });
+}
 
+// ===== 좋아요 토글 =====
+document.addEventListener('click', (e) => {
+    const likeBtn = e.target.closest('.glt2-like-btn');
+    if (!likeBtn) return;
 
+    const userId = likeBtn.dataset.id;
 
+    fetch(URL_LIKE_TOGGLE, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": CSRF_TOKEN,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `llm_id=${userId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'like') {
+            likeBtn.innerHTML = '<span class="heart-filled"></span>';
+        } else if (data.status === 'unlike') {
+            likeBtn.innerHTML = '<span class="heart-empty"></span>';
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error("좋아요 토글 오류:", err));
+});
 
+// ===== 팔로우 토글 =====
+document.addEventListener('click', (e) => {
+    const followBtn = e.target.closest('.glt2-follow-btn');
+    if (!followBtn) return;
 
+    const userId = followBtn.dataset.id;
+    if (!userId) return;
 
+    fetch(URL_TOGGLE_FOLLOW, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": CSRF_TOKEN,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `user_id=${encodeURIComponent(userId)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'follow') {
+            followBtn.textContent = "Following";
+            followBtn.classList.add('following');
+        } else if (data.status === 'unfollow') {
+            followBtn.textContent = "Follow";
+            followBtn.classList.remove('following');
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error("팔로우 토글 오류:", err));
+});
+
+// ===== 목소리 저장 =====
+function saveVoice(celebrityId) {
+    fetch(URL_SAVE_VOICE, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": CSRF_TOKEN
+        },
+        body: JSON.stringify({ "celebrity_id": celebrityId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "ok") {
+            alert("보이스가 저장되었습니다!");
+        } else if (data.status === "exists") {
+            alert("이미 저장된 보이스입니다.");
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error("보이스 저장 오류:", error));
+}
