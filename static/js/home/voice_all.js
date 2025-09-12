@@ -32,3 +32,27 @@ window.saveVoice = function(celebrityId){
     })
     .catch(error => console.error("Error:", error));
 }
+
+
+// voice_all.js
+window.toggleAudio = function(element) {
+    const audio = element.closest('.voice-wrapper').querySelector('audio');
+    if (!audio) return;
+
+    if (audio.paused) {
+        audio.play();
+    } else {
+        audio.pause();
+    }
+};
+
+window.seekAudio = function(event, progressContainer) {
+    const audio = progressContainer.closest('.voice-wrapper').querySelector('audio');
+    if (!audio) return;
+
+    const rect = progressContainer.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const width = rect.width;
+    const percent = clickX / width;
+    audio.currentTime = percent * audio.duration;
+};
