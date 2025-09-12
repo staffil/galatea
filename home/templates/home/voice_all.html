@@ -30,51 +30,10 @@
         <div class="cv-main-content">
             <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!' %}</h2>
             <div class="cv-container">
-<form method="get" action="{% url 'home:voice_all' %}">
-    <input type="text" name="q" placeholder="목소리 검색" value="{{ query }}">
-    <button type="submit">검색</button>
-</form>
 
-<ul>
-{% for voice in result %}
-                <div class="cv-scroll">
-                    {% for voice in voice_list %}
-                        <div class="voice-wrapper">
-                            <div class="cv-header">
-                                <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
-                                    {% if voice.celebrity_voice_image %}
-                                        <img src="{{ voice.celebrity_voice_image.url }}" alt="">
-                                    {% else %}
-                                        <img src="{% static 'images/default_voice.png' %}" alt="">
-                                    {% endif %}
-                                    <div class="cv-play-overlay"><div class="cv-play-icon"></div></div>
-                                </div>
-                                <div class="cv-info">
-                                    <p>{{ voice.name }}</p>
-                                    <input type="hidden" value="{{ voice.celebrity_voice_id }}">
-                                    <p>{{ voice.voice_name }}</p>
-                                </div>
-                            </div>
-                            <div class="voice-progress" onclick="seekAudio(event, this)">
-                                <div class="cv-progress-bar"></div>
-                            </div>
-                            <!-- <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button> -->
-                             <button class="copy-id-btn" onclick="saveVoice({{ voice.id }})" title="Voice ID 복사">{% trans '저장하기' %}</button>
 
-                            {% if voice.sample_url %}
-                                <audio class="voice-audio" controls>
-                                    <source src="{{ voice.sample_url.url }}" type="audio/mpeg">
-                                </audio>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-{% empty %}
-    <li>검색 결과가 없습니다.</li>
-{% endfor %}
-</ul>
                 <div class="cv-scroll">
-                    {% for voice in voice_list %}
+{% for voice in voice_list|slice:":30" %}
                         <div class="voice-wrapper">
                             <div class="cv-header">
                                 <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
