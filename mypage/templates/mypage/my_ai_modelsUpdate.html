@@ -69,34 +69,34 @@
                 <div class="form-group">
                     <label for="language">{% trans "언어" %}</label>
                     <select name="language" id="language">
-                    <option value="en" {% if llm.voice.language == "en" %}selected{% endif %}>English (US)</option>
-                        <option value="ko" {% if llm.voice.language == "ko" %}selected{% endif %}>{% trans "Korean" %}</option>
-                        <option value="hi" {% if llm.voice.language == "hi" %}selected{% endif %}>{% trans "Hindi" %}</option>
-                        <option value="pt" {% if llm.voice.language == "pt" %}selected{% endif %}>{% trans "Portuguese" %}</option>
-                        <option value="zh" {% if llm.voice.language == "zh" %}selected{% endif %}>{% trans "Chinese" %}</option>
-                        <option value="es" {% if llm.voice.language == "es" %}selected{% endif %}>{% trans "Spanish" %}</option>
-                        <option value="fr" {% if llm.voice.language == "fr" %}selected{% endif %}>{% trans "French" %}</option>
-                        <option value="ja" {% if llm.voice.language == "ja" %}selected{% endif %}>{% trans "Japanese" %}</option>
-                        <option value="ar" {% if llm.voice.language == "ar" %}selected{% endif %}>{% trans "Arabic" %}</option>
-                        <option value="ru" {% if llm.voice.language == "ru" %}selected{% endif %}>{% trans "Russian" %}</option>
-                        <option value="id" {% if llm.voice.language == "id" %}selected{% endif %}>{% trans "Indonesian" %}</option>
-                        <option value="it" {% if llm.voice.language == "it" %}selected{% endif %}>{% trans "Italian" %}</option>
-                        <option value="nl" {% if llm.voice.language == "nl" %}selected{% endif %}>{% trans "Dutch" %}</option>
-                        <option value="tr" {% if llm.voice.language == "tr" %}selected{% endif %}>{% trans "Turkish" %}</option>
-                        <option value="pl" {% if llm.voice.language == "pl" %}selected{% endif %}>{% trans "Polish" %}</option>
-                        <option value="sv" {% if llm.voice.language == "sv" %}selected{% endif %}>{% trans "Swedish" %}</option>
-                        <option value="fil" {% if llm.voice.language == "fil" %}selected{% endif %}>{% trans "Filipino" %}</option>
-                        <option value="ms" {% if llm.voice.language == "ms" %}selected{% endif %}>{% trans "Malay" %}</option>
-                        <option value="ro" {% if llm.voice.language == "ro" %}selected{% endif %}>{% trans "Romanian" %}</option>
-                        <option value="uk" {% if llm.voice.language == "uk" %}selected{% endif %}>{% trans "Ukrainian" %}</option>
-                        <option value="el" {% if llm.voice.language == "el" %}selected{% endif %}>{% trans "Greek" %}</option>
-                        <option value="cs" {% if llm.voice.language == "cs" %}selected{% endif %}>{% trans "Czech" %}</option>
-                        <option value="da" {% if llm.voice.language == "da" %}selected{% endif %}>{% trans "Danish" %}</option>
-                        <option value="fi" {% if llm.voice.language == "fi" %}selected{% endif %}>{% trans "Finnish" %}</option>
-                        <option value="bg" {% if llm.voice.language == "bg" %}selected{% endif %}>{% trans "Bulgarian" %}</option>
-                        <option value="hr" {% if llm.voice.language == "hr" %}selected{% endif %}>{% trans "Croatian" %}</option>
-                        <option value="sk" {% if llm.voice.language == "sk" %}selected{% endif %}>{% trans "Slovak" %}</option>
-                        <option value="ta" {% if llm.voice.language == "ta" %}selected{% endif %}>{% trans "Tamil" %}</option>
+                    <option value="en" {% if llm.language == "en" %}selected{% endif %}>English (US)</option>
+                        <option value="ko" {% if llm.language == "ko" %}selected{% endif %}>{% trans "Korean" %}</option>
+                        <option value="hi" {% if llm.language == "hi" %}selected{% endif %}>{% trans "Hindi" %}</option>
+                        <option value="pt" {% if llm.language == "pt" %}selected{% endif %}>{% trans "Portuguese" %}</option>
+                        <option value="zh" {% if llm.language == "zh" %}selected{% endif %}>{% trans "Chinese" %}</option>
+                        <option value="es" {% if llm.language == "es" %}selected{% endif %}>{% trans "Spanish" %}</option>
+                        <option value="fr" {% if llm.language == "fr" %}selected{% endif %}>{% trans "French" %}</option>
+                        <option value="ja" {% if llm.language == "ja" %}selected{% endif %}>{% trans "Japanese" %}</option>
+                        <option value="ar" {% if llm.language == "ar" %}selected{% endif %}>{% trans "Arabic" %}</option>
+                        <option value="ru" {% if llm.language == "ru" %}selected{% endif %}>{% trans "Russian" %}</option>
+                        <option value="id" {% if llm.language == "id" %}selected{% endif %}>{% trans "Indonesian" %}</option>
+                        <option value="it" {% if llm.language == "it" %}selected{% endif %}>{% trans "Italian" %}</option>
+                        <option value="nl" {% if llm.language == "nl" %}selected{% endif %}>{% trans "Dutch" %}</option>
+                        <option value="tr" {% if llm.language == "tr" %}selected{% endif %}>{% trans "Turkish" %}</option>
+                        <option value="pl" {% if llm.language == "pl" %}selected{% endif %}>{% trans "Polish" %}</option>
+                        <option value="sv" {% if llm.language == "sv" %}selected{% endif %}>{% trans "Swedish" %}</option>
+                        <option value="fil" {% if llm.language == "fil" %}selected{% endif %}>{% trans "Filipino" %}</option>
+                        <option value="ms" {% if llm.language == "ms" %}selected{% endif %}>{% trans "Malay" %}</option>
+                        <option value="ro" {% if llm.language == "ro" %}selected{% endif %}>{% trans "Romanian" %}</option>
+                        <option value="uk" {% if llm.language == "uk" %}selected{% endif %}>{% trans "Ukrainian" %}</option>
+                        <option value="el" {% if llm.language == "el" %}selected{% endif %}>{% trans "Greek" %}</option>
+                        <option value="cs" {% if llm.language == "cs" %}selected{% endif %}>{% trans "Czech" %}</option>
+                        <option value="da" {% if llm.language == "da" %}selected{% endif %}>{% trans "Danish" %}</option>
+                        <option value="fi" {% if llm.language == "fi" %}selected{% endif %}>{% trans "Finnish" %}</option>
+                        <option value="bg" {% if llm.language == "bg" %}selected{% endif %}>{% trans "Bulgarian" %}</option>
+                        <option value="hr" {% if llm.language == "hr" %}selected{% endif %}>{% trans "Croatian" %}</option>
+                        <option value="sk" {% if llm.language == "sk" %}selected{% endif %}>{% trans "Slovak" %}</option>
+                        <option value="ta" {% if llm.language == "ta" %}selected{% endif %}>{% trans "Tamil" %}</option>
                     </select>
                 </div>
 
@@ -146,8 +146,8 @@
                 <div class="form-group">
                     <label for="model">{% trans "모델" %}</label>
                     <select name="model" id="model">
-                                <option value="gpt:gpt-4o-mini">GPT4o-mini</option>
-                                <option value="grok:grok-3-mini">Grok-3-mini</option>
+<option value="gpt:gpt-4o-mini" {% if llm.model == "gpt:gpt-4o-mini" %}selected{% endif %}>GPT4o-mini</option>
+<option value="grok:grok-3-mini" {% if llm.model == "grok:grok-3-mini" %}selected{% endif %}>Grok-3-mini</option>
                     </select>
                 </div>
 
