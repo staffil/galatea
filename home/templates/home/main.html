@@ -14,6 +14,7 @@
 <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
     <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
     <script src="{% static 'js/home/main.js' %}"></script>
 
         <!-- Open Graph (SNS 공유용) -->
@@ -378,7 +379,7 @@
             {% for news in news_list %}
                 <div class="news-slide">
                     {% if news.news_img %}
-                        <img src="{{ news.news_img.url }}" alt="{{ news.title }}">
+                        <img src="{{ news.news_img.url }}" alt="{{ news.title }}" loading="lazy">
                     {% else %}
                         <div class="news-placeholder">
                             <i class="icon-news"></i>
@@ -431,9 +432,9 @@
         <div class="user-card" onclick="openUserModal({{ user.id }})" style="cursor: pointer;">
             <div class="user-avatar">
                 {% if user.user_image %}
-                    <img src="{{ user.user_image.url }}" alt="{{ user.username }}">
+                    <img src="{{ user.user_image.url }}" alt="{{ user.username }}" loading="lazy">
                 {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="">
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
                 {% endif %}
             </div>
             <div class="user-info">
@@ -455,9 +456,9 @@
     <div class="event_list">
         {% for gift in gift_list %}
                 {% if gift.gift_img %}
-                    <img src="{{  gift.gift_img.url }}" alt="">
+                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
                 {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="">
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
                 {% endif %}
         {% endfor %}
     </div>
@@ -507,9 +508,9 @@ function closeModal() {
                         <div class="llm-card-body">
                             <div class="llm-image-container">
                                 {% if item.llm_image %}
-                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
+                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
                                 {% else %}
-                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text={% trans 'No+Image' %}" alt="{% trans '기본 이미지' %}">
+                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text={% trans 'No+Image' %}" alt="{% trans '기본 이미지' %}" loading="lazy">
                                 {% endif %}
                             </div>
                             <div class="llm-name">{{ item.title }}</div>
@@ -580,9 +581,9 @@ function closeModal() {
                             <div class="cv-header">
                                 <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
                                     {% if voice.celebrity_voice_image %}
-                                        <img src="{{ voice.celebrity_voice_image.url }}" alt="">
+                                        <img src="{{ voice.celebrity_voice_image.url }}" alt="" loading="lazy">
                                     {% else %}
-                                        <img src="{% static 'images/default_voice.png' %}" alt="">
+                                        <img src="{% static 'images/default_voice.png' %}" alt="" loading="lazy">
                                     {% endif %}
                                     <div class="cv-play-overlay"><div class="cv-play-icon"></div></div>
                                 </div>
@@ -622,9 +623,9 @@ function closeModal() {
 
                         <div class="genre-tag-box">
                             {% if genre.genre_image %}
-                                <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}">
+                                <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}" loading="lazy">
                             {% else %}
-                                <img src="{% static 'images/default_genre.png' %}" alt="{{ genre.name }}">
+                                <img src="{% static 'images/default_genre.png' %}" alt="{{ genre.name }}" loading="lazy">
                             {% endif %}
                             <div class="genre-tag-overlay">{{ genre.name }}</div>
                         </div>
@@ -645,9 +646,9 @@ function closeModal() {
                         <div class="card-content">
                             <div class="character-image">
                                 {% if celebrity.celebrity_image %}
-                                    <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.display_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'" />
+                                    <img src="{{ celebrity.celebrity_image.url }}" alt="{{ celebrity.display_name }}" onclick="location.href='/celebrity/{{ celebrity.id }}/'"  loading="lazy"/>
                                 {% else %}
-                                    <img src="https://via.placeholder.com/60x60/FFB6C1/FFFFFF?text={% trans 'No+Image' %}" alt="{% trans '기본 이미지' %}" />
+                                    <img src="https://via.placeholder.com/60x60/FFB6C1/FFFFFF?text={% trans 'No+Image' %}" alt="{% trans '기본 이미지' %}" loading="lazy"/>
                                 {% endif %}
                             </div>
                             <div class="character-description">{{ celebrity.display_name }}</div>
