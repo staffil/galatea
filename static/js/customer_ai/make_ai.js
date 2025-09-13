@@ -111,11 +111,7 @@
             return false;
         }
 
-        // 최종 확인
-        if (!confirm("이대로 AI를 생성하시겠습니까?")) {
-            e.preventDefault();
-            return false;
-        }
+
     });
 });
 
