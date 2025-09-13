@@ -42,7 +42,10 @@ ELEVEN_API_KEY = os.getenv("ELEVEN_API_KEY")
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 eleven_client = ElevenLabs(api_key=ELEVEN_API_KEY)
 
-
+from django.core.files.base import ContentFile
+from PIL import Image
+import io
+import base64
 
 @csrf_exempt
 @login_required
@@ -104,7 +107,17 @@ def make_ai(request):
         # 이미지가 세션에 있으면 저장 (base64 디코딩 후 저장)
         if image_content and image_name:
             decoded_img = base64.b64decode(image_content)
-            llm.llm_image.save(image_name, ContentFile(decoded_img))
+            # BytesIO로 열기
+            img_io = io.BytesIO(decoded_img)
+            img = Image.open(img_io).convert("RGB")  # WebP는 RGB 필요
+            webp_io = io.BytesIO()
+            
+            # WebP로 저장
+            img.save(webp_io, format='WEBP', quality=85)
+            
+            # 파일명 확장자도 .webp로 변경
+            webp_name = image_name.rsplit('.', 1)[0] + '.webp'
+            llm.llm_image.save(webp_name, ContentFile(webp_io.getvalue()))
             llm.save()
         else :
             return JsonResponse({"error": _("이미지가 없습니다.")}, status=400)
@@ -531,9 +544,7 @@ Respond in {custom_language}.
 import base64
 from django.shortcuts import render, redirect
 from django.core.files.storage import FileSystemStorage
-from io import BytesIO
-from PIL import Image
-from django.utils.translation import gettext as _
+
 
 def input_ai_name(request):
     if request.method == 'POST':
@@ -542,16 +553,10 @@ def input_ai_name(request):
 
         if not llm_name or not user_image:
             return render(request, 'customer_ai/ai_name.html', {'error': _('이름과 이미지를 모두 입력해주세요.')})
-        
-        img = Image.open(user_image)
-        img_io = BytesIO()
-        img.save(img_io, format="WEBP", quality=85)
-        img_io.seek(0) 
-
 
         # 이미지와 이름을 세션에 저장
         request.session['llm_name'] = llm_name
-        request.session['llm_image'] = user_image.name.rsplit('.', 1)[0] + ".webp"
+        request.session['llm_image'] = user_image.name  # 파일명만 저장
 
         # user_image 읽고 base64로 인코딩하여 문자열로 변환 후 저장
         user_image_content = user_image.read()  # bytes
