@@ -39,9 +39,9 @@
                         <div class="llm-card-body">
                             <div class="llm-image-container">
                                 {% if item.llm_image %}
-                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
+                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
                                 {% else %}
-                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지">
+                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
                                 {% endif %}
                             </div>
                             <div class="llm-name">{{ item.title }}</div>

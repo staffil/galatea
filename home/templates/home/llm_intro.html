@@ -22,7 +22,7 @@
     <div class="glt2-content" style="background:linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
         <div class="glt2-header">
             {% if item.llm_image %}
-            <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="{% trans 'LLM 이미지' %}">
+            <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="{% trans 'LLM 이미지' %}" loading="lazy">
             {% endif %}
             {% if user.is_authenticated and user != item.user %}
             <button class="glt2-like-btn" data-id="{{ item.id }}">
@@ -43,9 +43,9 @@
         </div>
         <div class="glt2-user-info">
             {% if item.user.user_image %}
-            <img src="{{ item.user.user_image.url }}" alt="">
+            <img src="{{ item.user.user_image.url }}" alt="" loading="lazy">
             {% else %}
-            <img src="{% static 'images/default_user.png' %}" alt="">
+            <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
             {% endif %}
             <span style="color:#fff;">{{ item.user.nickname }}</span>
             {% if user.is_authenticated and user != item.user %}

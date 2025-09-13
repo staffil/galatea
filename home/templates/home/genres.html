@@ -60,9 +60,9 @@
                 <div class="genre-card" data-genre="{{ genre.name|lower }}" onclick="goToGenre('{{ genre.id }}')">
                     <div class="genre-card-image">
                         {% if genre.genre_image %}
-                            <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}">
+                            <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}" loading="lazy">
                         {% else %}
-                            <img src="{% static 'images/default_genre.png' %}" alt="{{ genre.name }}">
+                            <img src="{% static 'images/default_genre.png' %}" alt="{{ genre.name }}" loading="lazy">
                         {% endif %}
                     </div>
                     <div class="genre-card-overlay"></div>

@@ -55,9 +55,9 @@
                         {% for item in llm_list %}
                             <div class="ai-card" >
                                 {% if item.llm_image %}
-                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" class="ai-image">
+                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" class="ai-image" loading="lazy">
                                 {% else %}
-                                    <img src="https://via.placeholder.com/280x150/4facfe/ffffff?text=AI" alt="{% trans '기본 이미지' %}" class="ai-image">
+                                    <img src="https://via.placeholder.com/280x150/4facfe/ffffff?text=AI" alt="{% trans '기본 이미지' %}" class="ai-image" loading="lazy">
                                 {% endif %}
                                 <div class="ai-content">
                                     <h3 class="ai-title">{{ item.title }}</h3>
