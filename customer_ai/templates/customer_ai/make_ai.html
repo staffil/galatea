@@ -187,7 +187,9 @@
                 <button type="submit" id="auto_prompt" class="btn generate-button">대신 만들어줘!</button>
                 <p>{% trans '대신 만들어줘를 눌러 보세요. AI가 프롬프트를 더 자세하게 적어 줄 겁니다.'%}</p>
 
-
+<script>
+  const AUTO_PROMPT_URL = "{% url 'auto_prompt' %}";
+</script>
 <script src="{% static 'js/customer_ai/make_ai.js' %}"></script>
 
 </body>

@@ -51,7 +51,7 @@
                         alert("{% trans '프롬프트을 입력해 주세요' %}")
                         return;
                     }
-                    fetch("{% url 'auto_prompt' %}", {
+                    fetch(AUTO_PROMPT_URL, {
                         method :"POST",
                         headers:{
                             'Content-Type': 'application/json',
