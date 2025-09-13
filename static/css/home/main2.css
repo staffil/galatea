@@ -179,9 +179,7 @@
 }
 
 @media (max-width: 480px) {
-    .news-section {
-        padding: 1rem 0.5rem;
-    }
+
 
     .news-container {
         width: 80%;
