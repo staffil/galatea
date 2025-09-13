@@ -29,7 +29,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
     # postal_code = models.CharField(max_length=30)
     # address_line1 = models.CharField(max_length=255)
     # address_line2 = models.CharField(max_length=255, null=True, blank=True)
-    user_image = models.ImageField(upload_to='uploads/profile_images/', null=True, blank=True)
+    user_image = models.ImageField(upload_to='uploads/profile_images/', null=True, blank=True,max_length=500,)
     oauth_provider = models.CharField(max_length=20, choices=[('google', 'Google'), ('microsoft', 'Microsoft'), ('github', 'GitHub')], null=True, blank=True)
     oauth_uid = models.CharField(max_length=200, null=True, blank=True)
     access_token = models.CharField(max_length=500, null=True, blank=True)
