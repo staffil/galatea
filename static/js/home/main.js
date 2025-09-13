@@ -64,7 +64,6 @@
         const audio = wrapper.querySelector('.voice-audio');
 const playOverlay = character.querySelector('.cv-play-overlay');
 const progressBar = wrapper.querySelector('.cv-progress-bar');
-        const timeDisplay = wrapper.querySelector('.voice-time');
 
         if (currentAudio && currentAudio !== audio) {
             currentAudio.pause();
