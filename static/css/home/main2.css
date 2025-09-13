@@ -129,9 +129,7 @@
 }
 /* 뉴스 반응형 */
 @media (max-width: 768px) {
-    .news-section {
-        padding: 2rem 1rem;
-    }
+
 
     .news-container {
         width: 80%;
@@ -179,7 +177,6 @@
 }
 
 @media (max-width: 480px) {
-
 
     .news-container {
         width: 80%;
