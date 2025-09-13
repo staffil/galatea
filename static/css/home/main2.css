@@ -1,0 +1,227 @@
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .event_list img {
+        width:100%;
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .event_list img {
+        width: 100%;
+        height: 300px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .event_list img {
+        width: 100%;
+        height: 110px;
+        border-radius: 10px;
+    }
+}
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .main-content, .cv-main-content {
+        padding: 35px 18px;
+    }
+    .section-title, .cv-section-title {
+        font-size: 24px;
+    }
+    .genre-tag-box {
+        min-width: 180px;
+        width: 180px;
+        height: 110px;
+    }
+    .character-card {
+        min-width: 200px;
+        width: 200px;
+    }
+    .llm-cards-container {
+        grid-auto-columns: 230px;
+    }
+    .llm-card {
+        width: 230px;
+        height: 180px;
+    }
+    .cv-scroll {
+        grid-auto-columns: 160px;
+        max-height: 520px;
+    }
+    .voice-wrapper {
+        width: 160px;
+        height: 160px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content, .cv-main-content {
+        padding: 30px 16px;
+    }
+    .section-title, .cv-section-title {
+        font-size: 20px;
+    }
+    .genre-tag-box {
+        min-width: 160px;
+        width: 160px;
+        height: 100px;
+    }
+    .character-card {
+        min-width: 180px;
+        width: 180px;
+    }
+    .llm-cards-container {
+        grid-template-rows: repeat(1, 2fr);
+        grid-auto-columns: 200px;
+        max-height: 700px;
+    }
+    .llm-card {
+        width: 200px;
+        height: 160px;
+    }
+    .cv-scroll {
+        grid-template-rows: repeat(3, 1fr);
+        grid-auto-columns: 200px;
+        max-height: 350px;
+
+    }
+    .voice-wrapper {
+        width: 200px;
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content, .cv-main-content {
+        padding: 25px 12px;
+    }
+    .section-title, .cv-section-title {
+        font-size: 18px;
+    }
+    .genre-tag-box {
+        min-width: 140px;
+        width: 140px;
+        height: 90px;
+    }
+    .character-card {
+        min-width: 160px;
+        width: 160px;
+    }
+    .llm-cards-container {
+        grid-auto-columns: 170px;
+        max-height: 400px;
+    }
+    .llm-card {
+        width: 170px;
+        height: 300px;
+    }
+    .cv-scroll {
+        grid-auto-columns: 200px;
+        max-height: 300px;
+
+    }
+    .voice-wrapper {
+        width: 200px;
+        height: 140px;
+    }
+}
+/* 뉴스 반응형 */
+@media (max-width: 768px) {
+    .news-section {
+        padding: 2rem 1rem;
+    }
+
+    .news-container {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .news-content {
+        padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .news-title {
+        font-size: 10px
+    }
+
+    .news-description {
+        font-size: 7px;
+        margin-bottom: 1rem;
+    }
+
+    .nav-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .nav-btn.prev {
+        left: 1rem;
+    }
+
+    .nav-btn.next {
+        right: 1rem;
+    }
+
+    .indicators {
+        bottom: 1.5rem;
+    }
+
+    .news-slide {
+        height: 400px;
+    }
+
+    .news-link {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-section {
+        padding: 1rem 0.5rem;
+    }
+
+    .news-container {
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .news-slide {
+        height: 200px;
+    }
+
+    .news-content {
+        padding: 1.5rem 1rem 1rem;
+    }
+
+    .news-section .section-title {
+        margin-bottom: 1.5rem;
+        font-size: 10px;
+    }
+
+    .news-link {
+        font-size: 7px;
+    }
+
+    .nav-btn {
+        width: 15px;
+        height: 15px;
+        font-size: 1.1rem;
+    }
+
+    .nav-btn.prev {
+        left: 0.5rem;
+    }
+
+    .nav-btn.next {
+        right: 0.5rem;
+    }
+    #sidebar-toggle{
+        width: 30px;
+        height: 30px;
+        padding: 7px
+
+    }
+}
