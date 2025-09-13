@@ -353,18 +353,7 @@
     </div>
 
     <main style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin-top: -40px; padding-bottom: 40px;">
-        <!-- 메인 네비게이션 -->
-                 {% if user.is_authenticated %}
-        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}" style="padding-top: 70px;">
-            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
-            <!-- <a href="/soon/" class="nav-button">{% trans "보이스 클로닝" %}</a>
-            <a href="/soon/" class="nav-button">{% trans "보이스 만들기" %}</a> -->
-            <a href="/voice_all/" class="nav-button">{% trans "보이스 선택하기" %}</a>
-            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
-            <a href="/soon/" class="nav-button">{% trans "친구초대하기" %}</a>
-            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
-        </nav>
-        {% endif %}
+
                     {% for news in news_list %}
 
                     {% endfor %}
@@ -423,7 +412,18 @@
         {% endif %}
     </div>
 </div>
-
+        <!-- 메인 네비게이션 -->
+                 {% if user.is_authenticated %}
+        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}" style="padding-top: 70px;">
+            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
+            <!-- <a href="/soon/" class="nav-button">{% trans "보이스 클로닝" %}</a>
+            <a href="/soon/" class="nav-button">{% trans "보이스 만들기" %}</a> -->
+            <a href="/voice_all/" class="nav-button">{% trans "보이스 선택하기" %}</a>
+            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
+            <a href="/soon/" class="nav-button">{% trans "친구초대하기" %}</a>
+            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
+        </nav>
+        {% endif %}
 
 <!-- 인기있는 유저 -->
 <div class="popular-users-section">
