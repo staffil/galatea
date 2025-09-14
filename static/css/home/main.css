@@ -540,7 +540,11 @@ main {
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(139,92,246,0.5);
 }
-
+.users-list, .llm-cards-container {
+    padding-left: 20px;
+    padding-right: 20px;
+    scroll-padding-left: 20px; /* 스크롤 포커스 시 여백 유지 */
+}
 /* LLM 추천 섹션 - 2행 그리드 */
 .llm-cards-container {
     display: grid;
