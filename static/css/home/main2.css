@@ -115,7 +115,7 @@
     }
     .llm-card {
         width: 170px;
-        height: 300px;
+        height: 230px;
     }
     .cv-scroll {
         grid-auto-columns: 200px;
@@ -224,4 +224,5 @@
         padding: 7px
 
     }
+
 }
