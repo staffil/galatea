@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
     <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
     <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_section.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+
     <script src="{% static 'js/home/main.js' %}"></script>
 
         <!-- Open Graph (SNS 공유용) -->
@@ -474,35 +477,35 @@
 
 
         <!-- LLM 추천 섹션 -->
-        <div class="main-content">
-            <div class="llm-container">
-                <h2 class="section-title">{% trans '추천' %}</h2>
-                <div class="llm-cards-container">
-                    {% for item in llm|slice:":18" %}
-                    <div class="llm-card" onclick="openModal({{ item.id }})">
-                        <div class="llm-card-body">
-                            <div class="llm-image-container">
-                                {% if item.llm_image %}
-                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
-                                {% else %}
-                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text={% trans 'No+Image' %}" alt="{% trans '기본 이미지' %}" loading="lazy">
-                                {% endif %}
-                            </div>
-                            <div class="llm-name">{{ item.title }}</div>
-                            <div class="genre-tags">
-                                {% for genre in item.genres.all %}
-                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.display_name }}</div>
-                                {% empty %}
-                                    <div class="genre-tag" style="background-color: #999;">{% trans "장르 없음" %}</div>
-                                {% endfor %}
-                            </div>
-                        </div>
+<div class="main-content">
+    <div class="llm-container">
+        <h2 class="section-title">{% trans '추천' %}</h2>
+        <div class="llm-cards-container">
+            {% for item in llm_list %}
+            <div class="llm-card" onclick="openModal({{ item.id }})">
+                <div class="llm-card-body">
+                    <div class="llm-image-container">
+                        {% if item.llm_image %}
+                            <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                        {% else %}
+                            <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                        {% endif %}
                     </div>
-                    {% endfor %}
+                    <div class="llm-name">{{ item.title }}</div>
+                    <div class="genre-tags">
+                        {% for genre in item.genres.all %}
+                            <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                        {% empty %}
+                            <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
+            {% endfor %}
         </div>
+    </div>
+</div>
+
 
 
 <script>
@@ -950,16 +953,6 @@ document.addEventListener("click", function(e) {
         })
         .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
     });
-// 페이지 로드 후 카드 컨테이너 표시
-document.addEventListener('DOMContentLoaded', () => {
-    const llmContainer = document.querySelector('.llm-cards-container');
-    if (!llmContainer) return;
-
-    // 잠깐 delay를 줘서 브라우저가 DOM 계산 후 opacity 1
-    setTimeout(() => {
-        llmContainer.classList.add('loaded');
-    }, 50); // 50ms 정도면 충분
-});
 
 </script>
 
