@@ -440,7 +440,7 @@ def user_intro(request, user_id):
 
     total_follow_count = User.objects.filter(id=user_id)\
         .annotate(follower_count=Count('follower_set', distinct=True))\
-        .order_by('-follower_count')[:10]
+        .order_by('-follower_count')[:12]
 
     llm_list = LLM.objects.filter(user_id=user_id, is_public=True)
     prompt_list = Prompt.objects.filter(user_id=user_id)
