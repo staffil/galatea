@@ -51,7 +51,7 @@ class UserAdmin(BaseUserAdmin):
         return obj.nickname
     
     @admin.display(description='보이스 이름')
-    def 닉네임(self, obj):
+    def 보이스_이름(self, obj):
         return obj.voice.name
 
     # inlines 설정
