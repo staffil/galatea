@@ -53,7 +53,7 @@
                 <div class="ai-container">
                     <div class="ai-scroll">
                         {% for item in llm_list %}
-                            <div class="ai-card" >
+                            <div class="ai-card"  onclick="openModal({{ item.id }})">
                                 {% if item.llm_image %}
                                     <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" class="ai-image" loading="lazy">
                                 {% else %}
@@ -119,9 +119,11 @@
         </div>
     </div>
 
-    <script src="{% static 'js/home/user_intro.js' %}">
-
- 
-    </script>
+    <script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
+    const LLM_id = "{{ item.id }}"
+</script>
+    <script src="{% static 'js/home/user_intro.js' %}"></script>
+    <script src="{% static 'js/home/main.js' %}"></script>
 </body>
 </html>

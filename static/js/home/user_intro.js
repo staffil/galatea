@@ -1,42 +1,6 @@
-        // 모달 기능
-        function openModal(llmId) {
-            const modal = document.getElementById('modalOverlay');
-            const modalContent = document.getElementById('modalContent');
-            
-            modalContent.innerHTML = `
-                <h2 style="color: white; margin-bottom: 20px;">AI 상세 정보</h2>
-                <p style="color: #b8c5d1; line-height: 1.6;">
-                    선택하신 AI의 상세 정보입니다. 
-                </p>
-                <div style="margin-top: 30px; text-align: center;">
-                    <button style="
-                        padding: 12px 30px;
-                        background: linear-gradient(135deg, #4facfe, #00f2fe);
-                        border: none;
-                        border-radius: 25px;
-                        color: white;
-                        font-weight: 600;
-                        cursor: pointer;
-                    " onclick="closeModal()">
-                        대화 시작하기
-                    </button>
-                </div>
-            `;
-            
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+       
+       
 
-        function closeModal() {
-            const modal = document.getElementById('modalOverlay');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // 모달 이벤트
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
 
         document.getElementById('modalClose').addEventListener('click', closeModal);
 
@@ -81,3 +45,42 @@
             });
         });
 
+  // LLM 모달
+    function openModal(LLM_id) {
+        const modalHTML = `
+        <div id="llm-modal">
+            <div class="modal-overlay" onclick="closeModal()"></div>
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">X</button>
+                <div id="llm-container" class="llm-container"></div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+
+        fetch(`/${LANGUAGE_CODE}/intro/${LLM_id}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('llm-container').innerHTML = html;
+        });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('llm-modal');
+        if (modal) modal.remove();
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";
+
+    }
+
+    // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        initNewsSlider();
+    });
+
+
+
+    
