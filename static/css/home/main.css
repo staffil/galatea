@@ -585,8 +585,13 @@ main {
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(15px);
+        opacity: 0;
+    transform: translateY(10px);
 }
-
+.llm-card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
 .llm-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 45px rgba(139,92,246,0.4);
