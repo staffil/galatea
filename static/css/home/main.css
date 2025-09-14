@@ -544,7 +544,6 @@ main {
     padding-left: 20px;
     padding-right: 20px;
     scroll-padding-left: 20px; /* 스크롤 포커스 시 여백 유지 */
-        opacity: 1;
 }
 /* LLM 추천 섹션 - 2행 그리드 */
 .llm-cards-container {
@@ -559,7 +558,6 @@ main {
     scrollbar-width: thin;
     scrollbar-color: rgba(139,92,246,0.5) transparent;
     max-height: 2500px; /* 필요 시 조정 */
-    opacity: 0; /* 초기에는 숨기기 */
     transition: opacity 0.3s ease;
 }
 /* 카드 보여주기 */
