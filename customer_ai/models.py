@@ -54,9 +54,8 @@ def validate_webp(file):
 #llm 테이블
 class LLM(models.Model):
     MODEL_CHOICES = [
-        ('gpt-3.5-turbo', 'GPT-3.5 Turbo'),
         ('gpt-4o-mini', 'GPT-4o Mini'),
-        ('gpt-4o', 'GPT-4o'),
+        ('grok-3-mini', 'Grok-3-mini '),
     ]
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='llm_set')
     voice = models.ForeignKey('makeVoice.VoiceList', on_delete=models.CASCADE, null=True, blank=True, related_name='llms')
@@ -68,7 +67,7 @@ class LLM(models.Model):
     update_at = models.DateTimeField(null=True, blank=True, auto_now=True, verbose_name='user 가 프롬프트, 목소리 변형을 했을 경우 나중에 문제가 생겼을때 원인을 찾을 수 있음')
     llm_image = models.ImageField(upload_to='uploads/llm_images/', null=True, blank=True, max_length=500, validators=[validate_webp])
     response_mp3 = models.CharField(max_length=255, null=True, blank=True, verbose_name='해당 보이스를 저장할 수 있는 mp3 파일 -> 목소리는 ai가 대답할 떄마다 기록이 덮어씌워짐')
-    model = models.CharField(max_length=20, choices=MODEL_CHOICES, default='gpt-3.5-turbo', verbose_name='gpt 모델 중 하나를 선택해서 사용할 수 있음')
+    model = models.CharField(max_length=20, choices=MODEL_CHOICES, default='gpt-4o-mini', verbose_name='gpt 모델 중 하나를 선택해서 사용할 수 있음')
     language = models.CharField(max_length=10, default='en')
     temperature = models.FloatField(default=1.0)
     stability = models.FloatField(default=0.5)

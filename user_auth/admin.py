@@ -30,7 +30,7 @@ except admin.sites.NotRegistered:
 # 기존 이름 그대로 UserAdmin 사용
 @admin.register(Users)
 class UserAdmin(BaseUserAdmin):
-    list_display = ('사용자_번호', '사용자_아이디', '이메일_주소', 'is_staff', 'is_active')
+    list_display = ('사용자_번호', '사용자_아이디', '이메일_주소', '닉네임', 'is_staff', 'is_active')
     list_filter = ('is_staff', 'is_active', 'status')
 
     # 컬럼 이름 한글화
@@ -45,6 +45,10 @@ class UserAdmin(BaseUserAdmin):
     @admin.display(description='이메일 주소')
     def 이메일_주소(self, obj):
         return obj.email
+    
+    @admin.display(description='닉네임')
+    def 닉네임(self, obj):
+        return obj.nickname
 
     # inlines 설정
     inlines = [ConversationInline]  # ConversationInline 정의 필요
