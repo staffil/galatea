@@ -950,6 +950,16 @@ document.addEventListener("click", function(e) {
         })
         .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
     });
+// 페이지 로드 후 카드 컨테이너 표시
+document.addEventListener('DOMContentLoaded', () => {
+    const llmContainer = document.querySelector('.llm-cards-container');
+    if (!llmContainer) return;
+
+    // 잠깐 delay를 줘서 브라우저가 DOM 계산 후 opacity 1
+    setTimeout(() => {
+        llmContainer.classList.add('loaded');
+    }, 50); // 50ms 정도면 충분
+});
 
 </script>
 

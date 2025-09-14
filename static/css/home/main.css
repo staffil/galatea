@@ -546,22 +546,25 @@ main {
     scroll-padding-left: 20px; /* 스크롤 포커스 시 여백 유지 */
 }
 /* LLM 추천 섹션 - 2행 그리드 */
-/* LLM 추천 섹션 - 3행 가로 스크롤 */
 .llm-cards-container {
     display: grid;
-    grid-template-rows: repeat(3, 1fr);  /* 3행 고정 */
-    grid-auto-flow: column;               /* 카드가 열 단위로 배치 */
-    grid-auto-columns: 280px;             /* 자동 생성 열 너비 */
-    gap: 20px;
-    padding: 10px 0;
-    margin-bottom: 25px;
-    overflow-x: auto;                     /* 가로 스크롤 가능 */
+    grid-auto-flow: column; /* 카드가 좌→우로 이어지도록 */
+    grid-auto-columns: 280px; /* 각 카드 너비 */
+    grid-template-rows: repeat(3, 1fr); /* 3행으로 배치 */
+    gap: 25px;
+    overflow-x: auto;
     overflow-y: hidden;
+    padding: 10px 0;
     scrollbar-width: thin;
     scrollbar-color: rgba(139,92,246,0.5) transparent;
-    max-height: 2500px;
+    max-height: 2500px; /* 필요 시 조정 */
+    opacity: 0; /* 초기에는 숨기기 */
+    transition: opacity 0.3s ease;
 }
-
+/* 카드 보여주기 */
+.llm-cards-container.loaded {
+    opacity: 1; /* JS에서 로드 후 opacity 1로 변경 */
+}
 .llm-cards-container::-webkit-scrollbar {
     height: 8px;
 }
@@ -576,10 +579,9 @@ main {
     border-radius: 4px;
 }
 
-/* 카드 */
 .llm-card {
     width: 280px;
-    height: 250px; /* 카드 높이 고정 */
+    height: 250px;
     background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.05));
     border: 1px solid rgba(139,92,246,0.2);
     border-radius: 18px;
@@ -587,6 +589,7 @@ main {
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(15px);
+    
 }
 
 .llm-card:hover {
