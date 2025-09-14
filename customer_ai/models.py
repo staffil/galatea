@@ -67,7 +67,7 @@ class LLM(models.Model):
     update_at = models.DateTimeField(null=True, blank=True, auto_now=True, verbose_name='user 가 프롬프트, 목소리 변형을 했을 경우 나중에 문제가 생겼을때 원인을 찾을 수 있음')
     llm_image = models.ImageField(upload_to='uploads/llm_images/', null=True, blank=True, max_length=500, validators=[validate_webp])
     response_mp3 = models.CharField(max_length=255, null=True, blank=True, verbose_name='해당 보이스를 저장할 수 있는 mp3 파일 -> 목소리는 ai가 대답할 떄마다 기록이 덮어씌워짐')
-    model = models.CharField(max_length=20, choices=MODEL_CHOICES, default='gpt-4o-mini', verbose_name='gpt 모델 중 하나를 선택해서 사용할 수 있음')
+    model = models.CharField(max_length=20, choices=MODEL_CHOICES, default='gpt:gpt-4o-mini', verbose_name='gpt 모델 중 하나를 선택해서 사용할 수 있음')
     language = models.CharField(max_length=10, default='en')
     temperature = models.FloatField(default=1.0)
     stability = models.FloatField(default=0.5)
