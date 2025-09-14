@@ -459,53 +459,6 @@
         </nav>
         {% endif %}
 
-<!-- 인기있는 유저 -->
-<div class="popular-users-section">
-    <h2 class="section-title">{% trans '인기 있는 팔로워' %}</h2>
-    <div class="users-list">
-        {% for user in total_follow_count %}
-        <div class="user-card" onclick="openUserModal({{ user.id }})" style="cursor: pointer;">
-            <div class="user-avatar">
-                {% if user.user_image %}
-                    <img src="{{ user.user_image.url }}" alt="{{ user.username }}" loading="lazy">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-                {% endif %}
-            </div>
-            <div class="user-info">
-                <h3 class="username">{{ user.nickname }}</h3>
-                <span class="follower-count">{{ user.follower_count }} {% trans "팔로워" %}</span>
-            </div>
-        </div>
-        {% empty %}
-        <div class="empty-message">
-            <p>{% trans "아직 팔로우한 유저가 없습니다." %}</p>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
-
-
-
-
-
-
-<!-- 이벤트 -->
-<div class="popular-users-section">
-    <h2 class="section-title">{% trans '이벤트' %}</h2>
-    <div class="event_list">
-        {% for gift in gift_list %}
-                {% if gift.gift_img %}
-                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-                {% endif %}
-        {% endfor %}
-    </div>
-</div>
-
-
 
         <!-- LLM 추천 섹션 -->
 <div class="main-content">
@@ -538,6 +491,52 @@
 
     </div>
 </div>
+
+
+
+<!-- 이벤트 -->
+<div class="popular-users-section">
+    <h2 class="section-title">{% trans '이벤트' %}</h2>
+    <div class="event_list">
+        {% for gift in gift_list %}
+                {% if gift.gift_img %}
+                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
+                {% else %}
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+
+<!-- 인기있는 유저 -->
+<div class="popular-users-section">
+    <h2 class="section-title">{% trans '인기 있는 팔로워' %}</h2>
+    <div class="users-list">
+        {% for user in total_follow_count %}
+        <div class="user-card" onclick="openUserModal({{ user.id }})" style="cursor: pointer;">
+            <div class="user-avatar">
+                {% if user.user_image %}
+                    <img src="{{ user.user_image.url }}" alt="{{ user.username }}" loading="lazy">
+                {% else %}
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                {% endif %}
+            </div>
+            <div class="user-info">
+                <h3 class="username">{{ user.nickname }}</h3>
+                <span class="follower-count">{{ user.follower_count }} {% trans "팔로워" %}</span>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-message">
+            <p>{% trans "아직 팔로우한 유저가 없습니다." %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
 
 
 
