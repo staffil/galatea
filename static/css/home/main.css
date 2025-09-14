@@ -523,23 +523,7 @@ main {
     margin-bottom: 15px;
 }
 
-.chat-button {
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    border: none;
-    border-radius: 20px;
-    color: white;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
 
-.chat-button:hover {
-    background: linear-gradient(135deg, #7c3aed, #0891b2);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(139,92,246,0.5);
-}
 .users-list, .llm-cards-container {
     padding-left: 20px;
     padding-right: 20px;
