@@ -54,8 +54,8 @@ def validate_webp(file):
 #llm 테이블
 class LLM(models.Model):
     MODEL_CHOICES = [
-        ('gpt-4o-mini', 'GPT-4o Mini'),
-        ('grok-3-mini', 'Grok-3-mini '),
+        ('gpt:gpt-4o-mini', 'GPT-4o Mini'),
+        ('grok:grok-3-mini', 'Grok-3-mini '),
     ]
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='llm_set')
     voice = models.ForeignKey('makeVoice.VoiceList', on_delete=models.CASCADE, null=True, blank=True, related_name='llms')
