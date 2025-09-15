@@ -323,19 +323,24 @@
     <script>
         const IMP = window.IMP;
         IMP.init("imp28654630"); // 테스트 가맹점 코드
-
+        const pgMap = {
+            "KG": { pg: "html5_inicis", pay_method: "card" },
+            "PayPal": { pg: "paypal", pay_method: "paypal" },
+            "KakaoPay": { pg: "kakaopay", pay_method: "card" }
+        };
         function requestPay(pg, btn) {
             const VERIFY_PAYMENT_URL = "{% url 'payment:verify_payment' %}";
             const merchant_uid = "order_" + new Date().getTime();
             const amount = parseInt(btn.getAttribute("data-price"));
             const rank_id = btn.getAttribute("data-rank-id");
+            const { pg, pay_method } = pgMap[pgName];
 
             // 로딩 상태 표시
             btn.classList.add('loading');
 
             const data = {
                 pg: pg,
-                pay_method: "card",
+                pay_method: pay_method,
                 merchant_uid: merchant_uid,
                 name: "GALATEA {% trans '등급 결제' %}",
                 amount: amount,
