@@ -32,7 +32,6 @@ def payment_choice(request):
 
 
 
-
 # 아임포트 Access Token 발급
 def get_access_token():
     url = "https://api.iamport.kr/users/getToken"
@@ -44,7 +43,6 @@ def get_access_token():
     if response.status_code != 200:
         raise Exception(f"토큰 발급 실패: {response.text}")
     return response.json()["response"]["access_token"]
-
 
 
 @login_required
@@ -74,10 +72,18 @@ def verify_payment(request):
         payment_status = payment_data.get("status")  # paid, failed, ready 등
         pay_method_code = payment_data.get("pay_method")  # 아임포트 반환 PG사 코드
 
-        # 3. 결제수단 매핑
-        payment_method = PaymentMethod.objects.filter(name__iexact=pay_method_code).first()
-        if not payment_method:
-            # 등록된 PG사 이름과 불일치할 경우, 첫번째 활성 결제수단으로 기본 처리
+        # 3. 아임포트 코드 -> DB PaymentMethod 이름 매핑
+        PG_CODE_TO_DB_NAME = {
+            "html5_inicis": "KG",
+            "paypal": "PayPal",
+            "kakaopay": "KakaoPay",
+        }
+
+        db_name = PG_CODE_TO_DB_NAME.get(pay_method_code)
+        if db_name:
+            payment_method = PaymentMethod.objects.filter(name=db_name).first()
+        else:
+            # 매핑 실패 시, 활성화된 첫번째 PG사 선택
             payment_method = PaymentMethod.objects.filter(is_active=True).first()
 
         # 4. Payment 객체 생성
