@@ -5,10 +5,7 @@ import requests
 from .models import Payment
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from decimal import Decimal
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from payment.models import Payment, PaymentRank, PaymentMethod, PaymentStats, Token, TokenHistory
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from payment.models import Payment,PaymentMethod,PaymentRank,PaymentStats
@@ -45,84 +42,77 @@ def get_access_token():
         raise Exception(f"토큰 발급 실패: {response.text}")
     return response.json()["response"]["access_token"]
 
-
-
+from payment.models import TokenHistory, Token
+# 결제 검증
 @login_required
 def verify_payment(request):
+    imp_uid = request.GET.get("imp_uid")
+    merchant_uid = request.GET.get("merchant_uid")
+    rank_id = int(request.GET.get("rank_id"))
+
+    # 결제 등급 가져오기
     try:
-        imp_uid = request.GET.get("imp_uid")
-        merchant_uid = request.GET.get("merchant_uid")
-        rank_id = int(request.GET.get("rank_id"))
+        plan = PaymentRank.objects.get(id=rank_id)
+    except PaymentRank.DoesNotExist:
+        return JsonResponse({"error": _("잘못된 등급 ID")}, status=400)
 
-        # 1. 결제 등급 가져오기
-        plan = PaymentRank.objects.filter(id=rank_id).first()
-        if not plan:
-            return JsonResponse({"error": "잘못된 등급 ID"}, status=400)
+    # 아임포트에서 결제 정보 가져오기
+    access_token = get_access_token()
+    url = f"https://api.iamport.kr/payments/{imp_uid}"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(url, headers=headers)
+    res_json = response.json()
 
-        freetoken = plan.freetoken or 0
+    if res_json["code"] != 0:
+        return JsonResponse({"error": _("결제 검증 실패"), "detail": res_json}, status=400)
 
-        # 2. 아임포트 결제 정보 가져오기
-        access_token = get_access_token()
-        url = f"https://api.iamport.kr/payments/{imp_uid}"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        res_json = requests.get(url, headers=headers).json()
+    payment_data = res_json["response"]
+    payment_status = payment_data.get("status")
 
-        if res_json.get("code") != 0 or "response" not in res_json:
-            return JsonResponse({"error": "결제 검증 실패", "detail": res_json}, status=400)
+    # Payment 테이블 생성
+    payment = Payment.objects.create(
+        user=request.user,
+        amount=payment_data["amount"],
+        payment_method=PaymentMethod.objects.first(),  # 실제 결제 방식과 매핑 필요
+        status=payment_status,
+        imp_uid=imp_uid,
+        merchant_uid=merchant_uid,
+        payment_rank=plan
+    )
 
-        payment_data = res_json["response"]
-        payment_status = payment_data.get("status")  # paid, failed, ready 등
-        pay_method_code = payment_data.get("pay_method")  # 아임포트 반환 PG사 코드
+    # 결제 성공 시 Token 충전
+    if payment_status == "paid":
+        token, created = Token.objects.get_or_create(user=request.user)
+        token.total_token += plan.freetoken  # PaymentRank에 저장된 토큰 수량
+        token.payment = payment
+        token.save()
 
-        # 3. 결제수단 매핑
-        payment_method = PaymentMethod.objects.filter(name__iexact=pay_method_code).first()
-        if not payment_method:
-            # 등록된 PG사 이름과 불일치할 경우, 첫번째 활성 결제수단으로 기본 처리
-            payment_method = PaymentMethod.objects.filter(is_active=True).first()
-
-        # 4. Payment 객체 생성
-        payment = Payment.objects.create(
+        # TokenHistory 기록
+        TokenHistory.objects.create(
             user=request.user,
-            amount=payment_data.get("amount", 0),
-            status=payment_status,
-            payment_method=payment_method,
-            imp_uid=imp_uid,
-            merchant_uid=merchant_uid,
-            payment_rank=plan,
-            customer_uid=payment_data.get("customer_uid", "")
+            change_type=TokenHistory.CHARGE,
+            amount=plan.freetoken,
+            total_voice_generated=0
         )
 
-        # 5. 결제 성공 시 Token 충전
-        if payment_status == "paid":
-            token, _ = Token.objects.get_or_create(user=request.user)
-            token.total_token += Decimal(freetoken)
-            token.payment = payment
-            token.save()
+    if payment_status == "paid":
+        payment.customer_uid = payment_data.get("customer_uid")
+        payment.save()
 
-            TokenHistory.objects.create(
-                user=request.user,
-                change_type=TokenHistory.CHARGE,
-                amount=freetoken,
-                total_voice_generated=0
-            )
+    # PaymentStats 갱신
+    stats, created = PaymentStats.objects.get_or_create(id=1)  # 단일 통계 레코드
+    stats.total_payments += 1
+    if payment_status == "paid":
+        stats.success_count += 1
+    elif payment_status == "failed":
+        stats.failure_count += 1
+    elif payment_status == "ready":
+        stats.pending_count += 1
+    elif payment_status == "cancelled":
+        stats.refunded_count += 1
+    stats.save()
 
-        # 6. 결제 통계 업데이트
-        stats, _ = PaymentStats.objects.get_or_create(id=1)
-        stats.total_payments += 1
-        if payment_status == "paid":
-            stats.success_count += 1
-        elif payment_status == "failed":
-            stats.failure_count += 1
-        elif payment_status == "ready":
-            stats.pending_count += 1
-        elif payment_status == "cancelled":
-            stats.refunded_count += 1
-        stats.save()
-
-        return JsonResponse({"message": "결제 처리 완료", "status": payment_status})
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"message": _("결제 처리 완료"), "status": payment_status})
 
 from payment.models import PaymentMethod
 @login_required

@@ -75,7 +75,6 @@
                 <thead>
                     <tr>
                         <th>{% trans "날짜" %}</th>
-                        <th>{% trans "결제 방식" %}</th>
                         <th>{% trans "상태" %}</th>
                         <th>{% trans "결제 금액" %}</th>
                     </tr>
@@ -85,7 +84,6 @@
                         {% for p in payments %}
                         <tr>
                             <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
-                            <td>{{ p.payment_method.name }}</td>
                             <td>{{ p.status }}</td>
                             <td>{{ p.amount }}</td>
                         </tr>
