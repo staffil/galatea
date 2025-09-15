@@ -67,13 +67,16 @@ def verify_payment(request):
         return JsonResponse({"error": _("결제 검증 실패"), "detail": res_json}, status=400)
 
     payment_data = res_json["response"]
+    
     payment_status = payment_data.get("status")
+    pay_method_code = payment_data.get("pay_method")  # 아임포트에서 반환되는 PG사 코드
+    payment_method = PaymentMethod.objects.filter(code=pay_method_code).first()
 
     # Payment 테이블 생성
     payment = Payment.objects.create(
         user=request.user,
         amount=payment_data["amount"],
-        payment_method=PaymentMethod.objects.first(),  # 실제 결제 방식과 매핑 필요
+        payment_method=payment_method,
         status=payment_status,
         imp_uid=imp_uid,
         merchant_uid=merchant_uid,
@@ -169,12 +172,12 @@ def auto_charge(request, rank_id):
 
     if res_json["code"] != 0:
         return JsonResponse({"error": _("자동 결제 실패"), "detail": res_json}, status=400)
-
+    payment_status = res_json["response"]["status"]
     # DB 업데이트
     Payment.objects.create(
         user=user,
         amount=plan.amount,
-        status="paid",
+        status=payment_status,
         payment_rank=plan,
         customer_uid=last_payment.customer_uid
     )
