@@ -2,7 +2,7 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from django.conf import settings
 import requests
-from .models import Payment
+from payment.models import Payment
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
