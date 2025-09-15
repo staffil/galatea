@@ -63,32 +63,33 @@
         const wrapper = character.closest('.voice-wrapper');
         const audio = wrapper.querySelector('.voice-audio');
 const playOverlay = character.querySelector('.cv-play-overlay');
-const progressBar = wrapper.querySelector('.cv-progress-bar');
+        const progressBar = wrapper.querySelector('.voice-progress-bar');
+        const timeDisplay = wrapper.querySelector('.voice-time');
 
         if (currentAudio && currentAudio !== audio) {
             currentAudio.pause();
             currentCharacter.classList.remove('playing');
-currentCharacter.querySelector('.cv-play-overlay').innerHTML = '<div class="play-icon"></div>';
+            currentCharacter.querySelector('.play-overlay').innerHTML = '<div class="play-icon"></div>';
         }
 
         if (audio.paused) {
             audio.play();
             character.classList.add('playing');
-playOverlay.innerHTML = '<div class="cv-play-icon"></div>';
+            playOverlay.innerHTML = '<div class="pause-icon"></div>';
             currentAudio = audio;
             currentCharacter = character;
             setupAudioEvents(audio, character, progressBar, timeDisplay);
         } else {
             audio.pause();
             character.classList.remove('playing');
-playOverlay.innerHTML = '<div class="cv-pause-icon"></div>';
+            playOverlay.innerHTML = '<div class="play-icon"></div>';
             currentAudio = null;
             currentCharacter = null;
         }
     }
 
     function setupAudioEvents(audio, character, progressBar, timeDisplay) {
-const playOverlay = character.querySelector('.cv-play-overlay');
+        const playOverlay = character.querySelector('.play-overlay');
         
         audio.removeEventListener('timeupdate', audio._timeUpdateHandler);
         audio.removeEventListener('ended', audio._endedHandler);
@@ -121,7 +122,6 @@ const playOverlay = character.querySelector('.cv-play-overlay');
         audio.addEventListener('timeupdate', audio._timeUpdateHandler);
         audio.addEventListener('ended', audio._endedHandler);
     }
-const timeDisplay = wrapper.querySelector('.time-display');
 
     function seekAudio(event, progressContainer) {
         event.stopPropagation();
@@ -136,40 +136,6 @@ const timeDisplay = wrapper.querySelector('.time-display');
         }
     }
 
-    function copyVoiceId(button) {
-        const wrapper = button.closest('.voice-wrapper');
-        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
-        
-        if (hiddenInput && hiddenInput.value) {
-            navigator.clipboard.writeText(hiddenInput.value).then(() => {
-                const originalText = button.textContent;
-                button.textContent = '✓';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                const textArea = document.createElement('textarea');
-                textArea.value = hiddenInput.value;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    button.textContent = '✓';
-                    button.classList.add('copied');
-                    setTimeout(() => {
-                        button.textContent = '복사';
-                        button.classList.remove('copied');
-                    }, 2000);
-                } catch (err) {
-                    alert('복사에 실패했습니다.');
-                }
-                document.body.removeChild(textArea);
-            });
-        }
-    }
 
     // LLM 모달
     function openModal(llm_id) {
