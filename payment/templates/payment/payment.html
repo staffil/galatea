@@ -328,7 +328,7 @@
             "PayPal": { pg: "paypal", pay_method: "paypal" },
             "KakaoPay": { pg: "kakaopay", pay_method: "card" }
         };
-        function requestPay(pg, btn) {
+        function requestPay(pgName, btn) {
             const VERIFY_PAYMENT_URL = "{% url 'payment:verify_payment' %}";
             const merchant_uid = "order_" + new Date().getTime();
             const amount = parseInt(btn.getAttribute("data-price"));
