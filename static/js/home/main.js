@@ -93,7 +93,19 @@ const playOverlay = character.querySelector('.cv-play-overlay');
         audio.removeEventListener('timeupdate', audio._timeUpdateHandler);
         audio.removeEventListener('ended', audio._endedHandler);
 
-
+        audio._timeUpdateHandler = function() {
+            if (audio.duration) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = progress + '%';
+                
+                const currentMin = Math.floor(audio.currentTime / 60);
+                const currentSec = Math.floor(audio.currentTime % 60);
+                const durationMin = Math.floor(audio.duration / 60);
+                const durationSec = Math.floor(audio.duration % 60);
+                
+               
+            }
+        };
 
         audio._endedHandler = function() {
             character.classList.remove('playing');
