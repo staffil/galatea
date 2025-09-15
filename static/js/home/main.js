@@ -62,7 +62,7 @@
     function toggleAudio(character) {
         const wrapper = character.closest('.voice-wrapper');
         const audio = wrapper.querySelector('.voice-audio');
-const playOverlay = character.querySelector('.cv-play-icon');
+const playOverlay = character.querySelector('.cv-play-overlay');
 const progressBar = wrapper.querySelector('.cv-progress-bar');
 
         if (currentAudio && currentAudio !== audio) {
@@ -74,14 +74,14 @@ currentCharacter.querySelector('.cv-play-overlay').innerHTML = '<div class="play
         if (audio.paused) {
             audio.play();
             character.classList.add('playing');
-            playOverlay.innerHTML = '<div class="pause-icon"></div>';
+playOverlay.innerHTML = '<div class="cv-play-icon"></div>';
             currentAudio = audio;
             currentCharacter = character;
             setupAudioEvents(audio, character, progressBar, timeDisplay);
         } else {
             audio.pause();
             character.classList.remove('playing');
-            playOverlay.innerHTML = '<div class="play-icon"></div>';
+playOverlay.innerHTML = '<div class="cv-pause-icon"></div>';
             currentAudio = null;
             currentCharacter = null;
         }
@@ -121,6 +121,7 @@ currentCharacter.querySelector('.cv-play-overlay').innerHTML = '<div class="play
         audio.addEventListener('timeupdate', audio._timeUpdateHandler);
         audio.addEventListener('ended', audio._endedHandler);
     }
+const timeDisplay = wrapper.querySelector('.time-display');
 
     function seekAudio(event, progressContainer) {
         event.stopPropagation();
