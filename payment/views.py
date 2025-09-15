@@ -137,9 +137,28 @@ def payment_charge(request):
 
 @login_required
 def payment_complete(request):
+    # 최신 결제 내역 가져오기
     latest_payment = Payment.objects.filter(user=request.user).order_by('-paid_at').first()
-    status = latest_payment.status if latest_payment else "unknown"
-    return render(request, "payment/payment_complete.html", {"status": status})
+    
+    if not latest_payment:
+        return render(request, "payment/payment_complete.html", {"status": "unknown"})
+
+    # 상태, 금액, 충전된 토큰
+    status = latest_payment.status
+    amount = latest_payment.amount
+    charged_token = latest_payment.token_amount
+
+    transactions = TokenHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
+
+    context = {
+        "status": status,
+        "payment": latest_payment,
+        "amount": amount,
+        "charged_token": charged_token,
+        "transactions": transactions,
+    }
+    return render(request, "payment/payment_complete.html", context)
+
 
 import time
 @login_required
