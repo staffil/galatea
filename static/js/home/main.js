@@ -62,14 +62,13 @@
     function toggleAudio(character) {
         const wrapper = character.closest('.voice-wrapper');
         const audio = wrapper.querySelector('.voice-audio');
-        const playOverlay = character.querySelector('.play-overlay');
-        const progressBar = wrapper.querySelector('.voice-progress-bar');
-        const timeDisplay = wrapper.querySelector('.voice-time');
+const playOverlay = character.querySelector('.cv-play-overlay');
+const progressBar = wrapper.querySelector('.cv-progress-bar');
 
         if (currentAudio && currentAudio !== audio) {
             currentAudio.pause();
             currentCharacter.classList.remove('playing');
-            currentCharacter.querySelector('.play-overlay').innerHTML = '<div class="play-icon"></div>';
+currentCharacter.querySelector('.cv-play-overlay').innerHTML = '<div class="play-icon"></div>';
         }
 
         if (audio.paused) {
@@ -136,6 +135,40 @@
         }
     }
 
+    function copyVoiceId(button) {
+        const wrapper = button.closest('.voice-wrapper');
+        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+        
+        if (hiddenInput && hiddenInput.value) {
+            navigator.clipboard.writeText(hiddenInput.value).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                const textArea = document.createElement('textarea');
+                textArea.value = hiddenInput.value;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    button.textContent = '✓';
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.textContent = '복사';
+                        button.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {
+                    alert('복사에 실패했습니다.');
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+    }
 
     // LLM 모달
     function openModal(llm_id) {
