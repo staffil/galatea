@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.conf import settings
 import requests
 from .models import Payment
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -136,17 +136,10 @@ def payment_charge(request):
 
 
 @login_required
-def payment_complete(request,payment_id):
+def payment_complete(request):
     latest_payment = Payment.objects.filter(user=request.user).order_by('-paid_at').first()
     status = latest_payment.status if latest_payment else "unknown"
-    payment = get_object_or_404(Payment, id=payment_id, user=request.user)
-    context = {
-            "status": status,
-            "payment": payment,
-            "charged_token": payment.token_amount,  # 결제 시 충전된 토큰 수
-            "user": request.user,
-        }
-    return render(request, "payment/payment_complete.html", context)
+    return render(request, "payment/payment_complete.html", {"status": status})
 
 import time
 @login_required
