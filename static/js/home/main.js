@@ -77,7 +77,7 @@ currentCharacter.querySelector('.cv-play-overlay').innerHTML = '<div class="play
 playOverlay.innerHTML = '<div class="cv-play-icon"></div>';
             currentAudio = audio;
             currentCharacter = character;
-            setupAudioEvents(audio, character, progressBar, timeDisplay);
+            setupAudioEvents(audio, character, progressBar);
         } else {
             audio.pause();
             character.classList.remove('playing');
