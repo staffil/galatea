@@ -88,7 +88,7 @@ playOverlay.innerHTML = '<div class="cv-pause-icon"></div>';
     }
 
     function setupAudioEvents(audio, character, progressBar, timeDisplay) {
-        const playOverlay = character.querySelector('.play-overlay');
+const playOverlay = character.querySelector('.cv-play-overlay');
         
         audio.removeEventListener('timeupdate', audio._timeUpdateHandler);
         audio.removeEventListener('ended', audio._endedHandler);
