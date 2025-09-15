@@ -414,11 +414,15 @@
                 {% trans "결제가 완료되었습니다!" %}
             </h2>
             <p class="status-subtitle">
-                {% trans "토큰이 성공적으로 지급되었습니다. 이제 다양한 서비스를 이용하실 수 있습니다." %}
+                {% trans "토큰이 성공적으로 지급되었습니다. 이제 다양한 서비스를 이용하실 수 있습니다. 결제 내역 확인을 원하시면 '토큰 내역 확인하기' 버튼을 누르세요" %}
             </p>
-    <p class="token-info">
-        {% trans "충전된 토큰" %}: {{ payment.amount|intcomma }}
+                <p class="payment-amount">
+        {% trans "결제 금액" %}: {{ payment.amount|intcomma }} 원
     </p>
+    <p class="token-info">
+        {% trans "상태" %}: {{ status|intcomma }}
+    </p>
+
         </div>
 
         <!-- 성공 시 축하 애니메이션 -->

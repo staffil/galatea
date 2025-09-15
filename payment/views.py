@@ -146,7 +146,8 @@ def payment_complete(request):
     # 상태, 금액, 충전된 토큰
     status = latest_payment.status
     amount = latest_payment.amount
-    charged_token = latest_payment.token_amount
+    charged_token = latest_payment.amount
+    payment_method = PaymentMethod.objects.all()
 
     transactions = TokenHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
 
