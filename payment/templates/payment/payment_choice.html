@@ -137,6 +137,38 @@
         .payment-btn:active {
             transform: translateY(-5px) scale(1.02);
         }
+        .payment-detail {
+    text-align: center; 
+    margin-bottom: 30px;
+}
+
+   .payment-detail a {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 15px 30px;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    animation: gradient 3s ease infinite;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.payment-detail a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
 
         /* 설명 텍스트 스타일링 */
         .payment-info {
@@ -145,7 +177,7 @@
             border-radius: 20px;
             padding: 25px 35px;
             margin: 40px auto 20px;
-            max-width: 700px;
+            max-width: 1000px;
             font-size: 16px;
             line-height: 1.6;
             color: #333;
@@ -297,7 +329,10 @@
     </header>
 <h1>{% trans "등급 선택" %}</h1>
    <div class="payment-info">
-            {% trans 'AI 와 더 많은 대화를 하려면 토큰을 구매하셔야 합니다. 충전한 토큰은 구매일로부터 12개월간 유효하며, 사용하지 않은 토큰은 기간 만료 시 자동 소멸됩니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용하실 수 있습니다. 갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다.* 민원 담당자 김충희 / 연락처 010-3161-5706' %}
+            {% trans '토큰을 충전하면 AI와 계속 대화를 이어가실 수 있습니다. 충전한 토큰은 구매일로부터 12개월간 유효하며, 사용하지 않은 토큰은 기간 만료 시 자동 소멸됩니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용하실 수 있습니다. 갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다.* 민원 담당자 김충희 / 연락처 010-3161-5706' %}
+        </div>
+        <div class="payment-detail">
+        <a href="payment_detail/">상세 내용 보러 가기</a>
         </div>
 <div>
     {% for plan in plans %}

@@ -199,3 +199,8 @@ def auto_charge(request, rank_id):
         customer_uid=last_payment.customer_uid
     )
     return JsonResponse({"message": _("자동 결제 완료")})
+
+
+def payment_detail(request):
+
+    return render(request, "payment/payment_detail.html")

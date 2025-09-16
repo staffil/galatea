@@ -7,4 +7,5 @@ urlpatterns = [
     path('pay/', PaymentView.as_view(), name='payment'),  
     path('verify_payment/', verify_payment, name='verify_payment'),  # /payment/verify_payment/
     path('charge/', views.payment_charge, name="payment_charge"),
+    path('payment_detail/', views.payment_detail, name="payment_detail"),
 ]
