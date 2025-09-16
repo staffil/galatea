@@ -189,9 +189,6 @@
         /* 모달 */
 /* 모달 스타일 */
 #llm-modal {
-    display: none; /* 기본 숨김 */
-}
-#llm-modal.active {
    position: fixed;
    top: 0;
    left: 0;
