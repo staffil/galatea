@@ -94,7 +94,23 @@ class TokenHistory(models.Model):
         verbose_name = 'Token History'
         verbose_name_plural = 'Token Histories'
 
+    def save(self, *args, **kwargs):
+        # 1. 기존 Token 가져오기 (없으면 생성)
+        token_obj, _ = Token.objects.get_or_create(user=self.user)
 
+        # 2. Decimal로 변환
+        amount_decimal = Decimal(self.amount)
+
+        # 사용 시 Token 잔액 확인
+        if token_obj.remaining_tokens() < amount_decimal:
+            raise ValueError("Not enough tokens to consume")
+        token_obj.token_usage += amount_decimal
+
+        # 4. Token 저장
+        token_obj.save()
+
+        # 5. TokenHistory 저장
+        super().save(*args, **kwargs)
 
 
 
