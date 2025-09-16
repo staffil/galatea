@@ -80,7 +80,94 @@
             margin-bottom: 50px;
         }
 
-/* LLM 컨테이너 */
+        /* LLM 카드 - 메인 페이지와 동일한 스타일 */
+        .llm-card {
+            background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(6,182,212,0.1));
+            border: 1px solid rgba(139,92,246,0.3);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(25px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(139,92,246,0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .llm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+        }
+
+        .llm-card:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 15px 40px rgba(139,92,246,0.3);
+            transform: translateY(-5px);
+        }
+
+        .llm-card-body {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .llm-image-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(6,182,212,0.1));
+            flex-shrink: 0;
+        }
+
+        .llm-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+
+        .llm-card:hover .llm-image-container img {
+            transform: scale(1.08);
+        }
+
+        .llm-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .llm-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .genre-tag {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        /* LLM 컨테이너 */
 .llm-container {
    width: 100%;
 }
@@ -180,6 +267,7 @@
 .llm-card:hover .llm-image-container img {
    transform: scale(1.05);
 }
+
 
         /* 빈 상태 메시지 */
         .empty-state {
