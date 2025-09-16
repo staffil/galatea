@@ -80,20 +80,20 @@ def verify_payment(request):
         payment_rank=plan
     )
 
-    # # 결제 성공 시 Token 충전
-    # if payment_status == "paid":
-    #     token, created = Token.objects.get_or_create(user=request.user)
-    #     token.total_token += plan.freetoken  # PaymentRank에 저장된 토큰 수량
-    #     token.payment = payment
-    #     token.save()
+    # 결제 성공 시 Token 충전
+    if payment_status == "paid":
+        token, created = Token.objects.get_or_create(user=request.user)
+        token.total_token += plan.freetoken  # PaymentRank에 저장된 토큰 수량
+        token.payment = payment
+        token.save()
 
-    #     # TokenHistory 기록
-    #     TokenHistory.objects.create(
-    #         user=request.user,
-    #         change_type=TokenHistory.CHARGE,
-    #         amount=plan.freetoken,
-    #         total_voice_generated=0
-    #     )
+        # TokenHistory 기록
+        TokenHistory.objects.create(
+            user=request.user,
+            change_type=TokenHistory.CHARGE,
+            amount=plan.freetoken,
+            total_voice_generated=0
+        )
 
     if payment_status == "paid":
         payment.customer_uid = payment_data.get("customer_uid")
