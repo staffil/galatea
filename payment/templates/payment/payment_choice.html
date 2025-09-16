@@ -8,6 +8,283 @@
     <title>GALATEA {% trans "가격표" %}</title>
     <link rel="stylesheet" href="{% static 'css/payment/payment_choice.css' %}?v=5" />
 </head>
+<style>
+        /* 전체 초기화 */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        .brand-name{
+            margin:-10px;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            position: relative;
+            padding: 0;
+        }
+
+        /* 배경 장식 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(139,92,246,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(6,182,212,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 120px 20px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 제목 */
+        h1 {
+            font-size: 32px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.3;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            border-radius: 1.5px;
+        }
+
+        /* 결제 버튼 컨테이너 - 가로 배열 */
+        .payment-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        /* 개별 버튼 컨테이너 */
+        .payment-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 결제 버튼 - 원형 디자인 */
+        .payment-btn {
+            width: 200px;
+            height: 200px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+                background-size: cover; 
+            background-repeat: no-repeat;
+            background-position: center;
+
+        }
+
+        /* 버튼 라벨 */
+        .payment-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e2e8f0;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* 호버 효과 */
+        .payment-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .payment-btn:active {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        /* 설명 텍스트 스타일링 */
+        .payment-info {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 20px;
+            padding: 25px 35px;
+            margin: 40px auto 20px;
+            max-width: 700px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(15px);
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        .payment-info::before {
+            content: '💳';
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        /* 로딩 상태 */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 3px solid transparent;
+            border-top: 3px solid #8b5cf6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* 반응형 디자인 - 태블릿 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 100px 15px 40px;
+            }
+            
+            h1 {
+                font-size: 26px;
+                margin-bottom: 40px;
+            }
+            
+            .payment-buttons {
+                gap: 30px;
+                margin: 40px auto;
+            }
+            
+            .payment-btn {
+                width: 160px;
+                height: 160px;
+                background-size: 100px 100px;
+            }
+            
+            .payment-label {
+                font-size: 16px;
+            }
+            
+            .payment-info {
+                margin: 30px 15px 20px;
+                padding: 20px 25px;
+                font-size: 15px;
+            }
+        }
+
+        /* 반응형 디자인 - 모바일 */
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 90px 12px 35px;
+            }
+            
+            h1 {
+                font-size: 22px;
+                margin-bottom: 30px;
+            }
+            
+            .payment-buttons {
+                flex-direction: column;
+                gap: 25px;
+                margin: 30px auto;
+            }
+            
+            .payment-option {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .payment-btn {
+                width: 100%;
+                height: 80px;
+                border-radius: 40px;
+                background-size: 50px 50px;
+                background-position: 30px center;
+                justify-content: flex-start;
+                padding-left: 100px;
+                font-size: 16px;
+                font-weight: 700;
+                color: #333;
+            }
+            
+            .payment-label {
+                font-size: 15px;
+                margin-top: 0;
+            }
+            
+            .payment-info {
+                margin: 25px 15px 15px;
+                padding: 18px 20px;
+                font-size: 14px;
+                border-radius: 15px;
+            }
+        }
+
+        /* 포커스 상태 개선 */
+        .payment-btn:focus-visible {
+            outline: 3px solid rgba(255, 255, 255, 0.6);
+            outline-offset: 4px;
+        }
+
+        /* 접근성 개선 */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+</style>
 <body>
 
         <!-- 헤더 -->
@@ -19,6 +296,9 @@
         {% endif %}
     </header>
 <h1>{% trans "등급 선택" %}</h1>
+   <div class="payment-info">
+            {% trans '토큰은 결제 후 즉시 제공됩니다. 결제 성공 후 mypage로 가서 결제 내역을 확인해 주세요.(오류가 있을시 요청하기 혹은 kimc570612@gmail.com 으로 메일 부탁드립니다.) 환불은 요청, 확인 후 바로 환불 해드리겠습니다. AI 와 더 많은 대화를 하려면 토큰을 구매하셔야 합니다. 충전한 토큰은 구매일로부터 12개월간 유효하며, 사용하지 않은 토큰은 기간 만료 시 자동 소멸됩니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용하실 수 있습니다. 갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다.* 민원 담당자 김충희 / 연락처 010-3161-5706' %}
+        </div>
 <div>
     {% for plan in plans %}
     <div class="plan-card">
@@ -35,6 +315,7 @@
         </form>
     </div>
     {% endfor %}
+
 </div>
 </body>
 </html>
