@@ -182,7 +182,6 @@ const timeDisplay = wrapper.querySelector('.time-display');
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
         fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
         .then(response => response.text())
         .then(html => {
