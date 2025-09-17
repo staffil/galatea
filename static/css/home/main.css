@@ -320,7 +320,6 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 25px 20px;
-    height: 40%;
 }
 
 .llm-container, .genre-container {
@@ -663,7 +662,6 @@ body {
 @media (max-width: 1200px) {
     .main-content {
         padding: 20px 15px;
-        height: 400px;
     }
     
     .llm-container, .genre-container {
