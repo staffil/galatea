@@ -12,6 +12,13 @@
             min-height: 100vh;
             line-height: 1.6;
         }
+.user-card,
+.ai-card,
+.llm-card {
+    min-height: 300px; /* 이미지+내용 충분히 커버 */
+    display: flex;
+    flex-direction: column;
+}
 
         /* 메인 컨테이너 */
         .main-container {
