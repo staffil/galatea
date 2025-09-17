@@ -808,28 +808,29 @@ body {
     }
     
     .llm-card {
-        flex: 0 0 200px; /* 고정 너비로 설정 */
-        border-radius: 12px;
+        flex: 0 0 160px; /* 카드 너비 축소 */
+        border-radius: 10px;
         height: auto;
     }
     
     .llm-image-container {
-        height: 120px;
+        height: 90px; /* 이미지 높이 축소 */
     }
     
     .llm-card-body {
-        padding: 15px;
+        padding: 10px; /* 패딩 축소 */
     }
     
     .llm-name {
-        font-size: 1rem;
-        margin-bottom: 10px;
-        line-height: 1.3;
+        font-size: 0.85rem; /* 제목 폰트 축소 */
+        margin-bottom: 6px;
+        line-height: 1.2;
     }
     
     .genre-tag {
-        padding: 4px 8px;
-        font-size: 0.75rem;
+        padding: 2px 5px; /* 장르 태그 패딩 축소 */
+        font-size: 0.65rem; /* 장르 폰트 축소 */
+        margin: 1px;
     }
     
     .genre-tags-container {
