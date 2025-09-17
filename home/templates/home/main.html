@@ -517,6 +517,7 @@
     <div class="users-list">
         {% for user in total_follow_count %}
         <div class="user-card" onclick="openUserModal({{ user.id }})" style="cursor: pointer;">
+                <div class="glt2-content">
             <div class="user-avatar">
                 {% if user.user_image %}
                     <img src="{{ user.user_image.url }}" alt="{{ user.username }}" loading="lazy">
@@ -534,6 +535,7 @@
             <p>{% trans "아직 팔로우한 유저가 없습니다." %}</p>
         </div>
         {% endfor %}
+        </div>
     </div>
 </div>
 
