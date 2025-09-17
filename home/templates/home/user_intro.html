@@ -73,7 +73,10 @@
                                             </div>
                                         {% endfor %}
                                     </div>
-                                </div>
+      <div class="ai-button-container">
+            <button class="glt2-chat-btn" onclick="window.location.href='/customer_ai/chat/{{ item.id }}/'">{% trans "대화하기" %}</button>
+        </div>
+                                    </div>
                             </div>
                         {% empty %}
                             <div class="empty-state">
