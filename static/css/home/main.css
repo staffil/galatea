@@ -1168,3 +1168,65 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
+
+
+/* LLM 섹션들 사이의 간격 조정 */
+.main-content + .main-content {
+    margin-top: 30px; /* 기본 간격 */
+}
+
+/* 태블릿 사이즈에서 간격 줄이기 */
+@media (max-width: 1200px) {
+    .main-content + .main-content {
+        margin-top: 20px;
+    }
+}
+
+/* 모바일에서 간격 더 줄이기 */
+@media (max-width: 768px) {
+    .main-content + .main-content {
+        margin-top: 15px;
+    }
+}
+
+/* 작은 모바일에서 최소 간격 */
+@media (max-width: 576px) {
+    .main-content + .main-content {
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 375px) {
+    .main-content + .main-content {
+        margin-top: 8px;
+    }
+}
+
+/* 또는 더 구체적으로 llm-container2들 사이의 간격만 조정하려면: */
+.llm-container2 {
+    margin-bottom: 40px; /* 기본 하단 마진 */
+}
+
+@media (max-width: 1200px) {
+    .llm-container2 {
+        margin-bottom: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .llm-container2 {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .llm-container2 {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 375px) {
+    .llm-container2 {
+        margin-bottom: 10px;
+    }
+}
