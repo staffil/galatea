@@ -501,40 +501,7 @@
     <div class="llm-container2">
         <h2 class="section-title">{% trans '추천' %}</h2>
         <div class="llm-cards-container">
-            {% for item in llm_list|slice:":10" %}
-            <div class="llm-card" onclick="openModal({{ item.id }})">
-                <div class="llm-card-body">
-                    <div class="llm-image-container">
-                        {% if item.llm_image %}
-                            <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
-                        {% else %}
-                            <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
-                        {% endif %}
-                    </div>
-                    <div class="llm-name">{{ item.title }}</div>
-                    <div class="genre-tags">
-                        {% for genre in item.genres.all %}
-                            <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-                        {% empty %}
-                            <div class="genre-tag" style="background-color: #999;">장르 없음</div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-                        <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
-
-    </div>
-</div>
-
-
-        <!-- LLM 추천 섹션 -->
-<div class="main-content">
-    <div class="llm-container2">
-        <h2 class="section-title">{% trans '추천' %}</h2>
-        <div class="llm-cards-container">
-            {% for item in llm_list2|slice:":10" %}
+            {% for item in llm_list|slice:":6" %}
             <div class="llm-card" onclick="openModal({{ item.id }})">
                 <div class="llm-card-body">
                     <div class="llm-image-container">
