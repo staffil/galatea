@@ -468,7 +468,7 @@
     <div class="llm-container2">
         <h2 class="section-title">{% trans '추천' %}</h2>
         <div class="llm-cards-container">
-            {% for item in llm_list|slice:":6" %}
+            {% for item in llm_list|slice:":12" %}
             <div class="llm-card" onclick="openModal({{ item.id }})">
                 <div class="llm-card-body">
                     <div class="llm-image-container">
@@ -501,7 +501,7 @@
     <div class="llm-container2">
         <h2 class="section-title">{% trans '추천' %}</h2>
         <div class="llm-cards-container">
-            {% for item in llm_list|slice:":6" %}
+            {% for item in llm_list2|slice:":12" %}
             <div class="llm-card" onclick="openModal({{ item.id }})">
                 <div class="llm-card-body">
                     <div class="llm-image-container">
