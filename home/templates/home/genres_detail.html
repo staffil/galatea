@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
     <link rel="stylesheet" href="{% static 'css/home/genres_detail.css'%}">
-    <script src="{% static 'js/home/main.js' %}"></script>
 </head>
 <style>
 
@@ -62,7 +61,13 @@
             </div>
         </div>
     </div>
+<script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
+    const USER_ID = "{{ user.id }}";
+    const LLM_id = "{{ item.id }}"
+</script>
 
+<script src="{% static 'js/home/main.js' %}"></script>
 <script>
 
 
