@@ -331,7 +331,14 @@ body {
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-soft);
 }
-
+.llm-container2 {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    width: 100%;
+}
 .section-title {
     font-size: 2rem;
     font-weight: 800;
