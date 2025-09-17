@@ -26,6 +26,98 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
 }
+/* 사이드바 토글 */
+#sidebar-toggle {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 999;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139,92,246,0.3);
+    margin-top: 30px;
+    padding: 15px ;
+
+}
+
+#sidebar-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(139,92,246,0.5);
+}
+
+#sidebar-content {
+    position: fixed;
+    top: 135px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(15,15,35,0.95), rgba(26,26,46,0.95));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 180px;
+    z-index: 998;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(139,92,246,0.15);
+}
+
+#sidebar-content.collapsed {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+}
+
+.languageSelect, .helpdesk {
+    margin-bottom: 15px;
+}
+
+.languageSelect label {
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.languageSelect select {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(139,92,246,0.3);
+    background: rgba(139,92,246,0.1);
+    color: #e2e8f0;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.languageSelect button, .helpdesk a {
+    display: block;
+    width: 100%;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(139,92,246,0.3);
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.1));
+    color: #e2e8f0;
+    cursor: pointer;
+}
+
+.languageSelect button:hover, .helpdesk a:hover {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(139,92,246,0.3);
+}
 
 /* 뉴스 섹션 개선 */
 .news-section {
