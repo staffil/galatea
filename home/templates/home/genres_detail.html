@@ -112,6 +112,9 @@ const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"; // request에서 넘어온 언어�
         </div>
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
+            // 애니메이션 위해 show 클래스 추가
+    const modal = document.getElementById('llm-modal');
+    setTimeout(() => modal.classList.add('show'), 10);
 
         fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
         .then(response => response.text())
