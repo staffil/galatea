@@ -393,7 +393,18 @@
 
                     {% endfor %}
 
-        <!-- 뉴스 섹션 -->
+        <!-- 메인 네비게이션 -->
+                 {% if user.is_authenticated %}
+        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}" style="padding-top: 70px;">
+            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
+            <!-- <a href="/soon/" class="nav-button">{% trans "보이스 클로닝" %}</a>
+            <a href="/soon/" class="nav-button">{% trans "보이스 만들기" %}</a> -->
+            <a href="/voice_all/" class="nav-button">{% trans "보이스 선택하기" %}</a>
+            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
+            <a href="/invite/" class="nav-button">{% trans "친구초대하기" %}</a>
+            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
+        </nav>
+        {% endif %}
 
 <!-- 뉴스 섹션 HTML (Django 템플릿) -->
 <div class="news-section">
@@ -447,18 +458,22 @@
         {% endif %}
     </div>
 </div>
-        <!-- 메인 네비게이션 -->
-                 {% if user.is_authenticated %}
-        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}" style="padding-top: 70px;">
-            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
-            <!-- <a href="/soon/" class="nav-button">{% trans "보이스 클로닝" %}</a>
-            <a href="/soon/" class="nav-button">{% trans "보이스 만들기" %}</a> -->
-            <a href="/voice_all/" class="nav-button">{% trans "보이스 선택하기" %}</a>
-            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
-            <a href="/invite/" class="nav-button">{% trans "친구초대하기" %}</a>
-            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
-        </nav>
-        {% endif %}
+
+<!-- 이벤트 -->
+<div class="popular-users-section">
+    <h2 class="section-title">{% trans '이벤트' %}</h2>
+    <div class="event_list">
+        {% for gift in gift_list %}
+                {% if gift.gift_img %}
+                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
+                {% else %}
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
 
 
         <!-- LLM 추천 섹션 -->
@@ -466,7 +481,7 @@
     <div class="llm-container">
         <h2 class="section-title">{% trans '추천' %}</h2>
         <div class="llm-cards-container">
-            {% for item in llm_list %}
+            {% for item in llm_list|slice:":30" %}
             <div class="llm-card" onclick="openModal({{ item.id }})">
                 <div class="llm-card-body">
                     <div class="llm-image-container">
@@ -495,19 +510,6 @@
 
 
 
-<!-- 이벤트 -->
-<div class="popular-users-section">
-    <h2 class="section-title">{% trans '이벤트' %}</h2>
-    <div class="event_list">
-        {% for gift in gift_list %}
-                {% if gift.gift_img %}
-                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-                {% endif %}
-        {% endfor %}
-    </div>
-</div>
 
 
 
@@ -595,7 +597,7 @@
             <div class="genre-container">
                 <h2 class="section-title">{% trans "장르" %}</h2>
                 <div class="genre-tags-container">
-                    {% for genre in genre_list|slice:":10" %}
+                    {% for genre in genre_list|slice:":8" %}
                     <a href="{% url 'home:genres_detail' genre.id %}">
 
                         <div class="genre-tag-box">
