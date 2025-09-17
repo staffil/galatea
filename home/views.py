@@ -15,11 +15,13 @@ from customer_ai.models import LLM, LlmLike
 from makeVoice.models import VoiceList, VoiceLike
 from register.models import Follow
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 
 from distribute.models import Comment
 from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 from user_auth.models import Gift
+from django.db.models import Count
 
 User = get_user_model()
 
@@ -77,21 +79,11 @@ def main(request):
 
     # 다국어 이름/설명 처리
 
- # 캐시된 순서대로 LLM 객체 가져오기
-    llm_list2 = list(LLM.objects.filter(id__in=llm_list_ids).prefetch_related('llm_like_count'))
-    llm_list2.sort(key=lambda x: llm_list_ids.index(x.id))
-    if request.user.is_authenticated:
-        for llm in llm_list2:
-            try:
-                like_obj = LlmLike.objects.get(user=request.user, llm=llm, is_like=True)
-                llm.user_has_liked = True
-            except LlmLike.DoesNotExist:
-                llm.user_has_liked = False
-    else:
-        for llm in llm_list2:
-            llm.user_has_liked = False
-    voice_list = list(VoiceList.objects.filter(id__in = voice_list_ids).prefetch_related('llm'))
-    voice_list.sort(key=lambda x: voice_list_ids.index(x.id))
+    llm_list2 = list(
+        LLM.objects.filter(id__in=llm_list_ids)
+        .annotate(like_count=Count('llmlike', filter=Q(llmlike__is_like=True)))
+        .order_by('-like_count') 
+    )
 
 
 
