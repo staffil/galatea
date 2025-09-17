@@ -330,7 +330,6 @@ body {
     padding: 40px;
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-soft);
-    margin-bottom: 50px;
 }
 
 .section-title {

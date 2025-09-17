@@ -80,56 +80,165 @@
 .llm-card:active {
    transform: translateY(-4px) scale(0.98);
 }
-
-/* LLM 카드 바디 */
-.llm-card-body {
-   padding: 0;
-   display: flex;
-   flex-direction: column;
-   height: 100%;
+/* LLM 카드 섹션 개선 */
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
 }
 
-/* LLM 이미지 컨테이너 */
+.llm-container, .genre-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 40px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.llm-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.llm-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    group: hover;
+}
+
+.llm-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.llm-card:hover::before {
+    transform: scaleX(1);
+}
+
+.llm-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
 .llm-image-container {
-   width: 100%;
-   height: 200px;
-   overflow: hidden;
-   border-radius: 16px 16px 0 0;
-   position: relative;
-   background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
-}
-
-.llm-image-container::after {
-   content: '';
-   position: absolute;
-   bottom: 0;
-   left: 0;
-   right: 0;
-   height: 60px;
-   background: linear-gradient(transparent, rgba(0, 0, 0, 0.4));
+    position: relative;
+    overflow: hidden;
+    height: 200px;
 }
 
 .llm-image-container img {
-   width: 100%;
-   height: 100%;
-   object-fit: cover;
-   transition: transform 0.3s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
 }
 
 .llm-card:hover .llm-image-container img {
-   transform: scale(1.05);
+    transform: scale(1.1);
 }
 
-/* LLM 이름 */
-.llm-name {
-   font-size: 1.1rem;
-   font-weight: 700;
-   color: #e2e8f0;
-   padding: 16px 16px 12px 16px;
-   line-height: 1.4;
-   text-align: left;
-   flex: 1;
+.llm-card-body {
+    padding: 25px;
 }
+
+.llm-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.genre-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.genre-tag {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 장르 섹션 개선 */
+.genre-tags-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.genre-tag-box {
+    position: relative;
+    height: 150px;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.genre-tag-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.genre-tag-box:hover img {
+    transform: scale(1.1);
+}
+
+.genre-tag-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    padding: 20px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.genre-tag-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
 /* 팔로우 버튼 */
 .glt2-follow-btn {
    padding: 10px 20px;
