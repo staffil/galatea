@@ -78,7 +78,7 @@ def main(request):
     # 다국어 이름/설명 처리
 
  # 캐시된 순서대로 LLM 객체 가져오기
-    llm_list2 = list(LLM.objects.filter(id__in=llm_list_ids).prefetch_related('genres'))
+    llm_list2 = list(LLM.objects.filter(id__in=llm_list_ids).prefetch_related('llm_like_count'))
     llm_list2.sort(key=lambda x: llm_list_ids.index(x.id))
     if request.user.is_authenticated:
         for llm in llm_list2:
