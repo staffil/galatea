@@ -64,42 +64,6 @@
     </div>
 
 <script>
-const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"; // request에서 넘어온 언어코드 사용
-
-    // LLM 모달
-    function openModal(llm_id) {
-        const modalHTML = `
-        <div id="llm-modal">
-            <div class="modal-overlay" onclick="closeModal()"></div>
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal()">X</button>
-                <div id="llm-container" class="llm-container"></div>
-            </div>
-        </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-            // 애니메이션 위해 show 클래스 추가
-    const modal = document.getElementById('llm-modal');
-    setTimeout(() => modal.classList.add('show'), 10);
-
-        fetch(`/${LANGUAGE_CODE}/intro/${llm_id}`)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('llm-container').innerHTML = html;
-        });
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('llm-modal');
-        if (modal) modal.remove();
-    }
-
-
-    // 초기화
-    document.addEventListener('DOMContentLoaded', () => {
-        initNewsSlider();
-    });
-
 
 
 // 팔로우 버튼
