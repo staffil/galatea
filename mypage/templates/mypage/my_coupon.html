@@ -8,25 +8,21 @@
     <title>{% trans "마이페이지 - GALATEA" %}</title>
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <style>
-/* 기존 CSS를 덮어쓰지 않고 추가만 하는 스타일 */
+/* 초대 코드 폼을 정중앙에 배치하는 간단한 CSS */
 
-/* mypage와 동일한 CSS 변수 */
+/* mypage 스타일 변수 */
 :root {
     --primary: #667eea;
     --primary-dark: #5a6fd8;
     --secondary: #764ba2;
-    --accent: #f093fb;
-    --bg-primary: #0f0f23;
-    --bg-secondary: #1a1a2e;
     --bg-card: rgba(255, 255, 255, 0.05);
     --text-primary: #ffffff;
     --text-secondary: #a0aec0;
     --border: rgba(255, 255, 255, 0.1);
-    --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     --glow: 0 0 20px rgba(102, 126, 234, 0.3);
 }
 
-/* 배경 애니메이션 - mypage와 동일 */
+/* 배경 애니메이션 */
 body::before {
     content: '';
     position: fixed;
@@ -46,57 +42,18 @@ body::before {
     50% { transform: translateY(-20px); }
 }
 
-/* 배경 원형들 숨김 - mypage와 동일 */
+/* 기존 원형 배경 숨김 */
 .circle-bg {
     display: none;
 }
 
-/* 햄버거 메뉴 - mypage와 동일 */
-.menu-toggle {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    cursor: pointer;
-    backdrop-filter: blur(20px);
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    transition: all 0.3s ease;
-}
-
-.menu-toggle span {
-    width: 24px;
-    height: 3px;
-    background: var(--text-primary);
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 998;
-    display: none;
-}
-
-.sidebar-overlay.active {
-    display: block;
-}
-
-/* 메시지 컨테이너 - mypage 스타일 적용 */
+/* 메시지 컨테이너 - 인라인 스타일 덮어쓰기 */
 .message-container {
-    position: fixed;
-    top: 30px;
-    right: 30px;
+    position: fixed !important;
+    top: 30px !important;
+    right: 30px !important;
+    left: auto !important;
+    margin-left: 0 !important;
     z-index: 1000;
     max-width: 400px;
 }
@@ -110,11 +67,8 @@ body::before {
     margin-bottom: 10px;
     backdrop-filter: blur(20px);
     font-weight: 500;
-    animation: slideInFromRight 0.5s ease-out;
-    position: relative;
-    overflow: hidden;
     color: var(--text-primary);
-    box-shadow: var(--shadow);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .message-container .alert.success {
@@ -127,52 +81,42 @@ body::before {
     color: #f44336;
 }
 
-.message-container .alert.info {
-    border-left-color: var(--primary);
-    color: var(--primary);
-}
-
-@keyframes slideInFromRight {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* 쿠폰 폼 스타일 - mypage 프로필 섹션과 동일한 스타일 */
+/* 폼을 정중앙에 배치 */
 form[action*="my_coupon"] {
-    max-width: 500px;
-    margin: 100px auto 0;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 40px;
     backdrop-filter: blur(10px);
+    
+    width: 90%;
+    max-width: 500px;
+    z-index: 100;
+    
     animation: fadeInUp 0.6s ease-out;
-    position: relative;
-    z-index: 10;
-    margin-left: 280px;
-    margin-right: 30px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translate(-50%, -40%);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translate(-50%, -50%);
     }
 }
 
-/* 폼 제목 스타일 - mypage h2와 동일 */
+/* 폼 제목 */
 form[action*="my_coupon"]::before {
-    content: "🎫 초대 코드 입력";
+    content: "초대 코드 입력";
     display: block;
     color: var(--text-primary);
     font-size: 1.8rem;
@@ -195,7 +139,7 @@ form[action*="my_coupon"]::after {
     line-height: 1.5;
 }
 
-/* 라벨 스타일 - mypage form-group label과 동일 */
+/* 라벨 스타일 */
 form[action*="my_coupon"] label {
     color: var(--text-secondary);
     font-size: 0.9rem;
@@ -204,7 +148,7 @@ form[action*="my_coupon"] label {
     margin-bottom: 8px;
 }
 
-/* 입력 필드 스타일 - mypage form-group input과 동일 */
+/* 입력 필드 */
 form[action*="my_coupon"] input[type="text"] {
     width: 100%;
     padding: 12px 15px;
@@ -216,6 +160,7 @@ form[action*="my_coupon"] input[type="text"] {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     transition: all 0.3s ease;
     margin-bottom: 20px;
+    box-sizing: border-box;
 }
 
 form[action*="my_coupon"] input[type="text"]:focus {
@@ -229,7 +174,7 @@ form[action*="my_coupon"] input[type="text"]::placeholder {
     opacity: 0.7;
 }
 
-/* 버튼 스타일 - mypage submit-btn과 동일 */
+/* 버튼 */
 form[action*="my_coupon"] button[type="submit"] {
     width: 100%;
     padding: 15px 30px;
@@ -253,80 +198,42 @@ form[action*="my_coupon"] button[type="submit"]:hover {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
 }
 
-/* 반응형 디자인 - mypage와 동일 */
-@media (max-width: 1024px) {
-    form[action*="my_coupon"] {
-        margin-left: 0;
-        margin-right: 20px;
-        margin-left: 20px;
-    }
-    
-    .message-container {
-        right: 20px;
-        left: 20px;
-        max-width: none;
-        position: relative;
-        margin-bottom: 20px;
-        top: auto;
-    }
-    
-    .menu-toggle {
-        display: flex;
-    }
-}
-
+/* 모바일 반응형 */
 @media (max-width: 768px) {
     form[action*="my_coupon"] {
+        width: 95% !important;
         padding: 30px 20px;
-        margin: 20px;
-        margin-top: 80px;
     }
     
     form[action*="my_coupon"]::before {
         font-size: 1.5rem;
-        margin-bottom: 8px;
     }
     
     form[action*="my_coupon"]::after {
         font-size: 0.9rem;
-        margin-bottom: 25px;
     }
     
     .message-container {
-        margin: 15px;
-        margin-bottom: 15px;
+        position: absolute !important;
+        top: 20px !important;
+        right: 20px !important;
+        left: 20px !important;
+        max-width: none;
     }
 }
 
 @media (max-width: 480px) {
     form[action*="my_coupon"] {
-        padding: 20px 15px;
-        margin: 15px;
-        margin-top: 70px;
+        width: 95% !important;
+        padding: 25px 15px;
     }
     
     form[action*="my_coupon"]::before {
         font-size: 1.3rem;
-        margin-bottom: 6px;
     }
     
     form[action*="my_coupon"]::after {
         font-size: 0.85rem;
-        margin-bottom: 20px;
-    }
-    
-    form[action*="my_coupon"] label {
-        font-size: 0.85rem;
-    }
-    
-    form[action*="my_coupon"] input[type="text"] {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-    }
-    
-    form[action*="my_coupon"] button[type="submit"] {
-        padding: 12px 24px;
-        font-size: 0.9rem;
     }
 }
     </style>
@@ -359,6 +266,7 @@ form[action*="my_coupon"] button[type="submit"]:hover {
         {% endfor %}
     </div>
     {% endif %}
+    <script src="{% static 'js/sidebar.js' %}"></script>
 
     <!-- 쿠폰 입력 폼 -->
     <form method="post" action="{% url 'mypage:my_coupon' %}" style="margin-left: 1000px;">
