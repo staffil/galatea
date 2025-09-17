@@ -320,6 +320,7 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 25px 20px;
+    height: 40%;
 }
 
 .llm-container, .genre-container {
@@ -328,6 +329,7 @@ body {
     border-radius: 24px;
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-soft);
+    
 }
 
 .llm-container2 {
@@ -661,7 +663,7 @@ body {
 @media (max-width: 1200px) {
     .main-content {
         padding: 20px 15px;
-        height: 80%;
+        height: 400px;
     }
     
     .llm-container, .genre-container {
@@ -1201,4 +1203,133 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* 각 줄 독립적으로 horizontal 스크롤 */
+.llm-row {
+    margin-bottom: 15px;
+}
+
+.llm-cards-horizontal {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 5px 0 10px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.5) transparent;
+    scroll-behavior: smooth;
+}
+
+/* 스크롤바 스타일링 */
+.llm-cards-horizontal::-webkit-scrollbar {
+    height: 6px;
+}
+
+.llm-cards-horizontal::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.llm-cards-horizontal::-webkit-scrollbar-thumb {
+    background: var(--primary-gradient);
+    border-radius: 3px;
+}
+
+.llm-cards-horizontal::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* 카드 스타일 */
+.llm-card {
+    flex: 0 0 280px; /* 고정 너비, 줄어들지 않음 */
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+}
+
+.llm-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.llm-card:hover::before {
+    transform: scaleX(1);
+}
+
+.llm-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+/* 반응형 조정 */
+@media (max-width: 1200px) {
+    .llm-card {
+        flex: 0 0 250px;
+    }
+    
+    .llm-cards-horizontal {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .llm-card {
+        flex: 0 0 220px;
+    }
+    
+    .llm-cards-horizontal {
+        gap: 10px;
+    }
+    
+    .llm-row {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .llm-card {
+        flex: 0 0 200px;
+    }
+    
+    .llm-cards-horizontal {
+        gap: 8px;
+    }
+    
+    .llm-row {
+        margin-bottom: 10px;
+    }
+}
+
+/* 드래그 스크롤을 위한 커서 */
+.llm-cards-horizontal {
+    cursor: grab;
+}
+
+.llm-cards-horizontal:active {
+    cursor: grabbing;
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .llm-cards-horizontal {
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+    
+    .llm-card {
+        scroll-snap-align: start;
+    }
 }
