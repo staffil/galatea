@@ -1000,11 +1000,14 @@ body {
         font-size: 0.7rem;
     }
     
-    .llm-container, .genre-container {
+   .genre-container {
         padding: 15px 8px;
         border-radius: 12px;
     }
-    
+    .llm-container{
+        border-radius: 12px;
+
+    }
     .users-list {
         grid-auto-columns: 120px;
     }
