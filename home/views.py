@@ -326,7 +326,7 @@ def search_llm(request):
 def genre_detail(request, genres_id):
     genres = get_object_or_404(Genre, id =genres_id)
 
-    llm_list = genres.llms.all()
+    llm_list = genres.llms.all().order_by("?")
     language_code = getattr(request, 'LANGUAGE_CODE', get_language()) or 'ko'
 
     context ={
