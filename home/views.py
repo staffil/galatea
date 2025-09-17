@@ -81,7 +81,7 @@ def main(request):
 
     llm_list2 = list(
         LLM.objects.filter(id__in=llm_list_ids)
-        .annotate(like_count=Count('llmlike', filter=Q(llmlike__is_like=True)))
+        .annotate(like_count=Count('llm_like_count', filter=Q(llm_like_count=True)))
         .order_by('-like_count') 
     )
 
