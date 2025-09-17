@@ -28,6 +28,7 @@
     padding: 40px;
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-soft);
+    margin-bottom: 50px;
     width: 100%;
 }
 
@@ -346,34 +347,15 @@
         border-radius: 16px;
     }
     
-    /* 모바일에서 가로 스크롤로 변경 */
+    /* 모바일에서 Grid로 전체 표시 */
     .llm-cards-container {
-        display: flex;
-        overflow-x: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 15px;
         padding: 10px 0 20px;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(139, 92, 246, 0.5) transparent;
-    }
-    
-    .llm-cards-container::-webkit-scrollbar {
-        height: 6px;
-    }
-    
-    .llm-cards-container::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 3px;
-    }
-    
-    .llm-cards-container::-webkit-scrollbar-thumb {
-        background: linear-gradient(90deg, #8b5cf6, #06b6d4);
-        border-radius: 3px;
     }
     
     .llm-card {
-        flex: 0 0 150px; /* 고정 너비 */
         min-height: 200px; /* 높이 축소 */
         border-radius: 12px;
     }
@@ -415,9 +397,14 @@
         padding: 20px 10px;
     }
     
-    /* 작은 모바일에서 더 작게 */
+    /* 작은 모바일에서 Grid로 전체 표시 */
+    .llm-cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 10px;
+    }
+    
     .llm-card {
-        flex: 0 0 130px; /* 더 작은 고정 너비 */
         min-height: 180px;
     }
     
@@ -456,8 +443,14 @@
         border-radius: 12px;
     }
     
+    /* 소형 모바일에서 Grid로 전체 표시 */
+    .llm-cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+    }
+    
     .llm-card {
-        flex: 0 0 120px;
         min-height: 160px;
     }
     
