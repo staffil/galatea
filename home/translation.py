@@ -52,6 +52,6 @@ class CloningAgreementTranslationsOption(TranslationOptions):
 translator.register(CloningAgreement, CloningAgreementTranslationsOption)
 
 class PaymentRankTranslationsOption(TranslationOptions):
-    fields = ("voicetime")
+    fields = ("voicetime",)
 translator.register(PaymentRank, PaymentRankTranslationsOption)
 
