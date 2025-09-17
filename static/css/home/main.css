@@ -16,7 +16,6 @@
     box-shadow: 0 4px 15px rgba(139,92,246,0.3);
     margin-top: 30px;
     padding: 15px ;
-
 }
 
 #sidebar-toggle:hover {
@@ -90,7 +89,6 @@
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(139,92,246,0.3);
 }
-
 
 /* 전체 개선된 스타일 */
 :root {
@@ -320,7 +318,7 @@ body {
 .main-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 25px 20px;
 }
 
 .llm-container, .genre-container {
@@ -330,31 +328,33 @@ body {
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-soft);
 }
+
 .llm-container2 {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
     border-radius: 24px;
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-soft);
-        padding: 40px;
-
+    padding: 25px;
     width: 100%;
+    margin-bottom: 20px;
 }
+
 .section-title {
     font-size: 2rem;
     font-weight: 800;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 30px;
+    margin-bottom: 18px;
     text-align: center;
 }
 
 .llm-cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-bottom: 30px;
+    gap: 18px;
+    margin-bottom: 18px;
 }
 
 .llm-card {
@@ -394,7 +394,7 @@ body {
 .llm-image-container {
     position: relative;
     overflow: hidden;
-    height: 200px;
+    height: 170px;
 }
 
 .llm-image-container img {
@@ -409,14 +409,14 @@ body {
 }
 
 .llm-card-body {
-    padding: 25px;
+    padding: 18px;
 }
 
 .llm-name {
     font-size: 1.3rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     text-align: center;
 }
 
@@ -659,7 +659,7 @@ body {
 /* 향상된 반응형 디자인 */
 @media (max-width: 1200px) {
     .main-content {
-        padding: 30px 15px;
+        padding: 20px 15px;
         height: 80%;
     }
     
@@ -667,18 +667,29 @@ body {
         padding: 30px 20px;
     }
     
+    .llm-container2 {
+        padding: 18px;
+        margin-bottom: 15px;
+    }
+    
+    .section-title {
+        margin-bottom: 15px;
+    }
+    
     .llm-cards-container {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 25px;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .llm-image-container {
+        height: 150px;
     }
     
     .genre-tags-container {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 15px;
     }
-    .llm-container2 {
-    padding: 5px;
-}
 }
 
 @media (max-width: 992px) {
@@ -687,11 +698,6 @@ body {
         text-align: center;
         padding: 30px 20px;
         gap: 20px;
-    }
-}
-    @media (max-width: 1200px) {
-    .main-content {
-        padding: 8px 5px;
     }
     
     .news-slide img {
@@ -726,9 +732,6 @@ body {
         grid-auto-columns: 180px;
         gap: 20px;
     }
-        .llm-container2 {
-    padding: 5px;
-}
 }
 
 @media (max-width: 768px) {
@@ -740,9 +743,39 @@ body {
     .news-container {
         border-radius: 16px;
     }
-        .main-content {
-        padding: 8px 5px;
+    
+    .main-content {
+        padding: 15px 10px;
         margin-bottom: -20px;
+    }
+    
+    .llm-container2 {
+        padding: 15px;
+        margin-bottom: 12px;
+    }
+    
+    .section-title {
+        font-size: 1.7rem;
+        margin-bottom: 12px;
+    }
+    
+    .llm-cards-container {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .llm-card-body {
+        padding: 15px;
+    }
+    
+    .llm-image-container {
+        height: 130px;
+    }
+    
+    .llm-name {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
     }
     
     .news-slide {
@@ -794,36 +827,13 @@ body {
         min-width: auto;
     }
     
-    .section-title {
-        font-size: 1.7rem;
-        margin-bottom: 25px;
-    }
-    
     .llm-container, .genre-container {
         padding: 25px 15px;
         border-radius: 16px;
     }
     
-    .llm-cards-container {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 20px;
-    }
-    
     .llm-card {
         border-radius: 16px;
-    }
-    
-    .llm-image-container {
-        height: 160px;
-    }
-    
-    .llm-card-body {
-        padding: 20px;
-    }
-    
-    .llm-name {
-        font-size: 1.1rem;
-        margin-bottom: 12px;
     }
     
     .genre-tags-container {
@@ -882,9 +892,6 @@ body {
         font-size: 0.9rem;
         margin: 15px auto;
     }
-        .llm-container2 {
-    padding: 5px;
-}
 }
 
 @media (max-width: 576px) {
@@ -896,9 +903,34 @@ body {
         max-width: 200px;
         height: 130px;
     }
-        .main-content {
-        padding: 8px 5px;
+    
+    .main-content {
+        padding: 12px 8px;
         height: 80%;
+    }
+    
+    .llm-container2 {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .llm-cards-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .llm-card-body {
+        padding: 12px;
+    }
+    
+    .llm-image-container {
+        height: 110px;
     }
     
     .news-title {
@@ -930,26 +962,8 @@ body {
         border-radius: 20px;
     }
     
-    .section-title {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-    }
-    
     .llm-container, .genre-container {
         padding: 20px 10px;
-    }
-    
-    .llm-cards-container {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .llm-image-container {
-        height: 140px;
-    }
-    
-    .llm-card-body {
-        padding: 15px;
     }
     
     .genre-tags-container {
@@ -1001,9 +1015,6 @@ body {
     .popular-users-section {
         padding: 20px 10px;
     }
-        .llm-container2 {
-    padding: 5px;
-}
 }
 
 @media (max-width: 375px) {
@@ -1015,9 +1026,32 @@ body {
         max-width: 180px;
         height: 120px;
     }
-        .main-content {
-        padding: 8px 5px;
+    
+    .main-content {
+        padding: 10px 8px;
         height: 80%;
+    }
+    
+    .llm-container2 {
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+    
+    .section-title {
+        margin-bottom: 8px;
+    }
+    
+    .llm-cards-container {
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .llm-card-body {
+        padding: 10px;
+    }
+    
+    .llm-image-container {
+        height: 100px;
     }
     
     .main-nav {
@@ -1029,14 +1063,15 @@ body {
         font-size: 0.7rem;
     }
     
-   .genre-container {
+    .genre-container {
         padding: 15px 8px;
         border-radius: 12px;
     }
-    .llm-container{
+    
+    .llm-container {
         border-radius: 12px;
-
     }
+    
     .users-list {
         grid-auto-columns: 120px;
     }
@@ -1058,9 +1093,6 @@ body {
         padding: 10px 20px;
         font-size: 0.85rem;
     }
-        .llm-container2 {
-    padding: 5px;
-}
 }
 
 /* 가로 모드 최적화 */
@@ -1083,9 +1115,10 @@ body {
     .main-nav {
         padding: 20px 10px;
     }
-        .llm-container2 {
-    padding: 5px;
-}
+    
+    .llm-container2 {
+        padding: 15px;
+    }
 }
 
 /* 터치 디바이스 최적화 */
@@ -1167,108 +1200,4 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-
-/* LLM 컨테이너의 패딩 줄이기 */
-.llm-container2 {
-    padding: 30px; /* 기존 40px에서 30px로 */
-}
-
-/* 섹션 제목 아래 마진 줄이기 */
-.section-title {
-    margin-bottom: 20px; /* 기존 30px에서 20px로 */
-}
-
-/* LLM 카드들 사이 간격 줄이기 */
-.llm-cards-container {
-    gap: 20px; /* 기존 30px에서 20px로 */
-    margin-bottom: 20px; /* 기존 30px에서 20px로 */
-}
-
-/* 개별 LLM 카드 패딩 줄이기 */
-.llm-card-body {
-    padding: 20px; /* 기존 25px에서 20px로 */
-}
-
-/* LLM 이미지 높이 줄이기 */
-.llm-image-container {
-    height: 180px; /* 기존 200px에서 180px로 */
-}
-
-/* 반응형에서 더 많이 줄이기 */
-@media (max-width: 1200px) {
-    .llm-container2 {
-        padding: 25px 20px; /* 기존 30px 20px에서 25px 20px로 */
-    }
-    
-    .llm-cards-container {
-        gap: 15px; /* 기존 25px에서 15px로 */
-        margin-bottom: 15px;
-    }
-    
-    .section-title {
-        margin-bottom: 15px;
-    }
-    
-    .llm-image-container {
-        height: 160px;
-    }
-}
-
-@media (max-width: 768px) {
-    .llm-container2 {
-        padding: 20px 15px; /* 기존 25px 15px에서 20px 15px로 */
-    }
-    
-    .llm-cards-container {
-        gap: 12px; /* 기존 20px에서 12px로 */
-        margin-bottom: 12px;
-    }
-    
-    .section-title {
-        margin-bottom: 12px;
-    }
-    
-    .llm-card-body {
-        padding: 15px;
-    }
-    
-    .llm-image-container {
-        height: 140px;
-    }
-}
-
-@media (max-width: 576px) {
-    .llm-container2 {
-        padding: 15px 10px;
-    }
-    
-    .llm-cards-container {
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-    
-    .section-title {
-        margin-bottom: 10px;
-    }
-    
-    .llm-image-container {
-        height: 120px;
-    }
-}
-
-@media (max-width: 375px) {
-    .llm-container2 {
-        padding: 10px 8px;
-    }
-    
-    .llm-cards-container {
-        gap: 8px;
-        margin-bottom: 8px;
-    }
-    
-    .section-title {
-        margin-bottom: 8px;
-    }
 }
