@@ -1,8 +1,5 @@
 
 
-document.addEventListener('DOMContentLoaded', () => {
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-    const USER_ID = "{{ user.id }}";
 
 // llm_section.js (외부 JS)
 function getCookie(name) {
@@ -97,4 +94,7 @@ document.addEventListener('click', (e) => {
         });
     }
 });
-});
+    // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        initNewsSlider();
+    });
