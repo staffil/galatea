@@ -280,14 +280,6 @@ def my_request(request):
     return render(request, "mypage/my_request.html", context)
 
 
-@login_required
-def my_coupon(request):
-    llm = LLM.objects.filter(user=request.user).first()
-    context={
-        "llm":llm
-    }
-
-    return render(request, "mypage/my_coupon.html", context)
 
 
 from customer_ai.models import Conversation, Prompt
@@ -442,3 +434,86 @@ def prompt_share_update(request, prompt_id):
         form = PromptForm(instance=prompt)
 
     return render(request, "mypage/personal_profile.html")
+
+
+
+
+import secrets
+import string
+from django.contrib.auth.decorators import login_required
+
+def generate_code(length=10):
+    chars = string.ascii_uppercase + string.digits
+    return ''.join(secrets.choice(chars) for _ in range(length))
+
+
+import secrets, string
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from user_auth.models import Referral, Coupon
+from .models import LLM  # 필요시 import
+
+# 랜덤 코드 생성
+def generate_code(length=12):
+    chars = string.ascii_uppercase + string.digits
+    return ''.join(secrets.choice(chars) for _ in range(length))
+
+
+from django.utils import timezone
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+
+@login_required
+def my_coupon(request):
+    user = request.user
+
+    if request.method == "POST":
+        input_code = request.POST.get("invite_code", "").strip()
+
+        try:
+            referral = Referral.objects.get(code=input_code, is_active=True)
+        except Referral.DoesNotExist:
+            messages.error(request, "유효하지 않거나 이미 사용된 코드입니다.")
+            return redirect("mypage:my_coupon")
+
+        if Referral.objects.filter(invitee=user).exists():
+            messages.error(request, "이미 다른 초대 코드를 사용했습니다.")
+            return redirect("mypage:my_coupon")
+
+        # Referral 업데이트
+        referral.invitee = user
+        referral.is_active = False
+        referral.save()
+
+        # 1️⃣ 초대받은 사람(B)에게 토큰 충전
+        token_b, _ = Token.objects.get_or_create(user=user)
+        token_b.total_token += 0  # 충전량
+        token_b.save()
+
+        TokenHistory.objects.create(
+            user=user,
+            change_type=TokenHistory.CHARGE,
+            amount=100
+        )
+
+        # 2️⃣ 초대한 사람(A)에게 토큰 충전
+        token_a, _ = Token.objects.get_or_create(user=referral.inviter)
+        token_a.total_token += 100
+        token_a.save()
+
+
+        messages.success(request, "초대 코드가 적용되었습니다! 토큰이 지급되었습니다.")
+        return redirect("mypage:my_coupon")
+
+    # GET 요청: 토큰 내역 보여주기
+    user_tokens = TokenHistory.objects.filter(user=user).order_by('-created_at')
+    context = {
+        "user_tokens": user_tokens,
+        "token_obj": Token.objects.filter(user=user).first()
+    }
+    return render(request, "mypage/my_coupon.html", context)

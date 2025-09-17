@@ -469,3 +469,47 @@ def user_intro(request, user_id):
 
 def soon(request):
     return render(request, "home/soon.html")
+
+
+import secrets
+import string
+from django.contrib.auth.decorators import login_required
+
+def generate_code(length=10):
+    chars = string.ascii_uppercase + string.digits
+    return ''.join(secrets.choice(chars) for _ in range(length))
+
+
+from django.utils import timezone
+from user_auth.models import Referral, Coupon
+@login_required
+def invite(request):
+    gift_list = Gift.objects.all()
+
+    invite_code = request.session.get('invite_code')  # 기존 세션 코드
+    invite_link = None
+
+    if request.method == "POST":
+        # 새 코드 생성
+        invite_code = generate_code()
+        request.session['invite_code'] = invite_code
+        invite_link = request.build_absolute_uri(f"/")
+
+        # Referral DB에 저장 (inviter = 현재 사용자)
+        Referral.objects.create(
+            inviter=request.user,
+            code=invite_code,
+            is_active=True,
+            created_at=timezone.now()
+        )
+
+    else:
+        if invite_code:
+            invite_link = request.build_absolute_uri(f"/invite/?code={invite_code}")
+
+    context = {
+        "gift_list": gift_list,
+        "invite_code": invite_code,
+        "invite_link": invite_link,
+    }
+    return render(request, "home/invite.html", context)

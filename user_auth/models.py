@@ -39,9 +39,10 @@ class Coupon(models.Model):
 # 친구 초대 기록 
 class Referral(models.Model):
     inviter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_invites")
-    invitee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_invites")
+    invitee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_invites", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     code = models.CharField(max_length=10, blank=True, null=True) 
+    is_active = models.BooleanField(default=True) 
 
     class Meta:
         db_table = 'referral'

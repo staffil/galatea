@@ -1,0 +1,386 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '친구 초대하기' %}</title>
+    <link rel="stylesheet" href="{% static 'css/makeImage/image.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
+    <meta property="og:url" content="{{ invite_link }}">
+    <meta property="og:description" content="나만의 초대 코드: {{ invite_code }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+
+
+        /* 페이지 제목 */
+        .page-title {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .page-title h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* 초대 코드 생성 섹션 */
+        .invite-generator {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .invite-generator h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .invite-generator p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            text-transform: none;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* 초대 결과 섹션 */
+        .invite-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .invite-container h3 {
+            color: #333;
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .invite-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .invite-item label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .invite-value {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e1e5e9;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            color: #333;
+            word-break: break-all;
+            line-height: 1.5;
+        }
+
+        .copy-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.3);
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(86, 171, 47, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 성공 메시지 */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            .invite-generator, .invite-container {
+                padding: 25px;
+                margin: 20px 0;
+            }
+
+            .generate-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .invite-value {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title h1 {
+                font-size: 1.7rem;
+            }
+
+            .invite-generator, .invite-container {
+                padding: 20px;
+            }
+
+            .event_list img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <div class="main-content">
+        <!-- 이벤트 섹션 (기존 그대로) -->
+        <div class="popular-users-section">
+            <div class="event_list">
+                {% for gift in gift_list %}
+                    {% if gift.gift_img %}
+                        <img src="{{ gift.gift_img.url }}" alt="" loading="lazy">
+                    {% else %}
+                        <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 페이지 제목 -->
+        <div class="page-title">
+            <h1>🎉 친구 초대하기</h1>
+            <p>친구들을 초대하고 함께 즐거운 시간을 보내세요!</p>
+        </div>
+
+        <!-- 초대 코드 생성 -->
+        <div class="invite-generator">
+            <h2>나만의 초대 코드 만들기</h2>
+            <p>아래 버튼을 클릭하면 친구들과 공유할 수 있는 전용 초대 링크와 코드가 생성됩니다.</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="generate-btn">✨ 초대 코드 생성하기</button>
+            </form>
+        </div>
+
+        <!-- 초대 링크 및 코드 표시 -->
+        {% if invite_code %}
+        <div class="invite-container">
+            <h3>🎊 초대 정보가 생성되었습니다!</h3>
+            
+            <div class="invite-item">
+                <label>🔗 초대 링크</label>
+                <div class="invite-value">{{ invite_link }}</div>
+            </div>
+            
+            <div class="invite-item">
+                <label>🎫 초대 코드</label>
+                <div class="invite-value">{{ invite_code }}</div>
+            </div>
+
+            <div class="copy-section">
+                <input type="hidden" id="fullInvite" value="링크: {{ invite_link }} | 코드: {{ invite_code }}">
+                <button type="button" class="copy-btn" onclick="copyFullInvite()">
+                    📋 전체 정보 복사하기
+                </button>
+                <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
+                    친구들에게 링크를 보내거나 코드를 알려주세요!
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 성공 메시지 -->
+    <div id="successMessage" class="success-message">
+        초대 정보가 클립보드에 복사되었습니다! 🎉
+    </div>
+
+    <script>
+        function copyFullInvite() {
+            const textToCopy = document.getElementById("fullInvite").value;
+            const successMessage = document.getElementById("successMessage");
+
+            // 클립보드 API 사용 (모던 브라우저)
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showSuccessMessage();
+                }).catch(() => {
+                    fallbackCopy(textToCopy);
+                });
+            } else {
+                fallbackCopy(textToCopy);
+            }
+        }
+
+        function fallbackCopy(text) {
+            // 이전 브라우저 호환성을 위한 fallback
+            const tempInput = document.createElement("input");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand("copy");
+                showSuccessMessage();
+            } catch (err) {
+                alert("복사에 실패했습니다. 수동으로 복사해 주세요:\n" + text);
+            }
+            
+            document.body.removeChild(tempInput);
+        }
+
+        function showSuccessMessage() {
+            const successMessage = document.getElementById("successMessage");
+            successMessage.classList.add("show");
+            
+            setTimeout(() => {
+                successMessage.classList.remove("show");
+            }, 3000);
+        }
+
+        // 페이지 로드 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.invite-generator, .invite-container');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'all 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
