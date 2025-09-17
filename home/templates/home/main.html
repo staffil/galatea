@@ -459,19 +459,6 @@
     </div>
 </div>
 
-<!-- 이벤트 -->
-<div class="popular-users-section">
-    <h2 class="section-title">{% trans '이벤트' %}</h2>
-    <div class="event_list">
-        {% for gift in gift_list %}
-                {% if gift.gift_img %}
-                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-                {% endif %}
-        {% endfor %}
-    </div>
-</div>
 
 
 
@@ -514,7 +501,7 @@
     <div class="llm-container2">
         <h2 class="section-title">{% trans '추천' %}</h2>
         <div class="llm-cards-container">
-            {% for item in llm_list|slice:":6" %}
+            {% for item in llm_list|slice:":10" %}
             <div class="llm-card" onclick="openModal({{ item.id }})">
                 <div class="llm-card-body">
                     <div class="llm-image-container">
@@ -536,20 +523,18 @@
             </div>
             {% endfor %}
         </div>
-        
                         <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
 
     </div>
 </div>
 
 
-
-
+        <!-- LLM 추천 섹션 -->
 <div class="main-content">
     <div class="llm-container2">
         <h2 class="section-title">{% trans '추천' %}</h2>
         <div class="llm-cards-container">
-            {% for item in llm_list|slice:":6" %}
+            {% for item in llm_list2|slice:":10" %}
             <div class="llm-card" onclick="openModal({{ item.id }})">
                 <div class="llm-card-body">
                     <div class="llm-image-container">
@@ -571,11 +556,16 @@
             </div>
             {% endfor %}
         </div>
-        
                         <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
 
     </div>
 </div>
+
+
+
+
+
+
 
 
 <!-- 인기있는 유저 -->
@@ -680,7 +670,20 @@
             </div>
         </div>
 
-    
+    <!-- 이벤트 -->
+<div class="popular-users-section">
+    <h2 class="section-title">{% trans '이벤트' %}</h2>
+    <div class="event_list">
+        {% for gift in gift_list %}
+                {% if gift.gift_img %}
+                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
+                {% else %}
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
 
     <footer class="footer">
         <div class="footer-content">

@@ -77,6 +77,8 @@ def main(request):
 
     # 다국어 이름/설명 처리
 
+    llm_list2 = LLM.objects.all().order_by("?")
+
 
     for l in llm_list:
         l.display_genres = []
@@ -93,6 +95,7 @@ def main(request):
         "user": user,
         "llm": llm_list,
         "llm_list": llm_list,
+        "llm_list2": llm_list2,
         "voice_list": voice_list,
         "celebrity_voice_list": celebrity_voice_list,
         "news_list": news_list,
