@@ -575,7 +575,19 @@
 <script src="{% static 'js/home/llm_section.js' %}"></script>
 
 
-
+    <!-- 이벤트 -->
+<div class="popular-users-section">
+    <h2 class="section-title">{% trans '이벤트' %}</h2>
+    <div class="event_list">
+        {% for gift in gift_list %}
+                {% if gift.gift_img %}
+                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
+                {% else %}
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                {% endif %}
+        {% endfor %}
+    </div>
+</div>
   <!-- 일반 voice 목록 -->
 <!-- <div class="cv-main-content">
     <h2 class="cv-section-title">{% trans 'user 가 추천하는 목소리' %}</h2>
@@ -637,19 +649,7 @@
             </div>
         </div>
 
-    <!-- 이벤트 -->
-<div class="popular-users-section">
-    <h2 class="section-title">{% trans '이벤트' %}</h2>
-    <div class="event_list">
-        {% for gift in gift_list %}
-                {% if gift.gift_img %}
-                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-                {% endif %}
-        {% endfor %}
-    </div>
-</div>
+
 
 
     <footer class="footer">
