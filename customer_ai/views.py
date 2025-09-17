@@ -179,27 +179,19 @@ def auto_prompt(request):
     return JsonResponse({"status": "error","error": _("POST 요청만 합니다.")})
 
 
+@login_required
 def chat_view(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
+        
     except LLM.DoesNotExist:
-        llm = None
-
-    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
-    is_bot = any(bot in user_agent for bot in ['facebookexternalhit', 'twitterbot', 'kakaotalk'])
-
-    # SNS 봇이면 로그인 체크 없이 OG만 제공
-    if is_bot:
-        return render(request, "customer_ai/share_preview.html", {
-            "llm": llm,
-        })
-
-    # 일반 사용자 로그인 체크
-    if not request.user.is_authenticated:
-        return redirect("login")
+        llm= None
 
     if llm.user != request.user and not llm.is_public:
         return HttpResponseForbidden(_("이 LLM에 접근할 권한이 없습니다."))
+
+
+
 
     return render(request, "customer_ai/custom.html", {
         "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
