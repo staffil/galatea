@@ -660,6 +660,7 @@ body {
 @media (max-width: 1200px) {
     .main-content {
         padding: 30px 15px;
+        height: 80%;
     }
     
     .llm-container, .genre-container {
@@ -686,6 +687,12 @@ body {
         text-align: center;
         padding: 30px 20px;
         gap: 20px;
+    }
+}
+    @media (max-width: 1200px) {
+    .main-content {
+        padding: 8px 5px;
+        height: 80%;
     }
     
     .news-slide img {
@@ -733,6 +740,10 @@ body {
     
     .news-container {
         border-radius: 16px;
+    }
+        .main-content {
+        padding: 8px 5px;
+        height: 80%;
     }
     
     .news-slide {
@@ -886,6 +897,10 @@ body {
         max-width: 200px;
         height: 130px;
     }
+        .main-content {
+        padding: 8px 5px;
+        height: 80%;
+    }
     
     .news-title {
         font-size: 1.2rem;
@@ -1000,6 +1015,10 @@ body {
     .news-slide img {
         max-width: 180px;
         height: 120px;
+    }
+        .main-content {
+        padding: 8px 5px;
+        height: 80%;
     }
     
     .main-nav {
