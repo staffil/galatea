@@ -1,6 +1,6 @@
 document.querySelectorAll('.faq-question').forEach((btn) => {
     btn.addEventListener('click', () => {
-        const item = btn.parentElement;
+        const item = btn.closest('.faq-item');
         item.classList.toggle('active');
     });
 });
