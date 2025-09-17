@@ -1170,63 +1170,105 @@ body {
 }
 
 
-/* LLM 섹션들 사이의 간격 조정 */
-.main-content + .main-content {
-    margin-top: 30px; /* 기본 간격 */
-}
-
-/* 태블릿 사이즈에서 간격 줄이기 */
-@media (max-width: 1200px) {
-    .main-content + .main-content {
-        margin-top: 20px;
-    }
-}
-
-/* 모바일에서 간격 더 줄이기 */
-@media (max-width: 768px) {
-    .main-content + .main-content {
-        margin-top: 15px;
-    }
-}
-
-/* 작은 모바일에서 최소 간격 */
-@media (max-width: 576px) {
-    .main-content + .main-content {
-        margin-top: 10px;
-    }
-}
-
-@media (max-width: 375px) {
-    .main-content + .main-content {
-        margin-top: 8px;
-    }
-}
-
-/* 또는 더 구체적으로 llm-container2들 사이의 간격만 조정하려면: */
+/* LLM 컨테이너의 패딩 줄이기 */
 .llm-container2 {
-    margin-bottom: 40px; /* 기본 하단 마진 */
+    padding: 30px; /* 기존 40px에서 30px로 */
 }
 
+/* 섹션 제목 아래 마진 줄이기 */
+.section-title {
+    margin-bottom: 20px; /* 기존 30px에서 20px로 */
+}
+
+/* LLM 카드들 사이 간격 줄이기 */
+.llm-cards-container {
+    gap: 20px; /* 기존 30px에서 20px로 */
+    margin-bottom: 20px; /* 기존 30px에서 20px로 */
+}
+
+/* 개별 LLM 카드 패딩 줄이기 */
+.llm-card-body {
+    padding: 20px; /* 기존 25px에서 20px로 */
+}
+
+/* LLM 이미지 높이 줄이기 */
+.llm-image-container {
+    height: 180px; /* 기존 200px에서 180px로 */
+}
+
+/* 반응형에서 더 많이 줄이기 */
 @media (max-width: 1200px) {
     .llm-container2 {
-        margin-bottom: 25px;
+        padding: 25px 20px; /* 기존 30px 20px에서 25px 20px로 */
     }
-}
-
-@media (max-width: 768px) {
-    .llm-container2 {
-        margin-bottom: 20px;
-    }
-}
-
-@media (max-width: 576px) {
-    .llm-container2 {
+    
+    .llm-cards-container {
+        gap: 15px; /* 기존 25px에서 15px로 */
         margin-bottom: 15px;
     }
+    
+    .section-title {
+        margin-bottom: 15px;
+    }
+    
+    .llm-image-container {
+        height: 160px;
+    }
+}
+
+@media (max-width: 768px) {
+    .llm-container2 {
+        padding: 20px 15px; /* 기존 25px 15px에서 20px 15px로 */
+    }
+    
+    .llm-cards-container {
+        gap: 12px; /* 기존 20px에서 12px로 */
+        margin-bottom: 12px;
+    }
+    
+    .section-title {
+        margin-bottom: 12px;
+    }
+    
+    .llm-card-body {
+        padding: 15px;
+    }
+    
+    .llm-image-container {
+        height: 140px;
+    }
+}
+
+@media (max-width: 576px) {
+    .llm-container2 {
+        padding: 15px 10px;
+    }
+    
+    .llm-cards-container {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .section-title {
+        margin-bottom: 10px;
+    }
+    
+    .llm-image-container {
+        height: 120px;
+    }
 }
 
 @media (max-width: 375px) {
     .llm-container2 {
-        margin-bottom: 10px;
+        padding: 10px 8px;
+    }
+    
+    .llm-cards-container {
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .section-title {
+        margin-bottom: 8px;
     }
 }
