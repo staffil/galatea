@@ -234,14 +234,7 @@ div:has(.plan-card) {
         padding: 35px 25px;
     }
     
-    .plan-card:nth-child(2) {
-        transform: none;
-        order: -1;
-    }
-    
-    .plan-card:nth-child(2):hover {
-        transform: translateY(-8px);
-    }
+
     
     h1 {
         font-size: 36px;
@@ -288,12 +281,7 @@ div:has(.plan-card) {
         margin-bottom: 30px;
     }
     
-    .plan-card:nth-child(2) {
-        top: -15px;
-        right: -10px;
-        font-size: 11px;
-        padding: 3px 10px;
-    }
+
 }
 
 @media (max-width: 400px) {
