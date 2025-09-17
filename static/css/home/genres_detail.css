@@ -58,17 +58,16 @@ body > h2 {
 .llm-card {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
     border-radius: 16px;
-    padding: 0;
     cursor: pointer;
-   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(139, 92, 246, 0.2);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(139, 92, 246, 0.2);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(139, 92, 246, 0.2);
     overflow: hidden;
-    position: relative;
-    min-height: 350px;
+    min-height: 350px;  /* 카드 높이 안정화 */
+    display: flex;
+    flex-direction: column;
 }
 
 .llm-card::before {
@@ -109,12 +108,13 @@ body > h2 {
     display: flex;
     flex-direction: column;
     height: 100%;
+        flex: 1;
 }
 
 /* LLM 이미지 컨테이너 */
 .llm-image-container {
     width: 100%;
-    height: 200px;
+    height: 200px; /* 이미지 로딩 전에도 높이 확보 */
     overflow: hidden;
     border-radius: 16px 16px 0 0;
     position: relative;
@@ -134,8 +134,8 @@ body > h2 {
 .llm-image-container img {
     width: 100%;
     height: 100%;
-        display: block;    
     object-fit: cover;
+    display: block;
     transition: transform 0.3s ease;
 }
 
