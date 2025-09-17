@@ -104,7 +104,20 @@ window.sendText = function(text) {
         messageArea.appendChild(userMessage);
 
         // 입력창 초기화
-        document.getElementById("text-input").value = "";
+                    const avatarImg = llmImageUrl ? 
+                `<img src="${llmImageUrl}" alt="AI" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` : 
+                '🤖';
+    const typingMessage = document.createElement("div");
+    typingMessage.className = "message ai typing";
+    typingMessage.innerHTML = `
+                <div class="message-avatar">${avatarImg}</div>
+                        <div class="message-content">
+                                <div class="typing-bubbles">
+            <span></span><span></span><span></span>
+        </div>
+        </div>
+    `;
+    messageArea.appendChild(typingMessage);
         
         // 스크롤을 맨 아래로
         messageArea.scrollTop = messageArea.scrollHeight;
@@ -124,6 +137,7 @@ window.sendText = function(text) {
             return res.json();
         })
         .then(data => {
+                    typingMessage.remove();
             const aiMessage = document.createElement("div");
             aiMessage.className = "message ai";
             
