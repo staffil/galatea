@@ -204,31 +204,7 @@ div:has(.plan-card) {
 
 
 
-.plan-card:nth-child(2)::before {
-    height: 6px;
-}
 
-.plan-card:nth-child(2) h3 {
-    font-size: 28px;
-    position: relative;
-}
-
-.plan-card:nth-child(2) h3::after {
-    content: '추천';
-    position: absolute;
-    top: -10px;
-    right: -20px;
-    color: white;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 20px;
-    white-space: nowrap;
-}
-
-.plan-card:nth-child(2):hover {
-    transform: scale(1.05) translateY(-8px);
-}
 
 /* 반응형 디자인 */
 @media (max-width: 1200px) {
