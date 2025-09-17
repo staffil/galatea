@@ -32,12 +32,11 @@
         {% endif %}
     </header>
 
-    <h2>{% trans "장르" %}: {{ genres.name }}</h2>
 
         <!-- LLM 추천 섹션 -->
 <div class="main-content">
     <div class="llm-container2">
-        <h2 class="section-title">{% trans '추천' %}</h2>
+        <h2 class="section-title">{{ genres.name }}</h2>
         <div class="llm-cards-container">
             {% for item in llm_list %}
             <div class="llm-card" onclick="openModal({{ item.id }})">
