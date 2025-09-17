@@ -470,7 +470,7 @@
         <!-- 첫 번째 줄 -->
         <div class="llm-row">
             <div class="llm-cards-horizontal">
-                {% for item in llm_list|slice:":4" %}
+                {% for item in llm_list|slice:":10" %}
                 <div class="llm-card" onclick="openModal({{ item.id }})">
                     <div class="llm-card-body">
                         <div class="llm-image-container">
@@ -497,7 +497,7 @@
         <!-- 두 번째 줄 -->
         <div class="llm-row">
             <div class="llm-cards-horizontal">
-                {% for item in llm_list|slice:"4:8" %}
+                {% for item in llm_list|slice:"10:20" %}
                 <div class="llm-card" onclick="openModal({{ item.id }})">
                     <div class="llm-card-body">
                         <div class="llm-image-container">
@@ -524,7 +524,7 @@
         <!-- 세 번째 줄 -->
         <div class="llm-row">
             <div class="llm-cards-horizontal">
-                {% for item in llm_list|slice:"8:12" %}
+                {% for item in llm_list|slice:"20:30" %}
                 <div class="llm-card" onclick="openModal({{ item.id }})">
                     <div class="llm-card-body">
                         <div class="llm-image-container">
