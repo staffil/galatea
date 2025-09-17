@@ -122,9 +122,9 @@ body {
 /* 뉴스 섹션 개선 */
 .news-section {
     position: relative;
-    margin: 130px auto 40px ;
+    margin: 40px auto;
     max-width: 1200px;
-    padding: 0 20px;
+    padding:  20px;
 }
 
 .news-container {
@@ -140,6 +140,7 @@ body {
 .news-slider {
     display: flex;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 40px;
 }
 
 .news-slide {
