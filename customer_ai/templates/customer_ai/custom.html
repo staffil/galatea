@@ -9,6 +9,15 @@
     <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
+        <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="{{ llm.name }}" />
+{% if llm.llm_image %}
+  <meta property="og:image" content="{{ llm.llm_image.url }}">
+{% endif %}
+
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
 </head>
 
 <style>
