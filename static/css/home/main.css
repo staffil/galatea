@@ -737,7 +737,7 @@ body {
 
 @media (max-width: 768px) {
     .news-section {
-        margin: 20px auto;
+        margin: 50px auto 20px;
         padding: 0 15px;
     }
     
@@ -898,9 +898,6 @@ body {
 @media (max-width: 576px) {
     .news-slide {
         padding: 20px 10px;
-    }
-    .news-slider{
-        margin-top: 120px;
     }
     
     .news-slide img {
