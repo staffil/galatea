@@ -48,7 +48,12 @@
 .faq-item.active .faq-question::after {
     content: '−';
 }
-
+.faq-answer img {
+    max-width: 100%;   /* 부모 너비를 넘어가지 않음 */
+    height: auto;      /* 비율 유지 */
+    display: block;    /* 불필요한 여백 제거 */
+    margin: 10px 0;    /* 필요 시 위아래 여백 */
+}
 .faq-question:hover {
     background: #e0e0e0;
 }
