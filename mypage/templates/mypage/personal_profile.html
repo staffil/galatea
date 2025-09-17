@@ -45,7 +45,7 @@
                         <div class="llm-name">{{ llm.name }}</div>
                         <div class="llm-likes">{{ llm.llm_like_count }}</div>
                                                        {% if llm.is_public %}
-                    <a href="{% url 'mypage:unpublish_llm' llm.id %}" class="action-button" onclick="return confirm('{% trans '공유를 취소하시겠습니까?' %}')">{% trans '공유취소하기' %}</a>
+                    <!-- <a href="{% url 'mypage:unpublish_llm' llm.id %}" class="action-button" onclick="return confirm('{% trans '공유를 취소하시겠습니까?' %}')">{% trans '공유취소하기' %}</a> -->
                 {% endif %}
                     </div>
                 </div>
