@@ -91,6 +91,7 @@
     box-shadow: 0 3px 8px rgba(139,92,246,0.3);
 }
 
+
 /* 전체 개선된 스타일 */
 :root {
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -781,60 +782,26 @@ body {
         margin-bottom: 30px;
     }
     
-    /* 모바일에서 LLM 카드를 적절한 크기로 조정 */
     .llm-cards-container {
-        display: flex;
-        overflow-x: auto;
-        gap: 15px;
-        padding: 10px 0 20px;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(139, 92, 246, 0.5) transparent;
-    }
-    
-    .llm-cards-container::-webkit-scrollbar {
-        height: 6px;
-    }
-    
-    .llm-cards-container::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 3px;
-    }
-    
-    .llm-cards-container::-webkit-scrollbar-thumb {
-        background: var(--primary-gradient);
-        border-radius: 3px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
     }
     
     .llm-card {
-        flex: 0 0 150px; /* 적절한 크기 */
-        border-radius: 12px;
-        height: auto;
+        border-radius: 16px;
     }
     
     .llm-image-container {
-        height: 100px; /* 적절한 이미지 높이 */
+        height: 160px;
     }
     
     .llm-card-body {
-        padding: 12px; /* 적절한 패딩 */
+        padding: 20px;
     }
     
     .llm-name {
-        font-size: 0.85rem; /* 읽기 좋은 폰트 크기 */
-        margin-bottom: 8px;
-        line-height: 1.3;
-    }
-    
-    .genre-tags {
-        gap: 5px;
-    }
-    
-    .genre-tag {
-        padding: 3px 6px; /* 적절한 태그 크기 */
-        border-radius: 8px;
-        font-size: 0.7rem; /* 읽기 좋은 태그 폰트 */
+        font-size: 1.1rem;
+        margin-bottom: 12px;
     }
     
     .genre-tags-container {
@@ -943,29 +910,17 @@ body {
         padding: 20px 10px;
     }
     
-    /* 작은 모바일에서도 읽기 좋은 크기 유지 */
-    .llm-card {
-        flex: 0 0 130px; /* 조금 더 작게 */
+    .llm-cards-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
     
     .llm-image-container {
-        height: 85px; /* 조금 더 작은 이미지 높이 */
+        height: 140px;
     }
     
     .llm-card-body {
-        padding: 10px; /* 조금 더 작은 패딩 */
-    }
-    
-    .llm-name {
-        font-size: 0.8rem; /* 조금 더 작은 폰트 */
-        margin-bottom: 6px;
-        line-height: 1.2;
-    }
-    
-    .genre-tag {
-        padding: 2px 5px; /* 조금 더 작은 태그 */
-        font-size: 0.65rem; /* 조금 더 작은 태그 폰트 */
-        margin: 1px;
+        padding: 15px;
     }
     
     .genre-tags-container {
