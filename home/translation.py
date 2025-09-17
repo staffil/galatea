@@ -4,6 +4,7 @@ from celebrity.models import CelebrityVoice
 from mypage.models import Genre
 from user_auth.models import News, Coupon, Notice, Gift ,Faq
 from cloning.models import CloningAgreement
+from payment.models import PaymentRank
 
 
 class CelebrityTranslationOptions(TranslationOptions):
@@ -49,4 +50,8 @@ translator.register(Gift, GiftTranslationsOption)
 class CloningAgreementTranslationsOption(TranslationOptions):
     fields = ('voice_text', "third_text", "share_text")
 translator.register(CloningAgreement, CloningAgreementTranslationsOption)
+
+class PaymentRankTranslationsOption(TranslationOptions):
+    fields = ("voicetime")
+translator.register(PaymentRank, PaymentRankTranslationsOption)
 
