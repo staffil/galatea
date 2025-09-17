@@ -441,7 +441,6 @@ body {
 }
 
 .modal-content {
-    padding: 30px;
     overflow-y: auto;
     max-height: calc(80vh - 60px);
 }
