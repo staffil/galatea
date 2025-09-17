@@ -28,8 +28,8 @@
 <main class="faq-page">
     <h1>FAQ</h1>
 
-   <div class="faq-item">
-    {% for faq in faq_list %}
+{% for faq in faq_list %}
+<div class="faq-item">
     <button class="faq-question">Q{{ forloop.counter }}. {{ faq.title }}</button>
     <div class="faq-answer">
         <p>{{ faq.content }}</p>
@@ -37,8 +37,9 @@
         <img src="{{ faq.faq_img.url }}" alt="">
         {% endif %}
     </div>
-    {% endfor %}
 </div>
+{% endfor %}
+
 
 
 
