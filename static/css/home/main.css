@@ -808,29 +808,28 @@ body {
     }
     
     .llm-card {
-        flex: 0 0 160px; /* 카드 너비 축소 */
-        border-radius: 10px;
+        flex: 0 0 140px; /* 200px의 70% */
+        border-radius: 8px; /* 12px의 70% */
         height: auto;
     }
     
     .llm-image-container {
-        height: 90px; /* 이미지 높이 축소 */
+        height: 84px; /* 120px의 70% */
     }
     
     .llm-card-body {
-        padding: 10px; /* 패딩 축소 */
+        padding: 10px; /* 15px의 70% */
     }
     
     .llm-name {
-        font-size: 0.85rem; /* 제목 폰트 축소 */
-        margin-bottom: 6px;
-        line-height: 1.2;
+        font-size: 0.7rem; /* 1rem의 70% */
+        margin-bottom: 7px; /* 10px의 70% */
+        line-height: 1.3;
     }
     
     .genre-tag {
-        padding: 2px 5px; /* 장르 태그 패딩 축소 */
-        font-size: 0.65rem; /* 장르 폰트 축소 */
-        margin: 1px;
+        padding: 3px 6px; /* 4px 8px의 75% */
+        font-size: 0.53rem; /* 0.75rem의 70% */
     }
     
     .genre-tags-container {
@@ -941,27 +940,27 @@ body {
     
     /* 작은 모바일에서 LLM 카드 더 작게 */
     .llm-card {
-        flex: 0 0 180px; /* 더 작은 고정 너비 */
+        flex: 0 0 125px; /* 180px의 70% */
     }
     
     .llm-image-container {
-        height: 100px;
+        height: 70px; /* 100px의 70% */
     }
     
     .llm-card-body {
-        padding: 12px;
+        padding: 8px; /* 12px의 70% */
     }
     
     .llm-name {
-        font-size: 0.9rem;
-        margin-bottom: 8px;
+        font-size: 0.63rem; /* 0.9rem의 70% */
+        margin-bottom: 6px; /* 8px의 75% */
         line-height: 1.2;
     }
     
     .genre-tag {
-        padding: 3px 6px;
-        font-size: 0.7rem;
-        margin: 2px;
+        padding: 2px 4px; /* 3px 6px의 70% */
+        font-size: 0.49rem; /* 0.7rem의 70% */
+        margin: 1px;
     }
     
     .genre-tags-container {
