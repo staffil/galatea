@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
     <link rel="stylesheet" href="{% static 'css/home/llm_section.css'%}">
+        <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+
 </head>
 <style>
 
@@ -31,13 +33,7 @@
     </header>
 
     <h2>{% trans "장르" %}: {{ genres.name }}</h2>
-<script>
-    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
-    const USER_ID = "{{ user.id }}";
-    const LLM_id = "{{ item.id }}"
-</script>
 
-<script src="{% static 'js/home/llm_section.js' %}"></script>
         <!-- LLM 추천 섹션 -->
 <div class="main-content">
     <div class="llm-container">
@@ -68,7 +64,13 @@
 
     </div>
 </div>
+<script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
+    const USER_ID = "{{ user.id }}";
+    const LLM_id = "{{ item.id }}"
+</script>
 
+<script src="{% static 'js/home/llm_section.js' %}"></script>
 <script>
 
 
