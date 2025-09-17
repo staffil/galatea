@@ -10,6 +10,44 @@
     <link rel="stylesheet" href="{% static 'css/home/genres_detail.css'%}">
     <script src="{% static 'js/home/main.js' %}"></script>
 </head>
+<style>
+    #llm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1001;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* 모달 열릴 때 */
+#llm-modal.show .modal-content {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+</style>
 <body>
     <!-- 배경 원들 -->
     <div class="circle-bg circle-1"></div>
