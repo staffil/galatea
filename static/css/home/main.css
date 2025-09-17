@@ -692,7 +692,6 @@ body {
     @media (max-width: 1200px) {
     .main-content {
         padding: 8px 5px;
-        height: 80%;
     }
     
     .news-slide img {
@@ -743,7 +742,7 @@ body {
     }
         .main-content {
         padding: 8px 5px;
-        height: 80%;
+        margin-bottom: -20px;
     }
     
     .news-slide {
