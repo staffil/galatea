@@ -342,7 +342,7 @@
                 amount: amount,
                 buyer_email: "{{ request.user.email }}",
                 buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-                buyer_tel: "{{ request.user.profile.phone_number|default:'010-3161-5706' }}",
+                buyer_tel: "{{ request.user.phonenumber }}",
                 m_redirect_url: "https://galatea.website/payment/complete/" 
             };
 
