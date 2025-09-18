@@ -157,7 +157,8 @@
     flex-wrap: wrap;
     gap: 8px;
     padding: 0 16px 16px 16px;
-    justify-content: center;
+    justify-content: left;
+       margin-top: auto;
 }
 
 /* 장르 태그 */
@@ -172,6 +173,7 @@
     box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
     transition: all 0.2s ease;
     white-space: nowrap;
+        text-align: left;
 }
 
 .genre-tag:hover {
