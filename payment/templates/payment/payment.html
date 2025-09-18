@@ -378,7 +378,8 @@ if (pgName.toLowerCase() === "paypal") {
         buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
         buyer_tel: "{{ request.user.phonenumber }}",
         m_redirect_url: "https://galatea.website/payment/complete/",
-        channelKey: channelKey
+        channelKey: channelKey,
+            name: "GALATEA 등급 결제", 
     };
 }
 
