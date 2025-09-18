@@ -2,144 +2,73 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>GALATEA {% trans "가격표" %}</title>
-<style>
-/* 전체 초기화 */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Noto Sans KR', sans-serif; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; color: #e2e8f0; overflow-x: hidden; position: relative; padding: 0; }
-body::before { content: ''; position: fixed; top:0; left:0; right:0; bottom:0; background: radial-gradient(circle at 25% 25%, rgba(139,92,246,0.1) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(6,182,212,0.08) 0%, transparent 50%); pointer-events:none; z-index:0; }
-.main-container { max-width:1000px; margin:0 auto; padding:120px 20px 60px; position:relative; z-index:1; }
-h1 { font-size:32px; font-weight:900; text-align:center; margin-bottom:50px; background: linear-gradient(135deg, #8b5cf6, #06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.3; position:relative; }
-h1::after { content:''; position:absolute; bottom:-12px; left:50%; transform:translateX(-50%); width:100px; height:3px; background:linear-gradient(90deg, #8b5cf6, #06b6d4); border-radius:1.5px; }
-.payment-buttons { display:flex; justify-content:center; align-items:center; gap:40px; flex-wrap:wrap; margin:60px auto; padding:0 20px; }
-.payment-option { display:flex; flex-direction:column; align-items:center; gap:15px; }
-.payment-btn { width:200px; height:200px; border:none; border-radius:50%; cursor:pointer; transition:all 0.3s ease; position:relative; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; background:white; background-size:cover; background-repeat:no-repeat; background-position:center; }
-.payment-btn:hover { transform:translateY(-10px) scale(1.05); box-shadow:0 20px 40px rgba(0,0,0,0.3); }
-.payment-btn:active { transform:translateY(-5px) scale(1.02); }
-.payment-label { font-size:18px; font-weight:700; color:#e2e8f0; text-align:center; margin-top:5px; }
-.payment-info { background: rgba(255,255,255,0.95); border:none; border-radius:20px; padding:25px 35px; margin:40px auto 20px; max-width:700px; font-size:16px; line-height:1.6; color:#333; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.15); backdrop-filter:blur(15px); font-weight:500; position:relative; z-index:2; }
-.payment-info::before { content:'💳'; font-size:24px; margin-right:10px; }
-.loading { opacity:0.6; pointer-events:none; position:relative; }
-.loading::after { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:30px; height:30px; border:3px solid transparent; border-top:3px solid #8b5cf6; border-radius:50%; animation:spin 1s linear infinite; }
-@keyframes spin { 0%{transform:translate(-50%,-50%) rotate(0deg);} 100%{transform:translate(-50%,-50%) rotate(360deg);} }
-/* 모바일 텍스트 */
-.mobile-text { display:none; color:#333; font-weight:700; font-size:16px; pointer-events:none; }
-@media (max-width:480px) { .mobile-text { display:block !important; } .payment-btn { width:100%; height:80px; border-radius:40px; background-size:50px 50px; background-position:30px center; justify-content:flex-start; padding-left:100px; font-size:16px; font-weight:700; color:#333; } }
-</style>
+    <meta charset="UTF-8">
+    <title>GALATEA 가격표</title>
+    <link rel="stylesheet" href="{% static 'css/payment/payment.css' %}?v=5" />
 </head>
 <body>
-<header>
-{% if not user.is_authenticated %}
-    {% include "common/notLoginHeader.html" %}
-{% else %}
-    {% include "common/loginHeader.html" %}
-{% endif %}
-</header>
 
-<div class="main-container">
-<h1>{{ plan.rankname }} {% trans "결제" %} - {{ plan.price }}{% trans "원" %}</h1>
+        <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+<h1>{{ plan.rankname }} 결제 - {{ plan.price }}원</h1>
 
-<div class="payment-buttons">
 {% for pg in available_pgs %}
-<div class="payment-option">
-    <button class="payment-btn" 
-        data-price="{{ plan.price }}" 
-        data-daller-price="{{ plan.daller_price }}"
-        data-rank-id="{{ plan.id }}"
-        data-merchant="{{ pg.imp_merchant_code }}"
-        data-currency="{{ pg.currency }}"
-        data-channel="{{ pg.channel_key }}"
-        onclick="requestPay('{{ pg.name }}', this)"
-        style="background-image: url('{{ pg.payment_image.url }}');">
-        <span class="mobile-text">{{ pg.name|title }} {{ plan.price }}원</span>
-    </button>
-    <div class="payment-label">{{ pg|title }}</div>
-</div>
-{% endfor %}
-</div>
+<button data-price="{{ plan.price }}" data-rank-id="{{ plan.id }}" onclick="requestPay('{{ pg }}', this)" style="background-image: {{ pg.payment_image.url }};">
+    {{ pg|title }} {{ plan.price }}원
+</button>
 
-<div class="payment-info">
-{% trans '토큰은 결제 후 즉시 제공됩니다. 결제 성공 후 mypage로 가서 결제 내역을 확인해 주세요.' %}
-</div>
-</div>
+{% endfor %}
+
 
 <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+
 <script>
 const IMP = window.IMP;
+IMP.init("imp28654630"); // 테스트 가맹점 코드
 
-function requestPay(pgName, btn){
+function requestPay(pg, btn) {
+    const VERIFY_PAYMENT_URL = "{% url 'payment:verify_payment' %}";
     const merchant_uid = "order_" + new Date().getTime();
-    const amountKRW = parseInt(btn.getAttribute("data-price"),10);
-    const dallerAmount = parseFloat(btn.getAttribute("data-daller-price"));
+    const amount = parseInt(btn.getAttribute("data-price"));
     const rank_id = btn.getAttribute("data-rank-id");
-    const merchant_code = btn.getAttribute("data-merchant");
-    IMP.init(merchant_code);
 
-    let data = {
+    const data = {
+        pg: pg,
+        pay_method: "card",
+        customer_uid: "user_{{ request.user.id }}",
         merchant_uid: merchant_uid,
+        name: "GALATEA 등급 결제",
+        amount: amount,
         buyer_email: "{{ request.user.email }}",
         buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-        buyer_tel: "{{ request.user.phonenumber }}",
-        name: "GALATEA 등급 결제",
-        m_redirect_url: "https://galatea.website/payment/complete/"
+        buyer_tel: "{{ request.user.profile.phone_number|default:'010-3161-5706' }}"
     };
 
-    pgName = pgName.toLowerCase();
-
-    if(pgName==="paypal"){
-        data.pg="paypal";
-        data.pay_method="paypal";
-        data.amount=dallerAmount;
-        data.currency="USD";
-    } else if(pgName==="kg"){
-        data.pg="html5_inicis";
-        data.pay_method="card";
-        data.amount=amountKRW;
-    } else {
-        data.pg=pgName;
-        data.pay_method="card";
-        data.amount=amountKRW;
-    }
-
-    console.log("=== request_pay data ===", data);
-
-    btn.classList.add('loading');
-
-    IMP.request_pay(data, function(rsp){
-        btn.classList.remove('loading');
-        if(rsp.success){
-            fetch("{% url 'payment:verify_payment' %}?imp_uid="+rsp.imp_uid+"&merchant_uid="+merchant_uid+"&rank_id="+rank_id)
-            .then(res=>res.json())
-            .then(result=>{
+    IMP.request_pay(data, function(rsp) {
+        if (rsp.success) {
+            fetch(`${VERIFY_PAYMENT_URL}?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}&rank_id=${rank_id}`)
+            .then(res => res.json())
+            .then(result => {
                 if(result.status){
                     alert(`결제 성공! 상태: ${result.status}`);
-                    window.location.href="/payment/complete/";
-                }else{
-                    alert("결제 처리 실패: "+JSON.stringify(result));
+                    window.location.href = "/payment/complete/";
+                } else {
+                    alert("결제 처리 실패: " + JSON.stringify(result));
                 }
-            }).catch(err=>{
-                alert("결제 처리 중 오류가 발생했습니다.");
-                console.error(err);
             });
-        }else{
-            alert("결제 실패: "+rsp.error_msg);
+        } else {
+            alert("결제 실패: " + rsp.error_msg);
         }
     });
 }
-
-// 모바일 텍스트 표시
-function updateMobileText(){
-    const isMobile = window.innerWidth <= 480;
-    const mobileTexts = document.querySelectorAll('.mobile-text');
-    mobileTexts.forEach(t=>{
-        t.style.display = isMobile ? 'block' : 'none';
-    });
-}
-updateMobileText();
-window.addEventListener('resize', updateMobileText);
 </script>
 </body>
 </html>
