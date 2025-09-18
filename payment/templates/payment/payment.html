@@ -354,7 +354,9 @@ if (pgName.toLowerCase() === "paypal") {
         buyer_tel: "{{ request.user.phonenumber }}",
         m_redirect_url: "https://galatea.website/payment/complete/",
         currency: "USD",
-        channelKey: channelKey
+        channelKey: channelKey,
+                    name: "GALATEA 등급 결제", 
+
     };
 } else if (pgName.toLowerCase() === "kg") { // KG(html5_inicis)
     data = {
@@ -365,8 +367,8 @@ if (pgName.toLowerCase() === "paypal") {
         buyer_email: "{{ request.user.email }}",
         buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
         buyer_tel: "{{ request.user.phonenumber }}",
-        m_redirect_url: "https://galatea.website/payment/complete/"
-        // channelKey 제거
+        m_redirect_url: "https://galatea.website/payment/complete/",
+            name: "GALATEA 등급 결제", 
     };
 } else {
     data = {
