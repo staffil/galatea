@@ -168,6 +168,7 @@
     transition: all 0.2s ease;
     white-space: nowrap;
     text-align: left;
+        margin-top: auto;
 }
 
 .genre-tag:hover {
@@ -350,7 +351,7 @@
     }
     
     .genre-tag {
-        font-size: 0.3rem;
+        font-size: 0.4rem;
         padding: 4px 6px;
     }
 }
@@ -395,7 +396,7 @@
     }
     
     .genre-tag {
-        font-size: 0.3rem;
+        font-size: 0.4rem;
         padding: 3px 5px;
     }
 }
@@ -440,7 +441,7 @@
     }
     
     .genre-tag {
-        font-size: 0.3rem;
+        font-size: 0.4rem;
         padding: 2px 4px;
     }
 }
