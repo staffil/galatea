@@ -2,12 +2,17 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 
-# 결제 수단 테이블
 class PaymentMethod(models.Model):
     name = models.CharField(max_length=50, unique=True)  
     description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
-    payment_image = models.ImageField( null=True, blank=True)
+    payment_image = models.ImageField(null=True, blank=True)
+    
+    # PG별 연동 정보 추가
+    imp_merchant_code = models.CharField(max_length=100, blank=True, null=True)  # 아임포트 가맹점 코드
+    currency = models.CharField(max_length=10, default='KRW')  # 기본 통화
+    channel_key = models.CharField(max_length=255, blank=True, null=True)  # 페이팔 등 채널키
+    extra_info = models.JSONField(blank=True, null=True)  # 필요시 다른 옵션들
 
     class Meta:
         db_table = 'payment_method'
@@ -16,6 +21,7 @@ class PaymentMethod(models.Model):
 
     def __str__(self):
         return self.name
+
     
 
 class PaymentRank(models.Model):
