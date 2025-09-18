@@ -29,15 +29,7 @@
     box-shadow: var(--shadow-soft);
     width: 100%;
 }
-.llm-container2 {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-soft);
-    padding: 40px;
-    width: 100%;
-}
+
 
 /* 섹션 제목 */
 .section-title {
@@ -151,6 +143,7 @@
     line-height: 1.4;
     text-align: center;
     margin-bottom: 15px;
+        text-align: left;
 }
 
 /* 장르 태그들 */
@@ -356,7 +349,7 @@
     }
     
     .genre-tag {
-        font-size: 0.7rem;
+        font-size: 0.4rem;
         padding: 4px 6px;
     }
 }
@@ -391,7 +384,7 @@
     }
     
     .llm-name {
-        font-size: 0.85rem;
+        font-size: 0.7rem;
         padding: 10px 6px 6px 6px;
         margin-bottom: 8px;
     }
@@ -401,7 +394,7 @@
     }
     
     .genre-tag {
-        font-size: 0.65rem;
+        font-size: 0.4rem;
         padding: 3px 5px;
     }
 }
@@ -437,7 +430,7 @@
     }
     
     .llm-name {
-        font-size: 0.8rem;
+        font-size: 0.5rem;
         padding: 8px 5px 5px 5px;
     }
     
@@ -446,7 +439,7 @@
     }
     
     .genre-tag {
-        font-size: 0.6rem;
+        font-size: 0.4rem;
         padding: 2px 4px;
     }
 }
