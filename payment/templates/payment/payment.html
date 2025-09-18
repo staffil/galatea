@@ -77,8 +77,7 @@ function requestPay(pgName, btn){
     const merchant_code = btn.getAttribute("data-merchant");
     IMP.init(merchant_code);
 
-    const isMobile = window.innerWidth <= 480;
-
+\
     // 결제 데이터 기본값
     let data = {
         merchant_uid: merchant_uid,
@@ -109,11 +108,6 @@ function requestPay(pgName, btn){
 
     btn.classList.add('loading');
 
-    if(isMobile){
-        // 모바일: redirect URL에 imp_uid, merchant_uid, rank_id 전달
-        data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
-        IMP.request_pay(data);  // 콜백 없이 m_redirect_url로 이동
-    } else {
         // 데스크탑: 기존 팝업 + callback
         IMP.request_pay(data, function(rsp){
             btn.classList.remove('loading');
@@ -136,5 +130,5 @@ function requestPay(pgName, btn){
             }
         });
     }
-}
+
 </script>
