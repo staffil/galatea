@@ -87,3 +87,9 @@ urlpatterns += i18n_patterns(
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+from home import views as home_views
+
+handler400 = 'home.views.bad_request'
+handler403 = 'home.views.permission_denied'
+handler404 = 'home.views.page_not_found'
+handler500 = 'home.views.server_error'
