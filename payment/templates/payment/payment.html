@@ -117,6 +117,8 @@ function requestPay(pgName, btn){
     // 모바일/데스크탑 분기
     if(isMobile){
         // 모바일: 결제 후 redirect URL에서 서버가 검증 및 토큰 지급
+            data.m_redirect_url = `https://galatea.website/payment/complete/?rank_id=${rank_id}`;
+
         IMP.request_pay(data);
     } else {
         // 데스크탑: 팝업 방식, JS callback에서 서버 검증
