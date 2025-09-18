@@ -302,6 +302,7 @@
             <div class="payment-option">
                 <button class="payment-btn" 
                         data-price="{{ plan.price }}" 
+                                data-daller-price="{{ plan.daller_price }}" 
                         data-rank-id="{{ plan.id }}" 
                         onclick="requestPay('{{ pg.description }}', this)"
                         style="background-image: url('{{ pg.payment_image.url }}');">
@@ -325,52 +326,68 @@
         const IMP = window.IMP;
         IMP.init("imp28654630"); // 테스트 가맹점 코드
 
-        function requestPay(pg, btn) {
-            const VERIFY_PAYMENT_URL = "{% url 'payment:verify_payment' %}";
-            const merchant_uid = "order_" + new Date().getTime();
-            const amount = parseInt(btn.getAttribute("data-price"));
-            const rank_id = btn.getAttribute("data-rank-id");
+function requestPay(pg, btn) {
+    const VERIFY_PAYMENT_URL = "{% url 'payment:verify_payment' %}";
+    const merchant_uid = "order_" + new Date().getTime();
+    
+    // 먼저 금액 변수 선언
+    const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
+    const dallerAmount = parseFloat(btn.getAttribute("data-daller-price"));
+    const rank_id = btn.getAttribute("data-rank-id");
+        let pgValue = pg.trim().toLowerCase()
 
-            // 로딩 상태 표시
-            btn.classList.add('loading');
+    // 로딩 상태 표시
+    btn.classList.add('loading');
 
-            const data = {
-                pg: pg,
-                channelKey: "channel-key-6e329fb7-dd4d-402c-a857-8356ef396e80",
-                pay_method: "paypal",
-                merchant_uid: merchant_uid,
-                name: "GALATEA {% trans '등급 결제' %}",
-                amount: amount,
-                buyer_email: "{{ request.user.email }}",
-                buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-                buyer_tel: "{{ request.user.phonenumber }}",
-                m_redirect_url: "https://galatea.website/payment/complete/" ,
-            };
+    // 기본 데이터
+    let data = {
+        merchant_uid: merchant_uid,
+        name: "GALATEA 등급 결제",
+        buyer_email: "{{ request.user.email }}",
+        buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+        buyer_tel: "{{ request.user.phonenumber }}",
+        m_redirect_url: "https://galatea.website/payment/complete/",
+            pg: pgValue
+    };
 
-            IMP.request_pay(data, function(rsp) {
-                // 로딩 상태 해제
-                btn.classList.remove('loading');
-                
-                if (rsp.success) {
-                    fetch(`${VERIFY_PAYMENT_URL}?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}&rank_id=${rank_id}`)
-                    .then(res => res.json())
-                    .then(result => {
-                        if(result.status){
-                            alert(`{% trans "결제 성공! 상태:" %} ${result.status}`);
-                            window.location.href = "/payment/complete/";
-                        } else {
-                            alert("{% trans '결제 처리 실패:' %} " + JSON.stringify(result));
-                        }
-                    })
-                    .catch(error => {
-                        alert("{% trans '결제 처리 중 오류가 발생했습니다.' %}");
-                        console.error('Error:', error);
-                    });
+    if (pg.toLowerCase() === "paypal") {
+        data.pg = "paypal";
+        data.pay_method = "paypal";
+        data.currency = "USD";
+        data.amount = dallerAmount;
+        data.channelKey = "channel-key-4eea9455-d74a-4264-b955-d09df1bbdaf8"; 
+    } else {
+        data.pg = pg;
+        data.pay_method = "card";
+        data.amount = amountKRW;
+    }
+
+    console.log("==== request_pay data ====");
+    console.log(data);
+
+    IMP.request_pay(data, function(rsp) {
+        btn.classList.remove('loading');
+        if (rsp.success) {
+            fetch(`${VERIFY_PAYMENT_URL}?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}&rank_id=${rank_id}`)
+            .then(res => res.json())
+            .then(result => {
+                if(result.status){
+                    alert(`결제 성공! 상태: ${result.status}`);
+                    window.location.href = "/payment/complete/";
                 } else {
-                    alert("{% trans '결제 실패:' %} " + rsp.error_msg);
+                    alert("결제 처리 실패: " + JSON.stringify(result));
                 }
+            })
+            .catch(error => {
+                alert("결제 처리 중 오류가 발생했습니다.");
+                console.error('Error:', error);
             });
+        } else {
+            alert("결제 실패: " + rsp.error_msg);
         }
+    });
+}
+
 
         // 모바일에서 텍스트 표시/숨김
         function updateMobileText() {
