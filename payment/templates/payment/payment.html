@@ -335,9 +335,10 @@
             btn.classList.add('loading');
 
             const data = {
+                pg: pg,
                 channelKey: "channel-key-6e329fb7-dd4d-402c-a857-8356ef396e80",
-                pay_method: "paypal",
-                merchant_uid: "7VCN742TZC6NA",
+                pay_method: "card",
+                merchant_uid: merchant_uid,
                 name: "GALATEA {% trans '등급 결제' %}",
                 amount: amount,
                 buyer_email: "{{ request.user.email }}",
