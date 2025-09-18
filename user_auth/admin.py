@@ -88,7 +88,7 @@ class LLMAdmin(admin.ModelAdmin):
     # list_display에는 정의한 @admin.display 메서드들의 이름이 들어가야 합니다.
     # 만약 커스텀 메서드를 사용한다면 그 메서드 이름을 여기에 넣어주세요.
     # 예를 들어, 메서드 이름을 'get_id_display' 등으로 명확히 하는 것이 좋습니다.
-    list_display= ('get_id_display', 'get_name_display', 'get_created_at_display', 'get_update_at_display') # <-- 수정된 부분
+    list_display= ('get_id_display', 'get_name_display', 'get_created_at_display', 'get_update_at_display', 'get_is_public',) # <-- 수정된 부분
 
     search_fields = ('name', 'prompt',) # LLM 모델의 필드이므로 'name', 'prompt'로 접근하는 것이 맞습니다.
 
@@ -107,7 +107,10 @@ class LLMAdmin(admin.ModelAdmin):
 
     @admin.display(description="수정날짜")
     def get_update_at_display(self, obj): # 메서드 이름 변경 권장
-        return obj.update_at # obj는 LLM 인스턴스이므로 obj.update_at으로 직접 접근
+        return obj.update_at
+    @admin.display(description="공유")
+    def get_is_public(self, obj): # 메서드 이름 변경 권장
+        return obj.is_public
     # =================================================
 
     inlines = [LLMConversationInline]
