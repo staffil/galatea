@@ -18,6 +18,7 @@
     max-width: 1400px;
     margin: 0 auto;
     background: transparent;
+
 }
 
 /* LLM 컨테이너 */
@@ -67,6 +68,7 @@
     overflow: hidden;
     position: relative;
     min-height: 350px;
+    
 }
 
 .llm-card::before {
@@ -152,7 +154,7 @@
     flex-wrap: wrap;
     gap: 8px;
     padding: 0 16px 16px 16px;
-    justify-content: center;
+    justify-content: left;
 }
 
 /* 장르 태그 */
@@ -168,7 +170,7 @@
     transition: all 0.2s ease;
     white-space: nowrap;
     text-align: left;
-        margin-top: auto;
+        margin-top: 100px;
 }
 
 .genre-tag:hover {
