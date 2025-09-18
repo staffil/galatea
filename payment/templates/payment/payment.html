@@ -342,29 +342,44 @@ function requestPay(pgName, btn) {
     const channelKey = btn.getAttribute("data-channel");
 
 
-    let data = {
+let data;
+if (pgName.toLowerCase() === "paypal") {
+    data = {
+        pg: "paypal",
+        pay_method: "paypal",
         merchant_uid: merchant_uid,
-        name: "GALATEA 등급 결제",
-        amount: currency === "USD" ? dallerAmount : amountKRW,
+        amount: dallerAmount,
         buyer_email: "{{ request.user.email }}",
         buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
         buyer_tel: "{{ request.user.phonenumber }}",
         m_redirect_url: "https://galatea.website/payment/complete/",
-        pg: pgName.toLowerCase(),
-        currency: currency
+        currency: "USD",
+        channelKey: channelKey
     };
-
-if (pgName.toLowerCase() === "paypal") {
-    data.pg = "paypal";
-    data.pay_method = "paypal";
-    data.currency = "USD";
-    data.amount = dallerAmount;
-    data.channelKey = channelKey;  // DB에서 읽어온 값 사용
+} else if (pgName.toLowerCase() === "kg") { // KG(html5_inicis)
+    data = {
+        pg: "html5_inicis",
+        pay_method: "card",
+        merchant_uid: merchant_uid,
+        amount: amountKRW,
+        buyer_email: "{{ request.user.email }}",
+        buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+        buyer_tel: "{{ request.user.phonenumber }}",
+        m_redirect_url: "https://galatea.website/payment/complete/"
+        // channelKey 제거
+    };
 } else {
-    data.pg = pgName.toLowerCase(); // 또는 원하는 PG 이름
-    data.pay_method = "card";
-    data.amount = amountKRW;
-    data.channelKey = channelKey; // DB에서 읽어온 값 사용
+    data = {
+        pg: pgName.toLowerCase(),
+        pay_method: "card",
+        merchant_uid: merchant_uid,
+        amount: amountKRW,
+        buyer_email: "{{ request.user.email }}",
+        buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+        buyer_tel: "{{ request.user.phonenumber }}",
+        m_redirect_url: "https://galatea.website/payment/complete/",
+        channelKey: channelKey
+    };
 }
 
 
