@@ -167,6 +167,7 @@
     box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
     transition: all 0.2s ease;
     white-space: nowrap;
+    text-align: left;
 }
 
 .genre-tag:hover {
