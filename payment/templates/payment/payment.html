@@ -327,10 +327,9 @@
     <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
     <script>
         const IMP = window.IMP;
-IMP.init(merchant_code); 
 function requestPay(pgName, btn) {
     const IMP = window.IMP;
-    
+
     // 버튼에서 PG별 데이터 가져오기
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
@@ -338,6 +337,7 @@ function requestPay(pgName, btn) {
     const rank_id = btn.getAttribute("data-rank-id");
     
     const merchant_code = btn.getAttribute("data-merchant");
+        IMP.init(merchant_code);  
     const currency = btn.getAttribute("data-currency");
     const channelKey = btn.getAttribute("data-channel");
 
@@ -354,18 +354,19 @@ function requestPay(pgName, btn) {
         currency: currency
     };
 
-    if (pg.toLowerCase() === "paypal") {
-        data.pg = "paypal";
-        data.pay_method = "paypal";
-        data.currency = "USD";
-        data.amount = dallerAmount;
-    data.channel = channelKey;
-    } else {
-        data.pg = pg;
-        data.pay_method = "card";
-        data.amount = amountKRW;
-            data.channel = channelKey; 
-    }
+if (pgName.toLowerCase() === "paypal") {
+    data.pg = "paypal";
+    data.pay_method = "paypal";
+    data.currency = "USD";
+    data.amount = dallerAmount;
+    data.channelKey = channelKey;  // DB에서 읽어온 값 사용
+} else {
+    data.pg = pgName.toLowerCase(); // 또는 원하는 PG 이름
+    data.pay_method = "card";
+    data.amount = amountKRW;
+    data.channelKey = channelKey; // DB에서 읽어온 값 사용
+}
+
 
 
     console.log("=== request_pay data ===", data);
