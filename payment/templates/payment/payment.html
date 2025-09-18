@@ -109,14 +109,12 @@ function requestPay(pgName, btn){
 
     btn.classList.add('loading');
 
-    // 모바일/데스크탑 분기
     if(isMobile){
-        // 모바일: 결제 후 redirect URL에서 서버가 검증 및 토큰 지급
-            data.m_redirect_url = `https://galatea.website/payment/complete/?rank_id=${rank_id}`;
-
-        IMP.request_pay(data);
+        // 모바일: redirect URL에 imp_uid, merchant_uid, rank_id 전달
+        data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
+        IMP.request_pay(data);  // 콜백 없이 m_redirect_url로 이동
     } else {
-        // 데스크탑: 팝업 방식, JS callback에서 서버 검증
+        // 데스크탑: 기존 팝업 + callback
         IMP.request_pay(data, function(rsp){
             btn.classList.remove('loading');
             if(rsp.success){
@@ -139,17 +137,4 @@ function requestPay(pgName, btn){
         });
     }
 }
-
-// 모바일 텍스트 표시
-function updateMobileText(){
-    const isMobile = window.innerWidth <= 480;
-    const mobileTexts = document.querySelectorAll('.mobile-text');
-    mobileTexts.forEach(t=>{
-        t.style.display = isMobile ? 'block' : 'none';
-    });
-}
-updateMobileText();
-window.addEventListener('resize', updateMobileText);
 </script>
-</body>
-</html>
