@@ -114,6 +114,60 @@ def verify_payment(request):
 
     return JsonResponse({"message": _("결제 처리 완료"), "status": payment_status})
 
+def verify_payment_server(imp_uid, merchant_uid, rank_id, user):
+    # 결제 등급
+    plan = PaymentRank.objects.get(id=rank_id)
+
+    # 아임포트 결제 정보
+    access_token = get_access_token()
+    url = f"https://api.iamport.kr/payments/{imp_uid}"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    res = requests.get(url, headers=headers).json()
+    if res["code"] != 0:
+        return {"status": "failed", "error": res}
+
+    payment_data = res["response"]
+    payment_status = payment_data.get("status")
+
+    # DB 저장
+    payment, created = Payment.objects.get_or_create(
+        user=user,
+        imp_uid=imp_uid,
+        merchant_uid=merchant_uid,
+        defaults={
+            "amount": payment_data["amount"],
+            "status": payment_status,
+            "payment_rank": plan
+        }
+    )
+
+    # 토큰 충전
+    if payment_status == "paid":
+        token, _ = Token.objects.get_or_create(user=user)
+        token.total_token += plan.freetoken
+        token.payment = payment
+        token.save()
+
+        TokenHistory.objects.create(
+            user=user,
+            change_type=TokenHistory.CHARGE,
+            amount=plan.freetoken,
+            total_voice_generated=0
+        )
+
+    # PaymentStats 갱신
+    stats, _ = PaymentStats.objects.get_or_create(id=1)
+    stats.total_payments += 1
+    if payment_status == "paid":
+        stats.success_count += 1
+    elif payment_status == "failed":
+        stats.failure_count += 1
+    stats.save()
+
+    return {"status": payment_status}
+    
+
+
 from payment.models import PaymentMethod
 @login_required
 def payment_charge(request):
@@ -137,27 +191,27 @@ def payment_charge(request):
 
 @login_required
 def payment_complete(request):
-    # 최신 결제 내역 가져오기
+    imp_uid = request.GET.get("imp_uid")
+    merchant_uid = request.GET.get("merchant_uid")
+    rank_id = request.GET.get("rank_id")
+
+    status = "unknown"
+
+    # 모바일에서 imp_uid가 넘어오면 서버에서 검증
+    if imp_uid and merchant_uid and rank_id:
+        result = verify_payment_server(imp_uid, merchant_uid, int(rank_id), request.user)
+        status = result.get("status", "failed")
+
     latest_payment = Payment.objects.filter(user=request.user).order_by('-paid_at').first()
     
-    if not latest_payment:
-        return render(request, "payment/payment_complete.html", {"status": "unknown"})
-
-    # 상태, 금액, 충전된 토큰
-    status = latest_payment.status
-    amount = latest_payment.amount
-    charged_token = latest_payment.amount
-    payment_method = PaymentMethod.objects.all()
-
-    transactions = TokenHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
-
     context = {
-        "status": status,
+        "status": status if imp_uid else (latest_payment.status if latest_payment else "unknown"),
         "payment": latest_payment,
-        "amount": amount,
-        "charged_token": charged_token,
-        "transactions": transactions,
+        "amount": latest_payment.amount if latest_payment else 0,
+        "charged_token": latest_payment.amount if latest_payment else 0,
+        "transactions": TokenHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
     }
+
     return render(request, "payment/payment_complete.html", context)
 
 
