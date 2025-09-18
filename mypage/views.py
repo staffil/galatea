@@ -471,6 +471,7 @@ from django.utils import timezone
 @login_required
 def my_coupon(request):
     user = request.user
+    llm = LLM.objects.filter(user=user).first()
 
     if request.method == "POST":
         input_code = request.POST.get("invite_code", "").strip()
@@ -514,6 +515,8 @@ def my_coupon(request):
     user_tokens = TokenHistory.objects.filter(user=user).order_by('-created_at')
     context = {
         "user_tokens": user_tokens,
-        "token_obj": Token.objects.filter(user=user).first()
+        "token_obj": Token.objects.filter(user=user).first(),
+        "llm":llm
+
     }
     return render(request, "mypage/my_coupon.html", context)
