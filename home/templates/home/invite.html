@@ -259,6 +259,19 @@
         {% endif %}
     </header>
 
+    <div class="main-content">
+        <!-- 이벤트 섹션 (기존 그대로) -->
+        <div class="popular-users-section">
+            <div class="event_list">
+                {% for gift in gift_list %}
+                    {% if gift.gift_img %}
+                        <img src="{{ gift.gift_img.url }}" alt="" loading="lazy">
+                    {% else %}
+                        <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
 
         <!-- 페이지 제목 -->
         <div class="page-title">
