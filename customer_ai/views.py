@@ -744,7 +744,7 @@ def novel_process(request):
     except requests.exceptions.HTTPError as e:
         return JsonResponse({"error": f"AI 호출 실패: HTTP {resp.status_code} - {resp.text}"}, status=500)
     except Exception as e:
-        return JsonResponse({"error": f"AI 호출 실패: {str(e)}"}, status=500)
+        return JsonResponse({"error": str(e)}, status=500)
 
     # 대사만 추출 (TTS용)
     import re
