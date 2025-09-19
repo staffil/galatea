@@ -32,7 +32,34 @@
             padding: 20px;
         }
 
+        /* 이벤트 섹션 개선 */
+        .popular-users-section {
+            margin-bottom: 30px;
+        }
 
+        .event_list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            padding: 20px 0;
+            justify-items: center;
+        }
+
+        .event_list img {
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .event_list img:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            border-color: rgba(255,255,255,0.6);
+        }
 
         /* 페이지 제목 */
         .page-title {
@@ -209,7 +236,20 @@
             transform: translateX(0);
         }
 
-        /* 반응형 디자인 */
+        /* 태블릿 사이즈 */
+        @media (max-width: 1024px) {
+            .event_list {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 12px;
+            }
+
+            .event_list img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* 모바일 사이즈 */
         @media (max-width: 768px) {
             .main-content {
                 padding: 15px;
@@ -217,6 +257,10 @@
 
             .page-title h1 {
                 font-size: 2rem;
+            }
+
+            .page-title p {
+                font-size: 1rem;
             }
 
             .invite-generator, .invite-container {
@@ -231,21 +275,144 @@
 
             .invite-value {
                 font-size: 0.85rem;
+                padding: 12px;
+            }
+
+            .event_list {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                gap: 10px;
+                padding: 15px 0;
+            }
+
+            .event_list img {
+                width: 80px;
+                height: 80px;
+                border-radius: 12px;
+            }
+
+            .invite-generator h2 {
+                font-size: 1.5rem;
+            }
+
+            .invite-container h3 {
+                font-size: 1.4rem;
             }
         }
 
+        /* 작은 모바일 사이즈 */
         @media (max-width: 480px) {
+            .main-content {
+                padding: 10px;
+            }
+
+            .page-title {
+                margin: 20px 0;
+            }
+
             .page-title h1 {
                 font-size: 1.7rem;
             }
 
+            .page-title p {
+                font-size: 0.9rem;
+            }
+
             .invite-generator, .invite-container {
                 padding: 20px;
+                border-radius: 15px;
+            }
+
+            .invite-generator h2 {
+                font-size: 1.3rem;
+            }
+
+            .invite-container h3 {
+                font-size: 1.2rem;
+            }
+
+            .event_list {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 8px;
+                padding: 10px 0;
             }
 
             .event_list img {
-                width: 100px;
-                height: 100px;
+                width: 70px;
+                height: 70px;
+                border-radius: 10px;
+                border-width: 2px;
+            }
+
+            .generate-btn {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+
+            .copy-btn {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+
+            .invite-item {
+                padding: 15px;
+            }
+
+            .invite-value {
+                font-size: 0.8rem;
+                padding: 10px;
+            }
+
+            .success-message {
+                right: 10px;
+                top: 10px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 매우 작은 화면 */
+        @media (max-width: 360px) {
+            .event_list {
+                grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+                gap: 6px;
+            }
+
+            .event_list img {
+                width: 60px;
+                height: 60px;
+                border-radius: 8px;
+            }
+
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .invite-generator h2 {
+                font-size: 1.2rem;
+            }
+
+            .invite-container h3 {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* 가로 방향에서의 이벤트 이미지 최적화 */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .event_list {
+                padding: 10px 0;
+            }
+
+            .event_list img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .page-title {
+                margin: 20px 0;
+            }
+
+            .page-title h1 {
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -260,7 +427,7 @@
     </header>
 
     <div class="main-content">
-        <!-- 이벤트 섹션 (기존 그대로) -->
+        <!-- 이벤트 섹션 (반응형 개선) -->
         <div class="popular-users-section">
             <div class="event_list">
                 {% for gift in gift_list %}
