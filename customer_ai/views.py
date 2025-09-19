@@ -763,6 +763,8 @@ def novel_process(request):
 
     print("checkpoint: AI 호출 성공")
     print("checkpoint: TTS 생성 시작, tts_text=", repr(tts_text))
+    print(audio_dir)
+    print(audio_path)
 
 
     audio_stream = eleven_client.text_to_speech.convert(
@@ -777,6 +779,8 @@ def novel_process(request):
             "use_speaker_boost": True
         }
     )
+    print(audio_stream)
+
 
     with open(audio_path, "wb") as f:
         for chunk in audio_stream:
@@ -795,7 +799,7 @@ def novel_process(request):
             amount=audio_seconds,
             total_voice_generated=token_obj.token_usage
         )
-        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
+        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename).replace("\\", "/")
 
     print("audio_seconds", audio_seconds)
     print("token_usage before", token_obj.token_usage)
