@@ -749,7 +749,8 @@ def novel_process(request):
     # 대사만 추출 (TTS용)
     import re
     dialogue_matches = re.findall(r'"([^"]+)"|\"([^"]+)\"', ai_text)
-    tts_text = " ".join([m[0] or m[1] for m in dialogue_matches]) if dialogue_matches else user_input
+    tts_text = " ".join(dialogue_matches)
+
 
     # DB 저장
     Conversation.objects.create(user=user, llm=llm, user_message=user_input, llm_response=ai_text)
