@@ -258,6 +258,7 @@ function requestPay(pgName, btn) {
         };
     } else if (pgName.toLowerCase() === "kg") {
         // KG이니시스 실연동
+            IMP.init("SEtQYjBkSGFUZjUzYWdzRGdzdHhwQT09"); 
         data = {
             pg: "html5_inicis.MOI8463171",  // Description과 정확히 일치
             pay_method: "card",
