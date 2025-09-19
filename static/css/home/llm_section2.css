@@ -47,7 +47,7 @@
 /* LLM 카드 컨테이너 */
 .llm-cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100%, 5fr));
     gap: 30px;
     margin-bottom: 30px;
     padding: 20px 0;
