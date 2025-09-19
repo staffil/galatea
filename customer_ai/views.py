@@ -749,7 +749,7 @@ def novel_process(request):
     # 대사만 추출 (TTS용)
     import re
     dialogue_matches = re.findall(r'"([^"]+)"|\"([^"]+)\"', ai_text)
-    tts_text = " ".join(dialogue_matches)
+    tts_text = " ".join([m[0] or m[1] for m in dialogue_matches])
 
 
     # DB 저장
@@ -761,6 +761,8 @@ def novel_process(request):
     filename = f"response_{uuid4().hex}.mp3"
     audio_path = os.path.join(audio_dir, filename)
 
+    print("checkpoint: AI 호출 성공")
+    print("checkpoint: TTS 생성 시작, tts_text=", repr(tts_text))
 
 
     audio_stream = eleven_client.text_to_speech.convert(
