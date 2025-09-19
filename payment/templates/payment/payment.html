@@ -265,7 +265,7 @@ function requestPay(pgName, btn) {
         };
     } else if (pgName.toLowerCase() === "kg") {
         data = {
-            pg: "inicis_v2",
+            pg: "html5_inicis.MOI8463171",
             pay_method: "card",
             merchant_uid: merchant_uid,
             amount: amountKRW,
@@ -274,6 +274,7 @@ function requestPay(pgName, btn) {
             buyer_tel: "{{ request.user.phonenumber }}",
             m_redirect_url: "https://galatea.website/payment/complete/",
             name: "GALATEA 등급 결제",
+                    channelKey: channelKey,   
         };
     } else {
         data = {
