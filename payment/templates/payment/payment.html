@@ -228,7 +228,6 @@
         </div>
    
     </div>
-
 <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 <script>
 const IMP = window.IMP;
@@ -236,17 +235,20 @@ const IMP = window.IMP;
 function requestPay(pgName, btn) {
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
+    const dallerAmount = parseFloat(btn.getAttribute("data-daller-price"));
     const rank_id = btn.getAttribute("data-rank-id");
+
+    // 모바일 체크
+    const isMobile = window.innerWidth <= 480;
 
     let data;
 
     if (pgName.toLowerCase() === "paypal") {
-        // PayPal 설정
         data = {
             pg: "paypal",
             pay_method: "paypal",
             merchant_uid: merchant_uid,
-            amount: parseFloat(btn.getAttribute("data-daller-price")),
+            amount: dallerAmount,
             buyer_email: "{{ request.user.email }}",
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
             buyer_tel: "{{ request.user.phonenumber }}",
@@ -257,7 +259,7 @@ function requestPay(pgName, btn) {
     } else if (pgName.toLowerCase() === "kg") {
         // KG이니시스 실연동
         data = {
-            pg: "html5_inicis.MOI8463171",       // DB Description과 정확히 일치
+            pg: "html5_inicis.MOI8463171",  // Description과 정확히 일치
             pay_method: "card",
             merchant_uid: merchant_uid,
             amount: amountKRW,
@@ -266,10 +268,10 @@ function requestPay(pgName, btn) {
             buyer_tel: "{{ request.user.phonenumber }}",
             m_redirect_url: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`,
             name: "GALATEA 등급 결제",
-            channelKey: "SEtQYjBkSGFUZjUzYWdzRGdzdHhwQT09"  // 포트원 웹결제 signKey
+            channelKey: "SEtQYjBkSGFUZjUzYWdzRGdzdHhwQT09" // 웹결제 signKey
         };
     } else {
-        // 기타 PG 설정
+        // 기타 PG
         data = {
             pg: pgName.toLowerCase(),
             pay_method: "card",
@@ -279,10 +281,12 @@ function requestPay(pgName, btn) {
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
             buyer_tel: "{{ request.user.phonenumber }}",
             m_redirect_url: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`,
-            name: "GALATEA 등급 결제",
-            channelKey: btn.getAttribute("data-channel")
+            channelKey: btn.getAttribute("data-channel"),
+            name: "GALATEA 등급 결제"
         };
     }
+
+    console.log("=== request_pay data ===", data);
 
     // 버튼 로딩 처리
     btn.classList.add('loading');
@@ -311,7 +315,5 @@ function requestPay(pgName, btn) {
     });
 }
 </script>
-
-
 </body>
 </html>
