@@ -228,89 +228,48 @@
    
     </div>
 
-    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 <script>
 const IMP = window.IMP;
 
-function requestPay(pgName, btn) {
-    const IMP = window.IMP;
+// 실연동 Merchant Code (실제 아임포트 관리자에서 확인)
+const MERCHANT_CODE = "MOI8463171"; // <- 실연동용 Merchant ID
+IMP.init(MERCHANT_CODE);
 
-    // 버튼에서 PG별 데이터 가져오기
-    const merchant_uid = "order_" + new Date().getTime();
-    const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
-    const dallerAmount = parseFloat(btn.getAttribute("data-daller-price"));
-    const rank_id = btn.getAttribute("data-rank-id");
-    const merchant_code = btn.getAttribute("data-merchant");
-    IMP.init(merchant_code);  
-    const currency = btn.getAttribute("data-currency");
-    const channelKey = btn.getAttribute("data-channel");
+function requestKGPayment(amountKRW, buyerInfo) {
+    const merchant_uid = "order_" + new Date().getTime(); // 유니크 주문번호
 
-    const isMobile = window.innerWidth <= 480;  // 모바일 체크
+    const data = {
+        pg: "inicis_v2",            // KG 이니시스 V2
+        pay_method: "card",          // 카드 결제
+        merchant_uid: merchant_uid,  // 고유 주문번호
+        amount: amountKRW,           // 결제 금액
+        buyer_email: buyerInfo.email,
+        buyer_name: buyerInfo.name,
+        buyer_tel: buyerInfo.tel,
+        m_redirect_url: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}`,
+        name: "GALATEA 등급 결제",
+        // 아임포트 서버에서 채널Key로 등록된 실연동 채널을 매칭함
+        // 채널Key를 전달하면 서버가 내부적으로 V2 Merchant ID와 연결
+        channelKey: "channel-key-0b516b67-9655-452b-a064-4404b11d0dad"
+    };
 
-    let data;
-    if (pgName.toLowerCase() === "paypal") {
-        data = {
-            pg: "paypal",
-            pay_method: "paypal",
-            merchant_uid: merchant_uid,
-            amount: dallerAmount,
-            buyer_email: "{{ request.user.email }}",
-            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-            buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
-            currency: "USD",
-            channelKey: channelKey,
-            name: "GALATEA 등급 결제",
-        };
-    } else if (pgName.toLowerCase() === "kg") {
-        data = {
-            pg: "inicis_v2",
-            pay_method: "card",
-            merchant_uid: merchant_uid,
-            amount: amountKRW,
-            buyer_email: "{{ request.user.email }}",
-            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-            buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
-            name: "GALATEA 등급 결제",
-        };
-    } else {
-        data = {
-            pg: pgName.toLowerCase(),
-            pay_method: "card",
-            merchant_uid: merchant_uid,
-            amount: amountKRW,
-            buyer_email: "{{ request.user.email }}",
-            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-            buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
-            channelKey: channelKey,
-            name: "GALATEA 등급 결제",
-        };
-    }
-
-    // 모바일이면 m_redirect_url에 rank_id 추가
-    if (isMobile) {
-        data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
-    }
-
-    console.log("=== request_pay data ===", data);
-
-    btn.classList.add('loading');
+    console.log("=== KG request_pay data ===", data);
 
     IMP.request_pay(data, function(rsp) {
-        btn.classList.remove('loading');
         if (rsp.success) {
-            fetch("{% url 'payment:verify_payment' %}?imp_uid=" + rsp.imp_uid + "&merchant_uid=" + merchant_uid + "&rank_id=" + rank_id)
+            // 결제 성공 처리
+            fetch(`/payment/verify_payment/?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}`)
             .then(res => res.json())
             .then(result => {
-                if (result.status) {
-                    alert(`결제 성공! 상태: ${result.status}`);
+                if(result.status){
+                    alert("결제 성공! 상태: " + result.status);
                     window.location.href = "/payment/complete/";
                 } else {
                     alert("결제 처리 실패: " + JSON.stringify(result));
                 }
-            }).catch(err => {
+            })
+            .catch(err => {
                 alert("결제 처리 중 오류가 발생했습니다.");
                 console.error(err);
             });
@@ -319,8 +278,10 @@ function requestPay(pgName, btn) {
         }
     });
 }
-</script>
 
+// 예시 호출
+// requestKGPayment(3400, {email: "kimc570612@gmail.com", name: "staffill", tel: "010-3161-5706"});
+</script>
 
 </body>
 </html>
