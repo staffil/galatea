@@ -234,49 +234,42 @@
 const IMP = window.IMP;
 
 function requestPay(pgName, btn) {
-    const IMP = window.IMP;
-
-    // 버튼에서 PG별 데이터 가져오기
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
-    const dallerAmount = parseFloat(btn.getAttribute("data-daller-price"));
     const rank_id = btn.getAttribute("data-rank-id");
-    const merchant_code = btn.getAttribute("data-merchant");
-    IMP.init(merchant_code);  
-    const currency = btn.getAttribute("data-currency");
-    const channelKey = btn.getAttribute("data-channel");
-
-    const isMobile = window.innerWidth <= 480;  // 모바일 체크
 
     let data;
+
     if (pgName.toLowerCase() === "paypal") {
+        // PayPal 설정
         data = {
             pg: "paypal",
             pay_method: "paypal",
             merchant_uid: merchant_uid,
-            amount: dallerAmount,
+            amount: parseFloat(btn.getAttribute("data-daller-price")),
             buyer_email: "{{ request.user.email }}",
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
             buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
+            m_redirect_url: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`,
             currency: "USD",
-            channelKey: channelKey,
-            name: "GALATEA 등급 결제",
+            name: "GALATEA 등급 결제"
         };
     } else if (pgName.toLowerCase() === "kg") {
+        // KG이니시스 실연동
         data = {
-            pg: "html5_inicis.MOI8463171",
+            pg: "html5_inicis.MOI8463171",       // DB Description과 정확히 일치
             pay_method: "card",
             merchant_uid: merchant_uid,
             amount: amountKRW,
             buyer_email: "{{ request.user.email }}",
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
             buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
+            m_redirect_url: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`,
             name: "GALATEA 등급 결제",
-channelKey: "SEtQYjBkSGFUZjUzYWdzRGdzdHhwQT09"
+            channelKey: "SEtQYjBkSGFUZjUzYWdzRGdzdHhwQT09"  // 포트원 웹결제 signKey
         };
     } else {
+        // 기타 PG 설정
         data = {
             pg: pgName.toLowerCase(),
             pay_method: "card",
@@ -285,23 +278,18 @@ channelKey: "SEtQYjBkSGFUZjUzYWdzRGdzdHhwQT09"
             buyer_email: "{{ request.user.email }}",
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
             buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
-            channelKey: channelKey,
+            m_redirect_url: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`,
             name: "GALATEA 등급 결제",
+            channelKey: btn.getAttribute("data-channel")
         };
     }
 
-    // 모바일이면 m_redirect_url에 rank_id 추가
-    if (isMobile) {
-        data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
-    }
-
-    console.log("=== request_pay data ===", data);
-
+    // 버튼 로딩 처리
     btn.classList.add('loading');
 
     IMP.request_pay(data, function(rsp) {
         btn.classList.remove('loading');
+
         if (rsp.success) {
             fetch("{% url 'payment:verify_payment' %}?imp_uid=" + rsp.imp_uid + "&merchant_uid=" + merchant_uid + "&rank_id=" + rank_id)
             .then(res => res.json())
@@ -312,7 +300,8 @@ channelKey: "SEtQYjBkSGFUZjUzYWdzRGdzdHhwQT09"
                 } else {
                     alert("결제 처리 실패: " + JSON.stringify(result));
                 }
-            }).catch(err => {
+            })
+            .catch(err => {
                 alert("결제 처리 중 오류가 발생했습니다.");
                 console.error(err);
             });
