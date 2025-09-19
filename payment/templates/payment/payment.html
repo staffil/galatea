@@ -260,16 +260,15 @@ function requestPay(pgName, btn) {
         };
     } else if (pgName.toLowerCase() === "kg") {
         data = {
-            pay_method: "card",
-            merchant_uid: merchant_uid,
-            amount: amountKRW,
-            buyer_email: "{{ request.user.email }}",
-            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-            buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
-            name: "GALATEA 등급 결제",
-            merchant_id: merchant_code,        // ✅ 실연동 Merchant ID
-            channelKey: channelKey  ,           // ✅ Channel Key
+        pay_method: "card",
+        merchant_uid: merchant_uid,
+        amount: amountKRW,
+        buyer_email: "{{ request.user.email }}",
+        buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+        buyer_tel: "{{ request.user.phonenumber }}",
+        m_redirect_url: "https://galatea.website/payment/complete/",
+        name: "GALATEA 등급 결제",
+        channelKey: channelKey,           // ✅ Channel Key
         };
     } else {
         data = {
