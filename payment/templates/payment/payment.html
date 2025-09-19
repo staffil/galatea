@@ -228,14 +228,14 @@
    
     </div>
 
-<script src="https://cdn.iamport.kr/v2/iamport.js"></script>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 <script>
+const IMP = window.IMP;
 function requestPay(pgName, btn) {
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
     const dallerAmount = parseFloat(btn.getAttribute("data-daller-price"));
     const rank_id = btn.getAttribute("data-rank-id");
-    const channelKey = btn.getAttribute("data-channel");
 
     const isMobile = window.innerWidth <= 480;
 
@@ -243,37 +243,58 @@ function requestPay(pgName, btn) {
 
     if (pgName.toLowerCase() === "paypal") {
         data = {
-            storeId: "store-05d93aaf-0f35-4c20-b72e-e56011f78d9e", // V2 Store ID
-            paymentId: merchant_uid,
-            orderName: "GALATEA 등급 결제",
-            totalAmount: dallerAmount,
+            pg: "paypal",
+            pay_method: "paypal",
+            merchant_uid: merchant_uid,
+            amount: dallerAmount,
+            buyer_email: "{{ request.user.email }}",
+            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+            buyer_tel: "{{ request.user.phonenumber }}",
+            m_redirect_url: "https://galatea.website/payment/complete/",
             currency: "USD",
-            channelKey: channelKey,
-            payMethod: "PAYPAL",
+            name: "GALATEA 등급 결제",
+        };
+    } else if (pgName.toLowerCase() === "kg") {
+        data = {
+            pg: "inicis", // 또는 "inicis"
+            pay_method: "card",
+            merchant_uid: merchant_uid,
+            amount: amountKRW,
+            buyer_email: "{{ request.user.email }}",
+            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+            buyer_tel: "{{ request.user.phonenumber }}",
+            m_redirect_url: "https://galatea.website/payment/complete/",
+            name: "GALATEA 등급 결제",
         };
     } else {
         data = {
-            storeId: "store-05d93aaf-0f35-4c20-b72e-e56011f78d9e", // V2 Store ID
-            paymentId: merchant_uid,
-            orderName: "GALATEA 등급 결제",
-            totalAmount: amountKRW,
-            currency: "KRW",
-            channelKey: channelKey,
-            payMethod: "CARD",
+            pg: pgName.toLowerCase(),
+            pay_method: "card",
+            merchant_uid: merchant_uid,
+            amount: amountKRW,
+            buyer_email: "{{ request.user.email }}",
+            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+            buyer_tel: "{{ request.user.phonenumber }}",
+            m_redirect_url: "https://galatea.website/payment/complete/",
+            name: "GALATEA 등급 결제",
         };
     }
 
-    console.log("=== V2 request_pay data ===", data);
+    // 모바일이면 m_redirect_url에 rank_id 추가
+    if (isMobile) {
+        data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
+    }
+
+    console.log("=== V1 request_pay data ===", data);
 
     btn.classList.add('loading');
 
-    // V2 API 사용
-    const { PortOne } = window.PortOne;
-    
-    PortOne.requestPayment(data).then(function(response) {
+    IMP.init("imp28654630"); // V1 API 사용
+
+    IMP.request_pay(data, function(rsp) {
         btn.classList.remove('loading');
-        if (response.code === "PAID") {
-            fetch("{% url 'payment:verify_payment' %}?paymentId=" + response.paymentId + "&rank_id=" + rank_id)
+        if (rsp.success) {
+            fetch("{% url 'payment:verify_payment' %}?imp_uid=" + rsp.imp_uid + "&merchant_uid=" + merchant_uid + "&rank_id=" + rank_id)
             .then(res => res.json())
             .then(result => {
                 if (result.status) {
@@ -287,7 +308,7 @@ function requestPay(pgName, btn) {
                 console.error(err);
             });
         } else {
-            alert("결제 실패: " + response.message);
+            alert("결제 실패: " + rsp.error_msg);
         }
     });
 }
