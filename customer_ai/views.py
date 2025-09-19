@@ -750,10 +750,11 @@ def novel_process(request):
     import re
     dialogue_matches = re.findall(r'"([^"]+)"|\"([^"]+)\"', ai_text)
     tts_text = " ".join([m[0] or m[1] for m in dialogue_matches])
-
+    if not tts_text.strip():
+        tts_text = ai_text
 
     # DB 저장
-    Conversation.objects.create(user=user, llm=llm, user_message=user_input, llm_response=ai_text)
+    Conversation.objects.create(user=user, llm=llm, user_message=user_input, llm_response=ai_text,response_audio=audio_url)
 
     # TTS 생성
     audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
@@ -780,7 +781,7 @@ def novel_process(request):
         }
     )
     print(audio_stream)
-
+    
 
     with open(audio_path, "wb") as f:
         for chunk in audio_stream:
@@ -797,9 +798,10 @@ def novel_process(request):
             user=user,
             change_type=TokenHistory.CONSUME,
             amount=audio_seconds,
-            total_voice_generated=token_obj.token_usage
+            total_voice_generated=token_obj.token_usage,
+            
         )
-        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename).replace("\\", "/")
+        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
 
     print("audio_seconds", audio_seconds)
     print("token_usage before", token_obj.token_usage)
