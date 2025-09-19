@@ -228,17 +228,14 @@
    
     </div>
 
-<script src="https://cdn.iamport.kr/v2/iamport.js"></script>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 <script>
 const IMP = window.IMP;
-
 function requestPay(pgName, btn) {
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
     const dallerAmount = parseFloat(btn.getAttribute("data-daller-price"));
     const rank_id = btn.getAttribute("data-rank-id");
-    const merchant_code = btn.getAttribute("data-merchant"); // MID
-    const channelKey = btn.getAttribute("data-channel");
 
     const isMobile = window.innerWidth <= 480;
 
@@ -255,12 +252,11 @@ function requestPay(pgName, btn) {
             buyer_tel: "{{ request.user.phonenumber }}",
             m_redirect_url: "https://galatea.website/payment/complete/",
             currency: "USD",
-            channelKey: channelKey,
             name: "GALATEA 등급 결제",
         };
     } else if (pgName.toLowerCase() === "kg") {
         data = {
-pg: "inicis_v2",
+            pg: "html5_inicis", // 또는 "inicis"
             pay_method: "card",
             merchant_uid: merchant_uid,
             amount: amountKRW,
@@ -269,8 +265,6 @@ pg: "inicis_v2",
             buyer_tel: "{{ request.user.phonenumber }}",
             m_redirect_url: "https://galatea.website/payment/complete/",
             name: "GALATEA 등급 결제",
-            merchant_id: merchant_code,        // ✅ 실연동 Merchant ID
-            channelKey: channelKey  ,           // ✅ Channel Key
         };
     } else {
         data = {
@@ -282,7 +276,6 @@ pg: "inicis_v2",
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
             buyer_tel: "{{ request.user.phonenumber }}",
             m_redirect_url: "https://galatea.website/payment/complete/",
-            channelKey: channelKey,
             name: "GALATEA 등급 결제",
         };
     }
@@ -292,11 +285,11 @@ pg: "inicis_v2",
         data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
     }
 
-    console.log("=== request_pay data ===", data);
+    console.log("=== V1 request_pay data ===", data);
 
     btn.classList.add('loading');
 
-IMP.init("imp28654630")
+    IMP.init("imp28654630"); // V1 API 사용
 
     IMP.request_pay(data, function(rsp) {
         btn.classList.remove('loading');
