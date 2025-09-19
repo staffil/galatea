@@ -270,7 +270,7 @@ function requestPay(pgName, btn) {
             m_redirect_url: "https://galatea.website/payment/complete/",
             name: "GALATEA 등급 결제",
             merchant_id: merchant_code,        // ✅ 실연동 Merchant ID
-            channelKey: channelKey             // ✅ Channel Key
+            channelKey: channelKey  ,           // ✅ Channel Key
         };
     } else {
         data = {
@@ -296,7 +296,7 @@ function requestPay(pgName, btn) {
 
     btn.classList.add('loading');
 
-    IMP.init(merchant_code); // MID 기반 초기화
+IMP.init("imp28654630")
 
     IMP.request_pay(data, function(rsp) {
         btn.classList.remove('loading');
