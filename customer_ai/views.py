@@ -670,7 +670,6 @@ def vision_process(request):
         traceback.print_exc()
         return JsonResponse({"error": f"OpenAI Vision API error: {str(e)}"}, status=500)
     
-
 @csrf_exempt
 @login_required
 def novel_process(request):
@@ -682,7 +681,7 @@ def novel_process(request):
     llm_id = request.POST.get('llm_id') or request.GET.get('llm_id')
     llm = get_object_or_404(LLM, Q(id=llm_id) & (Q(user=user) | Q(is_public=True)))
 
-    # 최근 대화 내역 불러오기
+    # 최근 대화 내역
     db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:50][::-1]
     chat_history = []
     for convo in db_history:
@@ -698,25 +697,22 @@ def novel_process(request):
     and your name is {llm.name} not AI character.
 
     Your response must always consist of exactly 3 sentences:
-    - The first 1–2 sentences must be written in third-person narrative, like a novel, continuing naturally from the user's input and prior conversation context.
-    - The final 3rd sentence must always be a single line of dialogue from the AI character, enclosed in double quotes ("..."), and must begin with an emotion tag in square brackets, e.g., [happy], [sad], [angry], that reflects the tone of the dialogue.
+    - The first 1–2 sentences must be written in third-person narrative, like a novel.
+    - The final 3rd sentence must always be a single line of dialogue from the AI character, enclosed in double quotes ("..."), and must begin with an emotion tag in square brackets, e.g., [happy], [sad], [angry].
 
     Strict rules:
-    - Never use dialogue outside of the 3rd sentence.
-    - Never write the 1–2 narrative sentences in non-novel styles (no plain explanations, no bullet points, no assistant-like answers).
-    - Always preserve the story-like tone in narration and maintain contextual consistency across turns.
+    - Dialogue ONLY in the 3rd sentence.
+    - Narrative ONLY in the 1–2 first sentences.
     - Always output an emotion tag at the start of the dialogue sentence.
-
     Respond in {llm.language}.
     """
 
-    # 모델 및 API provider 분리
-    if ":" not in llm.model:
-        return JsonResponse({"error": _("모델 형식이 잘못되었습니다. api_provider:model_name 형태여야 합니다.")}, status=400)
-    api_provider, model_name = llm.model.split(":", 1)
-
-    # AI 호출
+    # 모델 호출
     try:
+        if ":" not in llm.model:
+            return JsonResponse({"error": _("모델 형식이 잘못되었습니다.")}, status=400)
+        api_provider, model_name = llm.model.split(":", 1)
+
         if api_provider == "gpt":
             response = openai_client.chat.completions.create(
                 model=model_name,
@@ -725,41 +721,37 @@ def novel_process(request):
             )
             ai_text = response.choices[0].message.content.strip()
         elif api_provider == "grok":
-            grok_url = "https://api.x.ai/v1/chat/completions"
-            headers = {"Authorization": f"Bearer {grok_api_key}"}
-            payload = {
-                "model": model_name,
-                "messages": [{"role": "system", "content": system_prompt}] + chat_history,
-                "temperature": llm.temperature
-            }
-            resp = requests.post(grok_url, json=payload, headers=headers)
+            resp = requests.post(
+                "https://api.x.ai/v1/chat/completions",
+                json={
+                    "model": model_name,
+                    "messages": [{"role": "system", "content": system_prompt}] + chat_history,
+                    "temperature": llm.temperature
+                },
+                headers={"Authorization": f"Bearer {grok_api_key}"}
+            )
             resp.raise_for_status()
-            resp_json = resp.json()
-            ai_text = resp_json.get("choices", [{}])[0].get("message", {}).get("content", "")
+            ai_text = resp.json().get("choices", [{}])[0].get("message", {}).get("content", "")
         else:
             return JsonResponse({"error": _("지원하지 않는 api_provider 입니다.")}, status=400)
-    except requests.exceptions.HTTPError as e:
-        return JsonResponse({"error": f"AI 호출 실패: HTTP {resp.status_code} - {resp.text}"}, status=500)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-    # 대사만 추출 (TTS용)
+    # 🎯 대사만 추출 (TTS용)
     import re
-    dialogue_matches = re.findall(r'"([^"]+)"|\"([^"]+)\"', ai_text)
-    tts_text = " ".join([m[0] or m[1] for m in dialogue_matches])
-    if not tts_text.strip():
-        tts_text = ai_text
+    dialogue_matches = re.findall(r'"([^"]+)"', ai_text)
+    if dialogue_matches:
+        tts_text = " ".join(dialogue_matches)
+    else:
+        # fallback
+        tts_text = f'[neutral] "{llm.name}은 잠시 말이 없었다."'
+        print("⚠️ 대사가 감지되지 않아 fallback 대사로 대체:", tts_text)
 
     # TTS 생성
     audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
     os.makedirs(audio_dir, exist_ok=True)
     filename = f"response_{uuid4().hex}.mp3"
     audio_path = os.path.join(audio_dir, filename)
-
-    print("checkpoint: AI 호출 성공")
-    print("checkpoint: TTS 생성 시작, tts_text=", repr(tts_text))
-    print(audio_dir)
-    print(audio_path)
 
     audio_stream = eleven_client.text_to_speech.convert(
         voice_id=llm.voice.voice_id,
@@ -773,12 +765,10 @@ def novel_process(request):
             "use_speaker_boost": True
         }
     )
-
     with open(audio_path, "wb") as f:
         for chunk in audio_stream:
             f.write(chunk)
 
-    # URL 생성 (DB 저장용)
     audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename).replace("\\", "/")
 
     # DB 저장
@@ -797,16 +787,12 @@ def novel_process(request):
         token_obj = Token.objects.select_for_update().filter(user=user).latest("created_at")
         if token_obj.total_token - token_obj.token_usage < audio_seconds:
             return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
-
         TokenHistory.objects.create(
             user=user,
             change_type=TokenHistory.CONSUME,
             amount=audio_seconds,
             total_voice_generated=audio_seconds
         )
-
-    print("audio_seconds", audio_seconds)
-    print("token_usage before", token_obj.token_usage)
 
     return JsonResponse({
         "novel_text": ai_text,
