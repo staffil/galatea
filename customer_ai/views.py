@@ -671,7 +671,6 @@ def vision_process(request):
         return JsonResponse({"error": f"OpenAI Vision API error: {str(e)}"}, status=500)
     
 
-
 @csrf_exempt
 @login_required
 def novel_process(request):
@@ -710,8 +709,6 @@ def novel_process(request):
 
     Respond in {llm.language}.
     """
-
-
 
     # 모델 및 API provider 분리
     if ":" not in llm.model:
@@ -753,9 +750,6 @@ def novel_process(request):
     if not tts_text.strip():
         tts_text = ai_text
 
-    # DB 저장
-    Conversation.objects.create(user=user, llm=llm, user_message=user_input, llm_response=ai_text,response_audio=audio_url)
-
     # TTS 생성
     audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
     os.makedirs(audio_dir, exist_ok=True)
@@ -766,7 +760,6 @@ def novel_process(request):
     print("checkpoint: TTS 생성 시작, tts_text=", repr(tts_text))
     print(audio_dir)
     print(audio_path)
-
 
     audio_stream = eleven_client.text_to_speech.convert(
         voice_id=llm.voice.voice_id,
@@ -780,13 +773,24 @@ def novel_process(request):
             "use_speaker_boost": True
         }
     )
-    print(audio_stream)
-    
 
     with open(audio_path, "wb") as f:
         for chunk in audio_stream:
             f.write(chunk)
 
+    # URL 생성 (DB 저장용)
+    audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename).replace("\\", "/")
+
+    # DB 저장
+    Conversation.objects.create(
+        user=user,
+        llm=llm,
+        user_message=user_input,
+        llm_response=ai_text,
+        response_audio=audio_url
+    )
+
+    # 토큰 차감
     audio_seconds = get_audio_duration_in_seconds(audio_path)
     from django.db import transaction
     with transaction.atomic():
@@ -798,20 +802,13 @@ def novel_process(request):
             user=user,
             change_type=TokenHistory.CONSUME,
             amount=audio_seconds,
-            total_voice_generated=token_obj.token_usage,
-            
+            total_voice_generated=audio_seconds
         )
-        audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename)
 
     print("audio_seconds", audio_seconds)
     print("token_usage before", token_obj.token_usage)
-
 
     return JsonResponse({
         "novel_text": ai_text,
         "tts_audio_url": audio_url
     })
-
-
-
-
