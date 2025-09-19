@@ -214,7 +214,6 @@
                         data-channel="{{ pg.channel_key }}"
                         onclick="requestPay('{{ pg.name }}', this)"
                         style="background-image: url('{{ pg.payment_image.url }}');">
-                    <span class="mobile-text">{{ pg.name|title }} {{ plan.price }}원</span>
                 </button>
                 <div class="payment-label">
                     {{ pg|title }}
