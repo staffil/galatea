@@ -660,15 +660,15 @@ def vision_process(request):
                 {
                     "role": "system",
                     "content": (
-                        f"You are an assistant that describes images objectively, clearly, and factually "
-                        f"in english. Only state what is visibly present in the image. "
+                        "You are an assistant that describes images objectively, clearly, and factually "
+                        "in English. Only state what is visibly present in the image. "
                         "Do not roleplay or embellish."
                     )
                 },
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "이 이미지에서 보이는 것을 설명해 주세요."},
+                        {"type": "text", "text": "Please describe what is visible in this image."},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
                     ]
                 }
