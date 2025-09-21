@@ -1677,3 +1677,309 @@ msgstr "Bienvenue sur GALATEA AI - Site de présentation des services d'IA"
 #: .\home\templates\home\home.html
 msgid "GALATEA AI - AI 대화형 쳇봇 서비스"
 msgstr "GALATEA AI - Service de chatbot conversationnel IA" 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#: .\templates\home\main.html
+msgid "보이스 선택하기"
+msgstr "CHOISIR UNE VOIX"
+
+#: .\templates\home\main.html
+msgid "친구초대하기"
+msgstr "INVITER UN AMI"
+
+#: .\payment\templates\payment\payment_choice.html
+msgid "토큰을 충전하면 AI와 계속 대화를 이어가실 수 있습니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용하실 수 있습니다."
+msgstr "En rechargeant des jetons, vous pouvez continuer à discuter avec l'IA. Si les jetons sont épuisés, vous pouvez recharger pour continuer à utiliser le service."
+
+#: .\payment\templates\payment\payment_choice.html
+msgid "상세 내용 보러 가기"
+msgstr "Voir les détails"
+
+#: .\payment\templates\payment\payment_choice.html
+msgid "결제기간"
+msgstr "Période de paiement"
+
+#: .\payment\templates\payment\payment_choice.html
+msgid "결제시 토큰 즉시 제공(일부 처리 지연 가능)”"
+msgstr "Les jetons sont fournis immédiatement après le paiement (certains retards de traitement peuvent survenir)."
+
+#: .\payment\templates\payment\payment_complete.html
+msgid "결제 완료"
+msgstr "Paiement terminé"
+
+#: .\payment\templates\payment\payment_complete.html
+msgid "결제가 완료되었습니다!"
+msgstr "Votre paiement a été effectué !"
+
+#: .\payment\templates\payment\payment_complete.html
+msgid "토큰이 성공적으로 지급되었습니다. 이제 다양한 서비스를 이용하실 수 있습니다. 결제 내역 확인을 원하시면 '토큰 내역 확인하기' 버튼을 누르세요"
+msgstr "Les jetons ont été crédités avec succès. Vous pouvez maintenant utiliser divers services. Pour vérifier l'historique de vos paiements, cliquez sur le bouton 'Vérifier l'historique des jetons'."
+
+#: .\mypage\templates\mypage\token.html:
+#: .\payment\templates\payment\payment_complete.html
+msgid "결제 금액"
+msgstr "Montant du paiement"
+
+#: .\mypage\templates\mypage\token.html:
+#: .\payment\templates\payment\payment_complete.html
+msgid "상태"
+msgstr "Statut"
+
+#: .\payment\templates\payment\payment_complete.html
+msgid "결제에 실패했습니다"
+msgstr "Échec du paiement"
+
+#: .\payment\templates\payment\payment_complete.html
+msgid "결제가 실패했거나 취소되었습니다. 다시 시도해 주세요."
+msgstr "Le paiement a échoué ou a été annulé. Veuillez réessayer."
+
+#: .\payment\templates\payment\payment_complete.html:
+#: .\templates\payment\payment_complete.html
+msgid "메인으로 가기"
+msgstr "Retour à la page principale"
+
+#: .\payment\templates\payment\payment_complete.html
+msgid "결제 페이지로 가기"
+msgstr "Aller à la page de paiement"
+
+#: .\payment\templates\payment\payment_complete.html
+msgid "토큰 내역 확인하기"
+msgstr "Vérifier l'historique des jetons"
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "결제 상세 내역"
+msgstr "Détails du paiement"
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "1, 토큰은 갈라테이아 내 유료 AI 콘텐츠 이용에 사용됩니다. 더 많은 대화를 원할 시 토큰을 구매하셔야 합니다."
+msgstr "1. Les jetons sont utilisés pour accéder au contenu IA payant dans Galatea. Si vous souhaitez plus de conversations, vous devez acheter des jetons supplémentaires."
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "2, 1토큰은 AI 대화 1초로 측정됩니다. (1000토큰 = 1000초) 대화시 밑에 대화 내용과 TTS 로 변환한 audio의 시간에 맞춰 토큰이 차감됩니다."
+msgstr "2. 1 jeton équivaut à 1 seconde de conversation avec l'IA. (1000 jetons = 1000 secondes) Les jetons sont déduits en fonction du contenu textuel de la conversation et de la durée de l'audio converti par TTS."
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "3, 충전한 토큰은 구매일로부터 12개월간 유효하며, 기간 내 사용하지 않은 토큰은 자동 소멸됩니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용할 수 있습니다."
+msgstr "3. Les jetons rechargeés sont valables pendant 12 mois à compter de la date d'achat. Les jetons non utilisés expirent automatiquement après cette période. Si les jetons sont épuisés, vous pouvez continuer à utiliser le service en rechargeant."
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "4, 환불은 미사용 토큰에 한해 환불이 가능하며, 토큰 구매 후 사용 시 환불은 불가능합니다. 환불은 '요청' 및 '이메일 전송' 이후 3일 내로 처리됩니다."
+msgstr "4. Les remboursements ne sont possibles que pour les jetons non utilisés. Une fois les jetons utilisés, aucun remboursement n'est possible. Les remboursements sont traités dans les 3 jours suivant une 'demande' et l'envoi d'un 'e-mail'."
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "5, 갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다."
+msgstr "5. Tous les produits vendus sur les sites gérés par Galatea sont sous la responsabilité exclusive de Galatea."
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "6, 민원 담당자: 김충희 / 연락처: 010-3161-5706"
+msgstr "6. Contact du service client : Kim Chunghee / Téléphone : +82-10-3161-5706"
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "7, 결제는 신용카드 및 카카오페이를 통해 가능합니다. 결제 시 별도의 수수료는 부과되지 않습니다."
+msgstr "7. Les paiements peuvent être effectués par carte de crédit et KakaoPay. Aucun frais supplémentaire n'est appliqué lors du paiement."
+
+#: .\payment\templates\payment\payment_detail.html
+msgid "8, 각 등급별 금액과 토큰은 전 페이지에서 확인 바랍니다. Marble: 3,400(2.34$)/ Artisan: 7,400원(5.31$)/ Magnus: 12,900(9.28$)/ Elysium: 19,700(14.18$)"
+msgstr "8. Veuillez consulter la page précédente pour les détails des prix et des jetons pour chaque plan. Marble : 3 400 KRW (2,34 $) / Artisan : 7 400 KRW (5,31 $) / Magnus : 12 900 KRW (9,28 $) / Elysium : 19 700 KRW (14,18 $)"
+
+#: .\payment\templates\payment\payment_choice.html:
+#: .\payment\templates\payment\payment_complete.html:
+#: .\templates\payment\payment.html
+msgid "가격표"
+msgstr "Liste des prix"
+
+#: .\payment\templates\payment\payment.html
+msgid "결제"
+msgstr "Paiement"
+
+#: .\payment\templates\payment\payment.html
+msgid "토큰은 결제 후 즉시 제공됩니다. 결제 성공 후 mypage로 가서 결제 내역을 확인해 주세요.(오류가 있을시 요청하기 혹은 kimc570612@gmail.com 으로 메일 부탁드립니다.)  갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다.* 민원 담당자 김충희 / 연락처 010-3161-5706"
+msgstr "Les jetons sont fournis immédiatement après le paiement. Après un paiement réussi, veuillez vous rendre sur 'Ma page' pour vérifier l'historique des transactions. (En cas d'erreur, utilisez l'option 'Demande' ou envoyez un e-mail à kimc570612@gmail.com.) Tous les produits vendus sur les sites gérés par Galatea sont sous la responsabilité de Galatea. * Contact du service client : Kim Chunghee / Téléphone : +82-10-3161-5706"
+
+#: .\home\templates\home\voice_all.html
+msgid "🎶가 있는 목소리는 노래가 가능힙니다."
+msgstr "Les voix marquées d'un 🎶 peuvent chanter."
+
+#: .\templates\makeImage\image.html
+msgid "이미지 생성지 10토큰 차감됩니다."
+msgstr "10 jetons seront déduits pour la génération d'image."
+
+#: .\templates\home\invite.html
+msgid "친구 초대하기"
+msgstr "Inviter des amis"
+
+#: .\templates\home\invite.html
+msgid "친구들을 초대하고 함께 즐거운 시간을 보내세요!"
+msgstr "Invitez vos amis et passez un moment agréable ensemble !"
+
+#: .\templates\home\invite.html
+msgid "나만의 초대 코드 만들기"
+msgstr "Créer votre propre code d'invitation"
+
+#: .\templates\home\invite.html
+msgid "아래 버튼을 클릭하면 친구들과 공유할 수 있는 전용 초대 링크와 코드가 생성됩니다."
+msgstr "Cliquez sur le bouton ci-dessous pour générer un lien et un code d'invitation exclusifs à partager avec vos amis."
+
+#: .\templates\home\invite.html
+msgid "초대 코드 생성하기"
+msgstr "Générer un code d'invitation"
+
+#: .\templates\home\invite.html
+msgid "초대 정보가 생성되었습니다!"
+msgstr "Les informations d'invitation ont été créées !"
+
+#: .\templates\home\invite.html
+msgid "초대 링크"
+msgstr "Lien d'invitation"
+
+#: .\templates\home\invite.html
+msgid "초대 코드"
+msgstr "Code d'invitation"
+
+#: .\templates\home\invite.html
+msgid "전체 정보 복사하기"
+msgstr "Copier toutes les informations"
+
+#: .\templates\home\invite.html
+msgid "친구들에게 링크를 보내거나 코드를 알려주세요! (친구에게 회원가입 이후 오른쪽 상단 mypage -> '친구 초대 코드받기'로 들어가서 코드를 입력하세요!)"
+msgstr "Envoyez le lien ou le code à vos amis ! (Après leur inscription, vos amis peuvent entrer le code via 'Ma page' -> 'Recevoir un code d'invitation d'amis' en haut à droite.)"
+
+#: .\templates\home\invite.html
+msgid "초대 정보가 클립보드에 복사되었습니다! 🎉"
+msgstr "Les informations d'invitation ont été copiées dans le presse-papiers ! 🎉"
+
+#: .\templates\home\invite.html
+msgid "나만의 초대 코드: {{ invite_code }}"
+msgstr "Mon code d'invitation : {{ invite_code }}"
+
+#: .\templates\customer_ai\novel.html
+msgid "이야기를 진행해 주세요..."
+msgstr "Veuillez continuer l'histoire..."
+
+#: customer_ai/templates/customer_ai/novel.html
+#: .\templates\customer_ai\novel.html
+msgid "전송"
+msgstr "Envoyer"
+
+#: .\templates\common\sidebar.html
+msgid "친구 초대 코드받기>"
+msgstr "Recevoir un code d'invitation d'amis >"
+
+#: .\templates\mypage\my_coupon.html
+msgid "초대 코드 입력"
+msgstr "Entrer le code d'invitation"
+
+#: .\templates\mypage\my_coupon.html
+msgid "초대 코드를 입력하세요"
+msgstr "Veuillez entrer le code d'invitation"
+
+#: .\templates\mypage\my_coupon.html
+msgid "적용"
+msgstr "Appliquer"
+
+#: .\templates\mypage\my_coupon.html
+#: .\templates\mypage\my_coupon.html
+msgid "친구로부터 받은 초대 코드를 입력하여 특별한 혜택을 받아보세요!"
+msgstr "Entrez le code d'invitation reçu d'un ami pour bénéficier d'avantages spéciaux !"
+
+#: .\templates\home\user_intro.html
+msgid "팔로워가 만든 AI"
+msgstr "IA créée par les abonnés"
+
+#: customer_ai/templates/customer_ai/make_ai.html:8
+#: customer_ai/templates/customer_ai/make_ai.html:8
+msgid "AI 만들기"
+msgstr "CRÉER UNE IA"
+
+#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
+#: customer_ai/templates/customer_ai/make_ai.html:18
+#: customer_ai/templates/customer_ai/make_ai.html:15
+msgid "저장된 음성 목록"
+msgstr "Liste des voix enregistrées"
+
+#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
+#: customer_ai/templates/customer_ai/make_ai.html:18
+msgid "번호"
+msgstr "Numéro"
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+#: cloning/templates/cloning/cloning.html
+#: customer_ai/templates/customer_ai/make_ai.html:20
+msgid "목소리 이름"
+msgstr "Nom de la voix"
+
+#: customer_ai/templates/customer_ai/make_ai.html:21
+msgid "목소리 번호"
+msgstr "ID de la voix"
+
+#: customer_ai/templates/customer_ai/make_ai.html:22
+msgid "샘플 재생"
+msgstr "Jouer l'échantillon"
+
+#: customer_ai/templates/customer_ai/make_ai.html:50
+msgid "목소리 선택하기->"
+msgstr "Choisir une voix ->"
+
+#: customer_ai/templates/customer_ai/make_ai.html:78
+msgid "프롬프트를 입력하세요. 최대한 자세히 쓰세요. 프롬프트에 따라 원하는 대답을 얻을 수 있습니다."
+msgstr "Entrez une invite. Écrivez aussi précisément que possible. La réponse dépendra de la manière dont vous formulez l'invite."
+
+#: .\mypage\templates\mypage\my_ai_models.html:67
+#: customer_ai/templates/customer_ai/make_ai.html:114
+msgid "음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다."
+msgstr "Ajuste la cohérence du ton de la voix. Des valeurs basses produisent des émotions plus variées, tandis que des valeurs élevées génèrent des voix stables et monotones."
+
+#: .\mypage\templates\mypage\my_ai_models.html:76
+#: customer_ai/templates/customer_ai/make_ai.html:119
+msgid "음성 속도"
+msgstr "Vitesse de la voix"
+
+#: .\mypage\templates\mypage\my_ai_models.html:77
+#: customer_ai/templates/customer_ai/make_ai.html:122
+msgid "해당 AI의 음성 속도를 조절할 수 있습니다."
+msgstr "Vous pouvez ajuster la vitesse de parole de la voix de l'IA."
+
+#: .\mypage\templates\mypage\my_ai_models.html:86
+#: customer_ai/templates/customer_ai/make_ai.html:127
+msgid "목소리 스타일"
+msgstr "Style de voix"
+
+#: customer_ai/templates/customer_ai/make_ai.html:130
+msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
+msgstr "Plus la valeur est élevée, plus l'émotion de la voix sélectionnée est amplifiée."
+
+#: .\mypage\templates\mypage\my_ai_models.html:95
+#: customer_ai/templates/customer_ai/make_ai.html:135
+msgid "창의성"
+msgstr "Créativité"
+
+#: customer_ai/templates/customer_ai/make_ai.html:158
+msgid "GROK-3-mini 버전은 GPT-4o-mini에 비해 대답시간이 느릴수 있습니다. 대신 더 다양한 대화를 할 수 있습니다."
+msgstr "La version GROK-3-mini peut répondre plus lentement que GPT-4o-mini, mais elle permet des conversations plus variées."
+
+#: customer_ai/templates/customer_ai/make_ai.html:168
+#: customer_ai/templates/customer_ai/make_ai.html:163
+msgid "AI 생성하기"
+msgstr "Créer une IA"
+
+#: customer_ai/templates/customer_ai/make_ai.html:166
+msgid "대신 만들어줘!"
+msgstr "Créez-la pour moi !"
+
+#: customer_ai/templates/customer_ai/make_ai.html:167
+msgid "대신 만들어줘를 눌러 보세요. AI가 프롬프트를 더 자세하게 적어 줄 겁니다."
+msgstr "Cliquez sur 'Créez-la pour moi !' et l'IA élaborera votre invite plus en détail."
