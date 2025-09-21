@@ -68,9 +68,7 @@ document.getElementById("auto_prompt").addEventListener("click", function(){
             alert(messages.promptError);
         }
 
-        if (data.error){
-            alert(data.error)
-        }
+
     })
     .catch(err => {
         console.error(err);
@@ -97,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
     form.addEventListener("submit", function(e) {
         const prompt = document.getElementById("prompt").value.trim();
         const voiceId = document.getElementById("voice_id").value.trim();
+        const prompt_over = document.getElementById("prompt").value
 
         if (!prompt) {
             alert(messages.promptRequired);
@@ -109,6 +108,12 @@ document.addEventListener("DOMContentLoaded", function() {
             e.preventDefault(); // 폼 제출 막기
             return false;
         }
+    // ✅ 올바른 문법
+    if (prompt_over.length > 1000) {
+        alert("현재 프롬프트 글자가 1000자가 넘습니다.");
+        e.preventDefault(); // 폼 제출 막기 추가!
+        return false;
+    }
     });
 });
 
