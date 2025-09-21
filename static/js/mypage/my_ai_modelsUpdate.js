@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (form) {
         form.addEventListener("submit", function(e) {
             e.preventDefault(); // 기본 제출 막기
-            const formData = new FormData(form);
+            const formData = new formData(form);
 
         fetch(form.action, {
             method: "POST",
