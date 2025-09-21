@@ -67,6 +67,10 @@ document.getElementById("auto_prompt").addEventListener("click", function(){
         } else {
             alert(messages.promptError);
         }
+
+        if (data.error){
+            alert(data.error)
+        }
     })
     .catch(err => {
         console.error(err);
