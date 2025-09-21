@@ -169,31 +169,9 @@ msgstr "An error occurred while uploading audio: "
 msgid "마이크 권한을 허용해주세요."
 msgstr "Please grant microphone access"
 
-#: customer_ai/templates/customer_ai/make_ai.html:8
-msgid "AI 만들기"
-msgstr "Create AI"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:18
-msgid "저장된 음성 목록"
-msgstr "Saved Voice List"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:22
-msgid "번호"
-msgstr "No."
-
 #: customer_ai/templates/customer_ai/make_ai.html:23
 msgid "생성 날짜"
 msgstr "Created At"
-
-#: customer_ai/templates/customer_ai/make_ai.html:25
-msgid "목소리 번호"
-msgstr "Voice ID"
-
-#: customer_ai/templates/customer_ai/make_ai.html:26
-msgid "샘플 재생"
-msgstr "Play Sample"
 
 #: customer_ai/templates/customer_ai/make_ai.html:27
 msgid "복사하기"
@@ -245,10 +223,6 @@ msgstr "Please write as detailed as possible. You can get the desired response d
 #: customer_ai/templates/customer_ai/make_ai.html:153
 msgid "모델 선택하기"
 msgstr "Select Model"
-
-#: customer_ai/templates/customer_ai/make_ai.html:168
-msgid "AI 생성하기"
-msgstr "Generate AI"
 
 #: \customer_ai\templates\customer_ai\vision.html
 msgid "비전 모드"
@@ -429,39 +403,16 @@ msgstr "Please enter the text to be read by the generated voice.\n\nPlease write
 msgid "팁: 구체적이고 상세한 설명일수록 더 정확한 목소리가 생성됩니다!"
 msgstr "Tip: The more specific and detailed your description, the more accurate the voice generation!"
 
-
+#: customer_ai/templates/customer_ai/make_ai.html:88
 #: .\mypage\templates\mypage\my_ai_models.html:
 #: .\mypage\templates\mypage\my_ai_models.html:62
 msgid "언어를 선택해주세요"
 msgstr "Please select a language"
 
+#: customer_ai/templates/customer_ai/make_ai.html:111
 #: .\mypage\templates\mypage\my_ai_models.html:66
 msgid "안정감"
 msgstr "Stability"
-
-#: .\mypage\templates\mypage\my_ai_models.html:67
-msgid "음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다."
-msgstr "Adjusts the consistency of the voice tone. Lower values express more varied emotions, higher values create a stable and monotonous voice."
-
-#: .\mypage\templates\mypage\my_ai_models.html:76
-msgid "음성 속도"
-msgstr "Speech Speed"
-
-#: .\mypage\templates\mypage\my_ai_models.html:77
-msgid "해당 AI의 음성 속도를 조절할 수 있습니다."
-msgstr "You can adjust the speech speed of this AI."
-
-#: .\mypage\templates\mypage\my_ai_models.html:86
-msgid "목소리 스타일"
-msgstr "Voice Style"
-
-#: .\mypage\templates\mypage\my_ai_models.html:87
-msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
-msgstr "Higher values amplify the emotions of the voice."
-
-#: .\mypage\templates\mypage\my_ai_models.html:95
-msgid "창의성"
-msgstr "Creativity"
 
 #: .\mypage\templates\mypage\my_ai_models.html:96
 msgid "AI의 창의성을 정합니다"
@@ -747,12 +698,6 @@ msgstr "View All"
 #: cloning/templates/cloning/cloning.html
 msgid "AI 목소리 클로닝"
 msgstr "AI VOICE CLONING"
-
-
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-#: cloning/templates/cloning/cloning.html
-msgid "목소리 이름"
-msgstr "VOICE NAME"
 
 #: .\celebrity\templates\celebrity\celebrity.html
 #: cloning/templates/cloning/cloning.html
@@ -1916,12 +1861,6 @@ msgstr "Invite information has been copied to the clipboard! 🎉"
 msgid "나만의 초대 코드: {{ invite_code }}"
 msgstr "My invite code: {{ invite_code }}"
 
-
-#: .\templates\customer_ai\make_ai.html
-msgid "GROK-3-mini 버전은 GPT-4o-mini에 비해 대답시간이 느릴수 있습니다. 대신 더 다양한 대화를 할 수 있습니다."
-msgstr "The GROK-3-mini version may respond slower than GPT-4o-mini, but it allows for more diverse conversations."
-
-
 #: .\templates\customer_ai\novel.html
 msgid "이야기를 진행해 주세요..."
 msgstr "Please continue the story..."
@@ -1958,3 +1897,88 @@ msgstr "Enter the invitation code you received from a friend to receive special 
 msgid "팔로워가 만든 AI"
 msgstr "AI created by followers"
 
+#: customer_ai/templates/customer_ai/make_ai.html:8
+#: customer_ai/templates/customer_ai/make_ai.html:8
+msgid "AI 만들기"
+msgstr "MAKE AI"
+
+
+#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
+#: customer_ai/templates/customer_ai/make_ai.html:18
+#: customer_ai/templates/customer_ai/make_ai.html:15
+msgid "저장된 음성 목록"
+msgstr "Saved Voice List"
+
+
+#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
+#: customer_ai/templates/customer_ai/make_ai.html:18
+msgid "번호"
+msgstr "No."
+
+#: .\makeVoice\templates\makeVoice\makeVoice.html
+#: cloning/templates/cloning/cloning.html
+#: customer_ai/templates/customer_ai/make_ai.html:20
+msgid "목소리 이름"
+msgstr "Voice Name"
+
+#: customer_ai/templates/customer_ai/make_ai.html:21
+msgid "목소리 번호"
+msgstr "Voice ID"
+
+#: customer_ai/templates/customer_ai/make_ai.html:22
+msgid "샘플 재생"
+msgstr "Play Sample"
+
+#: customer_ai/templates/customer_ai/make_ai.html:50
+msgid "목소리 선택하기->"
+msgstr "Choose a voice ->"
+
+#: customer_ai/templates/customer_ai/make_ai.html:78
+msgid "프롬프트를 입력하세요. 최대한 자세히 쓰세요. 프롬프트에 따라 원하는 대답을 얻을 수 있습니다."
+msgstr "Enter a prompt. Be as detailed as possible. The response will depend on how you write the prompt."
+
+#: .\mypage\templates\mypage\my_ai_models.html:67
+#: customer_ai/templates/customer_ai/make_ai.html:114
+msgid "음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다."
+msgstr "Adjust the consistency of the voice tone. Lower values produce more varied emotions, higher values produce stable and monotone voices."
+
+#: .\mypage\templates\mypage\my_ai_models.html:76
+#: customer_ai/templates/customer_ai/make_ai.html:119
+msgid "음성 속도"
+msgstr "Voice Speed"
+
+#: .\mypage\templates\mypage\my_ai_models.html:77
+#: customer_ai/templates/customer_ai/make_ai.html:122
+msgid "해당 AI의 음성 속도를 조절할 수 있습니다."
+msgstr "Adjust the speaking speed of the AI voice."
+
+#: .\mypage\templates\mypage\my_ai_models.html:86
+#: customer_ai/templates/customer_ai/make_ai.html:127
+msgid "목소리 스타일"
+msgstr "Voice Style"
+
+#: customer_ai/templates/customer_ai/make_ai.html:130
+msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
+msgstr "Higher values amplify the emotion in the selected voice."
+
+#: .\mypage\templates\mypage\my_ai_models.html:95
+#: customer_ai/templates/customer_ai/make_ai.html:135
+msgid "창의성"
+msgstr "Creativity"
+
+#: customer_ai/templates/customer_ai/make_ai.html:158
+msgid "GROK-3-mini 버전은 GPT-4o-mini에 비해 대답시간이 느릴수 있습니다. 대신 더 다양한 대화를 할 수 있습니다."
+msgstr "The GROK-3-mini version may respond slower than GPT-4o-mini, but allows for more varied conversations."
+
+#: customer_ai/templates/customer_ai/make_ai.html:168
+#: customer_ai/templates/customer_ai/make_ai.html:163
+msgid "AI 생성하기"
+msgstr "Generate AI"
+
+#: customer_ai/templates/customer_ai/make_ai.html:166
+msgid "대신 만들어줘!"
+msgstr "Make it for me!"
+
+#: customer_ai/templates/customer_ai/make_ai.html:167
+msgid "대신 만들어줘를 눌러 보세요. AI가 프롬프트를 더 자세하게 적어 줄 겁니다."
+msgstr "Click 'Make it for me!' and the AI will elaborate your prompt in more detail."
