@@ -407,6 +407,8 @@ def voice_all(request):
     }
     return render(request, "home/voice_all.html", context)
 
+from django.utils import translation
+from django.utils.translation import gettext as _
 import json
 @csrf_exempt
 @login_required
@@ -414,6 +416,8 @@ def save_voice(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": _("로그인이 필요합니다.")}, status=401)  
 
+    user_language = getattr(request, 'LANGUAGE_CODE', 'en')
+    translation.activate(user_language)
     if request.method == "POST":
         data = json.loads(request.body)
         celebrity_id = data.get("celebrity_id")
