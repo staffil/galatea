@@ -23,25 +23,29 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault(); // 기본 제출 막기
             const formData = new FormData(form);
 
-            fetch(form.action, {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "X-CSRFToken": formData.get("csrfmiddlewaretoken")
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.error){
-                    alert("오류 발생: " + data.error);
-                } else {
-                    alert("AI가 수정되었습니다!");
-                    window.location.reload(); // 성공 시 새로고침
-                }
-            })
-            .catch(err =>{
-                alert("통신 오류: " + err);
-            });
+        fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": formData.get("csrfmiddlewaretoken")
+            }
+        })
+        .then(res => {
+            if(!res.ok) return res.json().then(err => { throw err });
+            return res.json();
+        })
+        .then(data => {
+            if(data.error){
+                alert("오류 발생: " + data.error);
+            } else {
+                alert("AI가 수정되었습니다!");
+                window.location.reload();
+            }
+        })
+        .catch(err =>{
+            // 서버가 JSON으로 오류 반환하지 않으면 err 자체가 객체가 아닐 수 있음
+            alert("통신 오류: " + (err.error || err.message || err));
+        });
         });
     }
 });
