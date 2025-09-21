@@ -466,9 +466,10 @@ def generate_response(request):
             payload = {
                 "model": model_name,
                 "messages": messages,
-                "temperature": custom_temperature
+                "temperature": custom_temperature,
+                    "max_tokens": 150
             }
-            resp = requests.post(grok_url, json=payload, headers=headers, timeout=60)
+            resp = requests.post(grok_url, json=payload, headers=headers, timeout=120)
             resp.raise_for_status()
             resp_json = resp.json()
             ai_text = resp_json["choices"][0]["message"]["content"].strip()
