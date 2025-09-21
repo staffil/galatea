@@ -415,16 +415,6 @@ def generate_response(request):
             chat_history.append({"role": "assistant", "content": convo.llm_response})
     chat_history.append({"role": "user", "content": user_input})
 
-        # 최근 대화 내역 불러오기
-    db_history_grok = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:5][::-1]
-    chat_history_grok = []
-    for convo in db_history_grok:
-        if convo.user_message:
-            chat_history.append({"role": "user", "content": convo.user_message})
-        if convo.llm_response:
-            chat_history.append({"role": "assistant", "content": convo.llm_response})
-    chat_history_grok.append({"role": "user", "content": user_input})
-
     system_prompt = f"""
     You are an AI assistant that replies clearly and concisely to the user's input.
 
@@ -450,6 +440,23 @@ def generate_response(request):
     {custom_prompt}
     """.strip()
 
+    # Grok 3 Mini 전용 프롬프트
+    system_prompt_grok = f"""
+    You are a helpful AI assistant. Please answer clearly and concisely in 2-3 short sentences.
+
+    User's text: "{user_input}"
+
+    [VISUAL INPUT DESCRIPTION]
+    "{vision_result}"
+
+    RULES:
+    1. For any text containing music symbols or emojis like 🎤✨ or ♪, treat it as a signal to read the text with a "singing" tone, combining appropriate TTS tags and emotional expressions. **Answer this in 2-3 short sentences.**
+    2. Include visual input naturally if provided. **Answer this in 2-3 short sentences.**
+    3. Whenever the user encloses a word or phrase in **double asterisks**, replace it with an appropriate English emotional or action expression, keeping it visible for TTS.
+
+    Respond in {custom_language}.
+    {custom_prompt}
+    """.strip()
 
 
 
@@ -473,8 +480,8 @@ def generate_response(request):
             grok_url = "https://api.x.ai/v1/chat/completions"
             headers = {"Authorization": f"Bearer {grok_api_key}"}
 
-            messages = [{"role": "system", "content": system_prompt}]
-            messages.extend(chat_history_grok)
+            messages = [{"role": "system", "content": system_prompt_grok}]
+            messages.extend(chat_history)
             payload = {
                 "model": model_name,
                 "messages": messages,
