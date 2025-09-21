@@ -176,8 +176,11 @@ def my_ai_models_update(request, llm_id):
         llm.update_at = timezone.now()
         llm.save()
 
-        messages.success(request, _('AI 설정이 수정되었습니다.'))
-        return redirect("mypage:my_ai_models", llm_id=llm.id)
+        return JsonResponse({
+            "success": True, 
+            "message": "AI 설정이 수정되었습니다.",
+            "redirect_url": f"/mypage/my_ai_models/{llm.id}/"  # 필요시
+        })
 
     voice_list = VoiceList.objects.filter(user=request.user).order_by('-created_at')
     paginator = Paginator(voice_list, 3)
