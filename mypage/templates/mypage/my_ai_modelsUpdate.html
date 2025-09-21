@@ -231,44 +231,7 @@
         </form>
     </div>
 
-    <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
-    const promptInput = document.getElementById("prompt");
-
-    form.addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        if (promptInput.value.length > 1000) {
-            alert("프롬프트는 1000자 이내로 작성해주세요.");
-            return;
-        }
-
-        const formData = new FormData(form);
-
-        fetch("{% url 'mypage:my_ai_models_update' llm.id %}", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRFToken": formData.get("csrfmiddlewaretoken")
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.error) {
-                alert("오류 발생: " + data.error);
-            } else {
-                alert("AI가 수정되었습니다!");
-                window.location.reload();
-            }
-        })
-        .catch(err => {
-            alert("통신 오류: " + err);
-        });
-    });
-});
-</script>
-
+    
 <script src="{% static 'js/sidebar.js' %}"></script>
 
   <script src="{% static 'js/mypage/my_ai_modelsUpdate.js' %}"></script>
