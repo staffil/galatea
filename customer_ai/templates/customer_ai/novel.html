@@ -30,8 +30,6 @@
         <span></span>
     </div>
 
-
-
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
@@ -39,21 +37,18 @@
             <div class="mode-options">
                 <div class="mode-option">
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';">
-                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
+                    <label><i class="fas fa-comment"></i> {% trans 'TEXT MODE' %}</label>
                 </div>
 
                 <div class="mode-option">
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
-                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                    <label><i class="fas fa-eye"></i> {% trans 'VISION MODE' %}</label>
                 </div>
 
                 <div class="mode-option active">
-                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/novel/{{llm_id}}';" checked>
-                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
+                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <label><i class="fas fa-book"></i> {% trans 'NOVEL MODE' %}</label>
                 </div>
-
-                
-        
             </div>
             <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
                 {% trans '공유하기' %}
@@ -64,7 +59,7 @@
         <main class="main-content">
             <div class="ai-showcase">
                 {% if llm.llm_image %}
-                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image">
+                    <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image">
                 {% endif %}
                 <div class="chat-header">
                     <div class="ai-avatar">🤖</div>
@@ -74,15 +69,15 @@
 
             <!-- Novel Output -->
             <div class="novel-output" id="novel-container">
-                <p>AI가 소설체로 답변할 예정입니다...</p>
+                <p>{% trans 'AI가 소설체로 답변할 예정입니다...' %}</p>
                 <div class="page-number" id="page-number">1</div>
             </div>
 
             <!-- Input Section -->
             <div class="input-section">
-                <input type="text" id="text-input" placeholder="이야기를 진행해 주세요..." 
+                <input type="text" id="text-input" placeholder="{% trans '이야기를 진행해 주세요...' %}" 
                        onkeydown="if(event.key==='Enter'){ sendNovel(); }">
-                <button onclick="sendNovel()">전송</button>
+                <button onclick="sendNovel()">{% trans '전송' %}</button>
 
                 <!-- Audio Player -->
                 <div class="audio-player" id="audio-container" style="display:none;">

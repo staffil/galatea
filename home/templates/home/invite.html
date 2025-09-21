@@ -248,7 +248,7 @@
                 height: 100px;
             }
         }
-    </style>
+ </style>
 </head>
 <body>
     <header>
@@ -260,7 +260,6 @@
     </header>
 
     <div class="main-content">
-        <!-- 이벤트 섹션 (기존 그대로) -->
         <div class="popular-users-section">
             <div class="event_list">
                 {% for gift in gift_list %}
@@ -273,54 +272,50 @@
             </div>
         </div>
 
-        <!-- 페이지 제목 -->
         <div class="page-title">
-            <h1>🎉 친구 초대하기</h1>
-            <p>친구들을 초대하고 함께 즐거운 시간을 보내세요!</p>
+            <h1>🎉 {% trans '친구 초대하기' %}</h1>
+            <p>{% trans '친구들을 초대하고 함께 즐거운 시간을 보내세요!' %}</p>
         </div>
 
-        <!-- 초대 코드 생성 -->
         <div class="invite-generator">
-            <h2>나만의 초대 코드 만들기</h2>
-            <p>아래 버튼을 클릭하면 친구들과 공유할 수 있는 전용 초대 링크와 코드가 생성됩니다.</p>
+            <h2>{% trans '나만의 초대 코드 만들기' %}</h2>
+            <p>{% trans '아래 버튼을 클릭하면 친구들과 공유할 수 있는 전용 초대 링크와 코드가 생성됩니다.' %}</p>
             
             <form method="post">
                 {% csrf_token %}
-                <button type="submit" class="generate-btn">✨ 초대 코드 생성하기</button>
+                <button type="submit" class="generate-btn">✨ {% trans '초대 코드 생성하기' %}</button>
             </form>
         </div>
 
-        <!-- 초대 링크 및 코드 표시 -->
         {% if invite_code %}
         <div class="invite-container">
-            <h3>🎊 초대 정보가 생성되었습니다!</h3>
+            <h3>🎊 {% trans '초대 정보가 생성되었습니다!' %}</h3>
             
             <div class="invite-item">
-                <label>🔗 초대 링크</label>
+                <label>🔗 {% trans '초대 링크' %}</label>
                 <div class="invite-value">{{ invite_link }}</div>
             </div>
             
             <div class="invite-item">
-                <label>🎫 초대 코드</label>
+                <label>🎫 {% trans '초대 코드' %}</label>
                 <div class="invite-value">{{ invite_code }}</div>
             </div>
 
             <div class="copy-section">
-                <input type="hidden" id="fullInvite" value="링크: {{ invite_link }} | 코드: {{ invite_code }}">
+                <input type="hidden" id="fullInvite" value="{% blocktrans %}링크: {{ invite_link }} | 코드: {{ invite_code }}{% endblocktrans %}">
                 <button type="button" class="copy-btn" onclick="copyFullInvite()">
-                    📋 전체 정보 복사하기
+                    📋 {% trans '전체 정보 복사하기' %}
                 </button>
                 <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
-                    친구들에게 링크를 보내거나 코드를 알려주세요! (친구에게 회원가입 이후 오른쪽 상단 mypage -> '친구 초대 코드받기'로 들어가서 코드를 입력하세요!)
+                    {% trans "친구들에게 링크를 보내거나 코드를 알려주세요! (친구에게 회원가입 이후 오른쪽 상단 mypage -> '친구 초대 코드받기'로 들어가서 코드를 입력하세요!)" %}
                 </p>
             </div>
         </div>
         {% endif %}
     </div>
 
-    <!-- 성공 메시지 -->
     <div id="successMessage" class="success-message">
-        초대 정보가 클립보드에 복사되었습니다! 🎉
+        {% trans '초대 정보가 클립보드에 복사되었습니다! 🎉' %}
     </div>
 
     <script>

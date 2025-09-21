@@ -826,10 +826,6 @@ msgstr "AI will answer in a novel format..."
 msgid "메시지를 입력하세요..."
 msgstr "Please enter your message..."
 
-#: customer_ai/templates/customer_ai/novel.html
-msgid "전송"
-msgstr "Forwarding"
-
 #: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
 #: .\mypage\templates\mypage\my_ai_models.html:
 #: distribute/templates/distribute/distribute.html
@@ -1660,10 +1656,6 @@ msgstr "Meet AI characters from various genres"
 msgid "개 장르"
 msgstr "genres"
 
-#: .\payment\templates\payment\payment_choice.html:
-#: .\payment\templates\payment\payment_complete.html:
-msgid "가격표"
-msgstr "Price List"
 
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제가 완료되었습니다"
@@ -1852,3 +1844,115 @@ msgstr "7. Payments can be made via credit card and KakaoPay. No additional fees
 #: .\templates\payment\payment_detail.html
 msgid "8, 각 등급별 금액과 토큰은 전 페이지에서 확인 바랍니다. Marble: 3,400(2.34$)/ Artisan: 7,400원(5.31$)/ Magnus: 12,900(9.28$)/ Elysium: 19,700(14.18$)"
 msgstr "8. Please check the previous page for details on each plan’s price and tokens. Marble: 3,400 KRW ($2.34) / Artisan: 7,400 KRW ($5.31) / Magnus: 12,900 KRW ($9.28) / Elysium: 19,700 KRW ($14.18)"
+
+#: .\payment\templates\payment\payment_choice.html:
+#: .\payment\templates\payment\payment_complete.html:
+#: .\templates\payment\payment.html
+msgid "가격표"
+msgstr "Pricing"
+
+#: .\templates\payment\payment.html
+msgid "결제"
+msgstr "Payment"
+
+#: .\templates\payment\payment.html
+msgid "토큰은 결제 후 즉시 제공됩니다. 결제 성공 후 mypage로 가서 결제 내역을 확인해 주세요.(오류가 있을시 요청하기 혹은 kimc570612@gmail.com 으로 메일 부탁드립니다.)  갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다.* 민원 담당자 김충희 / 연락처 010-3161-5706"
+msgstr "Tokens are provided immediately after payment. After a successful payment, please go to My Page to check your transaction history. (If there are errors, please use the 'Request' option or send an email to kimc570612@gmail.com.) All products sold on Galatea-operated sites are the responsibility of Galatea. * Customer Service Contact: Kim Chunghee / Phone: +82-10-3161-5706"
+
+#: .\templates\home\voice_all.html
+msgid "🎶가 있는 목소리는 노래가 가능힙니다."
+msgstr "Voices marked with 🎶 can sing."
+
+#: .\templates\makeImage\image.html
+msgid "이미지 생성지 10토큰 차감됩니다."
+msgstr "10 tokens will be deducted for image generation."
+
+
+#: .\templates\home\invite.html
+msgid "친구 초대하기"
+msgstr "Invite Friends"
+
+#: .\templates\home\invite.html
+msgid "친구들을 초대하고 함께 즐거운 시간을 보내세요!"
+msgstr "Invite your friends and have fun together!"
+
+#: .\templates\home\invite.html
+msgid "나만의 초대 코드 만들기"
+msgstr "Create Your Personal Invite Code"
+
+#: .\templates\home\invite.html
+msgid "아래 버튼을 클릭하면 친구들과 공유할 수 있는 전용 초대 링크와 코드가 생성됩니다."
+msgstr "Click the button below to generate a personal invite link and code to share with your friends."
+
+#: .\templates\home\invite.html
+msgid "초대 코드 생성하기"
+msgstr "Generate Invite Code"
+
+#: .\templates\home\invite.html
+msgid "초대 정보가 생성되었습니다!"
+msgstr "Invite information has been created!"
+
+#: .\templates\home\invite.html
+msgid "초대 링크"
+msgstr "Invite Link"
+
+#: .\templates\home\invite.html
+msgid "초대 코드"
+msgstr "Invite Code"
+
+#: .\templates\home\invite.html
+msgid "전체 정보 복사하기"
+msgstr "Copy All Info"
+
+#: .\templates\home\invite.html
+msgid "친구들에게 링크를 보내거나 코드를 알려주세요! (친구에게 회원가입 이후 오른쪽 상단 mypage -> '친구 초대 코드받기'로 들어가서 코드를 입력하세요!)"
+msgstr "Send the link or code to your friends! (After signing up, your friends can enter the code via mypage -> 'Receive Friend Invite Code' at the top right.)"
+
+#: .\templates\home\invite.html
+msgid "초대 정보가 클립보드에 복사되었습니다! 🎉"
+msgstr "Invite information has been copied to the clipboard! 🎉"
+
+#: .\templates\home\invite.html
+msgid "나만의 초대 코드: {{ invite_code }}"
+msgstr "My invite code: {{ invite_code }}"
+
+
+#: .\templates\customer_ai\make_ai.html
+msgid "GROK-3-mini 버전은 GPT-4o-mini에 비해 대답시간이 느릴수 있습니다. 대신 더 다양한 대화를 할 수 있습니다."
+msgstr "The GROK-3-mini version may respond slower than GPT-4o-mini, but it allows for more diverse conversations."
+
+
+#: .\templates\customer_ai\novel.html
+msgid "이야기를 진행해 주세요..."
+msgstr "Please continue the story..."
+
+#: customer_ai/templates/customer_ai/novel.html
+#: .\templates\customer_ai\novel.html
+msgid "전송"
+msgstr "Send"
+
+#: .\templates\common\sidebar.html
+msgid "친구 초대 코드받기>"
+msgstr "Receive Friend Invitation Code >"
+
+
+
+#: .\templates\mypage\my_coupon.html
+msgid "초대 코드 입력"
+msgstr "Enter Invitation Code"
+
+#: .\templates\mypage\my_coupon.html
+msgid "초대 코드를 입력하세요"
+msgstr "Please enter the invitation code"
+
+#: .\templates\mypage\my_coupon.html
+msgid "적용"
+msgstr "Apply"
+
+#: .\templates\mypage\my_coupon.html
+#: .\templates\mypage\my_coupon.html
+msgid "친구로부터 받은 초대 코드를 입력하여 특별한 혜택을 받아보세요!"
+msgstr "Enter the invitation code you received from a friend to receive special benefits!"
+
+
+

@@ -137,7 +137,7 @@ form[action*="my_coupon"]::before {
 }
 
 form[action*="my_coupon"]::after {
-    content: "친구로부터 받은 초대 코드를 입력하여 특별한 혜택을 받아보세요!";
+    content: "{% trans '친구로부터 받은 초대 코드를 입력하여 특별한 혜택을 받아보세요!' %}";
     display: block;
     color: var(--text-secondary);
     font-size: 0.95rem;
@@ -145,6 +145,7 @@ form[action*="my_coupon"]::after {
     margin-bottom: 30px;
     line-height: 1.5;
 }
+
 
 /* 라벨 스타일 */
 form[action*="my_coupon"] label {
@@ -328,9 +329,9 @@ form[action*="my_coupon"] button[type="submit"]:hover {
     <!-- 쿠폰 입력 폼 -->
     <form method="post" action="{% url 'mypage:my_coupon' %}">
         {% csrf_token %}
-        <label>초대 코드 입력</label>
-        <input type="text" name="invite_code" placeholder="초대 코드를 입력하세요" required>
-        <button type="submit">적용</button>
+        <label>{% trans "초대 코드 입력" %}</label>
+        <input type="text" name="invite_code" placeholder="{% trans '초대 코드를 입력하세요' %}" required>
+        <button type="submit">{% trans "적용" %}</button>
     </form>
     
     <script src="{% static 'js/sidebar.js' %}"></script>
