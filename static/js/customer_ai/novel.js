@@ -32,22 +32,23 @@ fetch(NOVEL_PROCESS_URL, {
             .then(data => {
                 if(data.novel_text){
                     // AI 메시지 추가 (소설 내용)
-                    
                     const aiMessage = document.createElement('p');
                     aiMessage.className = 'ai-message';
-                            const formattedText = data.novel_text.replace(/([^"]+)/g, '<span class="gray-text">$1</span>');
 
-                    aiMessage.innerHTML = `<strong>AI:</strong> ${data.novel_text}`;
+                    // 큰따옴표 제외하고 나머지 회색 처리
+                    const formattedText = data.novel_text.replace(/([^"]+)/g, '<span class="gray-text">$1</span>');
+
+                    aiMessage.innerHTML = `<strong>AI:</strong> ${formattedText}`;
                     novelContainer.insertBefore(aiMessage, pageNumberElement);
-                    
+
                     // 페이지 번호 업데이트
                     pageNumber++;
                     pageNumberElement.textContent = pageNumber;
-                    
+
                     // 스크롤을 맨 아래로
                     novelContainer.scrollTop = novelContainer.scrollHeight;
-                    
                 }
+
                 if(data.tts_audio_url){
                     const audioElem = document.getElementById("tts-audio");
                     audioElem.src = data.tts_audio_url;
