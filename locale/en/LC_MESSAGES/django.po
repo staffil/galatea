@@ -1954,5 +1954,7 @@ msgstr "Apply"
 msgid "친구로부터 받은 초대 코드를 입력하여 특별한 혜택을 받아보세요!"
 msgstr "Enter the invitation code you received from a friend to receive special benefits!"
 
-
+#: .\templates/home/user_intro.html
+msgid "팔로워가 만든 AI"
+msgstr "AI created by followers"
 
