@@ -189,6 +189,25 @@
                 <p>{% trans '대신 만들어줘를 눌러 보세요. AI가 프롬프트를 더 자세하게 적어 줄 겁니다.'%}</p>
 
 <script>
+    // Django 번역 문자열을 JS에서 사용할 객체
+    const messages = {
+        recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+        recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+        micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+        recognizedText: "{% trans '인식된 텍스트: ' %}",
+        audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+        errorOccurred: "{% trans '오류 발생: ' %}",
+        shareCopied: "{% trans '링크가 복사되었습니다!' %}",
+        aiGenerateConfirm: "{% trans '이대로 AI를 생성하시겠습니까?' %}",
+        promptRequired: "{% trans '프롬프트을 입력해 주세요' %}",
+        voiceSelectRequired: "{% trans '목소리를 선택해 주세요' %}",
+        promptRefined: "{% trans '프롬프트가 좀 더 구체화 되었습니다.' %}",
+        promptError: "{% trans '프롬프트 생성 중 오류가 발생했습니다.' %}",
+        serverError: "{% trans '서버 요청중 오류 발생' %}",
+        voiceSelected: "{% trans '해당 voice id 가 선택되었습니다.' %}"
+    };
+</script>
+<script>
   const AUTO_PROMPT_URL = "{% url 'auto_prompt' %}";
 </script>
 <script src="{% static 'js/customer_ai/make_ai.js' %}"></script>
