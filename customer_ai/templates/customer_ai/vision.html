@@ -186,7 +186,6 @@ async function startWebcam() {
         video.classList.add('active');
         streaming = true;
         visionResult.textContent = "{% trans '웹캠이 시작되었습니다' %}";
-        visionResult.className = "vision-status active";
     } catch (err) {
         alert("{% trans '웹캠 접근 실패: ' %}" + err);
         visionResult.textContent = "{% trans '웹캠 접근 실패' %}";
@@ -210,7 +209,6 @@ async function sendFrameToServer() {
     if (isPlayingAudio) return;
 
     isProcessingVision = true;
-    visionResult.textContent = "{% trans '이미지 분석 중...' %}";
     visionResult.className = "vision-status processing";
 
     canvas.width = video.videoWidth;
