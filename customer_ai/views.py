@@ -642,87 +642,114 @@ def upload_image(request):
 
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils.translation import get_language
+import base64, traceback, time
 
 ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif']
 MAX_IMAGE_SIZE_MB = 5
-ALLOWED_VISION_MODELS = ['gpt-4-vision-preview', 'gpt-4o-mini'] 
 
 def is_allowed_image_file(filename):
     ext = filename.split('.')[-1].lower()
     return ext in ALLOWED_IMAGE_EXTENSIONS
 
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.utils.translation import get_language
-import base64, traceback, time
 @csrf_exempt
 def vision_process(request):
     if request.method != 'POST':
-        return JsonResponse({'error': _('잘못된 요청 방법입니다.')}, status=400)
+        return JsonResponse({'error': '잘못된 요청 방법입니다.'}, status=400)
 
     if 'image' not in request.FILES:
-        return JsonResponse({'error': _('이미지 파일이 제공되지 않았습니다.')}, status=400)
+        return JsonResponse({'error': '이미지 파일이 제공되지 않았습니다.'}, status=400)
 
     image_file = request.FILES['image']
 
     if not is_allowed_image_file(image_file.name):
-        return JsonResponse({'error': _('지원되지 않는 이미지 형식입니다.')}, status=400)
+        return JsonResponse({'error': '지원되지 않는 이미지 형식입니다.'}, status=400)
 
     if not image_file.content_type.startswith("image/"):
-        return JsonResponse({'error': _('유효한 이미지 파일이 아닙니다.')}, status=400)
+        return JsonResponse({'error': '유효한 이미지 파일이 아닙니다.'}, status=400)
 
     if image_file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024:
-        return JsonResponse({'error': _('이미지 파일이 너무 큽니다. (최대 5MB)')}, status=400)
+        return JsonResponse({'error': '이미지 파일이 너무 큽니다. (최대 5MB)'}, status=400)
 
     try:
         image_bytes = image_file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
     except Exception:
         traceback.print_exc()
-        return JsonResponse({'error': _('이미지를 읽는 중 오류 발생')}, status=500)
+        return JsonResponse({'error': '이미지를 읽는 중 오류 발생'}, status=500)
 
-    # 세션에서 모델명과 프롬프트 가져오기 (기본값 지정)
-    custom_model = request.session.get('custom_model', 'gpt-4o-mini')
-    if custom_model not in ALLOWED_VISION_MODELS:
-        # 비전 API가 아니라면 기본 챗 모델로 fallback
-        custom_model = 'gpt-4o-mini'
+    # 안전한 언어 코드 매핑
+    LANGUAGE_MAPPING = {
+        'ko': 'Korean',
+        'en': 'English', 
+        'ja': 'Japanese',
+        'zh': 'Chinese',
+        'es': 'Spanish',
+        'fr': 'French',
+        'de': 'German',
+        'ru': 'Russian',
+        'ar': 'Arabic',
+        'hi': 'Hindi',
+        'pt': 'Portuguese'
+    }
 
-    custom_prompt = request.session.get('custom_prompt', '이 이미지에서 보이는 것을 설명해 주세요.')
-       # 선택 언어 가져오기 (세션 없으면 사이트 기본 언어)
-    user_lang = request.session.get('selected_language', get_language())
+    # 안전한 언어 가져오기
+    try:
+        raw_lang = request.session.get('selected_language', get_language())
+        # 언어 코드에서 앞 2자리만 추출 (예: 'ko-kr' → 'ko')
+        lang_code = raw_lang.split('-')[0].lower() if raw_lang else 'en'
+        user_lang = LANGUAGE_MAPPING.get(lang_code, 'English')
+    except:
+        user_lang = 'English'  # 안전한 기본값
 
-    # GPT 호출
+    # 언어별 프롬프트
+    prompts = {
+        'Korean': '이 이미지에서 보이는 것을 설명해 주세요.',
+        'English': 'Please describe what is visible in this image.',
+        'Japanese': 'この画像に見えるものを説明してください。',
+        'Chinese': '请描述此图像中可见的内容。',
+        'Spanish': 'Por favor, describe lo que es visible en esta imagen.',
+        'French': 'Veuillez décrire ce qui est visible dans cette image.',
+        'German': 'Bitte beschreiben Sie, was auf diesem Bild zu sehen ist.',
+        'Russian': 'Пожалуйста, опишите, что видно на этом изображении.',
+        'Arabic': 'يرجى وصف ما هو مرئي في هذه الصورة.',
+        'Hindi': 'कृपया इस छवि में दिखाई देने वाली चीज़ों का वर्णन करें।',
+        'Portuguese': 'Por favor, descreva o que é visível nesta imagem.'
+    }
+    
+    prompt_text = prompts.get(user_lang, prompts['English'])
+
     try:
         response = openai_client.chat.completions.create(
             model='gpt-4o-mini',
             messages=[
                 {
-                    "role": "system",
+                    "role": "system", 
                     "content": (
                         f"You are an assistant that describes images objectively, clearly, and factually "
-                        f"in english. Only state what is visibly present in the image. "
+                        f"in {user_lang}. Only state what is visibly present in the image. "
                         "Do not roleplay or embellish."
                     )
                 },
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "이 이미지에서 보이는 것을 설명해 주세요."},
+                        {"type": "text", "text": prompt_text},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
                     ]
                 }
             ]
         )
         ai_result = response.choices[0].message.content.strip()
-        # 잠시 대기 (옵션)
         time.sleep(3)
         return JsonResponse({"result": ai_result})
 
     except Exception as e:
+        print(f"Vision API 에러: {type(e).__name__}: {str(e)}")
         traceback.print_exc()
         return JsonResponse({"error": f"OpenAI Vision API error: {str(e)}"}, status=500)
-    
-
 
 
 @csrf_exempt
