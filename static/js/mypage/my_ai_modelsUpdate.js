@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("오류 발생: " + data.error);
                 } else {
                     alert("AI가 수정되었습니다!");
+                                window.location.href = data.redirect_url;
+
                 }
             })
             .catch(err =>{
