@@ -415,6 +415,16 @@ def generate_response(request):
             chat_history.append({"role": "assistant", "content": convo.llm_response})
     chat_history.append({"role": "user", "content": user_input})
 
+        # 최근 대화 내역 불러오기
+    db_history_grok = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:5][::-1]
+    chat_history_grok = []
+    for convo in db_history_grok:
+        if convo.user_message:
+            chat_history.append({"role": "user", "content": convo.user_message})
+        if convo.llm_response:
+            chat_history.append({"role": "assistant", "content": convo.llm_response})
+    chat_history_grok.append({"role": "user", "content": user_input})
+
     system_prompt = f"""
     You are an AI assistant that replies clearly and concisely to the user's input.
 
@@ -464,7 +474,7 @@ def generate_response(request):
             headers = {"Authorization": f"Bearer {grok_api_key}"}
 
             messages = [{"role": "system", "content": system_prompt}]
-            messages.extend(chat_history)
+            messages.extend(chat_history_grok)
             payload = {
                 "model": model_name,
                 "messages": messages,
