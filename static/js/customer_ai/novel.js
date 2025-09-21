@@ -17,8 +17,9 @@ const currentLlmId = LLM_ID;
             // 사용자 메시지 추가
             const userMessage = document.createElement('p');
             userMessage.className = 'user-message';
-            userMessage.innerHTML = `<strong>독자의 요청:</strong> ${userText}`;
+            userMessage.innerHTML = `<strong>독자의 요청:</strong> "${userText}"`;
             novelContainer.insertBefore(userMessage, pageNumberElement);
+            
 
             const formData = new FormData();
             formData.append("text", userText);
