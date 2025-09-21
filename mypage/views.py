@@ -170,6 +170,9 @@ def my_ai_models_update(request, llm_id):
         if 'llm_image' in request.FILES:
             llm.llm_image = request.FILES['llm_image']
 
+        if prompt > 1000:
+            return JsonResponse ({"error":"현재 프롬프트 글자가 1000자가 넘습니다."},status=400)
+
         llm.update_at = timezone.now()
         llm.save()
 
