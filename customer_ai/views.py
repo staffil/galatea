@@ -661,7 +661,7 @@ def vision_process(request):
                     "role": "system",
                     "content": (
                         f"You are an assistant that describes images objectively, clearly, and factually "
-                        f"in {user_lang}. Only state what is visibly present in the image. "
+                        f"in english. Only state what is visibly present in the image. "
                         "Do not roleplay or embellish."
                     )
                 },
