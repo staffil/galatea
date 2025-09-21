@@ -232,7 +232,7 @@ async function sendFrameToServer() {
             });
             if (!response.ok) throw new Error("{% trans '서버 응답 오류' %}");
             const data = await response.json();
-            visionResult.textContent = "{% trans '분석 완료: ' %}" + data.result;
+            visionResult.textContent = data.result;
             visionResult.className = "vision-status active";
             latestVisionResult = data.result;
         } catch (err) {
