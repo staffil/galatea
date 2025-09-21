@@ -153,6 +153,19 @@
         const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";  // 문자열
 
 </script>
+
+<script>
+    // Django 번역 문자열을 JS에서 사용할 객체
+    const messages = {
+        recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+        recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+        micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+        recognizedText: "{% trans '인식된 텍스트: ' %}",
+        audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+        errorOccurred: "{% trans '오류 발생: ' %}",
+        shareCopied: "{% trans '링크가 복사되었습니다!' %}"
+    };
+</script>
 <script src="{% static 'js/customer_ai/custom.js' %}">
    
 </script>
