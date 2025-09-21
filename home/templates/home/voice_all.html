@@ -80,17 +80,19 @@
                     {% endfor %}
                 </div>
             </div>
-
-        </div>
 <!-- 새로고침 버튼 -->
 <div style="text-align:center; margin: 20px 0;">
     <button onclick="refreshPage()" class="refresh-btn">{% trans '새로고침' %}</button>
 </div>
 
-    <script>
+        </div>
+<script>
 function refreshPage() {
     window.location.reload();  // 현재 페이지 새로고침
 }
+</script>
+    <script>
+
         
     function getCookie(name) {
     let cookieValue = null;
