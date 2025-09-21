@@ -34,8 +34,3 @@
             document.body.style.overflow = 'auto';
         }
 
-        // 페이지 로드 시 프롬프트 표시 (기존 코드)
-        window.onload = function() {
-            const prompt = document.getElementById("promptInput").value;
-            document.getElementById("promptDisplay").value = prompt;
-        };
