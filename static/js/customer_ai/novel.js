@@ -32,8 +32,11 @@ fetch(NOVEL_PROCESS_URL, {
             .then(data => {
                 if(data.novel_text){
                     // AI 메시지 추가 (소설 내용)
+                    
                     const aiMessage = document.createElement('p');
                     aiMessage.className = 'ai-message';
+                            const formattedText = data.novel_text.replace(/([^"]+)/g, '<span class="gray-text">$1</span>');
+
                     aiMessage.innerHTML = `<strong>AI:</strong> ${data.novel_text}`;
                     novelContainer.insertBefore(aiMessage, pageNumberElement);
                     
@@ -43,6 +46,7 @@ fetch(NOVEL_PROCESS_URL, {
                     
                     // 스크롤을 맨 아래로
                     novelContainer.scrollTop = novelContainer.scrollHeight;
+                    
                 }
                 if(data.tts_audio_url){
                     const audioElem = document.getElementById("tts-audio");
