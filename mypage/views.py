@@ -147,7 +147,7 @@ def my_ai_models_update(request, llm_id):
 
         if voice_id:
             try:
-                voice = VoiceList.objects.filter(voice_id=voice_id).order_by("created_at")
+                voice = VoiceList.objects.filter(voice_id=voice_id).first()
             except VoiceList.DoesNotExist:
                 voice = VoiceList.objects.create(user=request.user, voice_id=voice_id)
             llm.voice = voice
@@ -176,7 +176,7 @@ def my_ai_models_update(request, llm_id):
         messages.success(request, _('AI 설정이 수정되었습니다.'))
         return redirect("mypage:my_ai_models", llm_id=llm.id)
 
-    voice_list = VoiceList.objects.filter(user=request.user).order_by('created_at')
+    voice_list = VoiceList.objects.filter(user=request.user).order_by('-created_at')
     paginator = Paginator(voice_list, 3)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
