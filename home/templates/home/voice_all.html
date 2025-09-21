@@ -14,7 +14,21 @@
 </head>
 
 
+<style>
+    .refresh-btn {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.refresh-btn:hover {
+    background-color: #45a049;
+}
 
+</style>
 
 <body >
 
@@ -66,11 +80,17 @@
                     {% endfor %}
                 </div>
             </div>
+<!-- 새로고침 버튼 -->
+<div style="text-align:center; margin: 20px 0;">
+    <button onclick="refreshPage()" class="refresh-btn">{% trans '새로고침' %}</button>
+</div>
 
         </div>
 
     <script>
-
+function refreshPage() {
+    window.location.reload();  // 현재 페이지 새로고침
+}
         
     function getCookie(name) {
     let cookieValue = null;
