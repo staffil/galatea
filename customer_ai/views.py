@@ -458,6 +458,8 @@ def generate_response(request):
             )
             ai_text = response.choices[0].message.content.strip()
         elif api_provider == "grok":
+            system_prompt = system_prompt + "\n\nPlease answer briefly, in 2-3 short sentences only."
+
             grok_url = "https://api.x.ai/v1/chat/completions"
             headers = {"Authorization": f"Bearer {grok_api_key}"}
 
