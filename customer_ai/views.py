@@ -643,15 +643,18 @@ def vision_process(request):
         custom_model = 'gpt-4o-mini'
 
     custom_prompt = request.session.get('custom_prompt', '이 이미지에서 보이는 것을 설명해 주세요.')
-
+    user_lang = request.LANGUAGE_CODE
     try:
-        # OpenAI Vision API 호출 (이미지 base64 인라인 전달)
+        # OpenAI Vision API 호출
         response = openai_client.chat.completions.create(
             model=custom_model,
             messages=[
-                {"role": "system", "content": "You are an assistant that describes images objectively, clearly, and factually. "
-                       "Do not roleplay, embellish, or add imaginative scenarios. "
-                       "Only state what is visibly present in the image."},
+                {
+                    "role": "system",
+                    "content": f"You are an assistant that describes images objectively, clearly, and factually in {user_lang}. "
+                               "Do not roleplay, embellish, or add imaginative scenarios. "
+                               "Only state what is visibly present in the image."
+                },
                 {
                     "role": "user",
                     "content": [
