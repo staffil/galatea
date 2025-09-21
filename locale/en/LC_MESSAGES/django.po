@@ -1851,11 +1851,11 @@ msgstr "8. Please check the previous page for details on each plan’s price and
 msgid "가격표"
 msgstr "Pricing"
 
-#: .\templates\payment\payment.html
+#: .\payment\templates\payment\payment.html
 msgid "결제"
 msgstr "Payment"
 
-#: .\templates\payment\payment.html
+#: .\payment\templates\payment\payment.html
 msgid "토큰은 결제 후 즉시 제공됩니다. 결제 성공 후 mypage로 가서 결제 내역을 확인해 주세요.(오류가 있을시 요청하기 혹은 kimc570612@gmail.com 으로 메일 부탁드립니다.)  갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다.* 민원 담당자 김충희 / 연락처 010-3161-5706"
 msgstr "Tokens are provided immediately after payment. After a successful payment, please go to My Page to check your transaction history. (If there are errors, please use the 'Request' option or send an email to kimc570612@gmail.com.) All products sold on Galatea-operated sites are the responsibility of Galatea. * Customer Service Contact: Kim Chunghee / Phone: +82-10-3161-5706"
 
