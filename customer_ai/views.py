@@ -497,7 +497,6 @@ def generate_response(request):
                 "messages": messages,
                 "temperature": custom_temperature,
                 
-                
             }
             resp = requests.post(grok_url, json=payload, headers=headers, timeout=120)
             resp.raise_for_status()
