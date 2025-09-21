@@ -496,7 +496,7 @@ def generate_response(request):
                 "model": model_name,
                 "messages": messages,
                 "temperature": custom_temperature,
-                    "max_tokens": 150
+                
                 
             }
             resp = requests.post(grok_url, json=payload, headers=headers, timeout=120)
