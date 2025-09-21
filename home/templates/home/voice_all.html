@@ -37,7 +37,10 @@
             {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
-
+        <!-- 새로고침 버튼 -->
+        <div >
+            <button onclick="refreshPage()" class="refresh-btn">{% trans '새로고침' %}</button>
+        </div>
     <!-- celebrity voice 목록 -->
     <div class="cv-main-content">
         <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!' %}</h2>
@@ -79,9 +82,6 @@
             </div>
         </div>
 
-        <!-- 새로고침 버튼 -->
-
-            <button onclick="refreshPage()" class="refresh-btn">{% trans '새로고침' %}</button>
 
     </div>
 
