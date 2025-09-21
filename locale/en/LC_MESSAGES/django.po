@@ -1749,50 +1749,50 @@ msgstr "CHOICE VOICE"
 msgid "친구초대하기"
 msgstr "INVITE FRIEND"
 
-#: .\templates\payment\payment_choice.html
+#: .\payment\templates\payment\payment_choice.html
 msgid "토큰을 충전하면 AI와 계속 대화를 이어가실 수 있습니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용하실 수 있습니다."
 msgstr "By recharging tokens, you can continue conversations with the AI. If tokens are exhausted, you can recharge to keep using the service."
 
-#: .\templates\payment\payment_choice.html
+#: .\payment\templates\payment\payment_choice.html
 msgid "상세 내용 보러 가기"
 msgstr "View Details"
 
-#: .\templates\payment\payment_choice.html
+#: .\payment\templates\payment\payment_choice.html
 msgid "결제기간"
 msgstr "Payment Period"
 
-#: .\templates\payment\payment_choice.html
+#: .\payment\templates\payment\payment_choice.html
 msgid "결제시 토큰 즉시 제공(일부 처리 지연 가능)”"
 msgstr "Tokens are provided immediately upon payment (some processing delays may occur)."
 
 
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "결제 완료"
 msgstr "Payment Complete"
 
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "결제가 완료되었습니다!"
 msgstr "Your payment has been completed!"
 
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "토큰이 성공적으로 지급되었습니다. 이제 다양한 서비스를 이용하실 수 있습니다. 결제 내역 확인을 원하시면 '토큰 내역 확인하기' 버튼을 누르세요"
 msgstr "Tokens have been successfully credited. You can now use various services. To check your payment history, click the 'Check Token History' button."
 
 #: .\mypage\templates\mypage\token.html:
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "결제 금액"
 msgstr "Payment Amount"
 
 #: .\mypage\templates\mypage\token.html:
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "상태"
 msgstr "Status"
 
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "결제에 실패했습니다"
 msgstr "Payment Failed"
 
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "결제가 실패했거나 취소되었습니다. 다시 시도해 주세요."
 msgstr "The payment failed or was canceled. Please try again."
 
@@ -1801,47 +1801,47 @@ msgstr "The payment failed or was canceled. Please try again."
 msgid "메인으로 가기"
 msgstr "Go to Home"
 
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "결제 페이지로 가기"
 msgstr "Go to Payment Page"
 
-#: .\templates\payment\payment_complete.html
+#: .\payment\templates\payment\payment_complete.html
 msgid "토큰 내역 확인하기"
 msgstr "Check Token History"
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "결제 상세 내역"
 msgstr "Payment Details"
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "1, 토큰은 갈라테이아 내 유료 AI 콘텐츠 이용에 사용됩니다. 더 많은 대화를 원할 시 토큰을 구매하셔야 합니다."
 msgstr "1. Tokens are used to access paid AI content within Galatea. If you want more conversations, you must purchase additional tokens."
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "2, 1토큰은 AI 대화 1초로 측정됩니다. (1000토큰 = 1000초) 대화시 밑에 대화 내용과 TTS 로 변환한 audio의 시간에 맞춰 토큰이 차감됩니다."
 msgstr "2. 1 token equals 1 second of AI conversation. (1000 tokens = 1000 seconds) Tokens are deducted based on both the text conversation and the duration of the TTS-converted audio."
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "3, 충전한 토큰은 구매일로부터 12개월간 유효하며, 기간 내 사용하지 않은 토큰은 자동 소멸됩니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용할 수 있습니다."
 msgstr "3. Purchased tokens are valid for 12 months from the date of purchase. Unused tokens will automatically expire after this period. If tokens run out, you can continue using the service by recharging."
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "4, 환불은 미사용 토큰에 한해 환불이 가능하며, 토큰 구매 후 사용 시 환불은 불가능합니다. 환불은 '요청' 및 '이메일 전송' 이후 3일 내로 처리됩니다."
 msgstr "4. Refunds are only available for unused tokens. Once tokens are used, refunds are not possible. Refunds will be processed within 3 days after a 'request' and 'email submission.'"
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "5, 갈라테이아에서 운영하는 사이트에서 판매되는 모든 상품은 갈라테이아에서 책임지고 있습니다."
 msgstr "5. All products sold on sites operated by Galatea are the sole responsibility of Galatea."
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "6, 민원 담당자: 김충희 / 연락처: 010-3161-5706"
 msgstr "6. Customer Service Contact: Kim Chunghee / Phone: +82-10-3161-5706"
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "7, 결제는 신용카드 및 카카오페이를 통해 가능합니다. 결제 시 별도의 수수료는 부과되지 않습니다."
 msgstr "7. Payments can be made via credit card and KakaoPay. No additional fees will be charged."
 
-#: .\templates\payment\payment_detail.html
+#: .\payment\templates\payment\payment_detail.html
 msgid "8, 각 등급별 금액과 토큰은 전 페이지에서 확인 바랍니다. Marble: 3,400(2.34$)/ Artisan: 7,400원(5.31$)/ Magnus: 12,900(9.28$)/ Elysium: 19,700(14.18$)"
 msgstr "8. Please check the previous page for details on each plan’s price and tokens. Marble: 3,400 KRW ($2.34) / Artisan: 7,400 KRW ($5.31) / Magnus: 12,900 KRW ($9.28) / Elysium: 19,700 KRW ($14.18)"
 
