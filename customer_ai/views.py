@@ -643,7 +643,8 @@ def vision_process(request):
         custom_model = 'gpt-4o-mini'
 
     custom_prompt = request.session.get('custom_prompt', '이 이미지에서 보이는 것을 설명해 주세요.')
-    user_lang = request.LANGUAGE_CODE
+    user_lang = request.session.get('selected_language', request.LANGUAGE_CODE)
+
     try:
         # OpenAI Vision API 호출
         response = openai_client.chat.completions.create(
