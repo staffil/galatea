@@ -65,7 +65,7 @@ def mypage_update(request):
 def my_voice(request):
     user = request.user
 
-    voice_list = VoiceList.objects.filter(user=request.user).select_related("celebrity").order_by("created_at")
+    voice_list = VoiceList.objects.filter(user=request.user).select_related("celebrity").order_by("-created_at")
     paginator = Paginator(voice_list, 5) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number) 

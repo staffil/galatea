@@ -132,7 +132,7 @@ def make_ai(request):
         return redirect("customer_ai:chat_view", llm_id=llm.id)
 
     # GET 요청시 (페이지 렌더링용)
-    voice_list = VoiceList.objects.filter(user=request.user,).select_related("celebrity")
+    voice_list = VoiceList.objects.filter(user=request.user,).select_related("celebrity").order_by("-created_at")
     paginator = Paginator(voice_list, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
