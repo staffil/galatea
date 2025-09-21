@@ -254,19 +254,18 @@ function requestPay(pgName, btn) {
             currency: "USD",
             name: "GALATEA 등급 결제",
         };
-    } else if (pgName.toLowerCase() === "kg") {
-        data = {
-            pg: "html5_inicis", // 또는 "inicis"
-            pay_method: "card",
-        merchant_id: "MOI8463171",
-                merchant_uid: merchant_uid,
-            amount: amountKRW,
-            buyer_email: "{{ request.user.email }}",
-            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-            buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
-            name: "GALATEA 등급 결제",
-        };
+} else if (pgName.toLowerCase() === "kg") {
+    data = {
+        pg: "inicis_v2",
+        pay_method: "card",
+        merchant_uid: merchant_uid,
+        amount: amountKRW,
+        buyer_email: "{{ request.user.email }}",
+        buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+        buyer_tel: "{{ request.user.phonenumber }}",
+        m_redirect_url: "https://galatea.website/payment/complete/",
+        name: "GALATEA 등급 결제",
+    };
     } else {
         data = {
             pg: pgName.toLowerCase(),
