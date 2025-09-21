@@ -610,6 +610,12 @@ def is_allowed_image_file(filename):
     ext = filename.split('.')[-1].lower()
     return ext in ALLOWED_IMAGE_EXTENSIONS
 
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils.translation import get_language
+import base64, traceback, time
 @csrf_exempt
 def vision_process(request):
     if request.method != 'POST':
@@ -643,23 +649,26 @@ def vision_process(request):
         custom_model = 'gpt-4o-mini'
 
     custom_prompt = request.session.get('custom_prompt', '이 이미지에서 보이는 것을 설명해 주세요.')
-    user_lang = request.session.get('selected_language', request.LANGUAGE_CODE)
+       # 선택 언어 가져오기 (세션 없으면 사이트 기본 언어)
+    user_lang = request.session.get('selected_language', get_language())
 
+    # GPT 호출
     try:
-        # OpenAI Vision API 호출
         response = openai_client.chat.completions.create(
-            model=custom_model,
+            model='gpt-4o-mini',
             messages=[
                 {
                     "role": "system",
-                    "content": f"You are an assistant that describes images objectively, clearly, and factually in {user_lang}. "
-                               "Do not roleplay, embellish, or add imaginative scenarios. "
-                               "Only state what is visibly present in the image."
+                    "content": (
+                        f"You are an assistant that describes images objectively, clearly, and factually "
+                        f"in {user_lang}. Only state what is visibly present in the image. "
+                        "Do not roleplay or embellish."
+                    )
                 },
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": custom_prompt},
+                        {"type": "text", "text": "이 이미지에서 보이는 것을 설명해 주세요."},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
                     ]
                 }
