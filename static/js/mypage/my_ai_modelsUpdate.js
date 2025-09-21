@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault(); // 기본 제출 막기
             const formData = new FormData(form);
 
-            fetch("{% url 'mypage:my_ai_models_update' %}", {
+            fetch(form.action, {
                 method: "POST",
                 body: formData,
                 headers: {
@@ -38,6 +38,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("AI가 수정되었습니다!");
                     window.location.reload(); // 성공 시 새로고침
                 }
+            })
+            .catch(err =>{
+                alert("통신 오류: " + err);
             });
         });
     }
