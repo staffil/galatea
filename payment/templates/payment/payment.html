@@ -259,6 +259,7 @@ function requestPay(pgName, btn) {
             pg: "inicis_v2", // 또는 "inicis"
             pay_method: "card",
         merchant_id: "MOI8463171",
+                merchant_uid: merchant_uid,
             amount: amountKRW,
             buyer_email: "{{ request.user.email }}",
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
