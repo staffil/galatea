@@ -519,7 +519,7 @@ def generate_response(request):
 
     # 오디오 길이 측정 및 토큰 소모
     audio_seconds = get_audio_duration_in_seconds(audio_path)
-    token_obj = Token.objects.filter(user=user).order_by('-created_at').first()
+    token_obj = Token.objects.filter(user=user).latest("created_at")
     if token_obj.total_token - token_obj.token_usage < audio_seconds:
         return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
 
