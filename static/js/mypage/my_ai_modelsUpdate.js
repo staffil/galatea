@@ -1,33 +1,38 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
-    if (!form) return;
-
-    form.addEventListener("submit", function (e) {
-        e.preventDefault(); // 기본 제출 막기
-
-        const formData = new FormData(form);
-
+       document.addEventListener("DOMContentLoaded", function () {
+            const sliders = ["stability", "speed", "style", "temperature"];
+            
+            sliders.forEach(id => {
+                const slider = document.getElementById(id);
+                const output = document.getElementById(id + "Value");
+                
+                if (slider && output) {
+                    // 초기값 설정
+                    output.textContent = slider.value;
+                    
+                    // 슬라이더 변경 이벤트
+                    slider.addEventListener('input', function () {
+                        output.textContent = this.value;
+                    });
+                }
         fetch(form.action, {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRFToken": formData.get("csrfmiddlewaretoken") // Django CSRF
+            method:"POST",
+            body: FormData,
+            headers:{
+                "X-CSRFToken": formData.get("csrfmiddlewaretoken")
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert("오류 발생: " + data.error); // 에러 팝업
-            } else {
-                alert("AI 설정이 수정되었습니다!");
-                window.location.reload(); // 성공 시 페이지 갱신
-            }
-        })
-        .catch(err => {
-            alert("서버 통신 오류: " + err);
+            
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.error){
+                    alert(data.error)
+                }else{
+                    ("AI 가 수정되었습니다.");
+                }
+            }).catch(err =>{
+                alert("통신 오류" + err)
+            })
         });
-    });
-});
 
         // 음성 선택 기능
         function selectVoiceId(voiceId) {
