@@ -681,7 +681,7 @@ def vision_process(request):
     custom_model = request.session.get('custom_model', 'gpt-4o-mini')
     if custom_model not in ALLOWED_VISION_MODELS:
         # 비전 API가 아니라면 기본 챗 모델로 fallback
-        custom_model = 'gpt-4-vision-preview'
+        custom_model = 'gpt-4o'
 
     # 사용자 언어 가져오기
     user_lang = request.session.get('selected_language', request.LANGUAGE_CODE)
