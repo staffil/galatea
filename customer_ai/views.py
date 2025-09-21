@@ -83,7 +83,7 @@ def make_ai(request):
         if not style_prompt:
             return JsonResponse({"error": _("prompt 값이 없습니다.")}, status=400)
         
-        if style_prompt > 1000:
+        if len(style_prompt) > 1000:
             return JsonResponse({"error": _("현재 프롬프트 값이 1000자가 넘었습니다.")}, status=400)
 
         voice, created = VoiceList.objects.get_or_create(user=request.user, voice_id=voice_id)
