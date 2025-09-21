@@ -610,12 +610,6 @@ def is_allowed_image_file(filename):
     ext = filename.split('.')[-1].lower()
     return ext in ALLOWED_IMAGE_EXTENSIONS
 
-
-
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.utils.translation import get_language
-import base64, traceback, time
 @csrf_exempt
 def vision_process(request):
     if request.method != 'POST':
@@ -648,27 +642,41 @@ def vision_process(request):
         # 비전 API가 아니라면 기본 챗 모델로 fallback
         custom_model = 'gpt-4o-mini'
 
-    custom_prompt = request.session.get('custom_prompt', '이 이미지에서 보이는 것을 설명해 주세요.')
-       # 선택 언어 가져오기 (세션 없으면 사이트 기본 언어)
-    user_lang = request.session.get('selected_language', get_language())
+    # 사용자 언어 가져오기
+    user_lang = request.session.get('selected_language', request.LANGUAGE_CODE)
 
-    # GPT 호출
+    # 언어별 기본 프롬프트
+    prompts = {
+        'ko': '이 이미지에서 보이는 것을 설명해 주세요.',
+        'en': 'Please describe what is visible in this image.',
+        'ar': 'يرجى وصف ما هو مرئي في هذه الصورة.',
+        'hi': 'कृपया इस छवि में दिखाई देने वाली चीज़ों का वर्णन करें।',
+        'pt': 'Por favor, descreva o que é visível nesta imagem.',
+        'de': 'Bitte beschreiben Sie, was auf diesem Bild zu sehen ist.',
+        'ru': 'Пожалуйста, опишите, что видно на этом изображении.',
+        'ja': 'この画像に見えるものを説明してください。',
+        'zh': '请描述此图像中可见的内容。'
+    }
+
+    custom_prompt = request.session.get('custom_prompt', prompts.get(user_lang, prompts['en']))
+
     try:
+        # system 메시지에 user_lang 반영
+        system_content = (
+            f"You are an assistant that describes images objectively, clearly, and factually in {user_lang}. "
+            "Only state what is visibly present in the image. "
+            "Do not roleplay, embellish, or add imaginative scenarios."
+        )
+
+        # OpenAI Vision API 호출
         response = openai_client.chat.completions.create(
-            model='gpt-4o-mini',
+            model=custom_model,
             messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are an assistant that describes images objectively, clearly, and factually "
-                        "in English. Only state what is visibly present in the image. "
-                        "Do not roleplay or embellish."
-                    )
-                },
+                {"role": "system", "content": system_content},
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "Please describe what is visible in this image."},
+                        {"type": "text", "text": custom_prompt},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
                     ]
                 }
