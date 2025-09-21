@@ -13,9 +13,8 @@
     <script src="{% static 'js/home/main.js' %}"></script>
 </head>
 
-
 <style>
-    .refresh-btn {
+.refresh-btn {
     padding: 10px 20px;
     background-color: #4CAF50;
     color: white;
@@ -27,12 +26,10 @@
 .refresh-btn:hover {
     background-color: #45a049;
 }
-
 </style>
 
-<body >
-
-        <!-- 헤더 -->
+<body>
+    <!-- 헤더 -->
     <header>
         {% if not user.is_authenticated %}
             {% include "common/notLoginHeader.html" %}
@@ -40,60 +37,58 @@
             {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
-        <!-- celebrity voice 목록 -->
-        <div class="cv-main-content">
-            <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!' %}</h2>
-            <p>{% trans '🎶가 있는 목소리는 노래가 가능힙니다.' %}</p>
-            <div class="cv-container">
 
-
-                <div class="cv-scroll">
-{% for voice in voice_list|slice:":30" %}
-                        <div class="voice-wrapper">
-                            <div class="cv-header">
-                                <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
-                                    {% if voice.celebrity_voice_image %}
-                                        <img src="{{ voice.celebrity_voice_image.url }}" alt="" loading="lazy">
-                                    {% else %}
-                                        <img src="{% static 'images/default_voice.png' %}" alt="" loading="lazy">
-                                    {% endif %}
-                                    <div class="cv-play-overlay"><div class="cv-play-icon"></div></div>
-                                </div>
-                                <div class="cv-info">
-                                    <p>{{ voice.name }}</p>
-                                    <input type="hidden" value="{{ voice.celebrity_voice_id }}">
-                                    <p>{{ voice.voice_name }}</p>
-                                </div>
-                            </div>
-                            <div class="voice-progress" onclick="seekAudio(event, this)">
-                                <div class="cv-progress-bar"></div>
-                            </div>
-                            <!-- <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">복사</button> -->
-                             <button class="copy-id-btn" onclick="saveVoice({{ voice.id }})" title="Voice ID 복사">{% trans '저장하기' %}</button>
-
-                            {% if voice.sample_url %}
-                                <audio class="voice-audio" controls>
-                                    <source src="{{ voice.sample_url.url }}" type="audio/mpeg">
-                                </audio>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-<!-- 새로고침 버튼 -->
-<div style="text-align:center; margin: 20px 0;">
-    <button onclick="refreshPage()" class="refresh-btn">{% trans '새로고침' %}</button>
-</div>
-
-        </div>
-<script>
-function refreshPage() {
-    window.location.reload();  // 현재 페이지 새로고침
-}
-</script>
-    <script>
-
+    <!-- celebrity voice 목록 -->
+    <div class="cv-main-content">
+        <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!' %}</h2>
+        <p>{% trans '🎶가 있는 목소리는 노래가 가능힙니다.' %}</p>
         
+        <div class="cv-container">
+            <div class="cv-scroll">
+                {% for voice in voice_list|slice:":30" %}
+                <div class="voice-wrapper">
+                    <div class="cv-header">
+                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
+                            {% if voice.celebrity_voice_image %}
+                                <img src="{{ voice.celebrity_voice_image.url }}" alt="" loading="lazy">
+                            {% else %}
+                                <img src="{% static 'images/default_voice.png' %}" alt="" loading="lazy">
+                            {% endif %}
+                            <div class="cv-play-overlay"><div class="cv-play-icon"></div></div>
+                        </div>
+                        <div class="cv-info">
+                            <p>{{ voice.name }}</p>
+                            <input type="hidden" value="{{ voice.celebrity_voice_id }}">
+                            <p>{{ voice.voice_name }}</p>
+                        </div>
+                    </div>
+                    <div class="voice-progress" onclick="seekAudio(event, this)">
+                        <div class="cv-progress-bar"></div>
+                    </div>
+                    <button class="copy-id-btn" onclick="saveVoice({{ voice.id }})" title="Voice ID 저장">
+                        {% trans '저장하기' %}
+                    </button>
+
+                    {% if voice.sample_url %}
+                    <audio class="voice-audio" controls>
+                        <source src="{{ voice.sample_url.url }}" type="audio/mpeg">
+                    </audio>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 새로고침 버튼 -->
+        <div style="text-align:center; margin: 20px 0;">
+            <button onclick="refreshPage()" class="refresh-btn">{% trans '새로고침' %}</button>
+        </div>
+    </div>
+
+    <script>
+       function refreshPage() {
+        window.location.reload();  // 현재 페이지 새로고침
+    }
     function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
