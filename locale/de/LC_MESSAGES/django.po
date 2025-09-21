@@ -161,31 +161,9 @@ msgstr "Fehler beim Hochladen des Audios: "
 msgid "마이크 권한을 허용해주세요."
 msgstr "Bitte gewähren Sie Zugriff auf das Mikrofon"
 
-#: customer_ai/templates/customer_ai/make_ai.html:8
-msgid "AI 만들기"
-msgstr "KI erstellen"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:18
-msgid "저장된 음성 목록"
-msgstr "Liste gespeicherter Stimmen"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:22
-msgid "번호"
-msgstr "Nummer"
-
 #: customer_ai/templates/customer_ai/make_ai.html:23
 msgid "생성 날짜"
 msgstr "Erstellungsdatum"
-
-#: customer_ai/templates/customer_ai/make_ai.html:25
-msgid "목소리 번호"
-msgstr "Stimmen-ID"
-
-#: customer_ai/templates/customer_ai/make_ai.html:26
-msgid "샘플 재생"
-msgstr "Probe abspielen"
 
 #: customer_ai/templates/customer_ai/make_ai.html:27
 msgid "복사하기"
@@ -236,10 +214,6 @@ msgstr "Schreiben Sie so detailliert wie möglich. Je nach Prompt erhalten Sie d
 #: customer_ai/templates/customer_ai/make_ai.html:153
 msgid "모델 선택하기"
 msgstr "Modell auswählen"
-
-#: customer_ai/templates/customer_ai/make_ai.html:168
-msgid "AI 생성하기"
-msgstr "KI generieren"
 
 #: \customer_ai\templates\customer_ai\vision.html
 msgid "비전 모드"
@@ -425,30 +399,6 @@ msgstr "Bitte wählen Sie eine Sprache"
 #: .\mypage\templates\mypage\my_ai_models.html:66
 msgid "안정감"
 msgstr "Stabilität"
-
-#: .\mypage\templates\mypage\my_ai_models.html:67
-msgid "음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다."
-msgstr "Regelt die Konsistenz des Stimmtons. Niedrigere Werte drücken vielfältigere Emotionen aus, höhere Werte erzeugen eine stabile und monotone Stimme."
-
-#: .\mypage\templates\mypage\my_ai_models.html:76
-msgid "음성 속도"
-msgstr "Sprechgeschwindigkeit"
-
-#: .\mypage\templates\mypage\my_ai_models.html:77
-msgid "해당 AI의 음성 속도를 조절할 수 있습니다."
-msgstr "Sie können die Sprechgeschwindigkeit dieser KI anpassen."
-
-#: .\mypage\templates\mypage\my_ai_models.html:86
-msgid "목소리 스타일"
-msgstr "Stimmenstil"
-
-#: .\mypage\templates\mypage\my_ai_models.html:87
-msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
-msgstr "Je höher der Wert, desto stärker werden die Emotionen der Stimme verstärkt."
-
-#: .\mypage\templates\mypage\my_ai_models.html:95
-msgid "창의성"
-msgstr "Kreativität"
 
 #: .\mypage\templates\mypage\my_ai_models.html:96
 msgid "AI의 창의성을 정합니다"
@@ -717,11 +667,6 @@ msgstr "Alle anzeigen"
 msgid "AI 목소리 클로닝"
 msgstr "KI-STIMMENKLONEN"
 
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-#: cloning/templates/cloning/cloning.html
-msgid "목소리 이름"
-msgstr "STIMMENNAME"
-
 #: .\celebrity\templates\celebrity\celebrity.html
 #: cloning/templates/cloning/cloning.html
 msgid "녹음 시작" 
@@ -792,10 +737,6 @@ msgstr "Die KI wird im Romanstil antworten..."
 #: customer_ai/templates/customer_ai/novel.html
 msgid "메시지를 입력하세요..."
 msgstr "Geben Sie Ihre Nachricht ein..."
-
-#: customer_ai/templates/customer_ai/novel.html
-msgid "전송"
-msgstr "Senden"
 
 #: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
 #: .\mypage\templates\mypage\my_ai_models.html:
@@ -1533,14 +1474,6 @@ msgid "결제 방식"
 msgstr "Zahlungsmethode"
 
 #: .\mypage\templates\mypage\token.html:
-msgid "상태"
-msgstr "Status"
-
-#: .\mypage\templates\mypage\token.html:
-msgid "결제 금액"
-msgstr "Zahlungsbetrag"
-
-#: .\mypage\templates\mypage\token.html:
 msgid "결제 내역이 없습니다."
 msgstr "Kein Zahlungsverlauf gefunden."
 
@@ -1612,11 +1545,6 @@ msgstr "Lernen Sie KI-Charaktere aus verschiedenen Genres kennen"
 msgid "개 장르"
 msgstr "Genres"
 
-#: .\payment\templates\payment\payment_choice.html:
-#: .\payment\templates\payment\payment_complete.html:
-msgid "가격표"
-msgstr "Preisliste"
-
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제가 완료되었습니다"
 msgstr "Zahlung abgeschlossen"
@@ -1624,10 +1552,6 @@ msgstr "Zahlung abgeschlossen"
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제가 실패했거나 취소되었습니다"
 msgstr "Zahlung fehlgeschlagen oder abgebrochen"
-
-#: .\payment\templates\payment\payment_complete.html:
-msgid "메인으로 가기"
-msgstr "Zur Hauptseite"
 
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제 칸으로 가기"
@@ -1696,10 +1620,6 @@ msgstr "GALATEA AI - KI-gesteuerter Konversations-Chatbot-Service"
 #: .\templates\home\main.html
 msgid "보이스 선택하기"
 msgstr "STIMME AUSWÄHLEN"
-
-#: .\templates\home\main.html
-msgid "친구초대하기"
-msgstr "FREUND EINLADEN"
 
 #: .\payment\templates\payment\payment_choice.html
 msgid "토큰을 충전하면 AI와 계속 대화를 이어가실 수 있습니다. 토큰이 모두 소진된 경우, 추가 충전을 통해 계속 이용하실 수 있습니다."
@@ -1958,6 +1878,7 @@ msgstr "Sie können die Sprechgeschwindigkeit der KI-Stimme anpassen."
 msgid "목소리 스타일"
 msgstr "Stimmstil"
 
+#: .\mypage\templates\mypage\my_ai_models.html:87
 #: customer_ai/templates/customer_ai/make_ai.html:130
 msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
 msgstr "Je höher der Wert, desto stärker wird die Emotion der ausgewählten Stimme verstärkt."

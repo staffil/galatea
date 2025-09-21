@@ -161,31 +161,9 @@ msgstr "ऑडियो अपलोड करने में त्रुट�
 msgid "마이크 권한을 허용해주세요."
 msgstr "कृपया माइक्रोफ़ोन तक पहुँच की अनुमति दें"
 
-#: customer_ai/templates/customer_ai/make_ai.html:8
-msgid "AI 만들기"
-msgstr "AI बनाएँ"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:18
-msgid "저장된 음성 목록"
-msgstr "सहेजी गई आवाज़ों की सूची"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:22
-msgid "번호"
-msgstr "नंबर"
-
 #: customer_ai/templates/customer_ai/make_ai.html:23
 msgid "생성 날짜"
 msgstr "निर्माण तिथि"
-
-#: customer_ai/templates/customer_ai/make_ai.html:25
-msgid "목소리 번호"
-msgstr "आवाज़ आईडी"
-
-#: customer_ai/templates/customer_ai/make_ai.html:26
-msgid "샘플 재생"
-msgstr "नमूना चलाएँ"
 
 #: customer_ai/templates/customer_ai/make_ai.html:27
 msgid "복사하기"
@@ -236,10 +214,6 @@ msgstr "जितना हो सके विस्तार से लिख�
 #: customer_ai/templates/customer_ai/make_ai.html:153
 msgid "모델 선택하기"
 msgstr "मॉडल चुनें"
-
-#: customer_ai/templates/customer_ai/make_ai.html:168
-msgid "AI 생성하기"
-msgstr "AI जनरेट करें"
 
 #: \customer_ai\templates\customer_ai\vision.html
 msgid "비전 모드"
@@ -425,30 +399,6 @@ msgstr "कृपया भाषा चुनें"
 #: .\mypage\templates\mypage\my_ai_models.html:66
 msgid "안정감"
 msgstr "स्थिरता"
-
-#: .\mypage\templates\mypage\my_ai_models.html:67
-msgid "음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다."
-msgstr "आवाज़ के टोन की एकरूपता को नियंत्रित करता है। कम मूल्य पर अधिक विविध भावनाएँ व्यक्त होती हैं, और उच्च मूल्य पर स्थिर और एकसमान आवाज़ जनरेट होती है।"
-
-#: .\mypage\templates\mypage\my_ai_models.html:76
-msgid "음성 속도"
-msgstr "आवाज़ की गति"
-
-#: .\mypage\templates\mypage\my_ai_models.html:77
-msgid "해당 AI의 음성 속도를 조절할 수 있습니다."
-msgstr "आप इस AI की आवाज़ की गति को समायोजित कर सकते हैं।"
-
-#: .\mypage\templates\mypage\my_ai_models.html:86
-msgid "목소리 스타일"
-msgstr "आवाज़ का स्टाइल"
-
-#: .\mypage\templates\mypage\my_ai_models.html:87
-msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
-msgstr "मूल्य जितना अधिक होगा, आवाज़ की भावनाएँ उतनी ही बढ़ेंगी।"
-
-#: .\mypage\templates\mypage\my_ai_models.html:95
-msgid "창의성"
-msgstr "रचनात्मकता"
 
 #: .\mypage\templates\mypage\my_ai_models.html:96
 msgid "AI의 창의성을 정합니다"
@@ -717,11 +667,6 @@ msgstr "सब देखें"
 msgid "AI 목소리 클로닝"
 msgstr "AI आवाज़ क्लोनिंग"
 
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-#: cloning/templates/cloning/cloning.html
-msgid "목소리 이름"
-msgstr "आवाज़ का नाम"
-
 #: .\celebrity\templates\celebrity\celebrity.html
 #: cloning/templates/cloning/cloning.html
 msgid "녹음 시작" 
@@ -792,10 +737,6 @@ msgstr "AI उपन्यास शैली में जवाब देग�
 #: customer_ai/templates/customer_ai/novel.html
 msgid "메시지를 입력하세요..."
 msgstr "अपना संदेश दर्ज करें..."
-
-#: customer_ai/templates/customer_ai/novel.html
-msgid "전송"
-msgstr "भेजें"
 
 #: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
 #: .\mypage\templates\mypage\my_ai_models.html:
@@ -1533,14 +1474,6 @@ msgid "결제 방식"
 msgstr "भुगतान विधि"
 
 #: .\mypage\templates\mypage\token.html:
-msgid "상태"
-msgstr "स्थिति"
-
-#: .\mypage\templates\mypage\token.html:
-msgid "결제 금액"
-msgstr "भुगतान राशि"
-
-#: .\mypage\templates\mypage\token.html:
 msgid "결제 내역이 없습니다."
 msgstr "कोई भुगतान इतिहास नहीं है।"
 
@@ -1612,11 +1545,6 @@ msgstr "विभिन्न शैलियों के AI किरदार
 msgid "개 장르"
 msgstr "शैलियाँ"
 
-#: .\payment\templates\payment\payment_choice.html:
-#: .\payment\templates\payment\payment_complete.html:
-msgid "가격표"
-msgstr "मूल्य सूची"
-
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제가 완료되었습니다"
 msgstr "भुगतान पूर्ण हुआ"
@@ -1624,10 +1552,6 @@ msgstr "भुगतान पूर्ण हुआ"
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제가 실패했거나 취소되었습니다"
 msgstr "भुगतान विफल हुआ या रद्द किया गया"
-
-#: .\payment\templates\payment\payment_complete.html:
-msgid "메인으로 가기"
-msgstr "मुख्य पृष्ठ पर जाएँ"
 
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제 칸으로 가기"
@@ -1656,10 +1580,6 @@ msgstr "स्वचालित भुगतान विफल"
 #: .\payment\views.py:
 msgid "자동 결제 완료"
 msgstr "स्वचालित भुगतान पूर्ण"
-
-#: .\home\templates\home\main.html
-msgid "친구초대하기"
-msgstr "दोस्तों को आमंत्रित करें"
 
 #: .\home\templates\home\main.html
 msgid "이벤트"
@@ -1957,6 +1877,7 @@ msgstr "आप AI आवाज़ की बोलने की गति को
 msgid "목소리 스타일"
 msgstr "आवाज़ का स्टाइल"
 
+#: .\mypage\templates\mypage\my_ai_models.html:87
 #: customer_ai/templates/customer_ai/make_ai.html:130
 msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
 msgstr "मूल्य जितना अधिक होगा, चुनी गई आवाज़ की भावना उतनी ही अधिक बढ़ जाएगी।"

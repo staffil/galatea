@@ -161,31 +161,9 @@ msgstr "上传音频时出错："
 msgid "마이크 권한을 허용해주세요."
 msgstr "请允许麦克风访问权限。"
 
-#: customer_ai/templates/customer_ai/make_ai.html:8
-msgid "AI 만들기"
-msgstr "创建AI"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:18
-msgid "저장된 음성 목록"
-msgstr "已保存的语音列表"
-
-#: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
-#: customer_ai/templates/customer_ai/make_ai.html:22
-msgid "번호"
-msgstr "编号"
-
 #: customer_ai/templates/customer_ai/make_ai.html:23
 msgid "생성 날짜"
 msgstr "创建日期"
-
-#: customer_ai/templates/customer_ai/make_ai.html:25
-msgid "목소리 번호"
-msgstr "语音ID"
-
-#: customer_ai/templates/customer_ai/make_ai.html:26
-msgid "샘플 재생"
-msgstr "播放样本"
 
 #: customer_ai/templates/customer_ai/make_ai.html:27
 msgid "복사하기"
@@ -236,10 +214,6 @@ msgstr "尽可能详细地描述。根据提示可以获得您想要的回答。
 #: customer_ai/templates/customer_ai/make_ai.html:153
 msgid "모델 선택하기"
 msgstr "选择模型"
-
-#: customer_ai/templates/customer_ai/make_ai.html:168
-msgid "AI 생성하기"
-msgstr "生成AI"
 
 #: \customer_ai\templates\customer_ai\vision.html
 msgid "비전 모드"
@@ -425,30 +399,6 @@ msgstr "请选择语言"
 #: .\mypage\templates\mypage\my_ai_models.html:66
 msgid "안정감"
 msgstr "稳定性"
-
-#: .\mypage\templates\mypage\my_ai_models.html:67
-msgid "음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다."
-msgstr "调节语音语调的一致性。值越低，表达的情感越多样；值越高，生成的语音越稳定单调。"
-
-#: .\mypage\templates\mypage\my_ai_models.html:76
-msgid "음성 속도"
-msgstr "语音速度"
-
-#: .\mypage\templates\mypage\my_ai_models.html:77
-msgid "해당 AI의 음성 속도를 조절할 수 있습니다."
-msgstr "您可以调节此AI的语音速度。"
-
-#: .\mypage\templates\mypage\my_ai_models.html:86
-msgid "목소리 스타일"
-msgstr "语音风格"
-
-#: .\mypage\templates\mypage\my_ai_models.html:87
-msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
-msgstr "值越高，语音的情感表达越强烈。"
-
-#: .\mypage\templates\mypage\my_ai_models.html:95
-msgid "창의성"
-msgstr "创造力"
 
 #: .\mypage\templates\mypage\my_ai_models.html:96
 msgid "AI의 창의성을 정합니다"
@@ -717,11 +667,6 @@ msgstr "查看全部"
 msgid "AI 목소리 클로닝"
 msgstr "AI语音克隆"
 
-#: .\makeVoice\templates\makeVoice\makeVoice.html
-#: cloning/templates/cloning/cloning.html
-msgid "목소리 이름"
-msgstr "语音名称"
-
 #: .\celebrity\templates\celebrity\celebrity.html
 #: cloning/templates/cloning/cloning.html
 msgid "녹음 시작" 
@@ -792,10 +737,6 @@ msgstr "AI将以小说形式回复..."
 #: customer_ai/templates/customer_ai/novel.html
 msgid "메시지를 입력하세요..."
 msgstr "请输入消息..."
-
-#: customer_ai/templates/customer_ai/novel.html
-msgid "전송"
-msgstr "发送"
 
 #: .\mypage\templates\mypage\my_ai_modelsUpdate.html:
 #: .\mypage\templates\mypage\my_ai_models.html:
@@ -1533,14 +1474,6 @@ msgid "결제 방식"
 msgstr "支付方式"
 
 #: .\mypage\templates\mypage\token.html:
-msgid "상태"
-msgstr "状态"
-
-#: .\mypage\templates\mypage\token.html:
-msgid "결제 금액"
-msgstr "支付金额"
-
-#: .\mypage\templates\mypage\token.html:
 msgid "결제 내역이 없습니다."
 msgstr "没有支付记录。"
 
@@ -1612,11 +1545,6 @@ msgstr "探索各种类型的AI角色"
 msgid "개 장르"
 msgstr "类型"
 
-#: .\payment\templates\payment\payment_choice.html:
-#: .\payment\templates\payment\payment_complete.html:
-msgid "가격표"
-msgstr "价目表"
-
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제가 완료되었습니다"
 msgstr "支付已完成"
@@ -1624,10 +1552,6 @@ msgstr "支付已完成"
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제가 실패했거나 취소되었습니다"
 msgstr "支付失败或已取消"
-
-#: .\payment\templates\payment\payment_complete.html:
-msgid "메인으로 가기"
-msgstr "返回主页"
 
 #: .\payment\templates\payment\payment_complete.html:
 msgid "결제 칸으로 가기"
@@ -1657,9 +1581,6 @@ msgstr "自动支付失败"
 msgid "자동 결제 완료"
 msgstr "自动支付完成"
 
-#: .\home\templates\home\main.html
-msgid "친구초대하기"
-msgstr "邀请好友"  
 
 #: .\home\templates\home\main.html
 msgid "이벤트"
@@ -1952,6 +1873,7 @@ msgstr "您可以调整AI语音的说话速度。"
 msgid "목소리 스타일"
 msgstr "语音风格"
 
+#: .\mypage\templates\mypage\my_ai_models.html:87
 #: customer_ai/templates/customer_ai/make_ai.html:130
 msgid "값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다."
 msgstr "值越高，所选语音的情感会被放大。"
