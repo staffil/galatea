@@ -181,7 +181,7 @@ def payment_charge(request):
         context = {
             "plan": plan,
             "available_pgs": available_pgs,
-            "payment_method":payment_method
+            "PORTONE_STORE_ID": settings.PORTONE_STORE_ID,
         }
 
         return render(request, "payment/payment.html", context)
@@ -260,12 +260,12 @@ def payment_detail(request):
     return render(request, "payment/payment_detail.html")
 
 
-
-# views.py
 import requests
+import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
+from django.conf import settings
+
 @csrf_exempt
 def verify_payment_v2(request):
     if request.method == 'POST':
@@ -283,7 +283,7 @@ def verify_payment_v2(request):
             
             # PortOne V2 API로 결제 정보 조회
             headers = {
-                'Authorization': f'PortOne {settings.PORTONE_V2_API_SECRET}',  # V2 시크릿 사용
+                'Authorization': f'PortOne {settings.PORTONE_V2_API_SECRET}',
                 'Content-Type': 'application/json'
             }
             
@@ -292,17 +292,20 @@ def verify_payment_v2(request):
                 headers=headers
             )
             
+            print(f"V2 API 응답 상태: {response.status_code}")
+            print(f"V2 API 응답 내용: {response.text}")
+            
             if response.status_code == 200:
                 payment_data = response.json()
                 
-                if payment_data['status'] == 'PAID':
-                    # V1과 동일한 결제 처리 로직
+                if payment_data.get('status') == 'PAID':
+                    # 결제 성공 처리
                     payment = Payment.objects.create(
                         user=request.user,
-                        amount=payment_data.get('amount', {}).get('total', 0),
-                        payment_method=PaymentMethod.objects.first(),
+                        amount=payment_data.get('amount', {}).get('total', 0) / 100,  # 센트를 달러로
+                        payment_method=PaymentMethod.objects.filter(name='paypal').first(),
                         status='paid',
-                        imp_uid=payment_id,  # V2에서는 paymentId 사용
+                        imp_uid=payment_id,
                         merchant_uid=merchant_uid,
                         payment_rank=plan
                     )
@@ -334,15 +337,16 @@ def verify_payment_v2(request):
                 else:
                     return JsonResponse({
                         'status': 'failed',
-                        'message': '결제가 완료되지 않았습니다.'
+                        'message': f'결제 상태: {payment_data.get("status")}'
                     })
             else:
                 return JsonResponse({
                     'status': 'error',
-                    'message': f'결제 정보 조회 실패: {response.status_code}'
+                    'message': f'API 호출 실패: {response.status_code} - {response.text}'
                 })
                 
         except Exception as e:
+            print(f"V2 검증 오류: {str(e)}")
             return JsonResponse({
                 'status': 'error', 
                 'message': str(e)
