@@ -526,3 +526,19 @@ def my_coupon(request):
 
     }
     return render(request, "mypage/my_coupon.html", context)
+
+@login_required
+def token_less(request):
+    consume = TokenHistory.objects.filter(
+        user=request.user,
+        change_type=TokenHistory.CONSUME
+    ).order_by("-created_at")
+
+    # ✅ 페이지네이션 추가 (페이지당 10개씩)
+    paginator = Paginator(consume, 10)  
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "mypage/token_less.html", {
+        "consume_history": page_obj,  # page_obj 넘김
+    })
