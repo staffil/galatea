@@ -245,7 +245,7 @@ function requestPay(pgName, btn) {
         data = {
             pg: "paypal_v2",
             pay_method: "paypal_v2",
-            merchant_uid: merchant_uid,
+            merchant_uid: "7VCN742TZC6NA",
             amount: dallerAmount,
             buyer_email: "{{ request.user.email }}",
             buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
