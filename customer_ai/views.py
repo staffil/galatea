@@ -446,7 +446,6 @@ def generate_response(request):
     4. For any text containing music symbols or emojis like 🎤✨ or ♪, treat it as a **signal to read the text with a "singing" tone**, combining appropriate TTS tags, emotional expressions, and optional singing-related onomatopoeia (**la la la**, **woohoo**, etc.). **Answer this in 2-3 short sentences only.**
     5. Include visual input naturally if provided. **Answer this in 2-3 short sentences only.**
     6. Make responses playful, expressive, anime/comic-like, but clear and friendly.
-    7. After answering, ask one related follow-up question.
     8. Keep responses lively, energetic, and, where indicated, sing the text with natural rhythm and expressive tone.
     9. Always use **new words or phrases that have not been used previously** in this conversation.
 
@@ -456,7 +455,7 @@ def generate_response(request):
 
 
     system_prompt_grok = f"""
-    You are a helpful AI assistant. Answer the user's input clearly in **one short sentence only**.
+    You are a helpful AI assistant. 
 
     User's text: "{user_input}"
 
