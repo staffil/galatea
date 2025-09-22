@@ -243,7 +243,8 @@ function requestPay(pgName, btn) {
 
     if (pgName.toLowerCase() === "paypal") {
         data = {
-        channelKey: "channel-key-01887c96-eec1-4c79-8777-4f0a29723135",            pay_method: "paypal",
+            pg: "paypal_v2",
+            pay_method: "paypal",
             merchant_uid: merchant_uid,
             amount: dallerAmount,
             buyer_email: "{{ request.user.email }}",
