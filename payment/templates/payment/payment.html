@@ -243,10 +243,11 @@ function requestPay(pgName, btn) {
 
 if (pgName.toLowerCase() === "paypal") {
     data = {
-        pg: "paypal_v2",
-        pay_method: "paypal",  // paypal_v2에서 paypal로 수정
-        merchant_uid: merchant_uid,  // 고정값에서 변수로 수정
+        channelKey: "channel-key-77744639-92f9-40f7-a5d...",
+        pay_method: "paypal",
+        merchant_uid: merchant_uid,
         amount: dallerAmount,
+        currency: "USD",
         buyer_email: "{{ request.user.email }}",
         buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
         buyer_tel: "{{ request.user.phonenumber }}",
