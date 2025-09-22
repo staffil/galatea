@@ -89,7 +89,8 @@ class TokenHistory(models.Model):
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    
+    llm = models.ForeignKey("customer_ai.LLM", on_delete=models.SET_NULL, null=True, blank=True, related_name="token_histories")
+
     change_type = models.CharField(max_length=10, choices=CHANGE_TYPE_CHOICES)
     amount = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
