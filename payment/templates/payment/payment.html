@@ -244,7 +244,7 @@ function requestPay(pgName, btn) {
     if (pgName.toLowerCase() === "paypal") {
         data = {
             pg: "paypal_v2",
-            pay_method: "paypal",
+            pay_method: "paypal_v2",
             merchant_uid: merchant_uid,
             amount: dallerAmount,
             buyer_email: "{{ request.user.email }}",
