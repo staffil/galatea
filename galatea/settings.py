@@ -185,6 +185,7 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
 }
+PORTONE_V2_API_SECRET = os.getenv('PORTONE_V2_API_SECRET')
 
 # 이메일 (개발용: 콘솔 출력)
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

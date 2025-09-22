@@ -258,3 +258,94 @@ def auto_charge(request, rank_id):
 def payment_detail(request):
 
     return render(request, "payment/payment_detail.html")
+
+
+
+# views.py
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+@csrf_exempt
+def verify_payment_v2(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            payment_id = data.get('payment_id')
+            merchant_uid = data.get('merchant_uid')
+            rank_id = data.get('rank_id')
+            
+            # 결제 등급 가져오기
+            try:
+                plan = PaymentRank.objects.get(id=rank_id)
+            except PaymentRank.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': '잘못된 등급 ID'})
+            
+            # PortOne V2 API로 결제 정보 조회
+            headers = {
+                'Authorization': f'PortOne {settings.PORTONE_V2_API_SECRET}',  # V2 시크릿 사용
+                'Content-Type': 'application/json'
+            }
+            
+            response = requests.get(
+                f'https://api.portone.io/payments/{payment_id}',
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                payment_data = response.json()
+                
+                if payment_data['status'] == 'PAID':
+                    # V1과 동일한 결제 처리 로직
+                    payment = Payment.objects.create(
+                        user=request.user,
+                        amount=payment_data.get('amount', {}).get('total', 0),
+                        payment_method=PaymentMethod.objects.first(),
+                        status='paid',
+                        imp_uid=payment_id,  # V2에서는 paymentId 사용
+                        merchant_uid=merchant_uid,
+                        payment_rank=plan
+                    )
+
+                    # 토큰 충전
+                    token, created = Token.objects.get_or_create(user=request.user)
+                    token.total_token += plan.freetoken
+                    token.payment = payment
+                    token.save()
+
+                    # TokenHistory 기록
+                    TokenHistory.objects.create(
+                        user=request.user,
+                        change_type=TokenHistory.CHARGE,
+                        amount=plan.freetoken,
+                        total_voice_generated=0
+                    )
+
+                    # PaymentStats 갱신
+                    stats, created = PaymentStats.objects.get_or_create(id=1)
+                    stats.total_payments += 1
+                    stats.success_count += 1
+                    stats.save()
+
+                    return JsonResponse({
+                        'status': 'success',
+                        'message': '결제가 완료되었습니다.'
+                    })
+                else:
+                    return JsonResponse({
+                        'status': 'failed',
+                        'message': '결제가 완료되지 않았습니다.'
+                    })
+            else:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'결제 정보 조회 실패: {response.status_code}'
+                })
+                
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error', 
+                'message': str(e)
+            })
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
