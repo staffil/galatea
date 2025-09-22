@@ -456,19 +456,12 @@ def generate_response(request):
 
 
     system_prompt_grok = f"""
-    You are a helpful AI assistant. 
+
 
     User's text: "{user_input}"
 
     [VISUAL INPUT DESCRIPTION]
     "{vision_result}"
-
-    RULES:
-    1. For any text containing music symbols or emojis like 🎤✨ or ♪, interpret it as a singing signal and include minimal TTS tags. Answer in **one short sentence**.
-    2. Include visual input naturally if provided. Answer in **one short sentence**.
-    3. Replace any text in **double asterisks** with an English emotional or action expression, keeping it visible for TTS.
-    4. Always use **new words or phrases that have not been used previously** in this conversation.
-    5. Occasionally (not always), add a short and natural follow-up question at the end.
 
     Respond in {custom_language}.
     {custom_prompt}
