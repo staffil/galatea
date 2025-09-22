@@ -241,19 +241,20 @@ function requestPay(pgName, btn) {
 
     let data;
 
-    if (pgName.toLowerCase() === "paypal") {
-        data = {
-            pg: "paypal_v2",
-            pay_method: "paypal_v2",
-            merchant_uid: "7VCN742TZC6NA",
-            amount: dallerAmount,
-            buyer_email: "{{ request.user.email }}",
-            buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
-            buyer_tel: "{{ request.user.phonenumber }}",
-            m_redirect_url: "https://galatea.website/payment/complete/",
-            currency: "USD",
-            name: "GALATEA 등급 결제",
-        };
+if (pgName.toLowerCase() === "paypal") {
+    data = {
+        pg: "paypal_v2",
+        pay_method: "paypal",  // paypal_v2에서 paypal로 수정
+        merchant_uid: merchant_uid,  // 고정값에서 변수로 수정
+        amount: dallerAmount,
+        buyer_email: "{{ request.user.email }}",
+        buyer_name: "{{ request.user.get_full_name|default:request.user.username }}",
+        buyer_tel: "{{ request.user.phonenumber }}",
+        m_redirect_url: "https://galatea.website/payment/complete/",
+        currency: "USD",
+        name: "GALATEA 등급 결제",
+    };
+}
 } else if (pgName.toLowerCase() === "kg") {
     data = {
         pg: "html5_inicis",
