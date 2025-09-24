@@ -231,17 +231,19 @@ def novel_view(request, llm_id):
     })
 
 @login_required
-def phone_view(request, llm_id):
+def padcast_view(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
     except LLM.DoesNotExist:
         llm = None
-    return render(request, "customer_ai/phone.html",{
+
+    llm_list = LLM.objects.select_related()
+    return render(request, "customer_ai/padcast.html", {
         "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
         "llm_id": llm_id,
-        "llm": llm
+        "llm": llm,
+        "llm_list": llm_list
     })
-
 
 
 def not_in_voice_id(voice_id,eleven_client):
@@ -904,4 +906,5 @@ def novel_process(request):
 
 
 
-
+def padcast_mode(request):
+    return render(request, "")

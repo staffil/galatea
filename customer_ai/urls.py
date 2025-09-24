@@ -15,12 +15,13 @@ urlpatterns = [
 urlpatterns = [
     path('upload_audio/', views.upload_audio, name='upload_audio'),
     path('generate_response/', views.generate_response, name='generate_response'),
+    path('padcast_chat/', views.padcast_chat, name='padcast_chat'),
 
     path('chat/<int:llm_id>/', views.chat_view, name='chat_view'),
 
     path('vision/<int:llm_id>/', views.vision_view, name='vision_view'),
     path('novel/<int:llm_id>/', views.novel_view, name ='novel_view'),
-    path('phone/<int:llm_id>/', views.phone_view, name ='phone_view'),
+    path('padcast/<int:llm_id>/', views.padcast_view, name ='padcast_view'),
     path('make_ai/', views.make_ai, name='make_ai'),
 
     path('image-file/', views.is_allowed_image_file, name='image-file'),

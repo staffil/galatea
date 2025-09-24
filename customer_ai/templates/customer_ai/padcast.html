@@ -1,0 +1,943 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '팟캐스트' %}</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+</head>
+
+<style>
+/* ===== PODCAST MODE CSS ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #667eea;
+    --primary-dark: #5a6fd8;
+    --secondary: #764ba2;
+    --accent: #f093fb;
+    --bg-primary: #0f0f23;
+    --bg-secondary: #1a1a2e;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --glow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Animated Background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: rgba(15, 15, 35, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+
+
+/* 공유 버튼 */
+.share-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, var(--accent), #f5576c);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+}
+
+.share-btn::before {
+    content: '🔗';
+    font-size: 1rem;
+}
+
+/* Main Content */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    padding-top: 70px;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 300px;
+    padding: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    max-width: 1200px;
+    margin-left: 320px;
+    margin-right: auto;
+}
+
+/* AI Selection */
+.ai-selection {
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.ai-selection label {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+}
+
+.ai-selection select {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    z-index: 100; /* select의 z-index를 더 높게 설정 */
+}
+
+.ai-selection select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.ai-selection select:hover {
+    border-color: var(--primary);
+}
+
+.ai-selection select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 10px;
+}
+
+/* AI Showcase Container */
+.ai-showcase {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 25px;
+    padding: 30px;
+    color: white;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 400px;
+}
+
+.ai-showcase:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+}
+
+/* AI 1 특별 스타일 */
+#ai1-display {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* AI 2 특별 스타일 */
+#ai2-display {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* AI 이미지 */
+.ai-image {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    margin: 0 auto 20px auto;
+    display: block;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* 채팅 헤더 */
+.chat-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.ai-avatar {
+    font-size: 2.2rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.chat-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.chat-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* 펄스 애니메이션 */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.ai-showcase::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* 반응형 디자인 */
+
+    
+
+    
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 15px;
+        gap: 20px;
+    }
+    
+    .ai-showcase {
+        padding: 25px;
+        min-height: 350px;
+    }
+    
+    .chat-title {
+        font-size: 1.5rem;
+    }
+    
+    .ai-image {
+        width: 110px;
+        height: 110px;
+    }
+    
+    .ai-avatar {
+        font-size: 2rem;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .chat-subtitle {
+        font-size: 1rem;
+    }
+    
+    .ai-selection {
+        padding: 20px;
+    }
+    
+    .ai-selection label {
+        font-size: 1.1rem;
+    }
+    
+    .ai-selection select {
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
+    
+    .sidebar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 12px;
+        gap: 15px;
+        height: 200px;
+    }
+    
+    .ai-showcase {
+        padding: 20px;
+        min-height: 320px;
+    }
+    
+    .chat-title {
+        font-size: 1rem;
+    }
+    
+    .ai-image {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .ai-avatar {
+        font-size: 1.8rem;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .chat-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .ai-selection {
+        height: 150px;
+        padding: 15px;
+    }
+  
+}
+
+/* Chat Messages */
+.chat-messages {
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 25px;
+    margin: 20px 0;
+    max-height: 400px;
+    overflow-y: auto;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.message {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+}
+
+.message.user {
+    flex-direction: row-reverse;
+}
+
+.message.user .message-content {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    margin-left: 50px;
+}
+
+.message.ai .message-content {
+    background: rgba(255, 255, 255, 0.1);
+    margin-right: 50px;
+}
+
+.message-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    backdrop-filter: blur(10px);
+}
+
+.message-content {
+    padding: 15px 20px;
+    border-radius: 18px;
+    color: white;
+    line-height: 1.5;
+    word-wrap: break-word;
+    max-width: 70%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Input Section */
+.input-section {
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.text-input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid var(--border);
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.text-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.text-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.send-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.send-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.send-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* Controls Row */
+.controls-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.record-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.record-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+.record-btn.recording {
+    background: linear-gradient(135deg, #ff4757, #c44569);
+    animation: recordPulse 2s infinite;
+}
+
+@keyframes recordPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 20px rgba(255, 71, 87, 0);
+    }
+}
+
+.record-status {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.record-status.recording {
+    color: #ff6b6b;
+    font-weight: 600;
+}
+
+/* Recognized Text */
+.recognized-text {
+    min-height: 50px;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border: 2px dashed var(--border);
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.recognized-text:not(:empty) {
+    background: rgba(102, 126, 234, 0.1);
+    border-color: var(--primary);
+    color: var(--text-primary);
+    font-style: normal;
+}
+
+/* Audio Player */
+.audio-player {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+}
+
+.audio-player audio {
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.audio-player audio::-webkit-media-controls-panel {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.audio-player audio::-webkit-media-controls-play-button,
+.audio-player audio::-webkit-media-controls-pause-button {
+    background: var(--primary);
+    border-radius: 50%;
+}
+
+.audio-player audio::-webkit-media-controls-timeline {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+.audio-player audio::-webkit-media-controls-current-time-display,
+.audio-player audio::-webkit-media-controls-time-remaining-display {
+    color: var(--text-primary);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .chat-messages {
+        padding: 20px;
+        max-height: 300px;
+    }
+    
+    .message-content {
+        max-width: 85%;
+        font-size: 0.9rem;
+    }
+    
+    .message-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+    }
+    
+    .input-section {
+        padding: 20px;
+    }
+    
+    .text-input {
+        padding: 12px 18px;
+        font-size: 0.95rem;
+    }
+    
+    .send-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+    
+    .record-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 1.2rem;
+    }
+    
+    .controls-row {
+        gap: 15px;
+    }
+    
+    .record-status {
+        font-size: 0.9rem;
+    }
+    
+    .recognized-text {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .audio-player {
+        padding: 15px;
+    }
+    
+    .audio-player audio {
+        height: 45px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-messages {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .message {
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .message-content {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        max-width: 90%;
+    }
+    
+    .message.user .message-content {
+        margin-left: 30px;
+    }
+    
+    .message.ai .message-content {
+        margin-right: 30px;
+    }
+    
+    .input-section {
+        padding: 15px;
+    }
+    
+    .input-row {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .text-input {
+        width: 100%;
+        padding: 10px 16px;
+    }
+    
+    .send-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+        align-self: flex-end;
+    }
+    
+    .controls-row {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .record-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.1rem;
+    }
+    
+    .record-status {
+        font-size: 0.85rem;
+        text-align: center;
+    }
+    
+    .recognized-text {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        min-height: 40px;
+    }
+    
+    .audio-player {
+        padding: 12px;
+    }
+    
+    .audio-player audio {
+        height: 40px;
+    }
+}
+</style>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+    
+    <!-- 햄버거 메뉴 버튼 -->
+    <div class="hamburger" style="margin-top: 80px;" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-options">
+                <div class="mode-option" onclick="location.href='/customer_ai/chat/{{llm_id}}';">
+                    <input type="radio" name="mode">
+                    <label><i class="fas fa-comment"></i> {% trans 'TEXT MODE' %}</label>
+                </div>
+
+                <div class="mode-option" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                    <input type="radio" name="mode">
+                    <label><i class="fas fa-eye"></i> {% trans 'VISION MODE' %}</label>
+                </div>
+
+                <div class="mode-option" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <input type="radio" name="mode">
+                    <label><i class="fas fa-book"></i> {% trans 'NOVEL MODE' %}</label>
+                </div>
+
+                <div class="mode-option active">
+                    <input type="radio" name="mode" checked>
+                    <label><i class="fas fa-podcast"></i> PODCAST MODE</label>
+                </div>
+            </div>
+            <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+                {% trans '공유하기' %}
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <!-- AI 선택 드롭다운 -->
+            <div class="ai-selection">
+                <label for="llm2">두 번째 AI 선택:</label>
+                <select id="llm2" name="llm2" onchange="showAI2(this.value)">
+                    <option value="">-- AI를 선택해주세요 --</option>
+                    {% for item in llm_list %}
+                        <option value="{{ item.id }}"
+                            data-name="{{ item.name }}"
+                            data-image="{% if item.llm_image %}{{ item.llm_image.url }}{% endif %}"
+                        >
+                            {{ item.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 첫 번째 AI -->
+            <div class="ai-showcase" id="ai1-display">
+                {% if llm.llm_image %}
+                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
+                {% endif %}
+                <div class="chat-header">
+                    <div class="ai-avatar">🤖</div>
+                    <h1 class="chat-title">{{ llm.name }}</h1>
+                </div>
+            </div>
+
+            <!-- 두 번째 AI -->
+            <div class="ai-showcase" id="ai2-display">
+                <div class="chat-header">
+                    <div class="ai-avatar">🎙️</div>
+                    <h1 class="chat-title">두 번째 AI</h1>
+                </div>
+                <p class="chat-subtitle">AI를 선택해주세요</p>
+            </div>
+
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="message-area">
+                <div class="message ai">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-row">
+                    <input type="text" class="text-input" id="text-input" 
+                           placeholder="{% trans '메시지를 입력하세요...' %}" 
+                           onkeydown="if(event.key === 'Enter'){ sendText(); }">
+                    <button class="send-btn" onclick="sendText()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div class="controls-row">
+                    <button class="record-btn" id="record-btn" onclick="toggleRecording()">
+                        <i class="fas fa-microphone" id="record-icon"></i>
+                    </button>
+                    <div class="record-status" id="record-status">
+                        {% trans '녹음을 시작하려면 버튼을 누르세요' %}
+                    </div>
+                </div>
+                
+                <div class="recognized-text" id="recognized-text"></div>
+                
+                <!-- Audio Player -->
+                <div class="audio-player" id="audio-container" style="display: none;">
+                    <audio id="tts-audio" controls></audio>
+                </div>
+            </div>
+
+
+
+
+        </main>
+    </div>
+
+    <script>
+     
+        function showAI2(id) {
+            const select = document.getElementById('llm2');
+            const option = select.options[select.selectedIndex];
+            const display = document.getElementById('ai2-display');
+
+            if (!id) {
+                display.innerHTML = `
+                    <div class="chat-header">
+                        <div class="ai-avatar">🎙️</div>
+                        <h1 class="chat-title">두 번째 AI</h1>
+                    </div>
+                    <p class="chat-subtitle">AI를 선택해주세요</p>
+                `;
+                return;
+            }
+
+            const name = option.dataset.name;
+            const image = option.dataset.image;
+
+            display.innerHTML = `
+                ${image ? `<img src="${image}" alt="${name}" class="ai-image" />` : ''}
+                <div class="chat-header">
+                    <div class="ai-avatar">🤖</div>
+                    <h1 class="chat-title">${name}</h1>
+                </div>
+            `;
+        }
+
+        // 공유 버튼 기능
+        document.querySelector('.share-btn').addEventListener('click', function() {
+            const link = this.getAttribute('data-link');
+            if (navigator.share) {
+                navigator.share({
+                    title: 'AI 팟캐스트',
+                    text: '두 AI가 대화하는 팟캐스트를 체험해보세요!',
+                    url: link
+                });
+            } else {
+                navigator.clipboard.writeText(link).then(() => {
+                    alert('링크가 클립보드에 복사되었습니다!');
+                });
+            }
+        });
+
+
+    </script>
+
+    <script src="{% static 'js/customer_ai/custom.js' %}">
+   
+</script>
+</body>
+</html>
