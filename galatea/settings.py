@@ -1,4 +1,5 @@
 
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -15,6 +16,7 @@ IAMPORT_API_KEY = os.getenv("IAMPORT_API_KEY")
 IAMPORT_API_SECRET = os.getenv("IAMPORT_API_SECRET")
 print("GOOGLE_CLIENT_ID", GOOGLE_CLIENT_ID)
 print("GOOGLE_CLIENT_SECRET", GOOGLE_CLIENT_SECRET)
+PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID")
 
 # 보안 설정
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
