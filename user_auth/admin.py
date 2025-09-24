@@ -30,7 +30,7 @@ except admin.sites.NotRegistered:
 # 기존 이름 그대로 UserAdmin 사용
 @admin.register(Users)
 class UserAdmin(BaseUserAdmin):
-    list_display = ('사용자_번호', '사용자_아이디', '이메일_주소', '닉네임','보이스_이름', 'is_staff', 'is_active')
+    list_display = ('사용자_번호', '사용자_아이디', '이메일_주소', '닉네임', 'is_staff', 'is_active')
     list_filter = ('is_staff', 'is_active', 'status')
 
     # 컬럼 이름 한글화
