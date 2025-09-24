@@ -535,10 +535,10 @@ def generate_response(request):
             language_code=custom_language,
             voice_settings={
                 "stability": custom_stability,
-                "similarity": 0.75,
+                "similarity": 0.5,
                 "style": custom_style,
                 "speed": custom_speed,
-                "use_speaker_boost": True
+                "use_speaker_boost": False
             }
         )
         with open(audio_path, "wb") as f:
