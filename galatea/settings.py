@@ -152,7 +152,6 @@ LOGOUT_REDIRECT_URL = "/"
 
 # allauth 설정
 SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
-SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_SIGNUP_FORM_CLASS = None
 
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'  # 이메일 인증 스킵
@@ -227,7 +226,7 @@ LOGGING = {
         },
     },
 }
-SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_AUTO_SIGNUP = True
 
 
 
