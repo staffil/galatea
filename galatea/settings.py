@@ -180,6 +180,13 @@ SOCIALACCOUNT_PROVIDERS = {
 # 세션 / 캐시
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# 브라우저 닫아도 세션 유지 (선택사항)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# 세션 보안 강화
+SESSION_COOKIE_SECURE = True  # HTTPS에서만 쿠키 전송
+SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 CACHES = {
     "default": {
