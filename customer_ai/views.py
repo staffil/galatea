@@ -510,7 +510,10 @@ def generate_response(request):
         text = ''.join(ch for ch in text if ch.isprintable())
         return text[:1000] + "..." if len(text) > 1000 else text
 
-    ai_text = clean_text_for_tts(ai_text)
+    ai_text = clean_text_for_tts(ai_text).strip()
+    if not ai_text:
+        ai_text = "죄송합니다. 음성으로 변환할 내용이 없습니다."
+
 
     # 세션에 대화 내역 저장
     chat_history.append({"role": "assistant", "content": ai_text})
