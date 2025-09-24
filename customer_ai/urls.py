@@ -15,7 +15,7 @@ urlpatterns = [
 urlpatterns = [
     path('upload_audio/', views.upload_audio, name='upload_audio'),
     path('generate_response/', views.generate_response, name='generate_response'),
-    path('padcast_chat/', views.padcast_chat, name='padcast_chat'),
+    # path('padcast_chat/', views.padcast_chat, name='padcast_chat'),
 
     path('chat/<int:llm_id>/', views.chat_view, name='chat_view'),
 
