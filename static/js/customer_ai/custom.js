@@ -5,6 +5,25 @@ let stream;
 
 const baseUrl = window.location.pathname.replace(/\/(chat|vision|novel)\/\d+\/?$/, '');
 
+// 타이핑 효과 함수
+function typewriterEffect(element, text, speed = 30) {
+    element.textContent = '';
+    let i = 0;
+    
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            // 문장 부호에서는 조금 더 긴 간격
+            const currentChar = text.charAt(i - 1);
+            const delay = (currentChar === '.' || currentChar === '!' || currentChar === '?') ? speed * 3 : speed;
+            setTimeout(type, delay);
+        }
+    }
+    type();
+}
+
+// 사이드바 토글 함수
 window.toggleSidebar = function() {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
@@ -12,6 +31,7 @@ window.toggleSidebar = function() {
     hamburger.classList.toggle('active');
 };
 
+// 녹음 토글 함수
 window.toggleRecording = function() {
     const recordBtn = document.getElementById("record-btn");
     const recordIcon = document.getElementById("record-icon");
@@ -81,6 +101,7 @@ window.toggleRecording = function() {
     }
 };
 
+// 텍스트 전송 함수 (타이핑 효과 적용)
 window.sendText = function(text) {
     const userText = text || document.getElementById("text-input").value;
     if (!userText.trim()) return;
@@ -96,12 +117,15 @@ window.sendText = function(text) {
     `;
     messageArea.appendChild(userMessage);
 
+    // 입력창 비우기
     document.getElementById("text-input").value = "";
 
-    // AI typing bubble
+    // AI 아바타 이미지 설정
     const avatarImg = LLM_IMAGE_URL ? 
         `<img src="${LLM_IMAGE_URL}" alt="AI" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` :
         '🤖';
+
+    // AI typing bubble 추가
     const typingMessage = document.createElement("div");
     typingMessage.className = "message ai typing";
     typingMessage.innerHTML = `
@@ -113,10 +137,12 @@ window.sendText = function(text) {
     messageArea.appendChild(typingMessage);
     messageArea.scrollTop = messageArea.scrollHeight;
 
+    // FormData 준비
     const formData = new FormData();
     formData.append("text", userText);
     formData.append("llm_id", LLM_ID);
 
+    // 서버로 요청 전송
     fetch(`${baseUrl}/generate_response/`, {
         method: "POST",
         body: formData
@@ -126,29 +152,66 @@ window.sendText = function(text) {
         return res.json();
     })
     .then(data => {
+        // typing bubble 제거
         typingMessage.remove();
 
+        // AI 응답 메시지 생성 (빈 content로 시작)
         const aiMessage = document.createElement("div");
         aiMessage.className = "message ai";
-        const avatarImgAI = LLM_IMAGE_URL ? 
-            `<img src="${LLM_IMAGE_URL}" alt="AI" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` :
-            '🤖';
+        const messageId = 'ai-message-' + Date.now(); // 고유 ID 생성
         aiMessage.innerHTML = `
-            <div class="message-avatar">${avatarImgAI}</div>
-            <div class="message-content">${data.ai_text}</div>
+            <div class="message-avatar">${avatarImg}</div>
+            <div class="message-content" id="${messageId}"></div>
         `;
         messageArea.appendChild(aiMessage);
 
-        if (data.audio_url) {
-            const audioElem = document.getElementById("tts-audio");
-            audioElem.src = data.audio_url;
-            document.getElementById("audio-container").style.display = "block";
-            audioElem.play();
-        }
+        // 스크롤 위치 조정
         messageArea.scrollTop = messageArea.scrollHeight;
+
+        // 타이핑 효과로 AI 응답 표시
+        const responseDiv = document.getElementById(messageId);
+        typewriterEffect(responseDiv, data.ai_text, 25); // 25ms 간격으로 타이핑
+
+        // 오디오가 있으면 타이핑과 동시에 재생 시작
+        if (data.audio_url) {
+            // 타이핑 시작과 거의 동시에 오디오 재생
+            setTimeout(() => {
+                const audioElem = document.getElementById("tts-audio");
+                audioElem.src = data.audio_url;
+                document.getElementById("audio-container").style.display = "block";
+                audioElem.play();
+            }, 300); // 300ms 후 오디오 재생 (자연스러운 타이밍)
+        }
+
+        // 스크롤을 끝까지 유지
+        const scrollInterval = setInterval(() => {
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }, 50);
+
+        // 타이핑이 끝나면 스크롤 업데이트 중단
+        setTimeout(() => {
+            clearInterval(scrollInterval);
+        }, data.ai_text.length * 25 + 500); // 타이핑 시간 + 여유시간
     })
     .catch(error => {
-        alert(messages.errorOccurred + error.message);
+        // 에러 발생 시 typing bubble 제거
+        if (typingMessage.parentNode) {
+            typingMessage.remove();
+        }
+        
+        // 에러 메시지 표시
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "message ai";
+        errorMessage.innerHTML = `
+            <div class="message-avatar">⚠️</div>
+            <div class="message-content" style="color: #e74c3c;">
+                ${messages.errorOccurred} ${error.message}
+            </div>
+        `;
+        messageArea.appendChild(errorMessage);
+        messageArea.scrollTop = messageArea.scrollHeight;
+        
+        console.error('Error:', error);
     });
 };
 
@@ -176,7 +239,7 @@ window.addEventListener('resize', () => {
     }
 });
 
-// 링크 복사
+// 링크 복사 기능
 document.addEventListener("click", function(e) {
     if (e.target.classList.contains("share-btn")) {
         const link = e.target.getAttribute("data-link");
@@ -184,4 +247,23 @@ document.addEventListener("click", function(e) {
             alert(messages.shareCopied);
         });
     }
+});
+
+// 페이지 로드 완료 후 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    // 텍스트 입력창에 포커스
+    const textInput = document.getElementById('text-input');
+    if (textInput) {
+        textInput.focus();
+    }
+    
+    // 엔터키 이벤트 리스너 추가 (중복 방지)
+    textInput?.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendText();
+        }
+    });
+    
+    console.log('Voice Chat UI initialized with typing effect');
 });
