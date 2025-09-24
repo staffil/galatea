@@ -21,3 +21,14 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
         True이면 자동으로 회원가입 가능
         """
         return True
+    def pre_social_login(self, request, sociallogin):
+
+        if sociallogin.is_existing:
+            return
+        
+        try:
+            from home.models import Users  # 커스텀 사용자 모델 import
+            user = Users.objects.get(email__iexact=sociallogin.account.extra_data['email'])
+            sociallogin.connect(request, user)
+        except Users.DoesNotExist:
+            pass
