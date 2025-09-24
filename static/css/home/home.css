@@ -32,7 +32,7 @@ body {
     color: var(--text-primary);
 }
 
-/* Animated Background Layers */
+/* Static Background Layers - 움직임 제거 */
 body::before {
     content: '';
     position: fixed;
@@ -44,7 +44,7 @@ body::before {
         radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
-    animation: backgroundFloat 20s ease-in-out infinite;
+    /* animation: backgroundFloat 20s ease-in-out infinite; 제거 */
     z-index: 1;
 }
 
@@ -61,10 +61,11 @@ body::after {
         radial-gradient(1px 1px at 90px 40px, rgba(6, 182, 212, 0.4), transparent),
         radial-gradient(1px 1px at 130px 80px, rgba(240, 147, 251, 0.4), transparent);
     background-size: 200px 150px;
-    animation: sparkle 15s linear infinite;
+    /* animation: sparkle 15s linear infinite; 제거 */
     z-index: 1;
 }
 
+/* 배경 애니메이션 제거 - 주석 처리
 @keyframes backgroundFloat {
     0%, 100% { 
         transform: translateY(0px) translateX(0px); 
@@ -86,6 +87,7 @@ body::after {
         opacity: 0.3; 
     }
 }
+*/
 
 .wrapper {
     position: relative;
@@ -98,7 +100,7 @@ body::after {
     justify-content: center;
 }
 
-/* Logo Section */
+/* Logo Section - 호버 효과만 유지 */
 .logo {
     position: absolute;
     top: 40px;
@@ -147,7 +149,7 @@ h1 {
     text-shadow: none;
 }
 
-/* Main Container */
+/* Main Container - 움직임 제거 */
 .container {
     position: relative;
     display: flex;
@@ -159,7 +161,7 @@ h1 {
     margin-top: 50px;
 }
 
-/* Modern Circle Background */
+/* Modern Circle Background - 원형 요소들만 애니메이션 유지 */
 .circle-bg {
     position: absolute;
     border-radius: 50%;
@@ -232,6 +234,7 @@ h1 {
     animation: logoFloat 4s ease-in-out infinite;
 }
 
+/* 원형 요소들의 애니메이션 유지 */
 @keyframes pulse {
     0% {
         transform: translate(-50%, -50%) scale(1);
@@ -261,7 +264,7 @@ h1 {
     }
 }
 
-/* Typography */
+/* Typography - 움직임 제거 */
 .welcome-text {
     font-size: 3.5rem;
     font-weight: 300;
@@ -273,7 +276,7 @@ h1 {
     line-height: 1.2;
     font-family: "Inter", sans-serif;
     letter-spacing: 0.05em;
-    animation: fadeInUp 1s ease-out;
+    /* animation: fadeInUp 1s ease-out; 제거 */
     text-transform: lowercase;
 }
 
@@ -295,11 +298,12 @@ h1 {
     letter-spacing: 0.02em;
     line-height: 0.9;
     font-family: "Bungee", sans-serif;
-    animation: fadeInScale 1.2s ease-out;
+    /* animation: fadeInScale 1.2s ease-out; 제거 */
     text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
     filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.2));
 }
 
+/* 페이드인 애니메이션 제거 - 주석 처리
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -321,8 +325,9 @@ h1 {
         transform: translateY(0) scale(1);
     }
 }
+*/
 
-/* Button Container */
+/* Button Container - 움직임 제거 */
 .button-container {
     position: relative;
     display: flex;
@@ -331,10 +336,10 @@ h1 {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 40px;
-    animation: fadeInUp 1s ease-out 0.5s both;
+    /* animation: fadeInUp 1s ease-out 0.5s both; 제거 */
 }
 
-/* Modern Buttons */
+/* Modern Buttons - 호버 효과만 유지 */
 .btn {
     padding: 18px 40px;
     border: none;
@@ -493,7 +498,7 @@ h1 {
     .circle-5 { width: 120px; height: 120px; }
 }
 
-/* 태블릿 */
+/* 태블릿 - 개선된 반응형 */
 @media (max-width: 1023px) and (min-width: 768px) {
     .logo {
         top: 30px;
@@ -502,30 +507,30 @@ h1 {
     }
     
     .logo img {
-        width: 80px;
-        height: 80px;
+        width: 50px;
+        height: 50px;
     }
     
     h1 {
-        font-size: 22px;
+        font-size: 20px;
         letter-spacing: 2px;
     }
     
     .welcome-text {
-        font-size: 5rem;
+        font-size: 2.8rem;
         margin-bottom: 15px;
     }
     
     .galatea-text {
-        font-size: 8rem;
-        margin-bottom: 60px;
+        font-size: 4.5rem;
+        margin-bottom: 50px;
     }
     
-    .circle-1 { width: 1000px; height: 1000px; }
-    .circle-2 { width: 800px; height: 800px; }
-    .circle-3 { width: 620px; height: 620px; }
-    .circle-4 { width: 400px; height: 400px; }
-    .circle-5 { width: 240px; height: 240px; }
+    .circle-1 { width: 600px; height: 600px; }
+    .circle-2 { width: 480px; height: 480px; }
+    .circle-3 { width: 350px; height: 350px; }
+    .circle-4 { width: 230px; height: 230px; }
+    .circle-5 { width: 140px; height: 140px; }
     
     .button-container {
         gap: 20px;
@@ -534,10 +539,9 @@ h1 {
     }
     
     .btn {
-        width: 400px;
+        width: 320px;
         padding: 16px 35px;
-        height: 50px;
-        font-size: 20px;
+        font-size: 16px;
     }
 }
 
@@ -546,51 +550,52 @@ h1 {
     .logo {
         top: 20px;
         left: 20px;
-        padding: 18px 27px;
-        border-radius: 22px;
+        padding: 10px 18px;
+        border-radius: 15px;
     }
     
     .logo img {
-        width: 75px;
-        height: 75px;
+        width: 40px;
+        height: 40px;
     }
     
     h1 {
-        font-size: 30px;
-        letter-spacing: 2.7px;
+        font-size: 18px;
+        letter-spacing: 1.5px;
     }
     
     .container {
-        margin-top: 45px;
+        margin-top: 30px;
+        padding: 0 20px;
     }
     
     .welcome-text {
-        font-size: 3rem;
-        margin-bottom: 15px;
+        font-size: 2.2rem;
+        margin-bottom: 12px;
     }
     
     .galatea-text {
-        font-size: 4.5rem;
-        margin-bottom: 75px;
+        font-size: 3.2rem;
+        margin-bottom: 50px;
     }
     
-    .circle-1 { width: 600px; height: 600px; }
-    .circle-2 { width: 480px; height: 480px; }
-    .circle-3 { width: 330px; height: 330px; }
-    .circle-4 { width: 210px; height: 210px; }
-    .circle-5 { width: 120px; height: 120px; }
+    .circle-1 { width: 450px; height: 450px; }
+    .circle-2 { width: 360px; height: 360px; }
+    .circle-3 { width: 270px; height: 270px; }
+    .circle-4 { width: 180px; height: 180px; }
+    .circle-5 { width: 110px; height: 110px; }
     
     .button-container {
-        gap: 22px;
+        gap: 15px;
         flex-direction: column;
         align-items: center;
-        margin-top: 45px;
+        margin-top: 35px;
     }
     
     .btn {
-        width: 375px;
-        padding: 21px 45px;
-        font-size: 21px;
+        width: 280px;
+        padding: 16px 30px;
+        font-size: 15px;
         min-width: unset;
     }
 }
@@ -600,49 +605,53 @@ h1 {
     .logo {
         top: 15px;
         left: 15px;
-        padding: 15px 22px;
+        padding: 8px 15px;
     }
     
     .logo img {
-        width: 67px;
-        height: 67px;
+        width: 35px;
+        height: 35px;
     }
     
     h1 {
-        font-size: 27px;
-        letter-spacing: 2.2px;
+        font-size: 16px;
+        letter-spacing: 1.2px;
+    }
+    
+    .container {
+        padding: 0 15px;
     }
     
     .welcome-text {
-        font-size: 2.4rem;
-        margin-bottom: 12px;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
     }
     
     .galatea-text {
-        font-size: 3.4rem;
-        margin-bottom: 60px;
+        font-size: 2.5rem;
+        margin-bottom: 40px;
     }
     
-    .circle-1 { width: 480px; height: 480px; }
-    .circle-2 { width: 390px; height: 390px; }
-    .circle-3 { width: 270px; height: 270px; }
-    .circle-4 { width: 180px; height: 180px; }
-    .circle-5 { width: 105px; height: 105px; }
+    .circle-1 { width: 350px; height: 350px; }
+    .circle-2 { width: 280px; height: 280px; }
+    .circle-3 { width: 210px; height: 210px; }
+    .circle-4 { width: 140px; height: 140px; }
+    .circle-5 { width: 90px; height: 90px; }
     
     .button-container {
-        gap: 18px;
-        margin-top: 37px;
+        gap: 12px;
+        margin-top: 30px;
     }
     
     .btn {
-        width: 330px;
-        padding: 18px 37px;
-        font-size: 19px;
-        border-radius: 45px;
+        width: 250px;
+        padding: 14px 25px;
+        font-size: 14px;
+        border-radius: 35px;
     }
 }
 
-/* 가로 모드 최적화 */
+/* 가로 모드 최적화 - 움직임 제거 */
 @media (max-height: 600px) and (orientation: landscape) and (max-width: 1023px) {
     .wrapper {
         flex-direction: row;
@@ -656,17 +665,17 @@ h1 {
         position: absolute;
         top: 15px;
         left: 15px;
-        padding: 10px 15px;
+        padding: 8px 12px;
     }
     
     .logo img {
-        width: 45px;
-        height: 45px;
+        width: 30px;
+        height: 30px;
     }
     
     h1 {
-        font-size: 18px;
-        letter-spacing: 1.5px;
+        font-size: 14px;
+        letter-spacing: 1px;
     }
     
     .container {
@@ -675,33 +684,33 @@ h1 {
     }
     
     .welcome-text {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         margin-bottom: 5px;
     }
     
     .galatea-text {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
+        font-size: 2rem;
+        margin-bottom: 15px;
     }
     
     .button-container {
         width: 35%;
-        gap: 10px;
+        gap: 8px;
         margin-top: 0;
     }
     
     .btn {
         width: 100%;
-        padding: 10px 20px;
+        padding: 8px 16px;
         font-size: 12px;
     }
     
     .circle-bg {
-        transform: translate(-50%, -50%) scale(0.7);
+        transform: translate(-50%, -50%) scale(0.5);
     }
 }
 
-/* 접근성 및 성능 최적화 */
+/* 접근성 및 성능 최적화 - 모든 애니메이션 제거 옵션 */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -709,8 +718,6 @@ h1 {
         transition-duration: 0.01ms !important;
     }
     
-    body::before,
-    body::after,
     .circle-bg,
     .circle-5 img {
         animation: none;

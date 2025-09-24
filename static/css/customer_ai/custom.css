@@ -1,539 +1,6 @@
- * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-      body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #3b0d69;
-    min-height: 100vh;
-
-}
-.container {
-    margin: 0 auto;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    height: 100%;
-            background-color: #681170;
-    margin-top: -40px;
-    display: flex;
-    min-height: 300vh; /* 변경: 화면이 길어질 수 있도록 */
-}
-
-
-       header {
-  height: 60px;  /* 고정 높이 지정 */
-  position: fixed;
-  top: 90px;
-  left: 0;
-  width: 100%;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  box-sizing: border-box;
-}
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            color: white;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 3px solid white;
-        }
-
-
-/* 사이드바 오버레이 */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar-overlay.active {
-    opacity: 1;
-}
-
-/* Sidebar */
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 60px;
-    width: 280px;
-    height: calc(100vh - 60px);
-    background: rgba(26, 26, 46, 0.8);
-    backdrop-filter: blur(20px);
-    border-right: 1px solid var(--border);
-    padding: 30px 20px;
-    transition: transform 0.3s ease;
-    z-index: 999;
-    overflow-y: auto;
-}
-
-.sidebar h3 {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.mode-options {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.mode-option {
-    position: relative;
-    padding: 15px 20px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-}
-
-.mode-option:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--glow);
-    border-color: var(--primary);
-}
-
-.mode-option.active {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-color: var(--primary);
-    box-shadow: var(--glow);
-}
-
-.mode-option input {
-    appearance: auto;
-    opacity: 1;
-    position: static;
-    margin-right: 8px;
-}
-
-.mode-option label {
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.95rem;
-}
-        /* 메인 채팅 영역 */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 40px;
-            align-items: center;
-            justify-content: flex-start; /* 변경: center에서 flex-start로 */
-        }
-
-        .chat-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .ai-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #ff6b9d;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: white;
-        }
-
-        .chat-title {
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-        }
-
-        .chat-subtitle {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-
-        /* 텍스트 입력 */
-        .text-input {
-            width: 100%;
-            max-width: 800px;
-            padding: 15px 25px;
-            border: none;
-            border-radius: 30px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.9);
-            margin-bottom: 20px;
-            outline: none;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .text-input::placeholder {
-            color: #999;
-        }
-
-        /* 오디오 플레이어 */
-        .audio-player {
-            width: 100%;
-            max-width: 400px;
-            margin: 20px 0;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-        }
-
-        .audio-player audio {
-            width: 100%;
-            outline: none;
-        }
-
-        /* 녹음 버튼 - 사진과 동일한 원형 디자인 */
-        .record-container {
-            margin: 40px 0; /* 변경: margin-top만 있던 것을 위아래 마진으로 */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            position: relative;
-            width: 440px;
-            height: 440px;
-            justify-content: center;
-        }
-
-        .record-button {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: none;
-            background: #F359DE;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            z-index: 5;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* 동심원들 - 바깥쪽부터 안쪽으로 */
-        .record-button::before {
-            content: '';
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: rgba(243, 89, 222, 0.28);
-            z-index: -1;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .record-button::after {
-            content: '';
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            background: rgba(243, 89, 222, 0.51);
-            z-index: -2;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            
-        }
-
-        /* 추가 동심원들을 위한 가상 요소들 */
-        .record-container::before {
-            content: '';
-            position: absolute;
-            width: 360px;
-            height: 360px;
-            border-radius: 50%;
-            background: rgba(243, 89, 222, 0.28);
-            z-index: -3;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .record-container::after {
-            content: '';
-            position: absolute;
-            width: 440px;
-            height: 440px;
-            border-radius: 50%;
-            background: rgba(243, 89, 222, 0.12);
-            z-index: -4;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .record-button {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: none;
-    background: linear-gradient(135deg, #ff6ec4, #f359de);
-    box-shadow: 0 8px 20px rgba(243, 89, 222, 0.4);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    z-index: 5;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* Hover 시 3D 느낌 */
-.record-button:hover {
-    transform: translate(-50%, -50%) scale(1.05);
-    box-shadow: 0 12px 25px rgba(243, 89, 222, 0.6);
-}
-
-/* 녹음 중일 때 색상 변화 */
-.record-button.recording {
-    background: linear-gradient(135deg, #ff2e63, #ff6b9d);
-}
-
-/* 녹음 중일 때 퍼져나가는 리플 효과 */
-.record-button.recording::after {
-    content: '';
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.6);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: ripple 1.5s infinite ease-out;
-}
-
-/* 리플 애니메이션 */
-@keyframes ripple {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.8;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(2.5);
-        opacity: 0;
-    }
-}
-
-/* 아이콘 부드러운 회전 */
-.record-icon {
-    font-size: 32px;
-    color: white;
-    transition: transform 0.3s ease;
-}
-.record-button.recording .record-icon {
-    transform: rotate(180deg);
-}
-
-
-        @keyframes recording-pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-        }
-
-        @keyframes ring-pulse {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-            50% {
-                opacity: 0.7;
-                transform: translate(-50%, -50%) scale(1.05);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        /* 중앙 마이크 아이콘 */
-        .record-icon {
-            font-size: 32px;
-            z-index: 10;
-            position: relative;
-            color: white;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .record-status {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            text-align: center;
-        }
-
-        /* 인식된 텍스트 */
-        .recognized-text {
-            color: rgba(255, 255, 255, 0.9);
-            font-style: italic;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        /* 메시지 영역 - 마이크 아래로 이동 */
-        .message-area {
-            width: 100%;
-            max-width: 800px;
-            margin: 40px 0;
-            min-height: 200px; /* 최소 높이 설정 */
-        }
-
-        .user-message {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 20px 20px 5px 20px;
-            margin-bottom: 15px;
-            backdrop-filter: blur(10px);
-            text-align: left;
-        }
-
-        .ai-message {
-            background: #ff6b9d;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 20px 20px 20px 5px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
-            text-align: left;
-            width: 100%;
-        }
-.chat-container {
-    position: relative; /* 배경과 내용을 겹치게 하기 위해 */
-}
-
-.background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.5;
-    z-index: 0; /* 뒤로 보내기 */
-}
-
-.chat-content {
-    position: relative;
-    z-index: 1; /* 메인 채팅 앞으로 */
-    padding: 20px; /* 배경과 겹치지 않도록 여유 공간 */
-}
-
-
-
-        /* 반응형 */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-                padding: 20px;
-                border-radius: 0;
-            }
-            
-            .chat-container {
-                padding: 20px;
-            }
-            
-            .record-button {
-                width: 100px;
-                height: 100px;
-            }
-
-            .record-button::before {
-                width: 160px;
-                height: 160px;
-            }
-
-            .record-button::after {
-                width: 220px;
-                height: 220px;
-            }
-
-            .record-container::before {
-                width: 280px;
-                height: 280px;
-            }
-
-            .record-container::after {
-                width: 340px;
-                height: 340px;
-            }
-
-            .record-icon {
-                font-size: 24px;
-            }
-        }
-
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -545,6 +12,8 @@
     --primary-dark: #5a6fd8;
     --secondary: #764ba2;
     --accent: #f093fb;
+    --accent-secondary: #06b6d4;
+    --accent-tertiary: #10b981;
     --bg-primary: #0f0f23;
     --bg-secondary: #1a1a2e;
     --bg-card: rgba(255, 255, 255, 0.05);
@@ -556,14 +25,14 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
 }
 
-/* Animated Background */
+/* Background Effects */
 body::before {
     content: '';
     position: fixed;
@@ -571,25 +40,23 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
-    animation: float 20s ease-in-out infinite;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
     z-index: -1;
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-}
-
+/* ==========================================================================
+   LAYOUT COMPONENTS
+   ========================================================================== */
 .app-container {
     display: flex;
     min-height: 100vh;
     position: relative;
 }
 
-/* Header - Mobile First */
+/* Header */
 .header {
     position: fixed;
     top: 0;
@@ -606,16 +73,7 @@ body::before {
     padding: 0 20px;
 }
 
-.header-logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* 햄버거 메뉴 버튼 */
+/* Hamburger Menu */
 .hamburger {
     display: none;
     flex-direction: column;
@@ -645,7 +103,6 @@ body::before {
     transition: all 0.3s ease;
 }
 
-/* 햄버거 애니메이션 */
 .hamburger.active span:nth-child(1) {
     transform: rotate(-45deg) translate(-5px, 6px);
 }
@@ -658,7 +115,7 @@ body::before {
     transform: rotate(45deg) translate(-5px, -6px);
 }
 
-/* 사이드바 오버레이 */
+/* Sidebar */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -676,7 +133,6 @@ body::before {
     opacity: 1;
 }
 
-/* Sidebar */
 .sidebar {
     position: fixed;
     left: 0;
@@ -700,6 +156,7 @@ body::before {
     letter-spacing: 1px;
 }
 
+/* Mode Options */
 .mode-options {
     display: flex;
     flex-direction: column;
@@ -745,7 +202,60 @@ body::before {
     font-size: 0.95rem;
 }
 
-/* Main Content */
+/* Share Button */
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(139,92,246,0.3);
+    text-decoration: none;
+    min-width: 120px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.share-btn::before {
+    content: '🔗';
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.share-btn:hover {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139,92,246,0.4);
+}
+
+.share-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.share-btn:hover::after {
+    left: 100%;
+}
+
+/* ==========================================================================
+   MAIN CONTENT
+   ========================================================================== */
 .main-content {
     flex: 1;
     margin-left: 280px;
@@ -757,6 +267,7 @@ body::before {
     transition: margin-left 0.3s ease;
 }
 
+/* AI Showcase */
 .ai-showcase {
     text-align: center;
     margin-bottom: 30px;
@@ -806,6 +317,9 @@ body::before {
     font-size: 1.1rem;
 }
 
+/* ==========================================================================
+   CHAT INTERFACE
+   ========================================================================== */
 /* Chat Messages */
 .chat-messages {
     flex: 1;
@@ -832,17 +346,13 @@ body::before {
     border-radius: 3px;
 }
 
+/* Message Components */
 .message {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     margin-bottom: 20px;
     animation: messageSlide 0.3s ease;
-}
-
-@keyframes messageSlide {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 .message.user {
@@ -889,7 +399,34 @@ body::before {
     border-bottom-left-radius: 6px;
 }
 
-/* Input Section */
+/* Typing Animation */
+.typing-bubbles {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    height: 20px;
+}
+
+.typing-bubbles span {
+    width: 6px;
+    height: 6px;
+    background: #555;
+    border-radius: 50%;
+    display: block;
+    animation: bounce 1s infinite ease-in-out;
+}
+
+.typing-bubbles span:nth-child(2) { 
+    animation-delay: 0.2s; 
+}
+
+.typing-bubbles span:nth-child(3) { 
+    animation-delay: 0.4s; 
+}
+
+/* ==========================================================================
+   INPUT SECTION
+   ========================================================================== */
 .input-section {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -926,6 +463,7 @@ body::before {
     color: var(--text-secondary);
 }
 
+/* Buttons */
 .send-btn, .record-btn {
     width: 50px;
     height: 50px;
@@ -949,11 +487,6 @@ body::before {
 .record-btn.recording {
     background: linear-gradient(135deg, #ff4757, #ff6b7d);
     animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
 }
 
 .controls-row {
@@ -981,6 +514,7 @@ body::before {
     display: none;
 }
 
+/* Audio Player */
 .audio-player {
     margin-top: 15px;
     text-align: center;
@@ -993,79 +527,41 @@ body::before {
     background: var(--bg-secondary);
 }
 
-/* 공유 버튼 스타일 */
-.share-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(139,92,246,0.3);
-    text-decoration: none;
-    min-width: 120px;
-    margin-top: 20px;
-    width: 100%;
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+@keyframes messageSlide {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
 }
 
-.share-btn::before {
-    content: '🔗';
-    font-size: 16px;
-    margin-right: 4px;
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.05); 
+    }
 }
 
-.share-btn:hover {
-    background: linear-gradient(135deg, #7c3aed, #0891b2);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(139,92,246,0.4);
+@keyframes bounce {
+    0%, 80%, 100% { 
+        transform: scale(0); 
+    }
+    40% { 
+        transform: scale(1); 
+    }
 }
 
-.share-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(139,92,246,0.3);
-}
-
-.share-btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s ease;
-}
-
-.share-btn:hover::after {
-    left: 100%;
-}
-
-.share-btn.copied {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    animation: success-bounce 0.3s ease;
-}
-
-.share-btn.copied::before {
-    content: '✓';
-}
-
-@keyframes success-bounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-/* 1024px 이하에서 사이드바 숨기고 햄버거 버튼 표시 */
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
 @media (max-width: 1024px) {
     .hamburger {
         display: flex;
@@ -1085,7 +581,7 @@ body::before {
     
     .main-content {
         margin-left: 0;
-        padding: 90px 20px 20px; /* 햄버거 버튼 공간 확보 */
+        padding: 90px 20px 20px;
     }
     
     .chat-title {
@@ -1131,23 +627,9 @@ body::before {
     .ai-showcase {
         margin-bottom: 20px;
     }
-    
-    .share-btn {
-        padding: 10px 20px;
-        font-size: 13px;
-        min-width: 100px;
-    }
-    
-    .share-btn::before {
-        font-size: 14px;
-    }
 }
 
 @media (max-width: 480px) {
-    .header {
-        padding: 0 15px;
-    }
-    
     .main-content {
         padding: 80px 10px 10px;
     }
@@ -1181,51 +663,14 @@ body::before {
     .sidebar {
         width: 100%;
     }
-    
-    .share-btn {
-        padding: 8px 16px;
-        font-size: 12px;
-        min-width: 80px;
-    }
-    
-    .share-btn::before {
-        font-size: 12px;
-        margin-right: 2px;
-    }
 }
 
-/* Dark mode enhancements */
-@media (prefers-color-scheme: light) {
-    :root {
-        --bg-primary: #f7fafc;
-        --bg-secondary: #edf2f7;
-        --bg-card: rgba(255, 255, 255, 0.8);
-        --text-primary: #1a202c;
-        --text-secondary: #4a5568;
-        --border: rgba(0, 0, 0, 0.1);
-    }
-}
-
-/* 포커스 접근성 */
+/* ==========================================================================
+   ACCESSIBILITY & FOCUS STATES
+   ========================================================================== */
+.send-btn:focus-visible,
+.record-btn:focus-visible,
 .share-btn:focus-visible {
-    outline: 2px solid #8b5cf6;
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
-}
-
-.share-btn:disabled {
-    background: rgba(107,114,128,0.5);
-    color: rgba(226,232,240,0.6);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.share-btn:disabled::before {
-    content: '⏳';
-}
-
-.share-btn:disabled:hover {
-    transform: none;
-    background: rgba(107,114,128,0.5);
-    box-shadow: none;
 }
