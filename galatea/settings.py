@@ -226,7 +226,7 @@ LOGGING = {
         },
     },
 }
-SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_AUTO_SIGNUP = False
 
 
 
