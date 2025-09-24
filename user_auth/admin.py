@@ -49,10 +49,7 @@ class UserAdmin(BaseUserAdmin):
     @admin.display(description='닉네임')
     def 닉네임(self, obj):
         return obj.nickname
-    
-    @admin.display(description='보이스 이름')
-    def 보이스_이름(self, obj):
-        return obj.voice.name
+
 
     # inlines 설정
     inlines = [ConversationInline]  # ConversationInline 정의 필요
