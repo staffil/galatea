@@ -2,7 +2,7 @@
 .menu-toggle {
     display: none;
     position: fixed;
-    top: 20px;
+    top: 50px;
     left: 20px;
     z-index: 1001;
     background: linear-gradient(145deg, #7b006b, #E91E63);
