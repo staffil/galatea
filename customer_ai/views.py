@@ -359,8 +359,11 @@ from uuid import uuid4
 import os
 import time
 from django.db.models import Q
-import os
+import threading
+import requests
+
 grok_api_key = os.getenv("GROK_API_KEY")
+
 @csrf_exempt
 @login_required
 def generate_response(request):
@@ -376,7 +379,6 @@ def generate_response(request):
     if not llm_id:
         return JsonResponse({"error": _("llm_id 값이 필요합니다.")}, status=400)
     
-
     # LLM 객체 가져오기 및 권한 확인
     try:
         llm = LLM.objects.get(Q(id=llm_id) & (Q(user=user) | Q(is_public=True)))
@@ -396,8 +398,6 @@ def generate_response(request):
     custom_speed = llm.speed
     custom_model = llm.model
 
-    
-
     # ElevenLabs voice 유효성 체크
     def is_valid_voice_id(voice_id, api_key):
         url = f"https://api.elevenlabs.io/v1/voices/{voice_id}"
@@ -410,8 +410,8 @@ def generate_response(request):
             "error": _("voice_id 값이 맞지 않습니다. 목소리를 다시 생성하거나 다른 목소리로 바꿔 주세요.")
         }, status=400)
 
-    # 최근 대화 내역 불러오기
-    db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:50][::-1]
+    # 최근 대화 내역 불러오기 (개수 줄여서 속도 향상)
+    db_history = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:10][::-1]
     chat_history = []
     for convo in db_history:
         if convo.user_message:
@@ -420,7 +420,7 @@ def generate_response(request):
             chat_history.append({"role": "assistant", "content": convo.llm_response})
     chat_history.append({"role": "user", "content": user_input})
 
-        # 최근 대화 내역 불러오기
+    # Grok용 대화 내역도 동일하게 줄임
     db_history_grok = Conversation.objects.filter(user=user, llm=llm).order_by('-created_at')[:3][::-1]
     chat_history_grok = []
     for convo in db_history_grok:
@@ -438,22 +438,11 @@ def generate_response(request):
     [VISUAL INPUT DESCRIPTION]
     "{vision_result}"
 
-    RULES:
-    1. Treat visual input objectively and neutrally.
-    3. Keep the user's sentence in its original language, but ensure that **the content inside `**…**` is always English**.
-    5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
-    6. Make responses playful, expressive, anime/comic-like, but clear and friendly.
-    7. Occasionally (not always), end your response with a short related follow-up question.
-    9. Always use **new words or phrases that have not been used previously** in this conversation.
-
     Respond in {custom_language}.
     {custom_prompt}
     """.strip()
 
-
     system_prompt_grok = f"""
-
-
     User's text: "{user_input}"
     5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
 
@@ -464,24 +453,22 @@ def generate_response(request):
     {custom_prompt}
     """.strip()
 
-
-
     # 모델 및 API provider 분리
     if ":" not in llm.model:
         return JsonResponse({"error": _("모델 형식이 잘못되었습니다. api_provider:model_name 형태여야 합니다.")}, status=400)
     api_provider, model_name = llm.model.split(":", 1)
 
-    # GPT / Grok API 호출
+    # GPT / Grok API 호출 - 타임아웃 단축
     try:
         if api_provider == "gpt":
             response = openai_client.chat.completions.create(
                 model=model_name,
                 messages=[{"role": "system", "content": system_prompt}] + chat_history,
-                temperature=custom_temperature
+                temperature=custom_temperature,
+                timeout=30  # 타임아웃 단축
             )
             ai_text = response.choices[0].message.content.strip()
         elif api_provider == "grok":
-            
             grok_url = "https://api.x.ai/v1/chat/completions"
             headers = {"Authorization": f"Bearer {grok_api_key}"}
 
@@ -491,13 +478,11 @@ def generate_response(request):
                 "model": model_name,
                 "messages": messages,
                 "temperature": custom_temperature,
-                
             }
-            resp = requests.post(grok_url, json=payload, headers=headers, timeout=120)
+            resp = requests.post(grok_url, json=payload, headers=headers, timeout=30)  # 타임아웃 단축
             resp.raise_for_status()
             resp_json = resp.json()
             ai_text = resp_json["choices"][0]["message"]["content"].strip()
-
         else:
             return JsonResponse({"error": _("지원하지 않는 api_provider 입니다.")}, status=400)
     except requests.exceptions.HTTPError as e:
@@ -510,77 +495,137 @@ def generate_response(request):
         text = ''.join(ch for ch in text if ch.isprintable())
         return text[:1000] + "..." if len(text) > 1000 else text
 
-    ai_text = clean_text_for_tts(ai_text).strip()
-    if not ai_text:
-        ai_text = "죄송합니다. 음성으로 변환할 내용이 없습니다."
+    ai_text_clean = clean_text_for_tts(ai_text).strip()
+    if not ai_text_clean:
+        ai_text_clean = "죄송합니다. 음성으로 변환할 내용이 없습니다."
 
+    # DB에 텍스트만 먼저 저장 (오디오는 None)
+    conversation = Conversation.objects.create(
+        user=user,
+        llm=llm,
+        user_message=user_input,
+        llm_response=ai_text,
+        response_audio=None  # 나중에 업데이트
+    )
+
+    # 백그라운드에서 TTS 생성하는 함수
+    def generate_audio_background():
+        try:
+            # 오디오 파일 경로 설정
+            audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
+            os.makedirs(audio_dir, exist_ok=True)
+            filename = f"response_{uuid4().hex}.mp3"
+            audio_path = os.path.join(audio_dir, filename)
+
+            # ElevenLabs 음성 생성
+            audio_stream = eleven_client.text_to_speech.convert(
+                voice_id=custom_voice_id,
+                model_id="eleven_v3",
+                text=ai_text_clean,
+                language_code=custom_language,
+                voice_settings={
+                    "stability": custom_stability,
+                    "similarity": 0.5,
+                    "style": custom_style,
+                    "speed": custom_speed,
+                    "use_speaker_boost": False
+                }
+            )
+            
+            with open(audio_path, "wb") as f:
+                for chunk in audio_stream:
+                    f.write(chunk)
+
+            # 브라우저 접근용 URL
+            audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename).replace("\\", "/")
+
+            # 오디오 길이 측정 및 토큰 처리
+            audio_seconds = get_audio_duration_in_seconds(audio_path)
+            
+            # 토큰 체크
+            token_obj = Token.objects.filter(user=user).latest("created_at")
+            if token_obj and token_obj.total_token - token_obj.token_usage >= audio_seconds:
+                # 토큰 차감
+                TokenHistory.objects.create(
+                    user=user,
+                    change_type=TokenHistory.CONSUME,
+                    amount=audio_seconds,
+                    total_voice_generated=audio_seconds
+                )
+                
+                # DB 업데이트 (오디오 URL 저장)
+                conversation.response_audio = audio_url
+                conversation.save()
+                
+                print(f"TTS 생성 완료: {filename}")
+            else:
+                print("토큰 부족으로 TTS 생성 실패")
+                # 오디오 파일 삭제
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+                    
+        except Exception as e:
+            print(f"백그라운드 TTS 생성 실패: {str(e)}")
+
+    # 백그라운드 스레드에서 TTS 생성 시작
+    audio_thread = threading.Thread(target=generate_audio_background, daemon=True)
+    audio_thread.start()
 
     # 세션에 대화 내역 저장
     chat_history.append({"role": "assistant", "content": ai_text})
     request.session["chat_history"] = chat_history
 
-    # ElevenLabs 음성 생성
-    audio_dir = os.path.join(settings.MEDIA_ROOT, 'audio')
-    os.makedirs(audio_dir, exist_ok=True)
-    filename = f"response_{uuid4().hex}.mp3"
-    audio_path = os.path.join(audio_dir, filename)
-
-    try:
-        audio_stream = eleven_client.text_to_speech.convert(
-            voice_id=custom_voice_id,
-        model_id="eleven_v3",
-            text=ai_text,
-            language_code=custom_language,
-            voice_settings={
-                "stability": custom_stability,
-                "similarity": 0.5,
-                "style": custom_style,
-                "speed": custom_speed,
-                "use_speaker_boost": False
-            }
-        )
-        with open(audio_path, "wb") as f:
-            for chunk in audio_stream:
-                f.write(chunk)
-    except Exception as e:
-        return JsonResponse({"error": f"TTS 변환 실패: {str(e)}"}, status=500)
-
-    # 오디오 길이 측정 및 토큰 소모
-    audio_seconds = get_audio_duration_in_seconds(audio_path)
-    token_obj = Token.objects.filter(user=user).latest("created_at")
-    if token_obj.total_token - token_obj.token_usage < audio_seconds:
-        return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
-
-    TokenHistory.objects.create(
-        user=user,
-        change_type=TokenHistory.CONSUME,
-        amount=audio_seconds,
-        total_voice_generated=audio_seconds
-    )
-
-    # 브라우저 접근용 URL
-    audio_url = os.path.join(settings.MEDIA_URL, 'audio', filename).replace("\\", "/")
-
-    # DB 저장
-    Conversation.objects.create(
-        user=user,
-        llm=llm,
-        user_message=user_input,
-        llm_response=ai_text,
-        response_audio=audio_url
-    )
-    if not token_obj:
-        return JsonResponse({"error": _("사용자 토큰 정보가 존재하지 않습니다.")}, status=403)
-
-    if token_obj.total_token - token_obj.token_usage < audio_seconds:
-        return JsonResponse({"error": _("보유한 토큰이 부족합니다.")}, status=403)
-
     print("system_prompt:", system_prompt)
     print("custom_prompt:", custom_prompt)
     print("ai_text:", ai_text)
+    print(f"TTS 백그라운드 생성 시작 - conversation_id: {conversation.id}")
 
-    return JsonResponse({"ai_text": ai_text, "audio_url": audio_url})
+    # 텍스트 응답만 즉시 반환
+    return JsonResponse({
+        "ai_text": ai_text,
+        "audio_url": None,  # 아직 준비되지 않음
+        "conversation_id": conversation.id
+    })
 
+from django.utils.translation import gettext as _
+# 오디오 상태 확인용 새 엔드포인트
+@csrf_exempt
+@login_required
+def check_audio_status(request):
+    try:
+        conversation_id = request.GET.get('conversation_id')
+        print(f"오디오 상태 확인 요청 - conversation_id: {conversation_id}")
+        
+        if not conversation_id:
+            return JsonResponse({"error": "conversation_id가 필요합니다."}, status=400)
+        
+        # 숫자 변환 시도
+        try:
+            conversation_id = int(conversation_id)
+        except ValueError:
+            return JsonResponse({"error": "잘못된 conversation_id 형식입니다."}, status=400)
+        
+        conversation = Conversation.objects.get(id=conversation_id, user=request.user)
+        print(f"대화 찾음 - response_audio: {conversation.response_audio}")
+        
+        if conversation.response_audio:
+            # FileField를 문자열로 변환
+            audio_url = str(conversation.response_audio)  # 이 부분이 핵심!
+            print(f"오디오 준비됨: {audio_url}")
+            return JsonResponse({
+                "ready": True, 
+                "audio_url": audio_url
+            })
+        else:
+            print("오디오 아직 준비 안 됨")
+            return JsonResponse({"ready": False})
+            
+    except Conversation.DoesNotExist:
+        print(f"대화 못 찾음 - id: {conversation_id}")
+        return JsonResponse({"error": "대화를 찾을 수 없습니다."}, status=404)
+    except Exception as e:
+        print(f"check_audio_status 에러: {str(e)}")
+        return JsonResponse({"error": f"서버 오류: {str(e)}"}, status=500)
 
 import base64
 from django.shortcuts import render, redirect

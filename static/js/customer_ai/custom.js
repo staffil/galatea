@@ -5,6 +5,9 @@ let stream;
 
 const baseUrl = window.location.pathname.replace(/\/(chat|vision|novel)\/\d+\/?$/, '');
 
+// 오디오 폴링을 위한 전역 변수들
+let audioCheckIntervals = new Map(); // conversation_id별 인터벌 저장
+
 // 타이핑 효과 함수
 function typewriterEffect(element, text, speed = 30) {
     element.textContent = '';
@@ -23,6 +26,108 @@ function typewriterEffect(element, text, speed = 30) {
     type();
 }
 
+// 오디오 상태 확인 함수
+function checkAudioStatus(conversationId, messageElement, maxAttempts = 40) {
+    let attempts = 0;
+    
+    // 상태 표시 요소 생성/업데이트
+    let statusElement = messageElement.querySelector('.audio-status');
+    if (!statusElement) {
+        statusElement = document.createElement('div');
+        statusElement.className = 'audio-status';
+        statusElement.style.cssText = 'font-size: 0.8em; color: #666; margin-top: 5px; font-style: italic;';
+        messageElement.querySelector('.message-content').appendChild(statusElement);
+    }
+    statusElement.textContent = '🎵 음성 생성 중...';
+
+    const checkInterval = setInterval(() => {
+        attempts++;
+        
+        fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.ready && data.audio_url) {
+                    // 오디오 준비 완료
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    // 상태 업데이트
+                    statusElement.textContent = '🔊 음성 재생';
+                    statusElement.style.color = '#2ecc71';
+                    
+                    // 오디오 재생
+                    playAudio(data.audio_url, statusElement);
+                    
+                } else if (attempts >= maxAttempts) {
+                    // 최대 시도 횟수 초과 (20초 후 포기)
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    statusElement.textContent = '⚠️ 음성 생성 시간 초과';
+                    statusElement.style.color = '#e74c3c';
+                }
+            })
+            .catch(error => {
+                console.error('오디오 상태 확인 오류:', error);
+                
+                if (attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    statusElement.textContent = '⚠️ 음성 생성 실패';
+                    statusElement.style.color = '#e74c3c';
+                }
+            });
+    }, 500); // 0.5초마다 확인
+    
+    // 인터벌 저장 (필요시 취소할 수 있도록)
+    audioCheckIntervals.set(conversationId, checkInterval);
+}
+
+// 오디오 재생 함수
+function playAudio(audioUrl, statusElement) {
+    const audioElem = document.getElementById("tts-audio");
+    audioElem.src = audioUrl;
+    document.getElementById("audio-container").style.display = "block";
+    
+    // 재생 이벤트 리스너
+    audioElem.onplay = () => {
+        if (statusElement) {
+            statusElement.textContent = '▶️ 재생 중...';
+            statusElement.style.color = '#3498db';
+        }
+    };
+    
+    audioElem.onended = () => {
+        if (statusElement) {
+            statusElement.textContent = '✓ 재생 완료';
+            statusElement.style.color = '#95a5a6';
+            // 3초 후 상태 메시지 숨김
+            setTimeout(() => {
+                if (statusElement) {
+                    statusElement.style.display = 'none';
+                }
+            }, 3000);
+        }
+    };
+    
+    audioElem.onerror = () => {
+        if (statusElement) {
+            statusElement.textContent = '⚠️ 재생 실패';
+            statusElement.style.color = '#e74c3c';
+        }
+    };
+    
+    // 오디오 재생 시작
+    audioElem.play().catch(error => {
+        console.error('오디오 재생 실패:', error);
+        if (statusElement) {
+            statusElement.textContent = '⚠️ 재생 실패';
+            statusElement.style.color = '#e74c3c';
+        }
+    });
+}
+
 // 사이드바 토글 함수
 window.toggleSidebar = function() {
     const sidebar = document.getElementById('sidebar');
@@ -31,7 +136,7 @@ window.toggleSidebar = function() {
     hamburger.classList.toggle('active');
 };
 
-// 녹음 토글 함수
+// 녹음 토글 함수 (수정됨 - 새로운 방식 적용)
 window.toggleRecording = function() {
     const recordBtn = document.getElementById("record-btn");
     const recordIcon = document.getElementById("record-icon");
@@ -70,14 +175,8 @@ window.toggleRecording = function() {
                     recognizedText.style.display = "block";
                     setTimeout(() => { recognizedText.style.display = "none"; }, 3000);
 
+                    // 새로운 방식으로 텍스트 전송 (오디오는 폴링으로 처리)
                     sendText(data.text);
-
-                    if (data.audio_url) {
-                        const audioElem = document.getElementById("tts-audio");
-                        audioElem.src = data.audio_url;
-                        document.getElementById("audio-container").style.display = "block";
-                        audioElem.play();
-                    }
                 })
                 .catch((error) => {
                     alert(messages.audioUploadError + error.message);
@@ -101,7 +200,7 @@ window.toggleRecording = function() {
     }
 };
 
-// 텍스트 전송 함수 (타이핑 효과 적용)
+// 텍스트 전송 함수 (완전히 수정됨 - 새로운 방식 적용)
 window.sendText = function(text) {
     const userText = text || document.getElementById("text-input").value;
     if (!userText.trim()) return;
@@ -142,7 +241,7 @@ window.sendText = function(text) {
     formData.append("text", userText);
     formData.append("llm_id", LLM_ID);
 
-    // 서버로 요청 전송
+    // 서버로 요청 전송 (새로운 방식)
     fetch(`${baseUrl}/generate_response/`, {
         method: "POST",
         body: formData
@@ -158,10 +257,12 @@ window.sendText = function(text) {
         // AI 응답 메시지 생성 (빈 content로 시작)
         const aiMessage = document.createElement("div");
         aiMessage.className = "message ai";
-        const messageId = 'ai-message-' + Date.now(); // 고유 ID 생성
+        const messageId = 'ai-message-' + Date.now();
         aiMessage.innerHTML = `
             <div class="message-avatar">${avatarImg}</div>
-            <div class="message-content" id="${messageId}"></div>
+            <div class="message-content" id="${messageId}">
+                <div class="message-text"></div>
+            </div>
         `;
         messageArea.appendChild(aiMessage);
 
@@ -169,18 +270,24 @@ window.sendText = function(text) {
         messageArea.scrollTop = messageArea.scrollHeight;
 
         // 타이핑 효과로 AI 응답 표시
-        const responseDiv = document.getElementById(messageId);
-        typewriterEffect(responseDiv, data.ai_text, 25); // 25ms 간격으로 타이핑
+        const responseDiv = aiMessage.querySelector('.message-text');
+        typewriterEffect(responseDiv, data.ai_text, 25);
 
-        // 오디오가 있으면 타이핑과 동시에 재생 시작
-        if (data.audio_url) {
-            // 타이핑 시작과 거의 동시에 오디오 재생
+        // 백그라운드에서 오디오 상태 확인 시작
+        if (data.conversation_id) {
             setTimeout(() => {
-                const audioElem = document.getElementById("tts-audio");
-                audioElem.src = data.audio_url;
-                document.getElementById("audio-container").style.display = "block";
-                audioElem.play();
-            }, 300); // 300ms 후 오디오 재생 (자연스러운 타이밍)
+                checkAudioStatus(data.conversation_id, aiMessage);
+            }, 1000); // 1초 후 오디오 확인 시작 (타이핑 효과 시작 후)
+        } else {
+            // conversation_id가 없으면 기존 방식으로 폴백
+            if (data.audio_url) {
+                setTimeout(() => {
+                    const audioElem = document.getElementById("tts-audio");
+                    audioElem.src = data.audio_url;
+                    document.getElementById("audio-container").style.display = "block";
+                    audioElem.play();
+                }, 300);
+            }
         }
 
         // 스크롤을 끝까지 유지
@@ -191,7 +298,8 @@ window.sendText = function(text) {
         // 타이핑이 끝나면 스크롤 업데이트 중단
         setTimeout(() => {
             clearInterval(scrollInterval);
-        }, data.ai_text.length * 25 + 500); // 타이핑 시간 + 여유시간
+        }, data.ai_text.length * 25 + 500);
+
     })
     .catch(error => {
         // 에러 발생 시 typing bubble 제거
@@ -249,6 +357,14 @@ document.addEventListener("click", function(e) {
     }
 });
 
+// 페이지 언로드 시 모든 오디오 확인 인터벌 정리
+window.addEventListener('beforeunload', () => {
+    audioCheckIntervals.forEach((interval, conversationId) => {
+        clearInterval(interval);
+    });
+    audioCheckIntervals.clear();
+});
+
 // 페이지 로드 완료 후 초기화
 document.addEventListener('DOMContentLoaded', function() {
     // 텍스트 입력창에 포커스
@@ -265,5 +381,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    console.log('Voice Chat UI initialized with typing effect');
+    console.log('Voice Chat UI initialized with fast text response and background audio generation');
 });

@@ -152,7 +152,6 @@
 
         </main>
     </div>
-
 <script>
 const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
 
@@ -173,12 +172,92 @@ let latestVisionResult = '';
 let isProcessingVision = false;
 let isPlayingAudio = false;
 
+// 오디오 폴링을 위한 전역 변수들
+let audioCheckIntervals = new Map();
+
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
     
     sidebar.classList.toggle('active');
     hamburger.classList.toggle('active');
+}
+
+// 오디오 상태 확인 함수
+function checkAudioStatus(conversationId, maxAttempts = 40) {
+    let attempts = 0;
+    
+    // 상태 표시
+    responseDiv.innerHTML = responseDiv.textContent + '<br><small style="color: #666; font-style: italic;">🎵 음성 생성 중...</small>';
+
+    const checkInterval = setInterval(() => {
+        attempts++;
+        
+        fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.ready && data.audio_url) {
+                    // 오디오 준비 완료
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    // 상태 업데이트
+                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '🔊 음성 재생');
+                    
+                    // 오디오 재생
+                    playVisionAudio(data.audio_url);
+                    
+                } else if (attempts >= maxAttempts) {
+                    // 최대 시도 횟수 초과
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '⚠️ 음성 생성 시간 초과');
+                }
+            })
+            .catch(error => {
+                console.error('오디오 상태 확인 오류:', error);
+                
+                if (attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '⚠️ 음성 생성 실패');
+                }
+            });
+    }, 500);
+    
+    audioCheckIntervals.set(conversationId, checkInterval);
+}
+
+// 오디오 재생 함수
+function playVisionAudio(audioUrl) {
+    ttsAudio.src = audioUrl + '?t=' + new Date().getTime();
+    document.getElementById('audio-container').style.display = 'block';
+    
+    ttsAudio.onplay = () => {
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '▶️ 재생 중...');
+    };
+    
+    ttsAudio.onended = () => {
+        isPlayingAudio = false;
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('▶️ 재생 중...', '<small style="color: #95a5a6;">✓ 재생 완료</small>');
+        // 3초 후 상태 메시지 제거
+        setTimeout(() => {
+            responseDiv.innerHTML = responseDiv.innerHTML.replace('<small style="color: #95a5a6;">✓ 재생 완료</small>', '');
+        }, 3000);
+    };
+    
+    ttsAudio.onerror = () => {
+        isPlayingAudio = false;
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '<small style="color: #e74c3c;">⚠️ 재생 실패</small>');
+    };
+    
+    ttsAudio.play().catch(error => {
+        console.error('오디오 재생 실패:', error);
+        isPlayingAudio = false;
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '<small style="color: #e74c3c;">⚠️ 재생 실패</small>');
+    });
 }
 
 // 웹캠 시작
@@ -248,7 +327,7 @@ async function sendFrameToServer() {
     }, 'image/jpeg');
 }
 
-// GPT 응답 요청
+// GPT 응답 요청 (수정된 버전 - 새로운 방식 적용)
 async function sendText(text) {
     if (!text || !text.trim()) return;
     const currentLlmId = "{{ llm_id }}";
@@ -266,25 +345,39 @@ async function sendText(text) {
             method: 'POST',
             body: formData,
         });
-        if (!res.ok) throw new Error('응답 실패');
-        const data = await res.json();
-
-        responseDiv.textContent = data.ai_text;
-        if (data.audio_url) {
-            ttsAudio.src = data.audio_url + '?t=' + new Date().getTime();
-            document.getElementById('audio-container').style.display = 'block';
-            await ttsAudio.play();
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || '응답 실패');
         }
+        
+        const data = await res.json();
+        console.log('서버 응답:', data);
+
+        // 텍스트 즉시 표시
+        responseDiv.textContent = data.ai_text;
+        
+        // 백그라운드에서 오디오 상태 확인 시작
+        if (data.conversation_id) {
+            setTimeout(() => {
+                checkAudioStatus(data.conversation_id);
+            }, 1000);
+        } else {
+            // conversation_id가 없으면 기존 방식으로 폴백
+            if (data.audio_url) {
+                setTimeout(() => {
+                    playVisionAudio(data.audio_url);
+                }, 300);
+            } else {
+                isPlayingAudio = false;
+            }
+        }
+        
     } catch (err) {
         responseDiv.textContent = '응답 중 오류 발생: ' + err.message;
         console.error(err);
+        isPlayingAudio = false;
     }
 }
-
-// 오디오 재생 종료 시점 플래그 해제
-ttsAudio.addEventListener('ended', () => {
-    isPlayingAudio = false;
-});
 
 // 비전 모드 토글
 toggleBtn.addEventListener('click', () => {
@@ -322,7 +415,7 @@ function stopVisionMode() {
     visionResult.className = "vision-status";
 }
 
-// 녹음 관련
+// 녹음 관련 (수정된 버전)
 let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
@@ -370,6 +463,7 @@ function toggleRecording() {
                             recognizedTextDisplay.style.display = "none";
                         }, 3000);
                         
+                        // 새로운 방식으로 텍스트 전송 (오디오는 폴링으로 처리)
                         sendText(data.text);
                     })
                     .catch((error) => {
@@ -418,12 +512,22 @@ window.addEventListener('resize', () => {
     }
 });
 
+// 페이지 언로드 시 모든 오디오 확인 인터벌 정리
+window.addEventListener('beforeunload', () => {
+    audioCheckIntervals.forEach((interval, conversationId) => {
+        clearInterval(interval);
+    });
+    audioCheckIntervals.clear();
+});
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', () => {
     // 초기 상태 설정
     visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
     recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
     responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
+    
+    console.log('Vision Chat UI initialized with fast text response and background audio generation');
 });
 
 // 링크 복사하기
