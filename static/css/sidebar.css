@@ -76,6 +76,9 @@
     transition: transform 0.3s ease;
     overflow-y: auto;
     margin-top: 70px;
+    /* 이 부분을 수정 */
+    height: calc(100vh - 70px); /* margin-top 값을 빼서 정확한 높이 계산 */
+    padding-bottom: 20px;
 }
 
 .sidebar::-webkit-scrollbar {
