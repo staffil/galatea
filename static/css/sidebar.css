@@ -160,6 +160,7 @@
     .sidebar {
         transform: translateX(-100%);
         width: 280px;
+            margin-top: 60px;
     }
     
     /* 사이드바 활성화 시 */
@@ -183,6 +184,8 @@
     /* 사이드바 너비 조정 */
     .sidebar {
         width: 280px;
+                    margin-top: 60px;
+
     }
     
     /* 메인 콘텐츠 패딩 조정 */
@@ -206,6 +209,8 @@
         width: 260px;
         padding: 15px;
         padding-bottom: 80px;
+                    margin-top: 60px;
+
     }
     
     .main-content {
@@ -217,5 +222,7 @@
 @media (max-width: 480px) {
     .sidebar {
         width: 100%;
+                    margin-top: 60px;
+
     }
 }
