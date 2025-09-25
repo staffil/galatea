@@ -105,7 +105,9 @@ h1 {
     0% { filter: brightness(1); }
     100% { filter: brightness(1.2); }
 }
-
+.logo-container{
+    align-items: center;
+}
 /* Form Styling */
 form {
     background: var(--bg-card);
