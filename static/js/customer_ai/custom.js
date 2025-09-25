@@ -27,7 +27,7 @@ function typewriterEffect(element, text, speed = 30) {
 }
 
 // 오디오 상태 확인 함수
-function checkAudioStatus(conversationId, messageElement, maxAttempts = 40) {
+function checkAudioStatus(conversationId, messageElement, maxAttempts = 100) {
     let attempts = 0;
     
     // 상태 표시 요소 생성/업데이트
