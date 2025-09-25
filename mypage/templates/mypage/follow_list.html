@@ -13,6 +13,16 @@
 
 </head>
 <body>
+
+    
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+
     <!-- 배경 원형 효과 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
@@ -31,9 +41,6 @@
     <div class="sidebar-overlay" onclick="closeSidebar()"></div>
 
     {% include "common/sidebar.html" %}
-
-{% load static %}
-{% load i18n %}
 
 <div class="main-content">
 

@@ -12,6 +12,17 @@
 
 </head>
 <body>
+
+
+
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+
     <div class="container">
         <!-- Hidden for new design -->
     </div>

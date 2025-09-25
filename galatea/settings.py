@@ -20,7 +20,7 @@ PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID")
 
 # 보안 설정
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
