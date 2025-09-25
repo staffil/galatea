@@ -437,6 +437,11 @@ def generate_response(request):
     [VISUAL INPUT DESCRIPTION]
     "{vision_result}"
 
+    RULES:
+
+    5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
+
+
     Respond in {custom_language}.
     {custom_prompt}
     """.strip()
@@ -447,6 +452,7 @@ def generate_response(request):
 
     User's text: "{user_input}"    
     RULES:
+    5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
 
     [VISUAL INPUT DESCRIPTION]
     "{vision_result}"
