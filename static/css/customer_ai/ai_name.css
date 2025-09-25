@@ -380,7 +380,6 @@ button[type="submit"]:focus {
     }
     
     form {
-        padding: 30px 25px;
         border-radius: 20px;
     }
     
@@ -413,7 +412,6 @@ button[type="submit"]:focus {
     }
     
     form {
-        padding: 25px 20px;
         border-radius: 18px;
     }
     
@@ -456,7 +454,6 @@ button[type="submit"]:focus {
     }
     
     form {
-        padding: 20px 15px;
         border-radius: 15px;
     }
     
