@@ -28,7 +28,7 @@
 <div class="error-message">{{ error }}</div>
 {% endif %}
 
-<form method="POST" action="{% url 'customer_ai:input_ai_name' %}" enctype="multipart/form-data">
+<form method="POST" action="{% url 'customer_ai:input_ai_name' %}" enctype="multipart/form-data" style="padding: 40px;">
   {% csrf_token %}
   <input type="text" name="llm_name" placeholder="✏️ {% trans 'AI 이름을 입력해주세요' %}" required />
   
