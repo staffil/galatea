@@ -453,9 +453,14 @@ def generate_response(request):
     system_prompt_grok = f"""
 
 
-    User's text: "{user_input}"
+    User's text: "{user_input}"    
+    RULES:
+    1. Treat visual input objectively and neutrally.
+    3. Keep the user's sentence in its original language, but ensure that **the content inside `**…**` is always English**.
     5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
-
+    6. Make responses playful, expressive, anime/comic-like, but clear and friendly.
+    7. Occasionally (not always), end your response with a short related follow-up question.
+    9. Always use **new words or phrases that have not been used previously** in this conversation.
     [VISUAL INPUT DESCRIPTION]
     "{vision_result}"
 
