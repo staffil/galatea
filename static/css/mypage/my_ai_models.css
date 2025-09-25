@@ -325,7 +325,17 @@ body::before {
 .action-button.delete-button:hover {
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
 }
-
+@media (max-width: 1024px) {
+    .hamburger {
+        display: block;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 999;
+    }
+}
 /* 반응형 */
 @media (max-width: 1024px) {
     .main-content {

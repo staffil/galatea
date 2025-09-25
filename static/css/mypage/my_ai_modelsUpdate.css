@@ -475,7 +475,17 @@ form {
     transform: translateY(-2px);
     box-shadow: var(--glow);
 }
-
+@media (max-width: 1024px) {
+    .hamburger {
+        display: block;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 999;
+    }
+}
 /* 반응형 */
 @media (max-width: 1024px) {
     .main-content {

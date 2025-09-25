@@ -242,7 +242,17 @@ body::before {
     box-shadow: var(--glow);
     background: linear-gradient(135deg, var(--primary-dark), var(--primary));
 }
-
+@media (max-width: 1024px) {
+    .hamburger {
+        display: block;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 999;
+    }
+}
 /* 반응형 */
 @media (max-width: 1024px) {
     .main-content {

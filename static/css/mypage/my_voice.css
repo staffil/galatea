@@ -407,7 +407,17 @@ body::before {
     opacity: 0.5;
     cursor: not-allowed;
 }
-
+@media (max-width: 1024px) {
+    .hamburger {
+        display: block;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 999;
+    }
+}
 /* 태블릿 반응형 */
 @media (max-width: 1024px) {
     .main-content {

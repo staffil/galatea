@@ -423,7 +423,17 @@
         }
 
         /* 반응형 디자인 */
-
+@media (max-width: 1024px) {
+    .hamburger {
+        display: block;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 999;
+    }
+}
         /* Extra Large Desktop (1400px+) */
         @media (min-width: 1400px) {
             .main-content {
