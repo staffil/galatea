@@ -52,7 +52,21 @@ body::before {
     min-height: 100vh;
     position: relative;
 }
-
+    .hamburger {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .sidebar-overlay {
+        display: block;
+    }
 /* Header - Mobile First */
 .header {
     position: fixed;

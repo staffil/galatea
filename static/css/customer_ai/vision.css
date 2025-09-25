@@ -499,7 +499,21 @@ body::before {
     font-size: 0.9rem;
     display: none;
 }
-
+    .hamburger {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .sidebar-overlay {
+        display: block;
+    }
 /* 공유 버튼 스타일 */
 .share-btn {
     display: inline-flex;

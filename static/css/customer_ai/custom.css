@@ -316,7 +316,21 @@ body::before {
     margin-bottom: 30px;
     font-size: 1.1rem;
 }
-
+    .hamburger {
+        display: flex;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .sidebar-overlay {
+        display: block;
+    }
 /* ==========================================================================
    CHAT INTERFACE
    ========================================================================== */
