@@ -106,7 +106,7 @@ h1 {
     100% { filter: brightness(1.2); }
 }
 .logo-container{
-    align-items: center;
+    margin-top: 10px;
 }
 /* Form Styling */
 form {
