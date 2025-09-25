@@ -40,9 +40,7 @@
 
 
     <div class="main-content">
-        <form action="" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-
+<form id="ai-update-form" action="" method="post" enctype="multipart/form-data">
              <div class="form-group">
                     <label for="llm_image">{% trans "AI 이미지" %}</label>
                     <input type="file" name="llm_image" id="llm_image">
@@ -239,9 +237,9 @@
     </div>
 
     
-    <script src="{% static 'js/mypage/my_ai_modelsUpdate.js' %}"></script>
 <script src="{% static 'js/sidebar.js' %}"></script>
 
+  <script src="{% static 'js/mypage/my_ai_modelsUpdate.js' %}"></script>
 
 </body>
 </html>

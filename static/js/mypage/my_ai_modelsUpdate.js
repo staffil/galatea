@@ -17,13 +17,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 폼 제출 Ajax 처리
-    const form = document.querySelector("form");
+const form = document.getElementById("ai-update-form");
     if (form) {
         form.addEventListener("submit", function(e) {
             e.preventDefault(); // 기본 제출 막기
             const formData = new FormData(form);
 
-            fetch(window.location.href, { 
+            fetch(form.action, {
                 method: "POST",
                 body: formData,
                 headers: {
@@ -32,15 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(res => res.json())
             .then(data => {
+                    console.log("응답 받음:", data);
+
                 if(data.error){
+                            console.log("에러:", data.error);
+
                     alert("오류 발생: " + data.error);
                 } else {
                     alert("AI가 수정되었습니다!");
-        setTimeout(() => {
-            if(data.redirect_url) {
-                window.location.href = data.redirect_url;
-            }
-        }, 500);
+                                window.location.href = data.redirect_url;
+
                 }
             })
             .catch(err =>{
