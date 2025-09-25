@@ -11,7 +11,14 @@
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 </head>
 <body>
-
+  
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
    <!-- 배경 원형 효과 (distribute.css에서 사용) -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
