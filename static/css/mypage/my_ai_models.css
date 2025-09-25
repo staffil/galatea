@@ -188,7 +188,7 @@ body::before {
 }
 
 /* 우측 섹션 */
-.right-section {
+.right-sections {
     display: flex;
     flex-direction: column;
     gap: 20px;
