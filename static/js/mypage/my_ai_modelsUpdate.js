@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault(); // 기본 제출 막기
             const formData = new FormData(form);
 
-            fetch(form.action, {
+            fetch(window.location.href, { 
                 method: "POST",
                 body: formData,
                 headers: {
@@ -36,8 +36,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("오류 발생: " + data.error);
                 } else {
                     alert("AI가 수정되었습니다!");
-                                window.location.href = data.redirect_url;
-
+        setTimeout(() => {
+            if(data.redirect_url) {
+                window.location.href = data.redirect_url;
+            }
+        }, 500);
                 }
             })
             .catch(err =>{
