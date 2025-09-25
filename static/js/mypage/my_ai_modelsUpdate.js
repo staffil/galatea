@@ -23,7 +23,7 @@ const form = document.getElementById("ai-update-form");
             e.preventDefault(); // 기본 제출 막기
             const formData = new FormData(form);
 
-            fetch(form.action, {
+    fetch(window.location.href, {
                 method: "POST",
                 body: formData,
                 headers: {
