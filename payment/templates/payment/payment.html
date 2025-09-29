@@ -213,12 +213,13 @@
         data-merchant="{{ pg.imp_merchant_code }}"
         data-currency="{{ pg.currency }}"
         data-channel="{{ pg.channel_key }}"
+        data-user-id="{{ request.user.id }}"
         data-buyer-email="{{ request.user.email }}"
         data-buyer-name="{{ request.user.get_full_name|default:request.user.username }}"
         data-buyer-tel="{{ request.user.phonenumber }}"
         onclick="requestPay('{{ pg.name }}', this)"
         style="background-image: url('{{ pg.payment_image.url }}');">
-                </button>
+</button>
                 <div class="payment-label">
                     {{ pg|title }}
                 </div>
