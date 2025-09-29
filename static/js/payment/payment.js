@@ -144,7 +144,6 @@
             data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
         }
 
-        console.log("=== V1 request_pay data ===", data);
 
         btn.classList.add('loading');
 
@@ -185,3 +184,16 @@
             requestPayV1(pgName, btn);
         }
     };
+
+
+    // ⭐ 중요: window 객체에 함수 등록 (전역으로 노출)
+window.requestPay = function(pgName, btn) {
+    console.log("requestPay 호출됨:", pgName);
+    if (pgName.toLowerCase() === "paypal") {
+        console.log("PayPal V2 결제 시작");
+        requestPayPalV2(btn);
+    } else {
+        console.log("V1 결제 시작:", pgName);
+        requestPayV1(pgName, btn);
+    }
+};

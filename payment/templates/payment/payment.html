@@ -206,15 +206,18 @@
         <div class="payment-buttons">
             {% for pg in available_pgs %}
             <div class="payment-option">
-                <button class="payment-btn" 
-                        data-price="{{ plan.price }}" 
-                        data-daller-price="{{ plan.daller_price }}"
-                        data-rank-id="{{ plan.id }}"
-                        data-merchant="{{ pg.imp_merchant_code }}"
-                        data-currency="{{ pg.currency }}"
-                        data-channel="{{ pg.channel_key }}"
-                        onclick="requestPay('{{ pg.name }}', this)"
-                        style="background-image: url('{{ pg.payment_image.url }}');">
+<button class="payment-btn" 
+        data-price="{{ plan.price }}" 
+        data-daller-price="{{ plan.daller_price }}"
+        data-rank-id="{{ plan.id }}"
+        data-merchant="{{ pg.imp_merchant_code }}"
+        data-currency="{{ pg.currency }}"
+        data-channel="{{ pg.channel_key }}"
+        data-buyer-email="{{ request.user.email }}"
+        data-buyer-name="{{ request.user.get_full_name|default:request.user.username }}"
+        data-buyer-tel="{{ request.user.phonenumber }}"
+        onclick="requestPay('{{ pg.name }}', this)"
+        style="background-image: url('{{ pg.payment_image.url }}');">
                 </button>
                 <div class="payment-label">
                     {{ pg|title }}
@@ -234,6 +237,9 @@
     <!-- V2 SDK (PayPal용) -->
     <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
     
+    <script>
+        
+    </script>
     <script src="{% static 'js/paymnet/payment.js' %}">
     </script>
 
