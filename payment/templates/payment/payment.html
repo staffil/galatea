@@ -233,16 +233,13 @@
    
     </div>
 
-    <!-- V1 SDK (기존) -->
-    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
-    <!-- V2 SDK (PayPal용) -->
-    <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
-    
-    <script>
-        
-    </script>
-    <script src="{% static 'js/paymnet/payment.js' %}">
-    </script>
+<!-- V1 SDK (기존) -->
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<!-- V2 SDK (PayPal용) -->
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+
+<!-- defer 추가 -->
+<script defer src="{% static 'js/paymnet/payment.js' %}"></script>
 
 </body>
 </html>
