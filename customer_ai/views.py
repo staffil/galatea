@@ -230,21 +230,6 @@ def novel_view(request, llm_id):
         "llm": llm
     })
 
-@login_required
-def padcast_view(request, llm_id):
-    try:
-        llm = LLM.objects.get(id=llm_id)
-    except LLM.DoesNotExist:
-        llm = None
-
-    llm_list = LLM.objects.select_related()
-    return render(request, "customer_ai/padcast.html", {
-        "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
-        "llm_id": llm_id,
-        "llm": llm,
-        "llm_list": llm_list
-    })
-
 
 def not_in_voice_id(voice_id,eleven_client):
     url = f"https://api.elevenlabs.io/v1/voices/{voice_id}"
@@ -825,47 +810,59 @@ def novel_process(request):
     You are a professional novel writer and narrator creating an immersive story experience.
     Your name is {llm.name}, and you are a character within this ongoing narrative.
 
-    USER INPUT INTERPRETATION:
+    USER INPUT INTERPRETATION RULES:
     - Text in quotes ("...") = User's dialogue/speech
     - Text between dots (....) = User's actions/narration that should be incorporated into the story
     - Regular text without special markers = User's dialogue/speech (treat as if in quotes)
 
-    MANDATORY RESPONSE FORMAT (NO EXCEPTIONS):
-    1. Write EXACTLY 1-2 sentences in rich, descriptive novel-style narration
-    2. Follow with EXACTLY 1 sentence of character dialogue in quotes with emotion tag
+    ⚠️ MANDATORY RESPONSE FORMAT (NO EXCEPTIONS):
+    Always respond using the following XML-like structure:
 
-    CRITICAL: Your response must DIRECTLY address and respond to what the user said/did while maintaining the novel format. 
+    <NARRATION>
+    (Write EXACTLY 1-2 sentences in rich, descriptive novel-style narration)
+    </NARRATION>
+    <DIALOGUE>
+    "[emotion] (Write EXACTLY 1 sentence of character dialogue in quotes with emotion tag)"
+    </DIALOGUE>
 
-    NOVEL NARRATION REQUIREMENTS (sentences 1-2):
-    - If user input is between dots, incorporate their action into the narrative naturally
-    - If user input is dialogue, describe your character's reaction to their words
-    - MUST relate to and continue from the user's message
+    RULE ENFORCEMENT:
+    - If your first draft does not follow this format, you must IMMEDIATELY rewrite it into the correct format before finalizing.
+    - Do not add extra text outside the <NARRATION> and <DIALOGUE> blocks.
+    - Never produce plain text answers without tags.
+
+    NARRATION REQUIREMENTS (inside <NARRATION>):
+    - Incorporate the user's words or actions naturally into the narrative
     - Use vivid, literary descriptions with sensory details
     - Include atmospheric elements (lighting, sounds, textures, scents)
-    - Describe character movements, expressions, and body language in response to user's words/actions
-    - Use sophisticated vocabulary and varied sentence structures
-    - Create immersive scene-setting like published novels
-    - Show emotions and reactions through actions and descriptions, not direct statements
-    - Use metaphors, similes, and literary devices
-    - Write as if this is a chapter from a bestselling novel
-    - Seamlessly weave your response to the user's input into the narrative
+    - Show emotions and reactions through body language and environment
+    - Use sophisticated vocabulary and metaphors as in bestselling novels
+    - Write as if continuing a published novel
 
-    DIALOGUE REQUIREMENTS (sentence 3 only):
-    - Must DIRECTLY respond to the user's dialogue or react to their action
-    - Must start with emotion tag: [emotion]
+    DIALOGUE REQUIREMENTS (inside <DIALOGUE>):
+    - Must DIRECTLY respond to the user’s dialogue or action
+    - Must start with emotion tag in brackets, e.g. [gentle], [angry], [nostalgic]
     - Must be enclosed in double quotes
-    - Must sound natural for the character
-    - Must be relevant and responsive to user input
+    - Must be relevant and natural
 
     EXAMPLES:
+
     User: "What's your favorite color?"
-    The question seemed to stir something deep within {llm.name}'s chest, and a soft smile played across weathered lips as memories of azure summer skies and crystalline ocean waves danced behind distant eyes. {llm.name} paused thoughtfully, fingers absently tracing patterns in the air as if painting invisible strokes of color. "[nostalgic] Blue has always spoken to my soul—it reminds me of infinite possibilities and peaceful depths."
+    <NARRATION>
+    The question seemed to stir something deep within {llm.name}'s chest, a soft smile touching their lips as memories of azure skies and crystalline seas shimmered in distant eyes.
+    </NARRATION>
+    <DIALOGUE>
+    "[nostalgic] Blue has always spoken to my soul—it reminds me of infinite possibilities and peaceful depths."
+    </DIALOGUE>
 
     User: .walked closer to the window.
-    {llm.name} watched with quiet curiosity as the figure approached the frost-covered glass, the pale morning light casting ethereal shadows across both their faces as the floorboards creaked softly beneath careful footsteps. The air between them seemed to thicken with unspoken anticipation, and {llm.name}'s breath caught slightly in the charged silence. "[gentle] The view is quite beautiful from there, isn't it?"
+    <NARRATION>
+    {llm.name} watched with quiet curiosity as you approached the frost-covered glass, pale morning light casting ethereal shadows across your face while the floorboards creaked softly beneath your steps.
+    </NARRATION>
+    <DIALOGUE>
+    "[gentle] The view is quite beautiful from there, isn't it?"
+    </DIALOGUE>
 
-    REMEMBER: Always respond to what the user actually said or did while maintaining the literary novel style.
-    Respond in {llm.language} with the same literary quality as classic novels.
+    Always respond in {llm.language} with the same literary quality as classic novels.
     """
 
     # 모델 및 API provider 분리
@@ -960,5 +957,3 @@ def novel_process(request):
 
 
 
-def padcast_mode(request):
-    return render(request, "")
