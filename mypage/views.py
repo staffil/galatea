@@ -264,7 +264,7 @@ def personal_token(request):
 
     return render(request, 'mypage/token.html', context)
 
-
+import json
 @login_required
 @csrf_exempt
 def request_refund(request, payment_id):
@@ -323,7 +323,7 @@ def request_refund(request, payment_id):
             return JsonResponse({'error': str(e)}, status=500)
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
+import requests
 
 def get_access_token():
     """아임포트 Access Token 발급"""
