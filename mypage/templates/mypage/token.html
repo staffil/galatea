@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}">
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'css/mypage/token.css' %}">
+    
     <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
@@ -29,31 +30,178 @@
 }
 </script>
 
+    <style>
+        /* 추가 스타일 */
+        .btn-refund {
+            padding: 6px 12px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-refund:hover {
+            background: #c82333;
+        }
+
+        .btn-info {
+            padding: 6px 12px;
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h3 {
+            margin: 0 0 20px 0;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: none;
+            font-family: inherit;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .modal-buttons button:first-child {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .modal-buttons button:first-child:hover {
+            background: #7c3aed;
+        }
+
+        .modal-buttons button:last-child {
+            background: #6c757d;
+            color: white;
+        }
+
+        .modal-buttons button:last-child:hover {
+            background: #5a6268;
+        }
+
+        #refundTokenAmount {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+
 </head>
 <body>
 
     <header>
-    {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
-    {% else %}
-        {% include "common/loginHeader.html" %}
-    {% endif %}
-</header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
 
     <!-- 배경 원형 효과 -->
     <div class="circle-bg"></div>
     <div class="circle-bg"></div>
     <div class="circle-bg"></div>
-  <!-- 햄버거 메뉴 버튼 -->
+    
+    <!-- 햄버거 메뉴 버튼 -->
     <button class="menu-toggle" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
     </button>
+    
     <!-- 사이드바 오버레이 -->
     <div class="sidebar-overlay" onclick="closeSidebar()"></div>
 
     {% include "common/sidebar.html" %}
+    
     <div class="main-content">
         <div class="page-header">
             <h1 class="page-title">{% trans "토큰 관리" %}</h1>
@@ -90,101 +238,109 @@
             
             <!-- 토큰 사용률 진행률 바 -->
             <div class="token-progress">
-<div class="token-progress-bar" style="width: {{ usage_percent }}%"></div>
-<div class="token-progress-text">
-    {% trans "토큰 사용률" %}: <strong>{{ usage_percent|floatformat:1 }}%</strong>
-</div>
-
+                <div class="token-progress-bar" style="width: {{ usage_percent }}%"></div>
+                <div class="token-progress-text">
+                    {% trans "토큰 사용률" %}: <strong>{{ usage_percent|floatformat:1 }}%</strong>
+                </div>
+            </div>
         </div>
 
- <div class="payment-section">
-    <h3>{% trans "결제 내역" %}</h3>
-    <table class="payment-table">
-        <thead>
-            <tr>
-                <th>{% trans "날짜" %}</th>
-                <th>{% trans "상태" %}</th>
-                <th>{% trans "결제 금액" %}</th>
-                <th>{% trans "토큰" %}</th>
-                <th>{% trans "액션" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if payments %}
-                {% for p in payments %}
-                <tr>
-                    <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
-                    <td>
-                        {% if p.status == 'success' %}
-                            <span class="badge badge-success">결제완료</span>
-                        {% elif p.status == 'cancelled' %}
-                            <span class="badge badge-danger">환불완료</span>
-                            {% if p.refunded_at %}
-                                <small>({{ p.refunded_at|date:"Y-m-d" }})</small>
-                            {% endif %}
-                        {% elif p.status == 'pending' %}
-                            <span class="badge badge-warning">대기중</span>
-                        {% elif p.status == 'failure' %}
-                            <span class="badge badge-secondary">실패</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ p.amount|floatformat:0 }}원</td>
-                    <td>{{ p.payment_rank.freetoken }}T</td>
-                    <td>
-                        {% if p.status == 'success' %}
-                            <button class="btn-refund" 
-                                    onclick="requestRefund({{ p.id }}, {{ p.payment_rank.freetoken }})">
-                                환불 요청
-                            </button>
-                        {% elif p.status == 'cancelled' %}
-                            <span class="text-muted">환불완료</span>
-                            {% if p.refund_reason %}
-                                <button class="btn-info" onclick="showRefundReason('{{ p.refund_reason }}')">
-                                    사유보기
-                                </button>
-                            {% endif %}
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="5">{% trans "결제 내역이 없습니다." %}</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-</div>
-
-<!-- 환불 사유 입력 모달 -->
-<div id="refundModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <h3>환불 요청</h3>
-        <p>환불 시 <strong id="refundTokenAmount"></strong> 토큰이 차감됩니다.</p>
-        <textarea id="refundReason" placeholder="환불 사유를 입력해주세요 (필수)"></textarea>
-        <div class="modal-buttons">
-            <button onclick="confirmRefund()">확인</button>
-            <button onclick="closeRefundModal()">취소</button>
+        <div class="payment-section">
+            <h3>{% trans "결제 내역" %}</h3>
+            <table class="payment-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "날짜" %}</th>
+                        <th>{% trans "상태" %}</th>
+                        <th>{% trans "결제 금액" %}</th>
+                        <th>{% trans "토큰" %}</th>
+                        <th>{% trans "액션" %}</th>
+                    </tr>
+                </thead>
+ <tbody>
+    {% if payments %}
+        {% for p in payments %}
+        <tr>
+            <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
+            <td>
+                {% if p.status == 'success' or p.status == 'paid' %}
+                    <span class="badge badge-success">결제완료</span>
+                {% elif p.status == 'cancelled' or p.status == 'refunded' %}
+                    <span class="badge badge-danger">환불완료</span>
+                {% elif p.status == 'pending' %}
+                    <span class="badge badge-warning">대기중</span>
+                {% elif p.status == 'failure' %}
+                    <span class="badge badge-secondary">실패</span>
+                {% else %}
+                    <span class="badge badge-secondary">{{ p.status }}</span>
+                {% endif %}
+            </td>
+            <td>{{ p.amount|floatformat:0 }}원</td>
+            <td>
+                {% if p.payment_rank %}
+                    {{ p.payment_rank.freetoken }}T
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                {% if p.status == 'success' or p.status == 'paid' %}
+                    {% if p.payment_rank %}
+                        <button class="btn-refund" 
+                                onclick="requestRefund({{ p.id }}, {{ p.payment_rank.freetoken }})">
+                            환불 요청
+                        </button>
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                {% elif p.status == 'cancelled' or p.status == 'refunded' %}
+                    <span class="text-muted">환불완료</span>
+                    {% if p.refund_reason %}
+                        <button class="btn-info" onclick="showRefundReason('{{ p.refund_reason|escapejs }}')">
+                            사유보기
+                        </button>
+                    {% endif %}
+                {% else %}
+                    <span class="text-muted">-</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="5">{% trans "결제 내역이 없습니다." %}</td>
+        </tr>
+    {% endif %}
+</tbody>
+            </table>
         </div>
     </div>
-</div>
 
-<!-- 환불 사유 보기 모달 -->
-<div id="reasonModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <h3>환불 사유</h3>
-        <p id="reasonText"></p>
-        <div class="modal-buttons">
-            <button onclick="closeReasonModal()">닫기</button>
+    <!-- 환불 사유 입력 모달 -->
+    <div id="refundModal" class="modal">
+        <div class="modal-content">
+            <h3>환불 요청</h3>
+            <p>환불 시 <span id="refundTokenAmount"></span> 토큰이 차감됩니다.</p>
+            <textarea id="refundReason" placeholder="환불 사유를 입력해주세요 (필수)"></textarea>
+            <div class="modal-buttons">
+                <button onclick="confirmRefund()">확인</button>
+                <button onclick="closeRefundModal()">취소</button>
+            </div>
         </div>
     </div>
-</div>
-<script src="{% static 'js/sidebar.js' %}"></script>
 
-    <script src="{% static 'js/mypage/token.js' %}">
+    <!-- 환불 사유 보기 모달 -->
+    <div id="reasonModal" class="modal">
+        <div class="modal-content">
+            <h3>환불 사유</h3>
+            <p id="reasonText"></p>
+            <div class="modal-buttons">
+                <button onclick="closeReasonModal()">닫기</button>
+            </div>
+        </div>
+    </div>
 
-    </script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script src="{% static 'js/mypage/token.js' %}"></script>
 </body>
 </html>
