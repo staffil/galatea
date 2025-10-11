@@ -281,17 +281,18 @@ def request_refund(request, payment_id):
             if payment.status in ['refunded', 'cancelled']:
                 return JsonResponse({'error': '이미 환불된 결제입니다.'}, status=400)
             
-            # 결제 성공 상태가 아니면 환불 불가
-            if payment.status != 'success':
-                return JsonResponse({'error': '환불할 수 없는 결제 상태입니다.'}, status=400)
-            
+            if payment.status not in ['success', 'paid']:  
+                return JsonResponse({
+                    'error': f'환불할 수 없는 결제 상태입니다. (현재: {payment.status})'
+                }, status=400)
             # 토큰 확인
             token = Token.objects.filter(user=request.user).first()
             if not token:
                 return JsonResponse({'error': '토큰 정보를 찾을 수 없습니다.'}, status=400)
             
             refund_token_amount = payment.payment_rank.freetoken
-            
+            if not payment.payment_rank:
+                return JsonResponse({'error': '결제 등급 정보가 없습니다.'}, status=400)
             # 남은 토큰이 환불할 토큰보다 적은지 확인
             if token.remaining_tokens() < refund_token_amount:
                 return JsonResponse({
