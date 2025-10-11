@@ -23,7 +23,6 @@ async function requestPayPalV2(btn) {
 
     try {
         if (typeof PortOne !== 'undefined') {
-            console.log("PortOne V2 SDK loaded successfully");
         } else {
             throw new Error("PortOne V2 SDK not loaded");
         }
@@ -91,8 +90,20 @@ function requestPayV1(pgName, btn) {
     const rank_id = btn.getAttribute("data-rank-id");
     const isMobile = window.innerWidth <= 480;
 
+    // PG사별 코드 매핑
+    let pgCode;
+    const pgLower = pgName.toLowerCase();
+    
+    if (pgLower === "kg" || pgLower === "kg이니시스") {
+        pgCode = "html5_inicis";
+    } else if (pgLower === "kakaopay" || pgLower === "kakao") {
+        pgCode = "kakaopay";
+    } else {
+        pgCode = pgLower;
+    }
+
     let data = {
-        pg: pgName.toLowerCase() === "kg" ? "html5_inicis" : pgName.toLowerCase(),
+        pg: pgCode,
         pay_method: "card",
         merchant_uid: merchant_uid,
         amount: amountKRW,
@@ -102,6 +113,7 @@ function requestPayV1(pgName, btn) {
         m_redirect_url: "https://galatea.website/payment/complete/",
         name: "GALATEA 등급 결제",
     };
+    
 
     if (isMobile) {
         data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
