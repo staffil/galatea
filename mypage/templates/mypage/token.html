@@ -97,34 +97,90 @@
 
         </div>
 
-        <div class="payment-section">
-            <h3>{% trans "결제 내역" %}</h3>
-            <table class="payment-table">
-                <thead>
-                    <tr>
-                        <th>{% trans "날짜" %}</th>
-                        <th>{% trans "상태" %}</th>
-                        <th>{% trans "결제 금액" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if payments %}
-                        {% for p in payments %}
-                        <tr>
-                            <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
-                            <td>{{ p.status }}</td>
-                            <td>{{ p.amount }}</td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="4">{% trans "결제 내역이 없습니다." %}</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+ <div class="payment-section">
+    <h3>{% trans "결제 내역" %}</h3>
+    <table class="payment-table">
+        <thead>
+            <tr>
+                <th>{% trans "날짜" %}</th>
+                <th>{% trans "상태" %}</th>
+                <th>{% trans "결제 금액" %}</th>
+                <th>{% trans "토큰" %}</th>
+                <th>{% trans "액션" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if payments %}
+                {% for p in payments %}
+                <tr>
+                    <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        {% if p.status == 'success' %}
+                            <span class="badge badge-success">결제완료</span>
+                        {% elif p.status == 'cancelled' %}
+                            <span class="badge badge-danger">환불완료</span>
+                            {% if p.refunded_at %}
+                                <small>({{ p.refunded_at|date:"Y-m-d" }})</small>
+                            {% endif %}
+                        {% elif p.status == 'pending' %}
+                            <span class="badge badge-warning">대기중</span>
+                        {% elif p.status == 'failure' %}
+                            <span class="badge badge-secondary">실패</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ p.amount|floatformat:0 }}원</td>
+                    <td>{{ p.payment_rank.freetoken }}T</td>
+                    <td>
+                        {% if p.status == 'success' %}
+                            <button class="btn-refund" 
+                                    onclick="requestRefund({{ p.id }}, {{ p.payment_rank.freetoken }})">
+                                환불 요청
+                            </button>
+                        {% elif p.status == 'cancelled' %}
+                            <span class="text-muted">환불완료</span>
+                            {% if p.refund_reason %}
+                                <button class="btn-info" onclick="showRefundReason('{{ p.refund_reason }}')">
+                                    사유보기
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5">{% trans "결제 내역이 없습니다." %}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 환불 사유 입력 모달 -->
+<div id="refundModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3>환불 요청</h3>
+        <p>환불 시 <strong id="refundTokenAmount"></strong> 토큰이 차감됩니다.</p>
+        <textarea id="refundReason" placeholder="환불 사유를 입력해주세요 (필수)"></textarea>
+        <div class="modal-buttons">
+            <button onclick="confirmRefund()">확인</button>
+            <button onclick="closeRefundModal()">취소</button>
         </div>
     </div>
+</div>
+
+<!-- 환불 사유 보기 모달 -->
+<div id="reasonModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3>환불 사유</h3>
+        <p id="reasonText"></p>
+        <div class="modal-buttons">
+            <button onclick="closeReasonModal()">닫기</button>
+        </div>
+    </div>
+</div>
 <script src="{% static 'js/sidebar.js' %}"></script>
 
     <script src="{% static 'js/mypage/token.js' %}">

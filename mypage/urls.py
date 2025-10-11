@@ -27,7 +27,7 @@ urlpatterns = [
     path('prompt_share/<int:prompt_id>/update/', views.prompt_share_update, name='prompt_share_update'),
     path('intro/<int:llm_id>/', views.llm_intro, name='llm_intro'),
     path('token_less/', views.token_less, name='token_less'),
-    
+    path('refund/<int:payment_id>/', views.request_refund, name='request_refund'),
 
 
 

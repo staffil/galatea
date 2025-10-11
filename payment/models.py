@@ -46,6 +46,7 @@ class Payment(models.Model):
         ('failure', 'Failure'),
         ('pending', 'Pending'),
         ('refunded', 'Refunded'),
+        ('cancelled', 'Cancelled'),
     ]
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='유저 id 정보')
     payment_rank = models.ForeignKey(PaymentRank, on_delete=models.PROTECT, null=True)
@@ -59,6 +60,8 @@ class Payment(models.Model):
     currency = models.CharField(max_length=10, default='KRW', verbose_name='결제 통화 기록')
     refund_reason = models.TextField(null=True, blank=True, verbose_name='환불 사유')
     customer_uid = models.CharField(max_length=100,  null=True, blank=True, verbose_name="PG 사 발급 토큰")
+    refunded_at = models.DateTimeField(null=True, blank=True, verbose_name='환불 완료 날짜')  
+
 
     class Meta:
         db_table = 'payment'
@@ -83,9 +86,11 @@ from decimal import Decimal
 class TokenHistory(models.Model):
     CHARGE = 'charge'
     CONSUME = 'consume'
+    REFUND = 'refund' 
     CHANGE_TYPE_CHOICES = [
         (CHARGE, 'Charge'),
         (CONSUME, 'Consume'),
+        (REFUND, 'Refund')
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
