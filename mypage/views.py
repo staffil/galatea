@@ -322,7 +322,9 @@ def request_refund(request, payment_id):
             return JsonResponse({'error': '결제 내역을 찾을 수 없습니다.'}, status=404)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-    
+    print(f"환불 요청 오류: {str(e)}")
+    import traceback
+    traceback.print_exc()
     return JsonResponse({'error': 'Invalid request'}, status=400)
 import requests
 
