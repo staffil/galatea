@@ -44,6 +44,10 @@ link: https://www.galatea.website/
 - 한국어 버전
 [![설명 텍스트](https://img.youtube.com/vi/UeCPVia2tM8/0.jpg)](https://youtu.be/ZxI37zHv0hg)
 
+
+## AI 만드는 방법 설명 영상
+(https://www.youtube.com/watch?v=HeEgE7nJH7Q)
+
 #### DB 구조 ERD
 ![스크린샷](database.png)
 
