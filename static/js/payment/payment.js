@@ -83,7 +83,8 @@ async function requestInicisV2(btn) {
             alert('결제가 성공적으로 완료되었습니다!');
             window.location.href = "/payment/complete/";
         } else {
-            alert("결제 처리 실패: " + result.message);
+    console.error("결제 실패 상세:", result);
+    alert("결제 처리 실패: " + (result.message || JSON.stringify(result)));
         }
 
     } catch (error) {
