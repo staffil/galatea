@@ -968,9 +968,9 @@ from customer_ai.serializers import VoiceListSerializer, LLMSerializer
 class VoiceListViewSet(viewsets.ModelViewSet):
     queryset = VoiceList.objects.all()
     serializer_class = VoiceListSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
 
 class LLMViewSet(viewsets.ModelViewSet):
     queryset = LLM.objects.all()
     serializer_class = LLMSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAdminUser]
