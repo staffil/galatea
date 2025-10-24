@@ -265,8 +265,8 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-
 @csrf_exempt
+@login_required
 def verify_payment_v2(request):
     if request.method == 'POST':
         try:
@@ -299,11 +299,23 @@ def verify_payment_v2(request):
                 payment_data = response.json()
                 
                 if payment_data.get('status') == 'PAID':
+                    # 결제 금액 처리 (PayPal: 센트->달러, KG: 원화 그대로)
+                    amount_data = payment_data.get('amount', {})
+                    currency = payment_data.get('currency', 'KRW')
+                    
+                    # 👇 통화별 처리
+                    if currency == 'USD':
+                        amount = amount_data.get('total', 0) / 100  # 센트 -> 달러
+                        payment_method = PaymentMethod.objects.filter(name='paypal').first()
+                    else:  # KRW
+                        amount = amount_data.get('total', 0)  # 원화는 그대로
+                        payment_method = PaymentMethod.objects.filter(name__icontains='inicis').first() or PaymentMethod.objects.first()
+                    
                     # 결제 성공 처리
                     payment = Payment.objects.create(
                         user=request.user,
-                        amount=payment_data.get('amount', {}).get('total', 0) / 100,  # 센트를 달러로
-                        payment_method=PaymentMethod.objects.filter(name='paypal').first(),
+                        amount=amount,
+                        payment_method=payment_method,
                         status='paid',
                         imp_uid=payment_id,
                         merchant_uid=merchant_uid,
@@ -347,6 +359,8 @@ def verify_payment_v2(request):
                 
         except Exception as e:
             print(f"V2 검증 오류: {str(e)}")
+            import traceback
+            traceback.print_exc()  # 👈 상세 에러 로그
             return JsonResponse({
                 'status': 'error', 
                 'message': str(e)
