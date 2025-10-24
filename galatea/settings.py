@@ -15,7 +15,7 @@ print("GOOGLE_CLIENT_SECRET", GOOGLE_CLIENT_SECRET)
 
 # 보안 설정
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
@@ -33,7 +33,6 @@ LANGUAGES = [
     ('en', 'English'),
     ('ja', '日本語'),
     ('zh', '中文'),
-    ('fr', 'Français'),
     ('es', 'Español'),
     ('pt', 'Português'),    
     ('ru', 'Русский'),      
