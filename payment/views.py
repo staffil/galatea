@@ -309,7 +309,7 @@ def verify_payment_v2(request):
         # 결제 등급 가져오기
         try:
             plan = PaymentRank.objects.get(id=rank_id)
-            print(f"✅ Plan found: {plan.name}")
+            print(f"✅ Plan found: {plan.rankname}")
         except PaymentRank.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': '잘못된 등급 ID'})
         
