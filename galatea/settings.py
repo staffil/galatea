@@ -1,5 +1,3 @@
-
-
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -12,15 +10,12 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_USER = os.getenv("DB_USER")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-IAMPORT_API_KEY = os.getenv("IAMPORT_API_KEY")
-IAMPORT_API_SECRET = os.getenv("IAMPORT_API_SECRET")
 print("GOOGLE_CLIENT_ID", GOOGLE_CLIENT_ID)
 print("GOOGLE_CLIENT_SECRET", GOOGLE_CLIENT_SECRET)
-PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID")
 
 # 보안 설정
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
@@ -38,7 +33,7 @@ LANGUAGES = [
     ('en', 'English'),
     ('ja', '日本語'),
     ('zh', '中文'),
-    # ('fr', 'Français'),
+    ('fr', 'Français'),
     ('es', 'Español'),
     ('pt', 'Português'),    
     ('ru', 'Русский'),      
@@ -118,7 +113,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-                        "builtins": ["django.templatetags.i18n"], 
         },
     },
 ]
@@ -152,10 +146,8 @@ LOGOUT_REDIRECT_URL = "/"
 
 # allauth 설정
 SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
+SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_SIGNUP_FORM_CLASS = None
-
-SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'  # 이메일 인증 스킵
-SOCIALACCOUNT_LOGIN_ON_GET = True 
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
@@ -173,19 +165,11 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': os.getenv("SOCIAL_AUTH_GITHUB_SECRET"),
             'key': ''
         }
-        
     },
 }
 # 세션 / 캐시
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
-# 브라우저 닫아도 세션 유지 (선택사항)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
-# 세션 보안 강화
-SESSION_COOKIE_SECURE = False
-SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 CACHES = {
     "default": {
@@ -226,7 +210,4 @@ LOGGING = {
         },
     },
 }
-SOCIALACCOUNT_AUTO_SIGNUP = True
-
-
-
+SOCIALACCOUNT_AUTO_SIGNUP = False
