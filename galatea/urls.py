@@ -80,6 +80,7 @@ urlpatterns += i18n_patterns(
 
 
 
+    path('api/', include(('customer_ai.urls', 'customer_ai'), namespace='customer_ai_api')),
 
 
 )

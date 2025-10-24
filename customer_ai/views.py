@@ -957,3 +957,20 @@ def novel_process(request):
 
 
 
+# api 로 db 정보 가져오기
+
+# makeVoice/views.py
+from rest_framework import viewsets, permissions
+from makeVoice.models import VoiceList
+from customer_ai.models import LLM
+from customer_ai.serializers import VoiceListSerializer, LLMSerializer
+
+class VoiceListViewSet(viewsets.ModelViewSet):
+    queryset = VoiceList.objects.all()
+    serializer_class = VoiceListSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class LLMViewSet(viewsets.ModelViewSet):
+    queryset = LLM.objects.all()
+    serializer_class = LLMSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
