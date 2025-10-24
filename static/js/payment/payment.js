@@ -11,7 +11,6 @@ function getCsrfToken() {
     }
     return '';
 }
-
 // KG 이니시스 V2 결제 함수 수정
 async function requestInicisV2(btn) {
     const merchant_uid = "order_" + new Date().getTime();
@@ -47,22 +46,23 @@ async function requestInicisV2(btn) {
 
         const response = await PortOne.requestPayment(paymentData);
 
-        // 👇 Response 상세 확인
         console.log("=== KG Inicis V2 Response ===", response);
         console.log("Response code:", response.code);
         console.log("Response message:", response.message);
         console.log("Response paymentId:", response.paymentId);
         console.log("Response 전체:", JSON.stringify(response, null, 2));
 
-        // code가 null이 아니면 결제 실패
         if (response.code != null) {
             alert(`결제 실패: ${response.message}`);
             return;
         }
 
-        // 결제 성공 - 서버에서 검증
+        // 서버 검증 - 현재 페이지의 언어 경로 가져오기
+        const currentPath = window.location.pathname;
+        const langPrefix = currentPath.startsWith('/ko/') ? '/ko' : '';
+        
         console.log("서버 검증 시작...");
-        const verificationResult = await fetch('/payment/verify_payment_v2/', {
+        const verificationResult = await fetch(`${langPrefix}/payment/verify_payment_v2/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -77,14 +77,17 @@ async function requestInicisV2(btn) {
 
         console.log("서버 응답 상태:", verificationResult.status);
         const result = await verificationResult.json();
-        console.log("서버 응답 내용:", result);
+        console.log("=== 서버 응답 전체 ===");
+        console.log("Result object:", JSON.stringify(result, null, 2));
+        console.log("result.status:", result.status);
+        console.log("result.message:", result.message);
         
         if (result.status === 'success') {
             alert('결제가 성공적으로 완료되었습니다!');
             window.location.href = "/payment/complete/";
         } else {
-    console.error("결제 실패 상세:", result);
-    alert("결제 처리 실패: " + (result.message || JSON.stringify(result)));
+            console.error("결제 실패 상세:", result);
+            alert("결제 처리 실패: " + (result.message || JSON.stringify(result)));
         }
 
     } catch (error) {
