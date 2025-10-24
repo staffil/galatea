@@ -12,13 +12,12 @@ function getCsrfToken() {
     return '';
 }
 
-
-// KG 이니시스 V2 결제 함수
+// KG 이니시스 V2 결제 함수 수정
 async function requestInicisV2(btn) {
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
     const rank_id = btn.getAttribute("data-rank-id");
-    const channelKey = btn.getAttribute("data-channel"); // channel-key-0b516b67-9655-452b-a064-4404b11d0...
+    const channelKey = btn.getAttribute("data-channel");
 
     btn.classList.add('loading');
 
@@ -33,7 +32,7 @@ async function requestInicisV2(btn) {
             orderName: "GALATEA 등급 결제",
             totalAmount: amountKRW,
             currency: "KRW",
-            channelKey: channelKey, // 이미지의 channel key 사용
+            channelKey: channelKey,
             payMethod: "CARD",
             customer: {
                 customerId: btn.getAttribute("data-user-id") || "guest",
@@ -41,7 +40,6 @@ async function requestInicisV2(btn) {
                 phoneNumber: btn.getAttribute("data-buyer-tel") || "",
                 email: btn.getAttribute("data-buyer-email") || ""
             },
-            // 모바일 리다이렉트 URL
             redirectUrl: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`
         };
 
@@ -49,14 +47,21 @@ async function requestInicisV2(btn) {
 
         const response = await PortOne.requestPayment(paymentData);
 
+        // 👇 Response 상세 확인
+        console.log("=== KG Inicis V2 Response ===", response);
+        console.log("Response code:", response.code);
+        console.log("Response message:", response.message);
+        console.log("Response paymentId:", response.paymentId);
+        console.log("Response 전체:", JSON.stringify(response, null, 2));
+
+        // code가 null이 아니면 결제 실패
         if (response.code != null) {
             alert(`결제 실패: ${response.message}`);
             return;
         }
 
-        console.log("=== KG Inicis V2 Response ===", response);
-
         // 결제 성공 - 서버에서 검증
+        console.log("서버 검증 시작...");
         const verificationResult = await fetch('/payment/verify_payment_v2/', {
             method: 'POST',
             headers: {
@@ -70,7 +75,9 @@ async function requestInicisV2(btn) {
             })
         });
 
+        console.log("서버 응답 상태:", verificationResult.status);
         const result = await verificationResult.json();
+        console.log("서버 응답 내용:", result);
         
         if (result.status === 'success') {
             alert('결제가 성공적으로 완료되었습니다!');
