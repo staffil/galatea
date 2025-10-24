@@ -34,7 +34,7 @@ async function requestPayPalV2(btn) {
             totalAmount: Math.round(dallerAmount * 100),
             currency: "USD",
             channelKey: channelKey,
-            payMethod: "PAYPAL",
+            payMethod: "inicis_v2",
             customer: {
                 customerId: btn.getAttribute("data-user-id") || "guest",
                 email: btn.getAttribute("data-buyer-email") || ""
@@ -95,7 +95,7 @@ function requestPayV1(pgName, btn) {
     const pgLower = pgName.toLowerCase();
     
     if (pgLower === "kg" || pgLower === "kg이니시스") {
-        pgCode = "html5_inicis";
+        pgCode = "inicis";
     } else if (pgLower === "kakaopay" || pgLower === "kakao") {
         pgCode = "kakaopay.CA36348663";
     } else {
