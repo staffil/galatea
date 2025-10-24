@@ -2,7 +2,7 @@
 .env
 
 # Database files
-db.sqlite3  # <-- 이 파일이 가장 유력한 용의자입니다!
+db.sqlite3 
 *.sqlite3
 
 # Python virtual environment directories
@@ -25,3 +25,6 @@ uploads/ # image_ea265d.png에 uploads 폴더가 보입니다. 확인 필요.
 *.log
 
 galatea/media/
+.granite
+"node_modules/" 
+granite.config.tsnode_modules/ 
