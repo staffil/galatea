@@ -266,7 +266,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 @csrf_exempt
-@login_required
 def verify_payment_v2(request):
     if request.method == 'POST':
         try:
