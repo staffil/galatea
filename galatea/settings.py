@@ -85,8 +85,7 @@ INSTALLED_APPS = [
     "helpdesk",
     "invest",
     "django_extensions",
-
-    "rest_framework"
+    
 ]
 
 MIDDLEWARE = [
