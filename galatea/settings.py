@@ -1,3 +1,4 @@
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -12,10 +13,11 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 print("GOOGLE_CLIENT_ID", GOOGLE_CLIENT_ID)
 print("GOOGLE_CLIENT_SECRET", GOOGLE_CLIENT_SECRET)
+PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID")
 
 # 보안 설정
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key")
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '54.173.112.53',
