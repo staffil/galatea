@@ -95,7 +95,7 @@ function requestPayV1(pgName, btn) {
     const pgLower = pgName.toLowerCase();
     
     if (pgLower === "kg" || pgLower === "kg이니시스") {
-        pgCode = "inicis_v2";
+        pgCode = "inicis";
     } else if (pgLower === "kakaopay" || pgLower === "kakao") {
         pgCode = "kakaopay.CA36348663";
     } else {
