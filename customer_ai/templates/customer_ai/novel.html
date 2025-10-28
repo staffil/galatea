@@ -87,11 +87,7 @@
                 {% if llm.llm_image %}
                     <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image">
                 {% endif %}
-                <div class="chat-header">
-                    <div class="ai-avatar">🤖</div>
-                    <h1 class="chat-title">{{ llm.name }}</h1>
 
-                </div>
                 <p><strong>입력 방법:</strong> 일반 텍스트(대사) 또는 .행동이나 상황 묘사.</p>
 <p>💬 안녕하세요 (대사) | ⚡ .문을 열었다. (행동)</p>
             </div>

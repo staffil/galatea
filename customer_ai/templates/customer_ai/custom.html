@@ -120,11 +120,6 @@
                     <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
                 {% endif %}
                 
-                <div class="chat-header">
-                    <div class="ai-avatar">🤖</div>
-                    <h1 class="chat-title">{{ llm.name }}</h1>
-                </div>
-                <p class="chat-subtitle">{% trans '하고 싶은 말을 입력하세요' %}</p>
             </div>
 
             <!-- Chat Messages -->
@@ -148,14 +143,14 @@
                     </button>
                 </div>
                 
-                <div class="controls-row">
+                <!-- <div class="controls-row">
                     <button class="record-btn" id="record-btn" onclick="toggleRecording()">
                         <i class="fas fa-microphone" id="record-icon"></i>
                     </button>
                     <div class="record-status" id="record-status">
                         {% trans '녹음을 시작하려면 버튼을 누르세요' %}
                     </div>
-                </div>
+                </div> -->
                 
                 <div class="recognized-text" id="recognized-text"></div>
                 
