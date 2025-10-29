@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 :root {
@@ -21,18 +22,42 @@
     --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     --glow: 0 0 20px rgba(102, 126, 234, 0.3);
     --glow-strong: 0 0 40px rgba(102, 126, 234, 0.5);
+    
+    /* 앱 뷰를 위한 안전 영역 변수 */
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+html {
+    /* iOS에서 스크롤 바운스 방지 */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+    /* 앱 뷰를 위한 높이 설정 - dvh 사용 (동적 뷰포트 높이) */
     min-height: 100vh;
+    min-height: 100dvh; /* 최신 브라우저용 */
     overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
     color: var(--text-primary);
+    /* 앱 뷰에서 텍스트 확대 방지 */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* 안전 영역 패딩 추가 */
+    padding-top: var(--safe-area-top);
+    padding-bottom: var(--safe-area-bottom);
+    padding-left: var(--safe-area-left);
+    padding-right: var(--safe-area-right);
 }
 
-/* Static Background Layers - 움직임 제거 */
+/* Static Background Layers - 앱 뷰 최적화 */
 body::before {
     content: '';
     position: fixed;
@@ -44,8 +69,11 @@ body::before {
         radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
-    /* animation: backgroundFloat 20s ease-in-out infinite; 제거 */
     z-index: 1;
+    pointer-events: none;
+    /* 앱 뷰에서 성능 향상 */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 body::after {
@@ -61,65 +89,55 @@ body::after {
         radial-gradient(1px 1px at 90px 40px, rgba(6, 182, 212, 0.4), transparent),
         radial-gradient(1px 1px at 130px 80px, rgba(240, 147, 251, 0.4), transparent);
     background-size: 200px 150px;
-    /* animation: sparkle 15s linear infinite; 제거 */
     z-index: 1;
+    pointer-events: none;
+    /* 앱 뷰에서 성능 향상 */
+    will-change: transform;
+    transform: translateZ(0);
 }
-
-/* 배경 애니메이션 제거 - 주석 처리
-@keyframes backgroundFloat {
-    0%, 100% { 
-        transform: translateY(0px) translateX(0px); 
-        opacity: 0.8; 
-    }
-    50% { 
-        transform: translateY(-30px) translateX(20px); 
-        opacity: 1; 
-    }
-}
-
-@keyframes sparkle {
-    0%, 100% { 
-        transform: translateY(0px) translateX(0px); 
-        opacity: 0.8; 
-    }
-    50% { 
-        transform: translateY(-200px) translateX(100px); 
-        opacity: 0.3; 
-    }
-}
-*/
 
 .wrapper {
     position: relative;
     width: 100%;
     min-height: 100vh;
+    min-height: 100dvh; /* 최신 브라우저용 */
     z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    /* 앱 뷰에서 안전한 스크롤 */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px;
 }
 
-/* Logo Section - 호버 효과만 유지 */
+/* Logo Section - 앱 뷰 최적화 */
 .logo {
     position: absolute;
-    top: 40px;
-    left: 40px;
+    top: calc(40px + var(--safe-area-top));
+    left: calc(40px + var(--safe-area-left));
     z-index: 10;
     display: flex;
     align-items: center;
     gap: 15px;
     background: var(--bg-card);
+    /* 앱 뷰 호환성을 위한 backdrop-filter 대체 */
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 15px 25px;
     box-shadow: var(--shadow);
     transition: all 0.3s ease;
+    /* 앱 뷰에서 성능 향상 */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
-.logo:hover {
-    transform: translateY(-3px);
+.logo:hover,
+.logo:active {
+    transform: translateY(-3px) translateZ(0);
     box-shadow: var(--glow);
     border-color: rgba(102, 126, 234, 0.3);
 }
@@ -129,9 +147,12 @@ body::after {
     height: 60px;
     border-radius: 12px;
     transition: all 0.3s ease;
+    /* 이미지 렌더링 최적화 */
+    image-rendering: -webkit-optimize-contrast;
 }
 
-.logo:hover img {
+.logo:hover img,
+.logo:active img {
     transform: scale(1.1);
     filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
 }
@@ -149,7 +170,7 @@ h1 {
     text-shadow: none;
 }
 
-/* Main Container - 움직임 제거 */
+/* Main Container */
 .container {
     position: relative;
     display: flex;
@@ -159,9 +180,11 @@ h1 {
     text-align: center;
     z-index: 5;
     margin-top: 50px;
+    width: 100%;
+    max-width: 100%;
 }
 
-/* Modern Circle Background - 원형 요소들만 애니메이션 유지 */
+/* Modern Circle Background - 앱 뷰 최적화 */
 .circle-bg {
     position: absolute;
     border-radius: 50%;
@@ -169,6 +192,9 @@ h1 {
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: -1;
+    /* 앱 뷰에서 성능 향상 */
+    will-change: transform;
+    pointer-events: none;
 }
 
 .circle-1 {
@@ -206,6 +232,7 @@ h1 {
         rgba(240, 147, 251, 0.1));
     animation: pulse 7s ease-in-out infinite alternate-reverse;
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -216,6 +243,7 @@ h1 {
         rgba(102, 126, 234, 0.15), 
         rgba(6, 182, 212, 0.15));
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
@@ -232,9 +260,11 @@ h1 {
     object-fit: contain;
     filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
     animation: logoFloat 4s ease-in-out infinite;
+    /* 이미지 렌더링 최적화 */
+    image-rendering: -webkit-optimize-contrast;
 }
 
-/* 원형 요소들의 애니메이션 유지 */
+/* 원형 요소들의 애니메이션 */
 @keyframes pulse {
     0% {
         transform: translate(-50%, -50%) scale(1);
@@ -264,9 +294,9 @@ h1 {
     }
 }
 
-/* Typography - 움직임 제거 */
+/* Typography */
 .welcome-text {
-    font-size: 3.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 300;
     color: var(--text-secondary);
     text-align: center;
@@ -276,12 +306,14 @@ h1 {
     line-height: 1.2;
     font-family: "Inter", sans-serif;
     letter-spacing: 0.05em;
-    /* animation: fadeInUp 1s ease-out; 제거 */
     text-transform: lowercase;
+    /* 앱 뷰에서 텍스트 렌더링 개선 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .galatea-text {
-    font-size: 7rem;
+    font-size: clamp(3rem, 8vw, 7rem);
     font-weight: 900;
     background: linear-gradient(135deg, 
         var(--primary) 0%, 
@@ -292,42 +324,21 @@ h1 {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
     z-index: 10;
     position: relative;
     letter-spacing: 0.02em;
     line-height: 0.9;
     font-family: "Bungee", sans-serif;
-    /* animation: fadeInScale 1.2s ease-out; 제거 */
     text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
     filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.2));
+    /* 앱 뷰에서 텍스트 렌더링 개선 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    word-wrap: break-word;
 }
 
-/* 페이드인 애니메이션 제거 - 주석 처리
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-*/
-
-/* Button Container - 움직임 제거 */
+/* Button Container */
 .button-container {
     position: relative;
     display: flex;
@@ -336,10 +347,12 @@ h1 {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 40px;
-    /* animation: fadeInUp 1s ease-out 0.5s both; 제거 */
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
 }
 
-/* Modern Buttons - 호버 효과만 유지 */
+/* Modern Buttons - 앱 뷰 최적화 */
 .btn {
     padding: 18px 40px;
     border: none;
@@ -353,10 +366,19 @@ h1 {
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     transition: all 0.4s ease;
     box-shadow: var(--shadow);
+    /* 앱 뷰에서 터치 향상 */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    /* 앱 뷰에서 성능 향상 */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .btn::before {
@@ -371,14 +393,17 @@ h1 {
         rgba(255, 255, 255, 0.4), 
         transparent);
     transition: left 0.8s ease;
+    pointer-events: none;
 }
 
-.btn:hover::before {
+.btn:hover::before,
+.btn:active::before {
     left: 100%;
 }
 
-.btn:hover {
-    transform: translateY(-5px);
+.btn:hover,
+.btn:active {
+    transform: translateY(-5px) translateZ(0);
     box-shadow: 
         0 15px 35px rgba(0, 0, 0, 0.2),
         var(--glow-strong);
@@ -391,7 +416,8 @@ h1 {
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
-.btn-main:hover {
+.btn-main:hover,
+.btn-main:active {
     background: linear-gradient(135deg, 
         var(--primary-dark), 
         var(--accent));
@@ -405,7 +431,8 @@ h1 {
     box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
 }
 
-.btn-signup:hover {
+.btn-signup:hover,
+.btn-signup:active {
     background: linear-gradient(135deg, 
         #0891b2, 
         var(--accent-tertiary));
@@ -419,7 +446,8 @@ h1 {
     box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
 }
 
-.btn-login:hover {
+.btn-login:hover,
+.btn-login:active {
     background: linear-gradient(135deg, 
         #6b46c1, 
         var(--accent));
@@ -427,7 +455,7 @@ h1 {
 }
 
 .btn:active {
-    transform: translateY(-2px);
+    transform: translateY(-2px) translateZ(0);
     transition: all 0.1s ease;
 }
 
@@ -456,7 +484,7 @@ h1 {
     100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Enhanced Responsive Design */
+/* Enhanced Responsive Design - 앱 뷰 최적화 */
 
 /* 대형 데스크톱 */
 @media (min-width: 1440px) {
@@ -498,11 +526,15 @@ h1 {
     .circle-5 { width: 120px; height: 120px; }
 }
 
-/* 태블릿 - 개선된 반응형 */
+/* 태블릿 - 앱 뷰 최적화 */
 @media (max-width: 1023px) and (min-width: 768px) {
+    .wrapper {
+        padding: 15px;
+    }
+    
     .logo {
-        top: 30px;
-        left: 30px;
+        top: calc(30px + var(--safe-area-top));
+        left: calc(30px + var(--safe-area-left));
         padding: 12px 20px;
     }
     
@@ -536,20 +568,35 @@ h1 {
         gap: 20px;
         flex-direction: column;
         align-items: center;
+        max-width: 400px;
     }
     
     .btn {
-        width: 320px;
+        width: 100%;
+        max-width: 320px;
         padding: 16px 35px;
         font-size: 16px;
     }
 }
 
-/* 모바일 */
+/* 모바일 - 앱 뷰 특별 최적화 */
 @media (max-width: 767px) {
+    body {
+        /* 모바일 앱 뷰에서 스크롤 문제 해결 */
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    .wrapper {
+        padding: 10px;
+        min-height: calc(100vh - var(--safe-area-top) - var(--safe-area-bottom));
+        min-height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom));
+    }
+    
     .logo {
-        top: 20px;
-        left: 20px;
+        top: calc(20px + var(--safe-area-top));
+        left: calc(20px + var(--safe-area-left));
         padding: 10px 18px;
         border-radius: 15px;
     }
@@ -566,7 +613,7 @@ h1 {
     
     .container {
         margin-top: 30px;
-        padding: 0 20px;
+        padding: 0 15px;
     }
     
     .welcome-text {
@@ -579,32 +626,40 @@ h1 {
         margin-bottom: 50px;
     }
     
-    .circle-1 { width: 450px; height: 450px; }
-    .circle-2 { width: 360px; height: 360px; }
-    .circle-3 { width: 270px; height: 270px; }
-    .circle-4 { width: 180px; height: 180px; }
-    .circle-5 { width: 110px; height: 110px; }
+    .circle-1 { width: min(450px, 90vw); height: min(450px, 90vw); }
+    .circle-2 { width: min(360px, 75vw); height: min(360px, 75vw); }
+    .circle-3 { width: min(270px, 60vw); height: min(270px, 60vw); }
+    .circle-4 { width: min(180px, 45vw); height: min(180px, 45vw); }
+    .circle-5 { width: min(110px, 30vw); height: min(110px, 30vw); }
     
     .button-container {
         gap: 15px;
         flex-direction: column;
         align-items: center;
         margin-top: 35px;
+        width: 100%;
+        max-width: 320px;
+        padding: 0 15px;
     }
     
     .btn {
-        width: 280px;
+        width: 100%;
+        max-width: 280px;
         padding: 16px 30px;
         font-size: 15px;
         min-width: unset;
     }
 }
 
-/* 작은 모바일 */
+/* 작은 모바일 - 앱 뷰 특별 최적화 */
 @media (max-width: 479px) {
+    .wrapper {
+        padding: 10px;
+    }
+    
     .logo {
-        top: 15px;
-        left: 15px;
+        top: calc(15px + var(--safe-area-top));
+        left: calc(15px + var(--safe-area-left));
         padding: 8px 15px;
     }
     
@@ -619,7 +674,7 @@ h1 {
     }
     
     .container {
-        padding: 0 15px;
+        padding: 0 10px;
     }
     
     .welcome-text {
@@ -632,39 +687,42 @@ h1 {
         margin-bottom: 40px;
     }
     
-    .circle-1 { width: 350px; height: 350px; }
-    .circle-2 { width: 280px; height: 280px; }
-    .circle-3 { width: 210px; height: 210px; }
-    .circle-4 { width: 140px; height: 140px; }
-    .circle-5 { width: 90px; height: 90px; }
+    .circle-1 { width: min(350px, 85vw); height: min(350px, 85vw); }
+    .circle-2 { width: min(280px, 70vw); height: min(280px, 70vw); }
+    .circle-3 { width: min(210px, 55vw); height: min(210px, 55vw); }
+    .circle-4 { width: min(140px, 40vw); height: min(140px, 40vw); }
+    .circle-5 { width: min(90px, 25vw); height: min(90px, 25vw); }
     
     .button-container {
         gap: 12px;
         margin-top: 30px;
+        max-width: 280px;
     }
     
     .btn {
-        width: 250px;
+        width: 100%;
+        max-width: 250px;
         padding: 14px 25px;
         font-size: 14px;
         border-radius: 35px;
     }
 }
 
-/* 가로 모드 최적화 - 움직임 제거 */
+/* 가로 모드 최적화 - 앱 뷰 고려 */
 @media (max-height: 600px) and (orientation: landscape) and (max-width: 1023px) {
     .wrapper {
         flex-direction: row;
         align-items: center;
         justify-content: space-around;
-        padding: 20px;
+        padding: 15px;
         min-height: 100vh;
+        min-height: 100dvh;
     }
     
     .logo {
         position: absolute;
-        top: 15px;
-        left: 15px;
+        top: calc(15px + var(--safe-area-top));
+        left: calc(15px + var(--safe-area-left));
         padding: 8px 12px;
     }
     
@@ -697,6 +755,7 @@ h1 {
         width: 35%;
         gap: 8px;
         margin-top: 0;
+        flex-direction: column;
     }
     
     .btn {
@@ -710,7 +769,19 @@ h1 {
     }
 }
 
-/* 접근성 및 성능 최적화 - 모든 애니메이션 제거 옵션 */
+/* 앱 뷰 특정 최적화 - Android WebView */
+@supports (-webkit-touch-callout: none) {
+    body {
+        /* iOS Safari 특정 최적화 */
+        min-height: -webkit-fill-available;
+    }
+    
+    .wrapper {
+        min-height: -webkit-fill-available;
+    }
+}
+
+/* 접근성 및 성능 최적화 */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -733,4 +804,37 @@ h1 {
 .logo:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
+}
+
+/* 고해상도 디스플레이 최적화 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .logo img,
+    .circle-5 img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* 다크모드 시스템 설정 지원 */
+@media (prefers-color-scheme: dark) {
+    /* 이미 다크 테마이므로 변경 없음 */
+}
+
+/* 앱 뷰에서 선택 방지 */
+.welcome-text,
+.galatea-text,
+h1 {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+/* 앱 뷰에서 스크롤바 숨기기 (선택사항) */
+.wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.wrapper {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
