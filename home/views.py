@@ -541,3 +541,11 @@ def page_not_found(request, exception):
 
 def server_error(request):
     return render(request, "error/500.html", status=500)
+
+
+
+
+
+# 앱 전용
+def home_app_view(request):
+    return render(request, "home_app.html")

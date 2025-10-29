@@ -27,5 +27,9 @@ urlpatterns = [
 
     # path('like/<int:llm_id>/', views.like_toggle, name = "like_toggle"),
 
+
+    # 앱 전용
+    path("app/", views.home_app_view, name="home_app")
+
 ]
 
