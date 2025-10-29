@@ -66,6 +66,35 @@
         <button class="btn btn-login" onclick="handleClick('login')">{% trans "LOGIN" %}</button>
     </div>
 </div>
+
+<script>
+// WebView 강제 스타일 적용
+(function() {
+    function applyStyles() {
+        // html, body 강제 배경
+        document.documentElement.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; min-height: 100vh !important;';
+        document.body.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; min-height: 100vh !important; color: #ffffff !important;';
+        
+        console.log('WebView 스타일 강제 적용 완료');
+    }
+    
+    // 여러 시점에 적용
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyStyles);
+    } else {
+        applyStyles();
+    }
+    
+    window.addEventListener('load', function() {
+        setTimeout(applyStyles, 50);
+        setTimeout(applyStyles, 200);
+        setTimeout(applyStyles, 500);
+    });
+})();
+</script>
+
+
+
 <script>
     const URL_SIGNUP = "{% url 'register:signup' %}";
     const URL_LOGIN = "{% url 'register:login' %}";
