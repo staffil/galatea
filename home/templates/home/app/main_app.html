@@ -2,52 +2,17 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
-<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
-    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
-    <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
-    <link rel="stylesheet" href="{% static 'css/home/llm_section.css' %}">
-    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
 
-    <script src="{% static 'js/home/main.js' %}"></script>
-    <script src="{% static 'js/home/user_intro.js' %}"></script>
-
-    <!-- Open Graph (SNS 공유용) -->
-    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
-    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
-    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
-    <meta property="og:url" content="https://galatea.website" />
-    <meta property="og:type" content="website" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-
-<meta name="google-adsense-account" content="ca-pub-3542211779359374">
-    <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3542211779359374"
-     crossorigin="anonymous"></script>
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "GALATEA AI",
-  "url": "https://www.galatea.website",
-  "logo": "https://www.galatea.website/static/img/logo.png"
-}
-</script>
-
-
-</head>
 <style>
-    * {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -102,10 +67,6 @@ main {
     margin-top: 30px;
 }
 
-#sidebar-toggle:hover {
-    transform: scale(1.1);
-}
-
 #sidebar-content {
     position: fixed;
     top: 135px;
@@ -123,10 +84,6 @@ main {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
-}
-
-.languageSelect, .helpdesk {
-    margin-bottom: 15px;
 }
 
 .languageSelect label {
@@ -165,10 +122,6 @@ main {
     cursor: pointer;
 }
 
-.languageSelect button:hover, .helpdesk a:hover {
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-}
-
 /* 메인 네비게이션 */
 .main-nav {
     display: flex;
@@ -188,11 +141,6 @@ main {
     font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.3s ease;
-}
-
-.nav-button:hover {
-    background: rgba(139, 92, 246, 0.3);
-    transform: translateY(-2px);
 }
 
 .nav-button.special {
@@ -426,6 +374,10 @@ main {
     margin-bottom: 10px;
 }
 
+.user-info {
+    text-align: center;
+}
+
 .username {
     font-size: 1rem;
     font-weight: 600;
@@ -501,7 +453,6 @@ main {
     display: grid;
     grid-template-columns: 1fr;
     gap: 15px;
-    padding: 0 15px;
     margin-bottom: 30px;
 }
 
@@ -532,6 +483,128 @@ main {
     margin: 5px 0;
 }
 
+/* 모달 스타일 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+.modal-content {
+    padding: 20px;
+}
+
+.modal-header img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.modal-body h2 {
+    font-size: 1.8rem;
+    color: #ffffff;
+    margin-bottom: 15px;
+}
+
+.modal-body p {
+    color: #b8c5d1;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.modal-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-chat {
+    flex: 1;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+.btn-chat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.follower-info {
+    font-size: 1.1rem;
+    color: #8b5cf6;
+    font-weight: 600;
+}
+
 .glt2-follow-btn {
     padding: 12px 24px;
     background: rgba(139, 92, 246, 0.2);
@@ -554,6 +627,23 @@ main {
 }
 
 @media (max-width: 576px) {
+    .modal-container {
+        max-width: 95%;
+        border-radius: 16px;
+    }
+
+    .modal-header img {
+        height: 180px;
+    }
+
+    .modal-body h2 {
+        font-size: 1.5rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
     .section-title {
         font-size: 1.5rem;
         margin-left: 15px;
@@ -570,18 +660,11 @@ main {
     .genre-tags-container {
         grid-template-columns: 1fr;
     }
-
-    .nav-button {
-        padding: 10px 16px;
-        font-size: 0.85rem;
-    }
 }
 </style>
+</head>
+
 <body>
-
-
-
-    <!-- 헤더 -->
     <header>
         {% if not user.is_authenticated %}
             {% include "common/notLoginHeader.html" %}
@@ -590,10 +673,8 @@ main {
         {% endif %}
     </header>
 
-    <!-- 토글 버튼 -->
     <div id="sidebar-toggle" class="collapsed">&#9650;</div>
 
-    <!-- 토글 컨텐츠 -->
     <div id="sidebar-content" class="collapsed">
         <div class="languageSelect">
             <form action="{% url 'home:set_language' %}" method="post">
@@ -612,22 +693,13 @@ main {
             <a href="{% url 'helpdesk:Faq' %}" class="faq">FAQ</a>
             <a href="{% url 'helpdesk:request' %}" class="request">{% trans '요청하기' %}</a>
             <a href="{% url 'helpdesk:notice' %}" class="notice">{% trans '공지사항' %}</a>
-            <a href="{% url 'helpdesk:prompt_share' %}" class="notice">{% trans '프롬프트 공유하기' %}</a>
         </div>
     </div>
 
     <main style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin-top: -40px; padding-bottom: 40px;">
-
-                    {% for news in news_list %}
-
-                    {% endfor %}
-
-        <!-- 메인 네비게이션 -->
-                 {% if user.is_authenticated %}
+        {% if user.is_authenticated %}
         <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}" style="padding-top: 70px;">
             <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
-            <!-- <a href="/soon/" class="nav-button">{% trans "보이스 클로닝" %}</a>
-            <a href="/soon/" class="nav-button">{% trans "보이스 만들기" %}</a> -->
             <a href="/voice_all/" class="nav-button">{% trans "보이스 선택하기" %}</a>
             <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
             <a href="/invite/" class="nav-button">{% trans "친구초대하기" %}</a>
@@ -635,278 +707,204 @@ main {
         </nav>
         {% endif %}
 
-<!-- 뉴스 섹션 HTML (Django 템플릿) -->
-<div class="news-section">
-    
-    <!-- 메인 뉴스 슬라이더 -->
-    <div class="news-container"  style="margin-top: 20px;">
-        <div class="news-slider" id="newsSlider">
-            {% for news in news_list %}
-                <div class="news-slide">
-                    {% if news.news_img %}
-                        <img src="{{ news.news_img.url }}" alt="{{ news.title }}" loading="lazy">
-                    {% else %}
-                        <div class="news-placeholder">
-                            <i class="icon-news"></i>
-                        </div>
-                    {% endif %}
-                    
-                    <div class="news-content">
-                        <h3 class="news-title">{{ news.title }}</h3>
-                        {% if news.news_description %}
-                            <p class="news-description">{{ news.news_description }}</p>
-                        {% endif %}
-                        
-                        {% if news.link %}
-                            <a href="{{ news.link }}" class="news-link" target="_blank">
-                                <span>{% trans "자세히 보기" %}</span>
-                                <i class="icon-arrow-right"></i>
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% empty %}
-                <div class="news-slide">
-                    <div class="news-placeholder">
-                        <p>{% trans "등록된 뉴스가 없습니다." %}</p>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        
-        {% if news_list|length > 1 %}
-            <button class="nav-btn prev" onclick="slideNews(-1)">‹</button>
-            <button class="nav-btn next" onclick="slideNews(1)">›</button>
-            
-            <div class="indicators">
-                {% for news in news_list %}
-                    <div class="indicator {% if forloop.first %}active{% endif %}" 
-                         onclick="goToSlide({{ forloop.counter0 }})"></div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
-</div>
-
-
-
-
-<!-- HTML 구조 변경 -->
-<div class="main-content">
-    <div class="llm-container2">
-        <h2 class="section-title">{% trans '추천' %}</h2>
-        
-        <!-- 첫 번째 줄 -->
-        <div class="llm-row">
-            <div class="llm-cards-horizontal">
-                {% for item in llm_list|slice:":10" %}
-                <div class="llm-card" onclick="openModal({{ item.id }})">
-                    <div class="llm-card-body">
-                        <div class="llm-image-container">
-                            {% if item.llm_image %}
-                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
-                            {% else %}
-                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+        <!-- 뉴스 섹션 -->
+        <div class="news-section">
+            <div class="news-container" style="margin-top: 20px;">
+                <div class="news-slider" id="newsSlider">
+                    {% for news in news_list %}
+                        <div class="news-slide">
+                            {% if news.news_img %}
+                                <img src="{{ news.news_img.url }}" alt="{{ news.title }}" loading="lazy">
                             {% endif %}
-                        </div>
-                        <div class="llm-name">{{ item.title }}</div>
-                        <div class="genre-tags">
-                            {% for genre in item.genres.all %}
-                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-                            {% empty %}
-                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <!-- 두 번째 줄 -->
-        <div class="llm-row">
-            <div class="llm-cards-horizontal">
-                {% for item in llm_list|slice:"10:20" %}
-                <div class="llm-card" onclick="openModal({{ item.id }})">
-                    <div class="llm-card-body">
-                        <div class="llm-image-container">
-                            {% if item.llm_image %}
-                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
-                            {% else %}
-                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
-                            {% endif %}
-                        </div>
-                        <div class="llm-name">{{ item.title }}</div>
-                        <div class="genre-tags">
-                            {% for genre in item.genres.all %}
-                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-                            {% empty %}
-                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <!-- 세 번째 줄 -->
-        <div class="llm-row">
-            <div class="llm-cards-horizontal">
-                {% for item in llm_list|slice:"20:30" %}
-                <div class="llm-card" onclick="openModal({{ item.id }})">
-                    <div class="llm-card-body">
-                        <div class="llm-image-container">
-                            {% if item.llm_image %}
-                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
-                            {% else %}
-                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
-                            {% endif %}
-                        </div>
-                        <div class="llm-name">{{ item.title }}</div>
-                        <div class="genre-tags">
-                            {% for genre in item.genres.all %}
-                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-                            {% empty %}
-                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-                <!-- 세 번째 줄 -->
-        <div class="llm-row">
-            <div class="llm-cards-horizontal">
-                {% for item in llm_list|slice:"30:40" %}
-                <div class="llm-card" onclick="openModal({{ item.id }})">
-                    <div class="llm-card-body">
-                        <div class="llm-image-container">
-                            {% if item.llm_image %}
-                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
-                            {% else %}
-                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
-                            {% endif %}
-                        </div>
-                        <div class="llm-name">{{ item.title }}</div>
-                        <div class="genre-tags">
-                            {% for genre in item.genres.all %}
-                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-                            {% empty %}
-                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-<!-- 인기있는 유저 -->
-<div class="popular-users-section">
-    <h2 class="section-title">{% trans '인기 있는 팔로워' %}</h2>
-    <div class="users-list">
-        {% for user in total_follow_count %}
-        <div class="user-card" onclick="openUserModal({{ user.id }})" style="cursor: pointer;">
-            
-            <div class="user-avatar">
-                {% if user.user_image %}
-                    <img src="{{ user.user_image.url }}" alt="{{ user.username }}" loading="lazy">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-                {% endif %}
-            </div>
-            <div class="user-info">
-                <h3 class="username">{{ user.nickname }}</h3>
-                <span class="follower-count">{{ user.follower_count }} {% trans "팔로워" %}</span>
-            </div>
-        </div>
-        {% empty %}
-        <div class="empty-message">
-            <p>{% trans "아직 팔로우한 유저가 없습니다." %}</p>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-
-
-
-
-
-<script>
-    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
-    const USER_ID = "{{ user.id }}";
-    const LLM_id = "{{ item.id }}"
-</script>
-
-<script src="{% static 'js/home/llm_section.js' %}"></script>
-
-
-    <!-- 이벤트 -->
-<div class="popular-users-section">
-    <h2 class="section-title">{% trans '이벤트' %}</h2>
-    <div class="event_list">
-        {% for gift in gift_list %}
-                {% if gift.gift_img %}
-                    <img src="{{  gift.gift_img.url }}" alt="" loading="lazy">
-                {% else %}
-                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-                {% endif %}
-        {% endfor %}
-    </div>
-</div>
-  <!-- 일반 voice 목록 -->
-<!-- <div class="cv-main-content">
-    <h2 class="cv-section-title">{% trans 'user 가 추천하는 목소리' %}</h2>
-    
-    <div class="cv-container">
-        <div class="cv-scroll">
-            {% for voice in voice_list|slice:":7" %}
-                <div class="voice-wrapper">
-                    <div class="cv-header">
-                        <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
-
-                            <div class="cv-play-overlay">
-                                <div class="cv-play-icon"></div>
+                            <div class="news-content">
+                                <h3 class="news-title">{{ news.title }}</h3>
+                                {% if news.news_description %}
+                                    <p class="news-description">{{ news.news_description }}</p>
+                                {% endif %}
+                                {% if news.link %}
+                                    <a href="{{ news.link }}" class="news-link" target="_blank">
+                                        <span>{% trans "자세히 보기" %}</span>
+                                    </a>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="cv-info">
-                            <p>{{ voice.voice_name }}</p>
-                            <input type="hidden" value="{{ voice.voice_id }}">
+                    {% empty %}
+                        <div class="news-slide">
+                            <div class="news-placeholder">
+                                <p>{% trans "등록된 뉴스가 없습니다." %}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="voice-progress" onclick="seekAudio(event, this)">
-                        <div class="cv-progress-bar"></div>
-                    </div>
-                    <button class="copy-id-btn" onclick="copyVoiceId(this)" title="Voice ID 복사">{% trans "복사" %}</button>
-                    {% if voice.sample_url %}
-                        <audio class="voice-audio" controls>
-                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
-                        </audio>
-                    {% endif %}
+                    {% endfor %}
                 </div>
-            {% endfor %}
+                
+                {% if news_list|length > 1 %}
+                    <button class="nav-btn prev" onclick="slideNews(-1)">‹</button>
+                    <button class="nav-btn next" onclick="slideNews(1)">›</button>
+                    <div class="indicators">
+                        {% for news in news_list %}
+                            <div class="indicator {% if forloop.first %}active{% endif %}" onclick="goToSlide({{ forloop.counter0 }})"></div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
-                    <a href="{% url 'home:voice_all' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
 
-</div> -->
+        <!-- LLM 추천 -->
+        <div class="main-content">
+            <div class="llm-container2">
+                <h2 class="section-title">{% trans '추천' %}</h2>
+                
+                <!-- 첫 번째 줄 -->
+                <div class="llm-row">
+                    <div class="llm-cards-horizontal">
+                        {% for item in llm_list|slice:":10" %}
+                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                            <div class="llm-card-body">
+                                <div class="llm-image-container">
+                                    {% if item.llm_image %}
+                                        <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                                    {% endif %}
+                                </div>
+                                <div class="llm-name">{{ item.title }}</div>
+                                <div class="genre-tags">
+                                    {% for genre in item.genres.all %}
+                                        <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                                    {% empty %}
+                                        <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- 두 번째 줄 -->
+                <div class="llm-row">
+                    <div class="llm-cards-horizontal">
+                        {% for item in llm_list|slice:"10:20" %}
+                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                            <div class="llm-card-body">
+                                <div class="llm-image-container">
+                                    {% if item.llm_image %}
+                                        <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                                    {% endif %}
+                                </div>
+                                <div class="llm-name">{{ item.title }}</div>
+                                <div class="genre-tags">
+                                    {% for genre in item.genres.all %}
+                                        <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                                    {% empty %}
+                                        <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- 세 번째 줄 -->
+                <div class="llm-row">
+                    <div class="llm-cards-horizontal">
+                        {% for item in llm_list|slice:"20:30" %}
+                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                            <div class="llm-card-body">
+                                <div class="llm-image-container">
+                                    {% if item.llm_image %}
+                                        <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                                    {% endif %}
+                                </div>
+                                <div class="llm-name">{{ item.title }}</div>
+                                <div class="genre-tags">
+                                    {% for genre in item.genres.all %}
+                                        <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                                    {% empty %}
+                                        <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
 
+                <!-- 네 번째 줄 -->
+                <div class="llm-row">
+                    <div class="llm-cards-horizontal">
+                        {% for item in llm_list|slice:"30:40" %}
+                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                            <div class="llm-card-body">
+                                <div class="llm-image-container">
+                                    {% if item.llm_image %}
+                                        <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                                    {% endif %}
+                                </div>
+                                <div class="llm-name">{{ item.title }}</div>
+                                <div class="genre-tags">
+                                    {% for genre in item.genres.all %}
+                                        <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                                    {% empty %}
+                                        <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
+            </div>
+        </div>
+
+        <!-- 인기있는 팔로워 -->
+        <div class="popular-users-section">
+            <h2 class="section-title">{% trans '인기 있는 팔로워' %}</h2>
+            <div class="users-list">
+                {% for user in total_follow_count %}
+                <div class="user-card" onclick="openUserModal({{ user.id }}, '{{ user.nickname|escapejs }}', '{{ user.user_image.url|default:'' }}', '{{ user.follower_count }}')">
+                    <div class="user-avatar">
+                        {% if user.user_image %}
+                            <img src="{{ user.user_image.url }}" alt="{{ user.username }}" loading="lazy">
+                        {% else %}
+                            <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                        {% endif %}
+                    </div>
+                    <div class="user-info">
+                        <h3 class="username">{{ user.nickname }}</h3>
+                        <span class="follower-count">{{ user.follower_count }} {% trans "팔로워" %}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-message">
+                    <p>{% trans "아직 팔로우한 유저가 없습니다." %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 이벤트 -->
+        <div class="popular-users-section">
+            <h2 class="section-title">{% trans '이벤트' %}</h2>
+            <div class="event_list">
+                {% for gift in gift_list %}
+                    {% if gift.gift_img %}
+                        <img src="{{ gift.gift_img.url }}" alt="" loading="lazy">
+                    {% else %}
+                        <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
 
         <!-- 장르 섹션 -->
         <div class="main-content">
@@ -915,7 +913,6 @@ main {
                 <div class="genre-tags-container">
                     {% for genre in genre_list|slice:":8" %}
                     <a href="{% url 'home:genres_detail' genre.id %}">
-
                         <div class="genre-tag-box">
                             {% if genre.genre_image %}
                                 <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}" loading="lazy">
@@ -924,62 +921,61 @@ main {
                             {% endif %}
                             <div class="genre-tag-overlay">{{ genre.name }}</div>
                         </div>
-                        </a>
+                    </a>
                     {% endfor %}
                 </div>
                 <a href="{% url 'home:genre_all' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
         </div>
-
-
-   <!-- ✅ 광고 위치 -->
-    <div class="ad-section" style="margin: 40px auto; text-align:center;">
-
-
-        <!-- 구글 애드센스 광고 코드 -->
-        <ins class="adsbygoogle"
-        style="display:block; text-align:center;"
-        data-ad-client="ca-pub-3542211779359374"
-        data-ad-slot="1234567890"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-        
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-    </div>
+    </main>
 
     <footer class="footer">
         <div class="footer-content">
             <div class="company-name">갈라테이아</div>
-            <div class="info-line">사업자번호: 309-04-66659 | 대표자명: 김충희 | 연락처: 010-3161-5706 |email: kimc570612@gmail.com</div>
-            <div class="info-line">주소:경기도 안산시 단원구 광덕1로 80 </div>
+            <div class="info-line">사업자번호: 309-04-66659 | 대표자명: 김충희 | 연락처: 010-3161-5706 | email: kimc570612@gmail.com</div>
+            <div class="info-line">주소: 경기도 안산시 단원구 광덕1로 80</div>
         </div>
     </footer>
+
+    <!-- 모달 HTML -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalContent" class="modal-content"></div>
+        </div>
+    </div>
+
 <script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+    const USER_ID = "{{ user.id }}";
 
     function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // 쿠키 이름 확인
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
         }
+        return cookieValue;
     }
-    return cookieValue;
-}
 
+    // 높이 강제 설정
+    function fixHeight() {
+        const vh = window.innerHeight;
+        document.documentElement.style.height = vh + 'px';
+        document.body.style.height = 'auto';
+    }
+    
+    fixHeight();
+    window.addEventListener('resize', fixHeight);
+    window.addEventListener('orientationchange', fixHeight);
 
-
-
-  
-
-        // 사이드바 토글
+    // 사이드바 토글
     const toggleBtn = document.getElementById('sidebar-toggle');
     const sidebarContent = document.getElementById('sidebar-content');
 
@@ -988,308 +984,92 @@ main {
         sidebarContent.classList.toggle('collapsed');
         toggleBtn.classList.toggle('collapsed');
         toggleBtn.classList.toggle('expanded');
-        toggleBtn.innerHTML = collapsed ? '&#9660;' : '&#9650;'; // ▼ / ▲
+        toggleBtn.innerHTML = collapsed ? '&#9660;' : '&#9650;';
     });
 
+    // 뉴스 슬라이더
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.news-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    const slider = document.getElementById('newsSlider');
 
-  // 가로 스크롤 개선 스크립트
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // 모든 가로 스크롤 컨테이너
-    const horizontalContainers = document.querySelectorAll(
-        '.cv-scroll, .genre-tags-container, .character-cards-container, .llm-cards-container'
-    );
-    
-    horizontalContainers.forEach(container => {
-        // 마우스 휠로 가로 스크롤
-        container.addEventListener('wheel', function(e) {
-            if (e.deltaY !== 0) {
-                e.preventDefault();
-                container.scrollLeft += e.deltaY;
-            }
+    function slideNews(direction) {
+        if (slides.length <= 1) return;
+        currentSlide += direction;
+        if (currentSlide >= slides.length) currentSlide = 0;
+        else if (currentSlide < 0) currentSlide = slides.length - 1;
+        updateSlider();
+    }
+
+    function goToSlide(index) {
+        if (slides.length <= 1) return;
+        currentSlide = index;
+        updateSlider();
+    }
+
+    function updateSlider() {
+        if (!slider) return;
+        slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentSlide);
         });
-        
-        // 드래그 스크롤 (데스크톱)
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-        
-        container.addEventListener('mousedown', function(e) {
-            isDown = true;
-            container.style.cursor = 'grabbing';
-            startX = e.pageX - container.offsetLeft;
-            scrollLeft = container.scrollLeft;
-        });
-        
-        container.addEventListener('mouseleave', function() {
-            isDown = false;
-            container.style.cursor = 'grab';
-        });
-        
-        container.addEventListener('mouseup', function() {
-            isDown = false;
-            container.style.cursor = 'grab';
-        });
-        
-        container.addEventListener('mousemove', function(e) {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - container.offsetLeft;
-            const walk = (x - startX) * 2;
-            container.scrollLeft = scrollLeft - walk;
-        });
-        
-        // 기본 커서 스타일
-        container.style.cursor = 'grab';
-    });
-    
-    // 스크롤 인디케이터 생성 (옵션)
-    function createScrollIndicator(container) {
-        const indicator = document.createElement('div');
-        indicator.className = 'scroll-indicator';
-        indicator.style.cssText = `
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            height: 2px;
-            background: rgba(139,92,246,0.3);
-            border-radius: 1px;
-            width: 60px;
+    }
+
+    if (slides.length > 1) {
+        setInterval(() => slideNews(1), 5000);
+    }
+
+    // 모달 관련
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+
+    function openModal(llmId, title, imgSrc) {
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <img src="${imgSrc || '/static/images/default.png'}" alt="${title}">
+            </div>
+            <div class="modal-body">
+                <h2>${title}</h2>
+                <div class="modal-actions">
+                    <a href="/chat/${llmId}/" class="btn-chat">{% trans "채팅하기" %}</a>
+                </div>
+            </div>
         `;
-        
-        const thumb = document.createElement('div');
-        thumb.style.cssText = `
-            height: 100%;
-            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
-            border-radius: 1px;
-            transition: width 0.2s ease;
-            width: 30%;
+        modalOverlay.style.display = 'flex';
+    }
+
+    function openUserModal(userId, nickname, imgSrc, followerCount) {
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <img src="${imgSrc || '/static/images/default_user.png'}" alt="${nickname}">
+            </div>
+            <div class="modal-body">
+                <h2>${nickname}</h2>
+                <p class="follower-info">${followerCount} {% trans "팔로워" %}</p>
+                <div class="modal-actions">
+                    <button class="glt2-follow-btn" data-id="${userId}" onclick="event.stopPropagation()">
+                        {% trans "Follow" %}
+                    </button>
+                </div>
+            </div>
         `;
-        
-        indicator.appendChild(thumb);
-        
-        // 상대적 위치를 위해 부모에 relative 추가
-        const parent = container.parentElement;
-        if (parent && getComputedStyle(parent).position === 'static') {
-            parent.style.position = 'relative';
-        }
-        parent.appendChild(indicator);
-        
-        // 스크롤 이벤트로 인디케이터 업데이트
-        container.addEventListener('scroll', function() {
-            const scrollPercent = (container.scrollLeft / (container.scrollWidth - container.clientWidth)) * 100;
-            thumb.style.width = Math.max(10, Math.min(90, scrollPercent)) + '%';
-        });
+        modalOverlay.style.display = 'flex';
     }
-    
-    // 키보드 네비게이션
-    document.addEventListener('keydown', function(e) {
-        const focusedContainer = document.querySelector('.cv-scroll:hover, .genre-tags-container:hover, .character-cards-container:hover, .llm-cards-container:hover');
-        
-        if (focusedContainer) {
-            if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                focusedContainer.scrollLeft -= 200;
-            } else if (e.key === 'ArrowRight') {
-                e.preventDefault();
-                focusedContainer.scrollLeft += 200;
-            }
+
+    function closeModal() {
+        modalOverlay.style.display = 'none';
+        modalContent.innerHTML = '';
+    }
+
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.style.display === 'flex') {
+            closeModal();
         }
     });
-    
-    // 터치 디바이스에서 스크롤 개선
-    if ('ontouchstart' in window) {
-        horizontalContainers.forEach(container => {
-            container.style.scrollBehavior = 'smooth';
-            container.style.WebkitOverflowScrolling = 'touch';
-        });
-    }
-    
-    // 접근성: 포커스 시 자동 스크롤
-    horizontalContainers.forEach(container => {
-        const items = container.children;
-        Array.from(items).forEach(item => {
-            item.addEventListener('focus', function() {
-                const containerRect = container.getBoundingClientRect();
-                const itemRect = item.getBoundingClientRect();
-                
-                if (itemRect.left < containerRect.left) {
-                    container.scrollLeft -= (containerRect.left - itemRect.left + 20);
-                } else if (itemRect.right > containerRect.right) {
-                    container.scrollLeft += (itemRect.right - containerRect.right + 20);
-                }
-            });
-        });
-    });
-});
-
-// 스크롤 성능 최적화
-const optimizeScroll = () => {
-    const containers = document.querySelectorAll('.cv-scroll, .genre-tags-container, .character-cards-container, .llm-cards-container');
-    
-    containers.forEach(container => {
-        container.style.scrollBehavior = 'smooth';
-        
-        // Intersection Observer로 뷰포트 밖 요소 최적화
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.transform = 'none';
-                } else {
-                    entry.target.style.transform = 'translateZ(0)'; // 하드웨어 가속
-                }
-            });
-        }, {
-            root: container,
-            rootMargin: '50px'
-        });
-        
-        Array.from(container.children).forEach(child => {
-            observer.observe(child);
-        });
-    });
-};
-
-// 페이지 로드 후 최적화 실행
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', optimizeScroll);
-} else {
-    optimizeScroll();
-}
-
-let currentSlide = 0;
-const slides = document.querySelectorAll('.news-slide');
-const indicators = document.querySelectorAll('.indicator');
-const slider = document.getElementById('newsSlider');
-
-function slideNews(direction) {
-    if (slides.length <= 1) return;
-    
-    currentSlide += direction;
-    
-    if (currentSlide >= slides.length) {
-        currentSlide = 0;
-    } else if (currentSlide < 0) {
-        currentSlide = slides.length - 1;
-    }
-    
-    updateSlider();
-}
-
-function goToSlide(index) {
-    if (slides.length <= 1) return;
-    
-    currentSlide = index;
-    updateSlider();
-}
-
-function updateSlider() {
-    if (!slider) return;
-    
-    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-    
-    indicators.forEach((indicator, index) => {
-        indicator.classList.toggle('active', index === currentSlide);
-    });
-}
-
-// 자동 슬라이드 (5초마다)
-if (slides.length > 1) {
-    setInterval(() => {
-        slideNews(1);
-    }, 5000);
-}
-
-// 키보드 네비게이션
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-        slideNews(-1);
-    } else if (e.key === 'ArrowRight') {
-        slideNews(1);
-    }
-});
-
-// 터치 스와이프 지원 (모바일)
-let startX = 0;
-let endX = 0;
-
-slider?.addEventListener('touchstart', (e) => {
-    startX = e.changedTouches[0].screenX;
-});
-
-slider?.addEventListener('touchend', (e) => {
-    endX = e.changedTouches[0].screenX;
-    handleSwipe();
-});
-
-function handleSwipe() {
-    const threshold = 50; // 최소 스와이프 거리
-    const diff = startX - endX;
-    
-    if (Math.abs(diff) > threshold) {
-        if (diff > 0) {
-            slideNews(1); // 왼쪽으로 스와이프 = 다음 슬라이드
-        } else {
-            slideNews(-1); // 오른쪽으로 스와이프 = 이전 슬라이드
-        }
-    }
-}
-
-
-// like btn
-document.addEventListener('click', (e)=>{
-    const likeBtn = e.target.closest('.glt2-like-btn');
-    if (!likeBtn) return;
-
-    const userId = likeBtn.dataset.id;
-
-    fetch("{% url 'home:like_toggle' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `llm_id=${userId}`
-    })
-    .then(response => response.json())
-    .then(data=>{
-        if (data.status === 'like'){
-            likeBtn.innerHTML  = '<span class="heart-filled"></span>';
-        } else if(data.status === 'unlike'){
-            likeBtn.innerHTML  = '<span class="heart-empty"></span>';
-        } else{
-            alert(data.message)
-        }
- 
-
-            
-
-
-    })
-    .catch(err => console.error('{% trans "좋아요 토글 오류:" %}', err))
-})
-
-    // 카드 클릭 시 모달 열기
-    document.querySelectorAll('.glt2-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            // 버튼 클릭이면 모달 열지 않음
-            if (e.target.closest('.glt2-follow-btn') || e.target.closest('.glt2-like-btn') || e.target.closest('.glt2-chat-btn')) return;
-
-            // 카드 내용 모달로 복사
-            modalContent.innerHTML = card.innerHTML;
-            modalOverlay.style.display = 'flex';
-        });
-    });
-
-document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("share-btn")) {
-        const link = e.target.getAttribute("data-link");
-        navigator.clipboard.writeText(link).then(() => {
-            alert("{% trans '링크가 복사되었습니다!' %}");
-        });
-    }
-});
 
     // 팔로우 토글
     document.addEventListener('click', (e) => {
@@ -1319,16 +1099,9 @@ document.addEventListener("click", function(e) {
                 alert(data.message);
             }
         })
-        .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
+        .catch(err => console.error('팔로우 토글 오류:', err));
     });
-
 </script>
 
-
-
-<footer>
-
-</footer>
-    
 </body>
 </html>
