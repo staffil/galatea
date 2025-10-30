@@ -1,92 +1,147 @@
-{% load static %} 
 {% load i18n %}
-
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GALATEA</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <!-- SEO 최적화된 Title -->
-    <title>GALATEA Persona | 음성 대화형 챗봇 – 사람처럼 대화하는 AI</title>
+        html, body {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+            overflow: hidden;
+        }
 
-    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
-    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+        .splash-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+        }
 
-    <!-- Open Graph (SNS 공유용) -->
-    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
-    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
-    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
-    <meta property="og:url" content="https://galatea.website" />
-    <meta property="og:type" content="website" />
-<meta name="google-adsense-account" content="ca-pub-3542211779359374">
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            animation: fadeInScale 1s ease-out;
+        }
 
-    <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3542211779359374"
-     crossorigin="anonymous"></script>
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "GALATEA AI",
-  "url": "https://www.galatea.website",
-  "logo": "https://www.galatea.website/static/img/logo.png"
-}
-</script>
+        .logo-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
 
+        .logo-text {
+            font-family: "Bungee", sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 0.05em;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .logo-image {
+                width: 120px;
+                height: 120px;
+            }
+
+            .logo-text {
+                font-size: 3rem;
+            }
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
 </head>
 
-<style>
-    html {
-    height: 100%;
-
-}
-
-body {
-    height: 100%;  /* 100vh 대신 100% */
-
-}
-</style>
 <body>
-<div class="wrapper">
-    <div class="logo">        
-        <img src="/static/img/logo.png" alt="{% trans 'Galatea Logo' %}" style="width: 100px; height: 100px;">
-        <h1>GALATEA</h1>
+<div class="splash-container">
+    <div class="logo-wrapper">
+        <img src="/static/img/logo.png" alt="Galatea Logo" class="logo-image">
+        <div class="logo-text">GALATEA</div>
     </div>
-
-    <div class="container">
-        <div class="circle-bg circle-1"></div>
-        <div class="circle-bg circle-2"></div>
-        <div class="circle-bg circle-3"></div>
-        <div class="circle-bg circle-4"></div>
-        <div class="circle-bg circle-5">
-            <img src="/static/img/logo.png" alt="{% trans 'Galatea Logo' %}">
-        </div>
-
-        <div class="welcome-text">{% trans "welcome to" %}</div>
-        <div class="galatea-text">GALATEA</div>
-    </div>
-
-    <div class="button-container">
-        <button class="btn btn-main" onclick="handleClick('main')">{% trans "MAIN" %}</button>
-        <button class="btn btn-signup" onclick="handleClick('signup')">{% trans "SIGN UP" %}</button>
-        <button class="btn btn-login" onclick="handleClick('login')">{% trans "LOGIN" %}</button>
+    
+    <div class="loading-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
     </div>
 </div>
 
-
-
-
 <script>
-    const URL_SIGNUP = "{% url 'register:signup' %}";
-    const URL_LOGIN = "{% url 'register:login' %}";
+    // ✅ 3초 후 메인 페이지로 이동
+    setTimeout(function() {
+        window.location.href = '/main/';  // 메인 URL로 변경
+    }, 3000);  // 3000ms = 3초
 </script>
-
-<script src="{% static 'js/home/home.js' %}"></script>
 
 </body>
 </html>
