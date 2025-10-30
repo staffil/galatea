@@ -4,9 +4,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>{% trans 'LLM 목록' %} - GALATEA</title>
+    
     <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
@@ -18,98 +19,689 @@
     <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
 
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "GALATEA AI",
-  "url": "https://www.galatea.website",
-  "logo": "https://www.galatea.website/static/img/logo.png"
-}
-</script>
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GALATEA AI",
+      "url": "https://www.galatea.website",
+      "logo": "https://www.galatea.website/static/img/logo.png"
+    }
+    </script>
 
-<title>{% trans '마이페이지' %} - GALATEA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+        }
+
+        body {
+            height: 100%;
+            min-height: 100%;
+            font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+            color: #ffffff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 컨테이너 */
+        .glt2-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            min-height: 100vh;
+        }
+
+        /* 카드 */
+        .glt2-card {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            touch-action: manipulation;
+        }
+
+        .glt2-card:active {
+            transform: scale(0.98);
+        }
+
+        /* 배경 이미지 */
+        .glt2-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .glt2-bg::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(15, 15, 35, 0.9));
+        }
+
+        /* 컨텐츠 */
+        .glt2-content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(26, 26, 46, 0.95) 50%, rgba(22, 33, 62, 0.95) 100%);
+        }
+
+        /* 헤더 */
+        .glt2-header {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .glt2-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .glt2-card:active .glt2-header img {
+            transform: scale(1.05);
+        }
+
+        /* 좋아요 버튼 */
+        .glt2-like-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            -webkit-tap-highlight-color: rgba(255, 92, 246, 0.3);
+            touch-action: manipulation;
+        }
+
+        .glt2-like-btn:active {
+            transform: scale(0.9);
+        }
+
+        .heart-empty::before {
+            content: '🤍';
+            font-size: 24px;
+        }
+
+        .heart-filled::before {
+            content: '❤️';
+            font-size: 24px;
+            animation: heartBeat 0.5s ease;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* 타이틀 */
+        .glt2-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 설명 */
+        .glt2-description {
+            font-size: 0.95rem;
+            color: #b8c5d1;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            max-height: 4.8em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        /* 통계 */
+        .glt2-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #8b5cf6;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        /* 유저 정보 */
+        .glt2-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glt2-user-info img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(139, 92, 246, 0.5);
+        }
+
+        .glt2-user-info span {
+            flex: 1;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* 팔로우 버튼 */
+        .glt2-follow-btn {
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
+            touch-action: manipulation;
+        }
+
+        .glt2-follow-btn:active {
+            transform: scale(0.95);
+        }
+
+        .glt2-follow-btn:hover {
+            background: rgba(139, 92, 246, 0.4);
+            border-color: rgba(139, 92, 246, 0.8);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .glt2-follow-btn.following {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: transparent;
+        }
+
+        /* 채팅 버튼 */
+        .glt2-chat-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            margin-bottom: 16px;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+            touch-action: manipulation;
+        }
+
+        .glt2-chat-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .glt2-chat-btn:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        /* 장르 태그 */
+        .glt2-genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .glt2-genre-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .glt2-genre-tag:active {
+            transform: scale(0.95);
+        }
+
+        /* 모달 */
+        .glt2-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .glt2-modal-overlay.active {
+            display: flex;
+        }
+
+        .glt2-modal-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideUp 0.3s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glt2-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+            touch-action: manipulation;
+            line-height: 1;
+        }
+
+        .glt2-modal-close:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .glt2-modal-content {
+            padding: 20px;
+        }
+
+        /* 태블릿 */
+        @media (min-width: 576px) {
+            .glt2-container {
+                padding: 20px;
+                gap: 25px;
+            }
+            
+            .glt2-content {
+                padding: 25px;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 768px) {
+            .glt2-container {
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 30px 20px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .glt2-container {
+                max-width: 960px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .glt2-container {
+                max-width: 1140px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* 부드러운 스크롤 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 로딩 애니메이션 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glt2-card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* iOS 스타일 탭 하이라이트 제거 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* 터치 피드백 개선 */
+        button:active,
+        .glt2-card:active {
+            opacity: 0.9;
+        }
+
+        /* Safe Area 대응 (노치 디자인) */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+                padding-bottom: max(0px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div class="glt2-container">
-{% for item in llm_list %}
-<div class="glt2-card">
-    {% if item.llm_background_image %}
-        <div class="glt2-bg" style="background-image: url('{{ item.llm_background_image.url }}');"></div>
-    {% endif %}
-    <div class="glt2-content" style="background:linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
-        <div class="glt2-header">
-            {% if item.llm_image %}
-            <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="{% trans 'LLM 이미지' %}" loading="lazy">
-            {% endif %}
-            {% if user.is_authenticated and user != item.user %}
-            <button class="glt2-like-btn" data-id="{{ item.id }}">
-                {% if item.user_has_liked %}<span class="heart-filled"></span>{% else %}<span class="heart-empty"></span>{% endif %}
-            </button>
 
+        <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+    <div class="glt2-container">
+        {% for item in llm_list %}
+        <div class="glt2-card">
+            {% if item.llm_background_image %}
+                <div class="glt2-bg" style="background-image: url('{{ item.llm_background_image.url }}');"></div>
             {% endif %}
-
+            <div class="glt2-content" style="background:linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
+                <div class="glt2-header">
+                    {% if item.llm_image %}
+                    <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="{% trans 'LLM 이미지' %}" loading="lazy">
+                    {% endif %}
+                    {% if user.is_authenticated and user != item.user %}
+                    <button class="glt2-like-btn" data-id="{{ item.id }}">
+                        {% if item.user_has_liked %}<span class="heart-filled"></span>{% else %}<span class="heart-empty"></span>{% endif %}
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="glt2-title">{{ item.title }}</div>
+                <div class="glt2-description">{{ item.description }}</div>
+                <div class="glt2-stats">
+                    ❤️ {% trans "좋아요" %}: {{ item.llm_like_count }}
+                    👤 {% trans "팔로우" %}: {{ item.user.follow_count }}
+                </div>
+                <div class="glt2-user-info">
+                    {% if item.user.user_image %}
+                    <img src="{{ item.user.user_image.url }}" alt="" loading="lazy">
+                    {% else %}
+                    <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+                    {% endif %}
+                    <span style="color:#fff;">{{ item.user.nickname }}</span>
+                    {% if user.is_authenticated and user != item.user %}
+                    <button class="glt2-follow-btn {% if item.user_is_following_user %}following{% endif %}" data-id="{{ item.user.id }}">
+                        {% if item.user_is_following_user %}{% trans "Following" %}{% else %}{% trans "Follow" %}{% endif %}
+                    </button>
+                    {% endif %}
+                </div>
+                <button class="glt2-chat-btn" data-chat-id="{{ item.id }}">{% trans "대화하기" %}</button>
+                <div class="glt2-genre-tags">
+                    {% for genre in item.genres.all %}
+                    <div class="glt2-genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                    {% empty %}
+                    <div class="glt2-genre-tag" style="background-color: #999;">{% trans "장르 없음" %}</div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <div class="glt2-title">{{ item.title }}</div>
-        <div class="glt2-description">{{ item.description }}</div>
-        <div class="glt2-stats">
+        {% endfor %}
+    </div>
 
-
-
-            ❤️ {% trans "좋아요" %}: {{ item.llm_like_count }}
-            👤 {% trans "팔로우" %}: {{ item.user.follow_count }}
-        </div>
-        <div class="glt2-user-info">
-            {% if item.user.user_image %}
-            <img src="{{ item.user.user_image.url }}" alt="" loading="lazy">
-            {% else %}
-            <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
-            {% endif %}
-            <span style="color:#fff;">{{ item.user.nickname }}</span>
-            {% if user.is_authenticated and user != item.user %}
-            <button class="glt2-follow-btn" data-id="{{ item.user.id }}">
-                {% if item.user_is_following_user %}{% trans "Following" %}{% else %}{% trans "Follow" %}{% endif %}
-            </button>
-            {% endif %}
-        </div>
-        <button class="glt2-chat-btn" onclick="window.location.href='/customer_ai/chat/{{ item.id }}/'">{% trans "대화하기" %}</button>
-        <div class="glt2-genre-tags">
-            {% for genre in item.genres.all %}
-            <div class="glt2-genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-            {% empty %}
-            <div class="glt2-genre-tag" style="background-color: #999;">{% trans "장르 없음" %}</div>
-            {% endfor %}
+    <!-- 모달 -->
+    <div class="glt2-modal-overlay" id="glt2ModalOverlay">
+        <div class="glt2-modal-card">
+            <button class="glt2-modal-close" id="glt2ModalClose">&times;</button>
+            <div class="glt2-modal-content" id="glt2ModalContent"></div>
         </div>
     </div>
-</div>
-{% endfor %}
-</div>
 
-<!-- 모달 -->
-<div class="glt2-modal-overlay" id="glt2ModalOverlay">
-    <div class="glt2-modal-card">
-        <button class="glt2-modal-close" id="glt2ModalClose">&times;</button>
-        <div class="glt2-modal-content" id="glt2ModalContent"></div>
-    </div>
-</div>
+    <script>
+        // Cookie 가져오기
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
 
-<script src="{% static 'js/home/llm_intro.js' %}">
+        // 높이 강제 설정
+        function fixHeight() {
+            const vh = window.innerHeight;
+            document.documentElement.style.height = vh + 'px';
+            document.body.style.height = 'auto';
+        }
+        
+        fixHeight();
+        window.addEventListener('resize', fixHeight);
+        window.addEventListener('orientationchange', fixHeight);
 
+        // ==========================================
+        // 채팅 버튼 클릭 이벤트
+        // ==========================================
+        document.addEventListener('click', function(e) {
+            const chatBtn = e.target.closest('.glt2-chat-btn');
+            if (!chatBtn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const chatId = chatBtn.dataset.chatId;
+            if (chatId) {
+                window.location.href = `/customer_ai/chat/${chatId}/`;
+            }
+        });
 
-</script>
-<script>
-       // 높이 강제 설정
-    function fixHeight() {
-        const vh = window.innerHeight;
-        document.documentElement.style.height = vh + 'px';
-        document.body.style.height = 'auto';
-    }
-    
-    fixHeight();
-    window.addEventListener('resize', fixHeight);
-    window.addEventListener('orientationchange', fixHeight);
+        // ==========================================
+        // 좋아요 버튼 클릭 이벤트
+        // ==========================================
+        document.addEventListener('click', function(e) {
+            const likeBtn = e.target.closest('.glt2-like-btn');
+            if (!likeBtn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const llmId = likeBtn.dataset.id;
+            if (!llmId) return;
 
-</script>
+            fetch("{% url 'home:like_toggle' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie('csrftoken'),
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `llm_id=${llmId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'like') {
+                    likeBtn.innerHTML = '<span class="heart-filled"></span>';
+                } else if (data.status === 'unlike') {
+                    likeBtn.innerHTML = '<span class="heart-empty"></span>';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => console.error('좋아요 토글 오류:', err));
+        });
+
+        // ==========================================
+        // 팔로우 버튼 클릭 이벤트
+        // ==========================================
+        document.addEventListener('click', function(e) {
+            const followBtn = e.target.closest('.glt2-follow-btn');
+            if (!followBtn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const userId = followBtn.dataset.id;
+            if (!userId) return;
+
+            fetch("{% url 'home:toggle_follow' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie('csrftoken'),
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `user_id=${encodeURIComponent(userId)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'follow') {
+                    followBtn.textContent = '{% trans "Following" %}';
+                    followBtn.classList.add('following');
+                } else if (data.status === 'unfollow') {
+                    followBtn.textContent = '{% trans "Follow" %}';
+                    followBtn.classList.remove('following');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => console.error('팔로우 토글 오류:', err));
+        });
+
+        // ==========================================
+        // 모달 관련
+        // ==========================================
+        const modalOverlay = document.getElementById('glt2ModalOverlay');
+        const modalClose = document.getElementById('glt2ModalClose');
+        const modalContent = document.getElementById('glt2ModalContent');
+
+        // 모달 닫기
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            modalContent.innerHTML = '';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        console.log('Page loaded');
+        console.log('Total cards:', document.querySelectorAll('.glt2-card').length);
+    </script>
 </body>
 </html>
