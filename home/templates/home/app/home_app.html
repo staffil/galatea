@@ -15,12 +15,12 @@
 
         html {
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
         }
 
         body {
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
             overflow: hidden;
         }
 
@@ -49,8 +49,8 @@
         .logo-image {
             width: 150px;
             height: 150px;
-            border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+
             animation: float 3s ease-in-out infinite;
         }
 
@@ -58,9 +58,18 @@
             font-family: 'Arial Black', sans-serif;
             font-size: 4rem;
             font-weight: 900;
-            color: #ffffff;
+            background: linear-gradient(135deg, 
+                #8b5cf6 0%,
+                #ec4899 25%,
+                #06b6d4 50%,
+                #10b981 75%,
+                #06b6d4 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
             letter-spacing: 0.1em;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
         }
 
         .loading-dots {
@@ -73,7 +82,7 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(139, 92, 246, 0.8);
             animation: bounce 1.4s infinite ease-in-out;
         }
 
@@ -133,7 +142,6 @@
 </div>
 
 <script>
-    // ✅ 높이 강제 설정 (WebView 호환)
     function fixHeight() {
         const vh = window.innerHeight;
         document.documentElement.style.height = vh + 'px';
@@ -144,14 +152,10 @@
         }
     }
     
-    // 즉시 실행
     fixHeight();
-    
-    // 리사이즈 시에도 실행
     window.addEventListener('resize', fixHeight);
     window.addEventListener('orientationchange', fixHeight);
     
-    // ✅ 페이지 준비되면 표시
     let navigationStarted = false;
     
     function showSplash() {
@@ -169,21 +173,16 @@
         }
     }
     
-    // DOMContentLoaded - 즉시 표시
-    document.addEventListener('DOMContentLoaded', function() {
-        showSplash();
-        
-        // 3초 후 메인으로 이동
-        setTimeout(navigateToMain, 3000);
-    });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     showSplash();
+    //     setTimeout(navigateToMain, 3000);
+    // });
     
-    // 완전 로드 후에도 한번 더 체크
     window.addEventListener('load', function() {
         showSplash();
     });
     
-    // 안전장치: 5초 후 무조건 이동
-    setTimeout(navigateToMain, 5000);
+    // setTimeout(navigateToMain, 5000);
 </script>
 
 </body>
