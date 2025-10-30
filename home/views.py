@@ -548,4 +548,4 @@ def server_error(request):
 
 # 앱 전용
 def home_app_view(request):
-    return render(request, "home/home_app.html")
+    return render(request, "home/app/home_app.html")
