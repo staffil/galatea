@@ -712,7 +712,7 @@ def gerne_all_app(request):
 
     }
 
-    return render(request,'home/app/gerne_all_app.html', context)
+    return render(request,'home/app/genres_app.html', context)
 
 
 #검색하기
