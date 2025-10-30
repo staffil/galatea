@@ -818,7 +818,7 @@ main {
                 <!-- 두 번째 줄 -->
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
-                        {% for item in llm_list|slice:"5:10 %}
+                        {% for item in llm_list|slice:"5:10" %}
                         <div class="llm-card" 
                              data-llm-id="{{ item.id }}" 
                              data-llm-title="{{ item.title|escapejs }}" 
