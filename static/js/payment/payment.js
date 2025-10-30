@@ -61,19 +61,7 @@ async function requestInicisV2(btn) {
         const currentPath = window.location.pathname;
         const langPrefix = currentPath.startsWith('/ko/') ? '/ko' : '';
         
-        console.log("서버 검증 시작...");
-        const verificationResult = await fetch(`${langPrefix}/payment/verify_payment_v2/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken()
-            },
-            body: JSON.stringify({
-                payment_id: response.paymentId,
-                merchant_uid: merchant_uid,
-                rank_id: rank_id
-            })
-        });
+
 
         console.log("서버 응답 상태:", verificationResult.status);
         const result = await verificationResult.json();
