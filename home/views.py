@@ -549,3 +549,89 @@ def server_error(request):
 # 앱 전용
 def home_app_view(request):
     return render(request, "home/app/home_app.html")
+
+
+
+def main_app(request):
+    language = get_language()
+    user = request.user
+    genre_list = Genre.objects.all().order_by("?")
+    voice_list = VoiceList.objects.filter(is_public=True)
+    celebrity_voice_list = CelebrityVoice.objects.all().order_by("?")
+    news_list = News.objects.all()
+    total_follow_count = User.objects.annotate(follower_count = Count('follower_set', distinct=True)).order_by("-follower_count")[:10]
+    
+
+    # LLM 랜덤 캐시 처리
+    now = datetime.now()
+    hour_key = now.strftime('%Y%m%d_%H')
+    cache_key = f'llm_random_list_{language}_{hour_key}'
+    llm_cache_key = f'llm_random_list_{language}_{hour_key}'
+    voice_cache_key = f'voice_random_list_{language}_{hour_key}'
+
+
+    llm_list_ids = cache.get(llm_cache_key)
+    if llm_list_ids is None:
+        llm_list_ids = list(LLM.objects.filter(is_public=True).values_list('id', flat=True))
+        random.shuffle(llm_list_ids)
+        cache.set(llm_cache_key, llm_list_ids, timeout=10)
+
+    voice_list_ids = cache.get(voice_cache_key)
+    if voice_list_ids is None:
+        voice_list_ids = list(VoiceList.objects.filter(is_public=True).values_list('id', flat=True))
+        random.shuffle(voice_list_ids)
+        cache.set(voice_cache_key, voice_list_ids, timeout=10)
+
+
+    # 캐시된 순서대로 LLM 객체 가져오기
+    llm_list = list(LLM.objects.filter(id__in=llm_list_ids).prefetch_related('genres'))
+    llm_list.sort(key=lambda x: llm_list_ids.index(x.id))
+    if request.user.is_authenticated:
+        for llm in llm_list:
+            try:
+                like_obj = LlmLike.objects.get(user=request.user, llm=llm, is_like=True)
+                llm.user_has_liked = True
+            except LlmLike.DoesNotExist:
+                llm.user_has_liked = False
+    else:
+        for llm in llm_list:
+            llm.user_has_liked = False
+    voice_list = list(VoiceList.objects.filter(id__in = voice_list_ids).prefetch_related('llm'))
+    voice_list.sort(key=lambda x: voice_list_ids.index(x.id))
+
+    gift_list = Gift.objects.all()
+
+    # 다국어 이름/설명 처리
+
+    llm_list2 = list(
+        LLM.objects.filter(id__in=llm_list_ids)
+        .annotate(like_count=Count('llm_like_count', filter=Q(llm_like_count=True)))
+        .order_by('-like_count') 
+    )
+
+
+
+    for l in llm_list:
+        l.display_genres = []
+        for g in l.genres.all():
+            name_field = f'name_{language}'
+            g.display_name = getattr(g, name_field, g.name)
+            l.display_genres.append(g)
+
+    context = {
+        "languages": settings.LANGUAGES,
+        "LANGUAGE_CODE": language,
+        "request": request,
+        "genre_list": genre_list,
+        "user": user,
+        "llm": llm_list,
+        "llm_list": llm_list,
+        "llm_list2": llm_list2,
+        "voice_list": voice_list,
+        "celebrity_voice_list": celebrity_voice_list,
+        "news_list": news_list,
+        "total_follow_count":total_follow_count,
+        "gift_list" : gift_list,
+    }
+
+    return render(request, 'home/app/main_app.html', context)
