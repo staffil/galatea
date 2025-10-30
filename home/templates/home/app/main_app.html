@@ -1,0 +1,702 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+        }
+
+        body {
+            height: 100%;
+            min-height: 100%;
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* 헤더 스타일 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 35, 0.95);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        main {
+            padding-top: 60px;
+            min-height: 100vh;
+        }
+
+        /* 메인 네비게이션 */
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            padding: 12px 20px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 25px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button.special {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        /* ✅ 뉴스 섹션 - 앱 최적화 */
+        .news-section {
+            margin: 20px 15px;
+        }
+
+        .news-container {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .news-slider {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .news-slide {
+            min-width: 100%;
+            padding: 20px;
+        }
+
+        .news-slide img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .news-content {
+            text-align: left;
+        }
+
+        .news-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .news-description {
+            font-size: 0.95rem;
+            color: #b8c5d1;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .news-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* 네비게이션 버튼 */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(139, 92, 246, 0.8);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .nav-btn.prev {
+            left: 10px;
+        }
+
+        .nav-btn.next {
+            right: 10px;
+        }
+
+        /* 인디케이터 */
+        .indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 15px;
+        }
+
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+
+        .indicator.active {
+            background: #8b5cf6;
+            width: 24px;
+            border-radius: 5px;
+        }
+
+        /* 섹션 타이틀 */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 30px 0 20px 20px;
+            text-align: left;
+        }
+
+        /* LLM 카드 */
+        .main-content {
+            padding: 0 15px 30px;
+        }
+
+        .llm-container2 {
+            margin-bottom: 30px;
+        }
+
+        .llm-row {
+            margin-bottom: 15px;
+        }
+
+        .llm-cards-horizontal {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .llm-cards-horizontal::-webkit-scrollbar {
+            display: none;
+        }
+
+        .llm-card {
+            flex: 0 0 200px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .llm-image-container {
+            height: 120px;
+            overflow: hidden;
+        }
+
+        .llm-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .llm-card-body {
+            padding: 12px;
+        }
+
+        .llm-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .genre-tag {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        /* 인기 유저 */
+        .popular-users-section {
+            padding: 0 15px 30px;
+        }
+
+        .users-list {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .users-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .user-card {
+            flex: 0 0 150px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .user-avatar img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .username {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .follower-count {
+            font-size: 0.85rem;
+            color: #b8c5d1;
+        }
+
+        /* 장르 섹션 */
+        .genre-container {
+            padding: 0 15px 30px;
+        }
+
+        .genre-tags-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .genre-tag-box {
+            position: relative;
+            height: 120px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .genre-tag-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .genre-tag-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 15px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* 전체보기 버튼 */
+        .view-all-btn {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 12px 30px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 25px;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* 이벤트 */
+        .event_list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 0 15px;
+            margin-bottom: 30px;
+        }
+
+        .event_list img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* 푸터 */
+        .footer {
+            background: rgba(139, 92, 246, 0.1);
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #b8c5d1;
+        }
+
+        .company-name {
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 1.5rem;
+                margin-left: 15px;
+            }
+
+            .llm-card {
+                flex: 0 0 170px;
+            }
+
+            .user-card {
+                flex: 0 0 130px;
+            }
+
+            .genre-tags-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <main>
+        {% if user.is_authenticated %}
+        <nav class="main-nav">
+            <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
+            <a href="/voice_all/" class="nav-button">{% trans "보이스 선택" %}</a>
+            <a href="/image/" class="nav-button">{% trans "이미지 만들기" %}</a>
+            <a href="/invite/" class="nav-button">{% trans "친구초대" %}</a>
+            <a href="/customer_ai/ai_name" class="nav-button special">{% trans "AI 만들기⊕" %}</a>
+        </nav>
+        {% endif %}
+
+        <!-- ✅ 뉴스 섹션 -->
+        <div class="news-section">
+            <div class="news-container">
+                <div class="news-slider" id="newsSlider">
+                    {% for news in news_list %}
+                    <div class="news-slide">
+                        {% if news.news_img %}
+                            <img src="{{ news.news_img.url }}" alt="{{ news.title }}">
+                        {% endif %}
+                        
+                        <div class="news-content">
+                            <h3 class="news-title">{{ news.title }}</h3>
+                            {% if news.news_description %}
+                                <p class="news-description">{{ news.news_description }}</p>
+                            {% endif %}
+                            {% if news.link %}
+                                <a href="{{ news.link }}" class="news-link" target="_blank">
+                                    {% trans "자세히 보기" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="news-slide">
+                        <p style="text-align:center; padding:40px;">{% trans "등록된 뉴스가 없습니다." %}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if news_list|length > 1 %}
+                    <button class="nav-btn prev" onclick="slideNews(-1)">‹</button>
+                    <button class="nav-btn next" onclick="slideNews(1)">›</button>
+                    
+                    <div class="indicators">
+                        {% for news in news_list %}
+                            <div class="indicator {% if forloop.first %}active{% endif %}" 
+                                 onclick="goToSlide({{ forloop.counter0 }})"></div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+<!-- HTML 구조 변경 -->
+<div class="main-content">
+    <div class="llm-container2">
+        <h2 class="section-title">{% trans '추천' %}</h2>
+        
+        <!-- 첫 번째 줄 -->
+        <div class="llm-row">
+            <div class="llm-cards-horizontal">
+                {% for item in llm_list|slice:":10" %}
+                <div class="llm-card" onclick="openModal({{ item.id }})">
+                    <div class="llm-card-body">
+                        <div class="llm-image-container">
+                            {% if item.llm_image %}
+                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                            {% else %}
+                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <div class="llm-name">{{ item.title }}</div>
+                        <div class="genre-tags">
+                            {% for genre in item.genres.all %}
+                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                            {% empty %}
+                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- 두 번째 줄 -->
+        <div class="llm-row">
+            <div class="llm-cards-horizontal">
+                {% for item in llm_list|slice:"10:20" %}
+                <div class="llm-card" onclick="openModal({{ item.id }})">
+                    <div class="llm-card-body">
+                        <div class="llm-image-container">
+                            {% if item.llm_image %}
+                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                            {% else %}
+                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <div class="llm-name">{{ item.title }}</div>
+                        <div class="genre-tags">
+                            {% for genre in item.genres.all %}
+                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                            {% empty %}
+                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- 세 번째 줄 -->
+        <div class="llm-row">
+            <div class="llm-cards-horizontal">
+                {% for item in llm_list|slice:"20:30" %}
+                <div class="llm-card" onclick="openModal({{ item.id }})">
+                    <div class="llm-card-body">
+                        <div class="llm-image-container">
+                            {% if item.llm_image %}
+                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                            {% else %}
+                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <div class="llm-name">{{ item.title }}</div>
+                        <div class="genre-tags">
+                            {% for genre in item.genres.all %}
+                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                            {% empty %}
+                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+                <!-- 세 번째 줄 -->
+        <div class="llm-row">
+            <div class="llm-cards-horizontal">
+                {% for item in llm_list|slice:"30:40" %}
+                <div class="llm-card" onclick="openModal({{ item.id }})">
+                    <div class="llm-card-body">
+                        <div class="llm-image-container">
+                            {% if item.llm_image %}
+                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                            {% else %}
+                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <div class="llm-name">{{ item.title }}</div>
+                        <div class="genre-tags">
+                            {% for genre in item.genres.all %}
+                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                            {% empty %}
+                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
+    </div>
+</div>
+
+        <!-- 인기 팔로워 -->
+        <div class="popular-users-section">
+            <h2 class="section-title">{% trans '인기 있는 팔로워' %}</h2>
+            <div class="users-list">
+                {% for user in total_follow_count|slice:":10" %}
+                <div class="user-card" onclick="openUserModal({{ user.id }})">
+                    <div class="user-avatar">
+                        {% if user.user_image %}
+                            <img src="{{ user.user_image.url }}" alt="{{ user.username }}">
+                        {% else %}
+                            <img src="{% static 'images/default_user.png' %}" alt="">
+                        {% endif %}
+                    </div>
+                    <h3 class="username">{{ user.nickname }}</h3>
+                    <span class="follower-count">{{ user.follower_count }} {% trans "팔로워" %}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 이벤트 -->
+        <div class="popular-users-section">
+            <h2 class="section-title">{% trans '이벤트' %}</h2>
+            <div class="event_list">
+                {% for gift in gift_list %}
+                    {% if gift.gift_img %}
+                        <img src="{{ gift.gift_img.url }}" alt="">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 장르 -->
+        <div class="genre-container">
+            <h2 class="section-title">{% trans "장르" %}</h2>
+            <div class="genre-tags-container">
+                {% for genre in genre_list|slice:":6" %}
+                <a href="{% url 'home:genres_detail' genre.id %}">
+                    <div class="genre-tag-box">
+                        {% if genre.genre_image %}
+                            <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}">
+                        {% endif %}
+                        <div class="genre-tag-overlay">{{ genre.name }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            <a href="{% url 'home:genre_all' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="company-name">갈라테이아</div>
+        <div>사업자번호: 309-04-66659 | 대표자명: 김충희</div>
+        <div>연락처: 010-3161-5706 | email: kimc570612@gmail.com</div>
+        <div>주소: 경기도 안산시 단원구 광덕1로 80</div>
+    </footer>
+
+    <script>
+        // ✅ 높이 강제 설정
+        function fixHeight() {
+            const vh = window.innerHeight;
+            document.documentElement.style.height = vh + 'px';
+            document.body.style.height = 'auto';
+        }
+        
+        fixHeight();
+        window.addEventListener('resize', fixHeight);
+        window.addEventListener('orientationchange', fixHeight);
+
+        // 뉴스 슬라이더
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.news-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const slider = document.getElementById('newsSlider');
+
+        function slideNews(direction) {
+            if (slides.length <= 1) return;
+            currentSlide += direction;
+            if (currentSlide >= slides.length) currentSlide = 0;
+            else if (currentSlide < 0) currentSlide = slides.length - 1;
+            updateSlider();
+        }
+
+        function goToSlide(index) {
+            if (slides.length <= 1) return;
+            currentSlide = index;
+            updateSlider();
+        }
+
+        function updateSlider() {
+            if (!slider) return;
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // 자동 슬라이드
+        if (slides.length > 1) {
+            setInterval(() => slideNews(1), 5000);
+        }
+
+        // openModal 함수 (필요시 구현)
+        function openModal(id) {
+            // 모달 로직
+        }
+
+        function openUserModal(id) {
+            // 유저 모달 로직
+        }
+    </script>
+</body>
+</html>

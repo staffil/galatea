@@ -29,7 +29,8 @@ urlpatterns = [
 
 
     # 앱 전용
-    path("app/", views.home_app_view, name="home_app")
+    path("app/", views.home_app_view, name="home_app"),
+    path("main_app/", views.main_app, name="main_app")
 
 ]
 
