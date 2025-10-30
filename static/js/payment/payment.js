@@ -40,26 +40,13 @@ async function requestInicisV2(btn) {
                 phoneNumber: btn.getAttribute("data-buyer-tel") || "",
                 email: btn.getAttribute("data-buyer-email") || ""
             },
-            // 결제 완료 후 이동할 페이지
             redirectUrl: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`
         };
 
         console.log("=== KG Inicis V2 Payment Data ===", paymentData);
 
-        const response = await PortOne.requestPayment(paymentData);
+        await PortOne.requestPayment(paymentData);
 
-        console.log("=== KG Inicis V2 Response ===", response);
-        console.log("Response paymentId:", response.paymentId);
-        console.log("Response 전체:", JSON.stringify(response, null, 2));
-
-        if (response.code != null) {
-            alert(`결제 실패: ${response.message}`);
-            return;
-        }
-
-        // ✅ 서버 검증 fetch 제거
-        alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
-        
     } catch (error) {
         console.error('KG Inicis V2 Payment error:', error);
         alert("결제 처리 중 오류가 발생했습니다: " + error.message);
@@ -99,15 +86,7 @@ async function requestPayPalV2(btn) {
 
         console.log("=== PayPal V2 Payment Data ===", paymentData);
 
-        const response = await PortOne.requestPayment(paymentData);
-
-        if (response.code != null) {
-            alert(`결제 실패: ${response.message}`);
-            return;
-        }
-
-        console.log("=== PayPal V2 Response ===", response);
-        alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
+        await PortOne.requestPayment(paymentData);
 
     } catch (error) {
         console.error('PayPal V2 Payment error:', error);
@@ -124,7 +103,6 @@ function requestPayV1(pgName, btn) {
     const rank_id = btn.getAttribute("data-rank-id");
     const isMobile = window.innerWidth <= 480;
 
-    // PG사별 코드 매핑
     let pgCode;
     const pgLower = pgName.toLowerCase();
     if (pgLower === "kakaopay" || pgLower === "kakao") {
@@ -158,7 +136,6 @@ function requestPayV1(pgName, btn) {
     IMP.request_pay(data, function(rsp) {
         btn.classList.remove('loading');
         if (rsp.success) {
-            alert("결제 성공! 결제 완료 페이지로 이동합니다.");
             window.location.href = `/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
         } else {
             alert("결제 실패: " + rsp.error_msg);
