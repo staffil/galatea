@@ -320,6 +320,7 @@ main {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 13px;
 }
 
 .llm-card-body {
@@ -787,7 +788,7 @@ main {
                 <!-- 첫 번째 줄 -->
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
-                        {% for item in llm_list|slice:":10" %}
+                        {% for item in llm_list|slice:":5" %}
                         <div class="llm-card" 
                              data-llm-id="{{ item.id }}" 
                              data-llm-title="{{ item.title|escapejs }}" 
@@ -817,7 +818,7 @@ main {
                 <!-- 두 번째 줄 -->
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
-                        {% for item in llm_list|slice:"10:20" %}
+                        {% for item in llm_list|slice:"5:10 %}
                         <div class="llm-card" 
                              data-llm-id="{{ item.id }}" 
                              data-llm-title="{{ item.title|escapejs }}" 
@@ -847,7 +848,7 @@ main {
                 <!-- 세 번째 줄 -->
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
-                        {% for item in llm_list|slice:"20:30" %}
+                        {% for item in llm_list|slice:"10:15" %}
                         <div class="llm-card" 
                              data-llm-id="{{ item.id }}" 
                              data-llm-title="{{ item.title|escapejs }}" 
@@ -877,7 +878,7 @@ main {
                 <!-- 네 번째 줄 -->
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
-                        {% for item in llm_list|slice:"30:40" %}
+                        {% for item in llm_list|slice:"15:20" %}
                         <div class="llm-card" 
                              data-llm-id="{{ item.id }}" 
                              data-llm-title="{{ item.title|escapejs }}" 
@@ -908,7 +909,7 @@ main {
 
                                <div class="llm-row">
                     <div class="llm-cards-horizontal">
-                        {% for item in llm_list|slice:"40:50" %}
+                        {% for item in llm_list|slice:"20:25" %}
                         <div class="llm-card" 
                              data-llm-id="{{ item.id }}" 
                              data-llm-title="{{ item.title|escapejs }}" 

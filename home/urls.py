@@ -33,6 +33,9 @@ urlpatterns = [
     path("main_app/", views.main_app, name="main_app"),
     path("llm_intro_app/<int:llm_id>/", views.llm_intro_app, name="llm_intro_app"),
     path("llm_section_app/", views.llm_section_app, name="llm_section_app"),
+    path("gerne_all_app/", views.gerne_all_app, name="gerne_all_app"),
+    path("search_llm_app/", views.search_llm_app, name="search_llm_app"),
+    path("genre_detail_app/", views.genre_detail_app, name="genre_detail_app"),
 
 ]
 
