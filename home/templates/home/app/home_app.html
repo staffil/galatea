@@ -13,7 +13,12 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+        }
+
+        body {
             height: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
             overflow: hidden;
@@ -24,8 +29,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            position: relative;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        .splash-container.loaded {
+            opacity: 1;
         }
 
         .logo-wrapper {
@@ -33,7 +44,6 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            animation: fadeInScale 1s ease-out;
         }
 
         .logo-image {
@@ -45,11 +55,11 @@
         }
 
         .logo-text {
-            font-family: "Bungee", sans-serif;
+            font-family: 'Arial Black', sans-serif;
             font-size: 4rem;
             font-weight: 900;
             color: #ffffff;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
             text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
@@ -63,7 +73,7 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.8);
             animation: bounce 1.4s infinite ease-in-out;
         }
 
@@ -73,17 +83,6 @@
 
         .dot:nth-child(2) {
             animation-delay: -0.16s;
-        }
-
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
         }
 
         @keyframes float {
@@ -117,15 +116,12 @@
             }
         }
     </style>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
 </head>
 
 <body>
-<div class="splash-container">
+<div class="splash-container" id="splash">
     <div class="logo-wrapper">
-        <img src="/static/img/logo.png" alt="Galatea Logo" class="logo-image">
+        <img src="/static/img/logo.png" alt="Galatea Logo" class="logo-image" id="logo">
         <div class="logo-text">GALATEA</div>
     </div>
     
@@ -137,30 +133,57 @@
 </div>
 
 <script>
-    // ✅ 높이 강제 설정 (이전에 했던 방법!)
+    // ✅ 높이 강제 설정 (WebView 호환)
     function fixHeight() {
         const vh = window.innerHeight;
         document.documentElement.style.height = vh + 'px';
         document.body.style.height = vh + 'px';
-        document.querySelector('.splash-container').style.height = vh + 'px';
+        const container = document.querySelector('.splash-container');
+        if (container) {
+            container.style.height = vh + 'px';
+        }
     }
     
+    // 즉시 실행
     fixHeight();
+    
+    // 리사이즈 시에도 실행
     window.addEventListener('resize', fixHeight);
+    window.addEventListener('orientationchange', fixHeight);
     
-    // ✅ 페이지 로드 확인
-    let ready = false;
+    // ✅ 페이지 준비되면 표시
+    let navigationStarted = false;
     
-    window.addEventListener('load', function() {
-        ready = true;
-        document.getElementById('splash').classList.add('loaded');
-        
-        // 3초 후 이동
-        setTimeout(function() {
+    function showSplash() {
+        const splash = document.getElementById('splash');
+        if (splash) {
+            splash.classList.add('loaded');
+        }
+        fixHeight();
+    }
+    
+    function navigateToMain() {
+        if (!navigationStarted) {
+            navigationStarted = true;
             window.location.href = '/main/';
-        }, 3000);
+        }
+    }
+    
+    // DOMContentLoaded - 즉시 표시
+    document.addEventListener('DOMContentLoaded', function() {
+        showSplash();
+        
+        // 3초 후 메인으로 이동
+        setTimeout(navigateToMain, 3000);
     });
-
+    
+    // 완전 로드 후에도 한번 더 체크
+    window.addEventListener('load', function() {
+        showSplash();
+    });
+    
+    // 안전장치: 5초 후 무조건 이동
+    setTimeout(navigateToMain, 5000);
 </script>
 
 </body>
