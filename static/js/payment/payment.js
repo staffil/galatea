@@ -11,7 +11,8 @@ function getCsrfToken() {
     }
     return '';
 }
-// KG 이니시스 V2 결제 함수 수정
+
+// KG 이니시스 V2 결제 함수
 async function requestInicisV2(btn) {
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
@@ -39,6 +40,7 @@ async function requestInicisV2(btn) {
                 phoneNumber: btn.getAttribute("data-buyer-tel") || "",
                 email: btn.getAttribute("data-buyer-email") || ""
             },
+            // 결제 완료 후 이동할 페이지
             redirectUrl: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`
         };
 
@@ -47,8 +49,6 @@ async function requestInicisV2(btn) {
         const response = await PortOne.requestPayment(paymentData);
 
         console.log("=== KG Inicis V2 Response ===", response);
-        console.log("Response code:", response.code);
-        console.log("Response message:", response.message);
         console.log("Response paymentId:", response.paymentId);
         console.log("Response 전체:", JSON.stringify(response, null, 2));
 
@@ -57,27 +57,9 @@ async function requestInicisV2(btn) {
             return;
         }
 
-        // 서버 검증 - 현재 페이지의 언어 경로 가져오기
-        const currentPath = window.location.pathname;
-        const langPrefix = currentPath.startsWith('/ko/') ? '/ko' : '';
+        // ✅ 서버 검증 fetch 제거
+        alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
         
-
-
-        console.log("서버 응답 상태:", verificationResult.status);
-        const result = await verificationResult.json();
-        console.log("=== 서버 응답 전체 ===");
-        console.log("Result object:", JSON.stringify(result, null, 2));
-        console.log("result.status:", result.status);
-        console.log("result.message:", result.message);
-        
-        if (result.status === 'success') {
-            alert('결제가 성공적으로 완료되었습니다!');
-            window.location.href = "/payment/complete/";
-        } else {
-            console.error("결제 실패 상세:", result);
-            alert("결제 처리 실패: " + (result.message || JSON.stringify(result)));
-        }
-
     } catch (error) {
         console.error('KG Inicis V2 Payment error:', error);
         alert("결제 처리 중 오류가 발생했습니다: " + error.message);
@@ -96,8 +78,7 @@ async function requestPayPalV2(btn) {
     btn.classList.add('loading');
 
     try {
-        if (typeof PortOne !== 'undefined') {
-        } else {
+        if (typeof PortOne === 'undefined') {
             throw new Error("PortOne V2 SDK not loaded");
         }
 
@@ -112,7 +93,8 @@ async function requestPayPalV2(btn) {
             customer: {
                 customerId: btn.getAttribute("data-user-id") || "guest",
                 email: btn.getAttribute("data-buyer-email") || ""
-            }
+            },
+            redirectUrl: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`
         };
 
         console.log("=== PayPal V2 Payment Data ===", paymentData);
@@ -125,30 +107,7 @@ async function requestPayPalV2(btn) {
         }
 
         console.log("=== PayPal V2 Response ===", response);
-
-        // 결제 성공 - 서버에서 검증
-        const verificationResult = await fetch('/payment/verify_payment_v2/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken()
-            },
-            body: JSON.stringify({
-                payment_id: response.paymentId,
-                merchant_uid: merchant_uid,
-                rank_id: rank_id
-            })
-        });
-        await PortOne.approvePayment({ paymentId: response.paymentId });
-
-        const result = await verificationResult.json();
-        
-        if (result.status === 'success') {
-            alert('결제가 성공적으로 완료되었습니다!');
-            window.location.href = "/payment/complete/";
-        } else {
-            alert("결제 처리 실패: " + result.message);
-        }
+        alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
 
     } catch (error) {
         console.error('PayPal V2 Payment error:', error);
@@ -168,8 +127,7 @@ function requestPayV1(pgName, btn) {
     // PG사별 코드 매핑
     let pgCode;
     const pgLower = pgName.toLowerCase();
-    
-if (pgLower === "kakaopay" || pgLower === "kakao") {
+    if (pgLower === "kakaopay" || pgLower === "kakao") {
         pgCode = "kakaopay.CA36348663";
     } else {
         pgCode = pgLower;
@@ -186,7 +144,6 @@ if (pgLower === "kakaopay" || pgLower === "kakao") {
         m_redirect_url: "https://galatea.website/payment/complete/",
         name: "GALATEA 등급 결제",
     };
-    
 
     if (isMobile) {
         data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
@@ -201,30 +158,19 @@ if (pgLower === "kakaopay" || pgLower === "kakao") {
     IMP.request_pay(data, function(rsp) {
         btn.classList.remove('loading');
         if (rsp.success) {
-            fetch(`/payment/verify_payment/?imp_uid=${rsp.imp_uid}&merchant_uid=${merchant_uid}&rank_id=${rank_id}`)
-            .then(res => res.json())
-            .then(result => {
-                if (result.status) {
-                    alert(`결제 성공! 상태: ${result.status}`);
-                    window.location.href = "/payment/complete/";
-                } else {
-                    alert("결제 처리 실패: " + JSON.stringify(result));
-                }
-            }).catch(err => {
-                alert("결제 처리 중 오류가 발생했습니다.");
-                console.error(err);
-            });
+            alert("결제 성공! 결제 완료 페이지로 이동합니다.");
+            window.location.href = `/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
         } else {
             alert("결제 실패: " + rsp.error_msg);
         }
     });
 }
 
-// 전역 함수 수정
+// 전역 함수
 window.requestPay = function(pgName, btn) {
     console.log("requestPay 호출됨:", pgName);
     const pgLower = pgName.toLowerCase();
-    
+
     if (pgLower === "paypal") {
         console.log("PayPal V2 결제 시작");
         requestPayPalV2(btn);
@@ -236,4 +182,3 @@ window.requestPay = function(pgName, btn) {
         requestPayV1(pgName, btn);
     }
 };
-
