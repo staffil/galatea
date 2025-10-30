@@ -2,669 +2,358 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Boldonse&family=Bungee&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Oswald:wght@576&family=Special+Gothic+Expanded+One&family=Sunflower:wght@300&display=swap" rel="stylesheet">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_section.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+
+    <script src="{% static 'js/home/main.js' %}"></script>
+    <script src="{% static 'js/home/user_intro.js' %}"></script>
+
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="google-adsense-account" content="ca-pub-3542211779359374">
+    
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3542211779359374" crossorigin="anonymous"></script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GALATEA AI",
+      "url": "https://www.galatea.website",
+      "logo": "https://www.galatea.website/static/img/logo.png"
+    }
+    </script>
+</head>
 
 <style>
+/* 인기 유저 섹션 */
+.popular-users-section {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+/* 유저 리스트 */
+.users-list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 200px;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.5) transparent;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+/* 스크롤바 스타일 */
+.users-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.users-list::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+}
+
+.users-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+    border-radius: 4px;
+}
+
+/* 개별 유저 카드 */
+.user-card {
+    width: 200px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border-radius: 18px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
+    touch-action: manipulation;
+}
+
+.user-card:hover,
+.user-card:active {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(139,92,246,0.4);
+    border-color: #8b5cf6;
+}
+
+/* 유저 아바타 */
+.user-avatar img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.user-card:hover .user-avatar img {
+    transform: scale(1.1);
+}
+
+/* 유저 정보 */
+.user-info {
+    text-align: center;
+}
+
+.username {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.follower-count {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+/* 팔로우 버튼 */
+.glt2-follow-btn {
+   padding: 10px 20px;
+   background: rgba(255, 255, 255, 0.15);
+   color: white;
+   border: 2px solid rgba(255, 255, 255, 0.3);
+   border-radius: 25px;
+   font-size: 0.95rem;
+   font-weight: 700;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   backdrop-filter: blur(15px);
+   position: relative;
+   overflow: hidden;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+   -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
+   touch-action: manipulation;
+}
+
+.glt2-follow-btn::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: -100%;
+   width: 100%;
+   height: 100%;
+   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+   transition: left 0.5s ease;
+}
+
+.glt2-follow-btn:hover::before {
+   left: 100%;
+}
+
+.glt2-follow-btn:hover,
+.glt2-follow-btn:active {
+   background: rgba(255, 255, 255, 0.25);
+   transform: translateY(-3px);
+   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+   border-color: rgba(255, 255, 255, 0.5);
+}
+
+.glt2-follow-btn.primary {
+   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+   border-color: transparent;
+   box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+}
+
+.glt2-follow-btn.primary:hover,
+.glt2-follow-btn.primary:active {
+   background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+   box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+   transform: translateY(-4px);
+}
+
+.glt2-follow-btn.following {
+   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+   border-color: transparent;
+   box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+}
+
+.glt2-follow-btn.following:hover,
+.glt2-follow-btn.following:active {
+   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+   box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+.glt2-follow-btn:active {
+   transform: translateY(-1px);
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* LLM 카드 터치 최적화 */
+.llm-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
+    touch-action: manipulation;
+}
+
+.llm-card:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+/* 빈 메시지 */
+.empty-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+/* 전체보기 버튼 */
+.view-all-btn {
+    display: inline-block;
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 12px 24px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
+    touch-action: manipulation;
+}
+
+.view-all-btn:hover,
+.view-all-btn:active {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .popular-users-section {
+        padding: 30px 15px;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    
+    .user-card {
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .user-avatar img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .username {
+        font-size: 1.1rem;
+    }
+    
+    .glt2-follow-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .user-info {
+        text-align: center;
+    }
+    
+    .glt2-follow-btn {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html {
-    height: 100%;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
-}
-
 body {
-    height: 100%;
-    min-height: 100%;
-    font-family: 'Inter', 'Noto Sans KR', sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
-    color: #ffffff;
-    overflow-x: hidden;
-}
-
-/* 헤더 */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: rgba(15, 15, 35, 0.95);
-    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-}
-
-main {
-    padding-top: 60px;
+    font-family: 'Malgun Gothic', sans-serif;
+    background: #f0f0f0;
     min-height: 100vh;
 }
 
-/* 사이드바 토글 */
-#sidebar-toggle {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    width: 45px;
-    height: 45px;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    z-index: 999;
-    transition: all 0.3s ease;
-    padding: 15px;
-    margin-top: 30px;
-}
-
-#sidebar-content {
-    position: fixed;
-    top: 135px;
-    right: 20px;
-    background: linear-gradient(135deg, rgba(15,15,35,0.95), rgba(26,26,46,0.95));
-    border: 1px solid rgba(139,92,246,0.2);
-    border-radius: 12px;
-    padding: 16px;
-    min-width: 180px;
-    z-index: 998;
-    transition: all 0.3s ease;
-}
-
-#sidebar-content.collapsed {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-}
-
-.languageSelect label {
-    color: #e2e8f0;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-}
-
-.languageSelect select {
-    width: 100%;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(139,92,246,0.3);
-    background: rgba(139,92,246,0.1);
-    color: #e2e8f0;
-    font-size: 12px;
-    margin-bottom: 8px;
-}
-
-.languageSelect button, .helpdesk a {
-    display: block;
-    width: 100%;
-    padding: 6px 10px;
-    margin-bottom: 6px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 500;
-    text-align: center;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(139,92,246,0.3);
-    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(6,182,212,0.1));
-    color: #e2e8f0;
-    cursor: pointer;
-}
-
-/* 메인 네비게이션 */
-.main-nav {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 20px 10px;
-    flex-wrap: wrap;
-}
-
-.nav-button {
-    padding: 12px 20px;
-    background: rgba(139, 92, 246, 0.15);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 25px;
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.nav-button.special {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-}
-
-/* 뉴스 섹션 */
-.news-section {
-    margin: 20px 15px;
-}
-
-.news-container {
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 16px;
-    overflow: hidden;
-    position: relative;
-}
-
-.news-slider {
-    display: flex;
-    transition: transform 0.5s ease;
-}
-
-.news-slide {
-    min-width: 100%;
-    padding: 20px;
-}
-
-.news-slide img {
-    width: 100%;
-    max-height: 180px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 15px;
-}
-
-.news-content {
-    text-align: left;
-}
-
-.news-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 10px;
-}
-
-.news-description {
-    font-size: 0.95rem;
-    color: #b8c5d1;
-    line-height: 1.6;
-    margin-bottom: 15px;
-}
-
-.news-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.nav-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background: rgba(139, 92, 246, 0.8);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    z-index: 10;
-}
-
-.nav-btn.prev { left: 10px; }
-.nav-btn.next { right: 10px; }
-
-.indicators {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 15px;
-}
-
-.indicator {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.indicator.active {
-    background: #8b5cf6;
-    width: 24px;
-    border-radius: 5px;
-}
-
-/* 섹션 타이틀 */
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 30px 0 20px 20px;
-    text-align: left;
-}
-
-/* LLM 카드 */
-.main-content {
-    padding: 0 15px 30px;
-}
-
-.llm-container2 {
-    margin-bottom: 30px;
-}
-
-.llm-row {
-    margin-bottom: 15px;
-}
-
-.llm-cards-horizontal {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding: 10px 0;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
-
-.llm-cards-horizontal::-webkit-scrollbar {
-    display: none;
-}
-
-.llm-card {
-    flex: 0 0 200px;
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.llm-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-}
-
-.llm-image-container {
-    height: 120px;
-    overflow: hidden;
-}
-
-.llm-image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.llm-card-body {
-    padding: 12px;
-}
-
-.llm-name {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 8px;
-}
-
-.genre-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-}
-
-.genre-tag {
-    padding: 4px 8px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    color: white;
-}
-
-/* 인기 유저 */
-.popular-users-section {
-    padding: 0 15px 30px;
-}
-
-.users-list {
-    display: flex;
-    gap: 15px;
-    overflow-x: auto;
-    padding: 10px 0;
-    -webkit-overflow-scrolling: touch;
-}
-
-.users-list::-webkit-scrollbar {
-    display: none;
-}
-
-.user-card {
-    flex: 0 0 150px;
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 16px;
-    padding: 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.user-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-}
-
-.user-avatar img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-.user-info {
-    text-align: center;
-}
-
-.username {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 5px;
-}
-
-.follower-count {
-    font-size: 0.85rem;
-    color: #b8c5d1;
-}
-
-/* 장르 */
-.genre-container {
-    padding: 0 15px 30px;
-}
-
-.genre-tags-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.genre-tag-box {
-    position: relative;
-    height: 120px;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-}
-
-.genre-tag-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.genre-tag-overlay {
-    position: absolute;
+.footer {
     bottom: 0;
     left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-    padding: 15px;
-    color: white;
-    font-weight: 600;
-    text-align: center;
-}
-
-/* 전체보기 버튼 */
-.view-all-btn {
-    display: block;
-    width: fit-content;
-    margin: 20px auto;
-    padding: 12px 30px;
-    background: rgba(139, 92, 246, 0.15);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-radius: 25px;
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.view-all-btn:hover {
-    background: rgba(139, 92, 246, 0.3);
-    transform: translateY(-2px);
-}
-
-/* 이벤트 */
-.event_list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.event_list img {
     width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 12px;
+    background: transparent;
+    color: #ffffff;
+    padding: 15px 20px;
+    font-size: 12px;
+    border-top: 1px solid #ddd;
 }
 
-/* 푸터 */
-.footer {
-    background: rgba(139, 92, 246, 0.1);
-    border-top: 1px solid rgba(139, 92, 246, 0.2);
-    padding: 20px;
+.footer-content {
     text-align: center;
-    font-size: 0.85rem;
-    color: #b8c5d1;
+    line-height: 1.4;
 }
 
 .company-name {
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 10px;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .info-line {
-    margin: 5px 0;
-}
-
-/* 모달 스타일 */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.modal-container {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 20px;
-    max-width: 500px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    animation: modalSlideIn 0.3s ease;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    font-size: 2rem;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-    transition: all 0.3s ease;
-    line-height: 1;
-}
-
-.modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: rotate(90deg);
-}
-
-.modal-content {
-    padding: 20px;
-}
-
-.modal-header img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 20px;
-}
-
-.modal-body h2 {
-    font-size: 1.8rem;
-    color: #ffffff;
-    margin-bottom: 15px;
-}
-
-.modal-body p {
-    color: #b8c5d1;
-    line-height: 1.6;
-    margin-bottom: 20px;
-}
-
-.modal-genres {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.btn-chat {
-    flex: 1;
-    padding: 15px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    text-decoration: none;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-}
-
-.btn-chat:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-}
-
-.follower-info {
-    font-size: 1.1rem;
-    color: #8b5cf6;
-    font-weight: 600;
-}
-
-.glt2-follow-btn {
-    padding: 12px 24px;
-    background: rgba(139, 92, 246, 0.2);
-    border: 1px solid rgba(139, 92, 246, 0.5);
-    border-radius: 25px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.glt2-follow-btn:hover {
-    background: rgba(139, 92, 246, 0.4);
-    transform: translateY(-2px);
-}
-
-.glt2-follow-btn.following {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border-color: transparent;
-}
-
-@media (max-width: 576px) {
-    .modal-container {
-        max-width: 95%;
-        border-radius: 16px;
-    }
-
-    .modal-header img {
-        height: 180px;
-    }
-
-    .modal-body h2 {
-        font-size: 1.5rem;
-    }
-
-    .modal-actions {
-        flex-direction: column;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        margin-left: 15px;
-    }
-
-    .llm-card {
-        flex: 0 0 170px;
-    }
-
-    .user-card {
-        flex: 0 0 130px;
-    }
-
-    .genre-tags-container {
-        grid-template-columns: 1fr;
-    }
+    margin: 2px 0;
 }
 </style>
-</head>
 
 <body>
+    <!-- 헤더 -->
     <header>
         {% if not user.is_authenticated %}
             {% include "common/notLoginHeader.html" %}
@@ -673,8 +362,10 @@ main {
         {% endif %}
     </header>
 
+    <!-- 토글 버튼 -->
     <div id="sidebar-toggle" class="collapsed">&#9650;</div>
 
+    <!-- 토글 컨텐츠 -->
     <div id="sidebar-content" class="collapsed">
         <div class="languageSelect">
             <form action="{% url 'home:set_language' %}" method="post">
@@ -693,10 +384,15 @@ main {
             <a href="{% url 'helpdesk:Faq' %}" class="faq">FAQ</a>
             <a href="{% url 'helpdesk:request' %}" class="request">{% trans '요청하기' %}</a>
             <a href="{% url 'helpdesk:notice' %}" class="notice">{% trans '공지사항' %}</a>
+            <a href="{% url 'helpdesk:prompt_share' %}" class="notice">{% trans '프롬프트 공유하기' %}</a>
         </div>
     </div>
 
     <main style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin-top: -40px; padding-bottom: 40px;">
+        {% for news in news_list %}
+        {% endfor %}
+
+        <!-- 메인 네비게이션 -->
         {% if user.is_authenticated %}
         <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}" style="padding-top: 70px;">
             <a href="/payment/" class="nav-button">{% trans "결제하기" %}</a>
@@ -715,15 +411,22 @@ main {
                         <div class="news-slide">
                             {% if news.news_img %}
                                 <img src="{{ news.news_img.url }}" alt="{{ news.title }}" loading="lazy">
+                            {% else %}
+                                <div class="news-placeholder">
+                                    <i class="icon-news"></i>
+                                </div>
                             {% endif %}
+                            
                             <div class="news-content">
                                 <h3 class="news-title">{{ news.title }}</h3>
                                 {% if news.news_description %}
                                     <p class="news-description">{{ news.news_description }}</p>
                                 {% endif %}
+                                
                                 {% if news.link %}
                                     <a href="{{ news.link }}" class="news-link" target="_blank">
                                         <span>{% trans "자세히 보기" %}</span>
+                                        <i class="icon-arrow-right"></i>
                                     </a>
                                 {% endif %}
                             </div>
@@ -738,18 +441,20 @@ main {
                 </div>
                 
                 {% if news_list|length > 1 %}
-                    <button class="nav-btn prev" onclick="slideNews(-1)">‹</button>
-                    <button class="nav-btn next" onclick="slideNews(1)">›</button>
+                    <button class="nav-btn prev" data-direction="-1">‹</button>
+                    <button class="nav-btn next" data-direction="1">›</button>
+                    
                     <div class="indicators">
                         {% for news in news_list %}
-                            <div class="indicator {% if forloop.first %}active{% endif %}" onclick="goToSlide({{ forloop.counter0 }})"></div>
+                            <div class="indicator {% if forloop.first %}active{% endif %}" 
+                                 data-slide-index="{{ forloop.counter0 }}"></div>
                         {% endfor %}
                     </div>
                 {% endif %}
             </div>
         </div>
 
-        <!-- LLM 추천 -->
+        <!-- LLM 추천 섹션 -->
         <div class="main-content">
             <div class="llm-container2">
                 <h2 class="section-title">{% trans '추천' %}</h2>
@@ -758,7 +463,7 @@ main {
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
                         {% for item in llm_list|slice:":10" %}
-                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                        <div class="llm-card" data-llm-id="{{ item.id }}">
                             <div class="llm-card-body">
                                 <div class="llm-image-container">
                                     {% if item.llm_image %}
@@ -785,7 +490,7 @@ main {
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
                         {% for item in llm_list|slice:"10:20" %}
-                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                        <div class="llm-card" data-llm-id="{{ item.id }}">
                             <div class="llm-card-body">
                                 <div class="llm-image-container">
                                     {% if item.llm_image %}
@@ -812,7 +517,7 @@ main {
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
                         {% for item in llm_list|slice:"20:30" %}
-                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                        <div class="llm-card" data-llm-id="{{ item.id }}">
                             <div class="llm-card-body">
                                 <div class="llm-image-container">
                                     {% if item.llm_image %}
@@ -839,7 +544,7 @@ main {
                 <div class="llm-row">
                     <div class="llm-cards-horizontal">
                         {% for item in llm_list|slice:"30:40" %}
-                        <div class="llm-card" onclick="openModal({{ item.id }}, '{{ item.title|escapejs }}', '{{ item.llm_image.url|default:'' }}')">
+                        <div class="llm-card" data-llm-id="{{ item.id }}">
                             <div class="llm-card-body">
                                 <div class="llm-image-container">
                                     {% if item.llm_image %}
@@ -866,12 +571,12 @@ main {
             </div>
         </div>
 
-        <!-- 인기있는 팔로워 -->
+        <!-- 인기있는 유저 -->
         <div class="popular-users-section">
             <h2 class="section-title">{% trans '인기 있는 팔로워' %}</h2>
             <div class="users-list">
                 {% for user in total_follow_count %}
-                <div class="user-card" onclick="openUserModal({{ user.id }}, '{{ user.nickname|escapejs }}', '{{ user.user_image.url|default:'' }}', '{{ user.follower_count }}')">
+                <div class="user-card" data-user-id="{{ user.id }}">
                     <div class="user-avatar">
                         {% if user.user_image %}
                             <img src="{{ user.user_image.url }}" alt="{{ user.username }}" loading="lazy">
@@ -891,6 +596,14 @@ main {
                 {% endfor %}
             </div>
         </div>
+
+        <script>
+            const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
+            const USER_ID = "{{ user.id }}";
+            const LLM_id = "{{ item.id }}"
+        </script>
+
+        <script src="{% static 'js/home/llm_section.js' %}"></script>
 
         <!-- 이벤트 -->
         <div class="popular-users-section">
@@ -927,181 +640,428 @@ main {
                 <a href="{% url 'home:genre_all' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
         </div>
-    </main>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="company-name">갈라테이아</div>
-            <div class="info-line">사업자번호: 309-04-66659 | 대표자명: 김충희 | 연락처: 010-3161-5706 | email: kimc570612@gmail.com</div>
-            <div class="info-line">주소: 경기도 안산시 단원구 광덕1로 80</div>
+        <!-- 광고 위치 -->
+        <div class="ad-section" style="margin: 40px auto; text-align:center;">
+            <ins class="adsbygoogle"
+            style="display:block; text-align:center;"
+            data-ad-client="ca-pub-3542211779359374"
+            data-ad-slot="1234567890"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+            
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
-    </footer>
 
-    <!-- 모달 HTML -->
-    <div id="modalOverlay" class="modal-overlay">
-        <div class="modal-container">
-            <button class="modal-close" onclick="closeModal()">×</button>
-            <div id="modalContent" class="modal-content"></div>
-        </div>
-    </div>
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="company-name">갈라테이아</div>
+                <div class="info-line">사업자번호: 309-04-66659 | 대표자명: 김충희 | 연락처: 010-3161-5706 | email: kimc570612@gmail.com</div>
+                <div class="info-line">주소:경기도 안산시 단원구 광덕1로 80 </div>
+            </div>
+        </footer>
 
-<script>
-    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-    const USER_ID = "{{ user.id }}";
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+        <script>
+        // ==========================================
+        // 유틸리티 함수
+        // ==========================================
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
 
-    // 높이 강제 설정
-    function fixHeight() {
-        const vh = window.innerHeight;
-        document.documentElement.style.height = vh + 'px';
-        document.body.style.height = 'auto';
-    }
-    
-    fixHeight();
-    window.addEventListener('resize', fixHeight);
-    window.addEventListener('orientationchange', fixHeight);
+        // ==========================================
+        // LLM 카드 클릭 이벤트 (앱 환경 최적화)
+        // ==========================================
+        (function initLLMCards() {
+            'use strict';
+            
+            const handleCardClick = function(e) {
+                const llmCard = e.target.closest('.llm-card');
+                if (!llmCard) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const llmId = llmCard.dataset.llmId;
+                if (!llmId) {
+                    console.warn('LLM ID not found');
+                    return;
+                }
+                
+                console.log('Opening modal for LLM:', llmId);
+                
+                // openModal 함수가 있으면 사용, 없으면 페이지 이동
+                if (typeof openModal === 'function') {
+                    openModal(llmId);
+                } else {
+                    console.warn('openModal function not found, redirecting...');
+                    window.location.href = `/llm/${llmId}/detail/`;
+                }
+            };
+            
+            // 클릭과 터치 이벤트 모두 처리
+            document.addEventListener('click', handleCardClick);
+            document.addEventListener('touchend', handleCardClick);
+        })();
 
-    // 사이드바 토글
-    const toggleBtn = document.getElementById('sidebar-toggle');
-    const sidebarContent = document.getElementById('sidebar-content');
+        // ==========================================
+        // 유저 카드 클릭 이벤트
+        // ==========================================
+        (function initUserCards() {
+            'use strict';
+            
+            const handleUserCardClick = function(e) {
+                const userCard = e.target.closest('.user-card');
+                if (!userCard) return;
+                
+                // 팔로우 버튼 클릭은 제외
+                if (e.target.closest('.glt2-follow-btn')) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const userId = userCard.dataset.userId;
+                if (!userId) {
+                    console.warn('User ID not found');
+                    return;
+                }
+                
+                console.log('Opening user modal:', userId);
+                
+                if (typeof openUserModal === 'function') {
+                    openUserModal(userId);
+                } else {
+                    console.warn('openUserModal function not found, redirecting...');
+                    window.location.href = `/user/${userId}/profile/`;
+                }
+            };
+            
+            document.addEventListener('click', handleUserCardClick);
+            document.addEventListener('touchend', handleUserCardClick);
+        })();
 
-    toggleBtn.addEventListener('click', () => {
-        const collapsed = sidebarContent.classList.contains('collapsed');
-        sidebarContent.classList.toggle('collapsed');
-        toggleBtn.classList.toggle('collapsed');
-        toggleBtn.classList.toggle('expanded');
-        toggleBtn.innerHTML = collapsed ? '&#9660;' : '&#9650;';
-    });
-
-    // 뉴스 슬라이더
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.news-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    const slider = document.getElementById('newsSlider');
-
-    function slideNews(direction) {
-        if (slides.length <= 1) return;
-        currentSlide += direction;
-        if (currentSlide >= slides.length) currentSlide = 0;
-        else if (currentSlide < 0) currentSlide = slides.length - 1;
-        updateSlider();
-    }
-
-    function goToSlide(index) {
-        if (slides.length <= 1) return;
-        currentSlide = index;
-        updateSlider();
-    }
-
-    function updateSlider() {
-        if (!slider) return;
-        slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentSlide);
-        });
-    }
-
-    if (slides.length > 1) {
-        setInterval(() => slideNews(1), 5000);
-    }
-
-    // 모달 관련
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalContent = document.getElementById('modalContent');
-
-    function openModal(llmId, title, imgSrc) {
-        modalContent.innerHTML = `
-            <div class="modal-header">
-                <img src="${imgSrc || '/static/images/default.png'}" alt="${title}">
-            </div>
-            <div class="modal-body">
-                <h2>${title}</h2>
-                <div class="modal-actions">
-                    <a href="/chat/${llmId}/" class="btn-chat">{% trans "채팅하기" %}</a>
-                </div>
-            </div>
-        `;
-        modalOverlay.style.display = 'flex';
-    }
-
-    function openUserModal(userId, nickname, imgSrc, followerCount) {
-        modalContent.innerHTML = `
-            <div class="modal-header">
-                <img src="${imgSrc || '/static/images/default_user.png'}" alt="${nickname}">
-            </div>
-            <div class="modal-body">
-                <h2>${nickname}</h2>
-                <p class="follower-info">${followerCount} {% trans "팔로워" %}</p>
-                <div class="modal-actions">
-                    <button class="glt2-follow-btn" data-id="${userId}" onclick="event.stopPropagation()">
-                        {% trans "Follow" %}
-                    </button>
-                </div>
-            </div>
-        `;
-        modalOverlay.style.display = 'flex';
-    }
-
-    function closeModal() {
-        modalOverlay.style.display = 'none';
-        modalContent.innerHTML = '';
-    }
-
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) closeModal();
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modalOverlay.style.display === 'flex') {
-            closeModal();
-        }
-    });
-
-    // 팔로우 토글
-    document.addEventListener('click', (e) => {
-        const followBtn = e.target.closest('.glt2-follow-btn');
-        if (!followBtn) return;
-
-        const userId = followBtn.dataset.id;
-        if (!userId) return;
-
-        fetch("{% url 'home:toggle_follow' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": getCookie('csrftoken'),
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `user_id=${encodeURIComponent(userId)}`
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'follow') {
-                followBtn.textContent = '{% trans "Following" %}';
-                followBtn.classList.add('following');
-            } else if (data.status === 'unfollow') {
-                followBtn.textContent = '{% trans "Follow" %}';
-                followBtn.classList.remove('following');
-            } else {
-                alert(data.message);
+        // ==========================================
+        // 뉴스 슬라이더
+        // ==========================================
+        (function initNewsSlider() {
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.news-slide');
+            const indicators = document.querySelectorAll('.indicator');
+            const slider = document.getElementById('newsSlider');
+            
+            if (slides.length <= 1) return;
+            
+            function slideNews(direction) {
+                currentSlide += direction;
+                
+                if (currentSlide >= slides.length) {
+                    currentSlide = 0;
+                } else if (currentSlide < 0) {
+                    currentSlide = slides.length - 1;
+                }
+                
+                updateSlider();
             }
-        })
-        .catch(err => console.error('팔로우 토글 오류:', err));
-    });
-</script>
+            
+            function goToSlide(index) {
+                currentSlide = index;
+                updateSlider();
+            }
+            
+            function updateSlider() {
+                if (!slider) return;
+                
+                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+                
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentSlide);
+                });
+            }
+            
+            // 네비게이션 버튼 이벤트
+            document.addEventListener('click', function(e) {
+                const navBtn = e.target.closest('.nav-btn');
+                if (!navBtn) return;
+                
+                const direction = parseInt(navBtn.dataset.direction);
+                slideNews(direction);
+            });
+            
+            // 인디케이터 클릭 이벤트
+            document.addEventListener('click', function(e) {
+                const indicator = e.target.closest('.indicator');
+                if (!indicator) return;
+                
+                const index = parseInt(indicator.dataset.slideIndex);
+                if (!isNaN(index)) {
+                    goToSlide(index);
+                }
+            });
+            
+            // 자동 슬라이드 (5초마다)
+            setInterval(() => {
+                slideNews(1);
+            }, 5000);
+            
+            // 키보드 네비게이션
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    slideNews(-1);
+                } else if (e.key === 'ArrowRight') {
+                    slideNews(1);
+                }
+            });
+            
+            // 터치 스와이프 지원
+            let startX = 0;
+            let endX = 0;
+            
+            slider?.addEventListener('touchstart', (e) => {
+                startX = e.changedTouches[0].screenX;
+            });
+            
+            slider?.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].screenX;
+                const threshold = 50;
+                const diff = startX - endX;
+                
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        slideNews(1);
+                    } else {
+                        slideNews(-1);
+                    }
+                }
+            });
+        })();
 
+        // ==========================================
+        // 사이드바 토글
+        // ==========================================
+        (function initSidebar() {
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            const sidebarContent = document.getElementById('sidebar-content');
+            
+            if (!toggleBtn || !sidebarContent) return;
+            
+            toggleBtn.addEventListener('click', () => {
+                const collapsed = sidebarContent.classList.contains('collapsed');
+                sidebarContent.classList.toggle('collapsed');
+                toggleBtn.classList.toggle('collapsed');
+                toggleBtn.classList.toggle('expanded');
+                toggleBtn.innerHTML = collapsed ? '&#9660;' : '&#9650;';
+            });
+        })();
+
+        // ==========================================
+        // 좋아요 버튼
+        // ==========================================
+        document.addEventListener('click', (e) => {
+            const likeBtn = e.target.closest('.glt2-like-btn');
+            if (!likeBtn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const userId = likeBtn.dataset.id;
+            
+            fetch("{% url 'home:like_toggle' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie('csrftoken'),
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `llm_id=${userId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'like') {
+                    likeBtn.innerHTML = '<span class="heart-filled"></span>';
+                } else if (data.status === 'unlike') {
+                    likeBtn.innerHTML = '<span class="heart-empty"></span>';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => console.error('{% trans "좋아요 토글 오류:" %}', err));
+        });
+
+        // ==========================================
+        // 공유 버튼
+        // ==========================================
+        document.addEventListener("click", function(e) {
+            if (e.target.classList.contains("share-btn")) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const link = e.target.getAttribute("data-link");
+                navigator.clipboard.writeText(link).then(() => {
+                    alert("{% trans '링크가 복사되었습니다!' %}");
+                });
+            }
+        });
+
+        // ==========================================
+        // 팔로우 토글
+        // ==========================================
+        document.addEventListener('click', (e) => {
+            const followBtn = e.target.closest('.glt2-follow-btn');
+            if (!followBtn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const userId = followBtn.dataset.id;
+            if (!userId) return;
+            
+            fetch("{% url 'home:toggle_follow' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie('csrftoken'),
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `user_id=${encodeURIComponent(userId)}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'follow') {
+                    followBtn.textContent = '{% trans "Following" %}';
+                    followBtn.classList.add('following');
+                } else if (data.status === 'unfollow') {
+                    followBtn.textContent = '{% trans "Follow" %}';
+                    followBtn.classList.remove('following');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
+        });
+
+        // ==========================================
+        // 가로 스크롤 개선
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const horizontalContainers = document.querySelectorAll(
+                '.cv-scroll, .genre-tags-container, .character-cards-container, .llm-cards-container, .llm-cards-horizontal'
+            );
+            
+            horizontalContainers.forEach(container => {
+                // 마우스 휠로 가로 스크롤
+                container.addEventListener('wheel', function(e) {
+                    if (e.deltaY !== 0) {
+                        e.preventDefault();
+                        container.scrollLeft += e.deltaY;
+                    }
+                }, { passive: false });
+                
+                // 드래그 스크롤
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                
+                container.addEventListener('mousedown', function(e) {
+                    isDown = true;
+                    container.style.cursor = 'grabbing';
+                    startX = e.pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                });
+                
+                container.addEventListener('mouseleave', function() {
+                    isDown = false;
+                    container.style.cursor = 'grab';
+                });
+                
+                container.addEventListener('mouseup', function() {
+                    isDown = false;
+                    container.style.cursor = 'grab';
+                });
+                
+                container.addEventListener('mousemove', function(e) {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - container.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    container.scrollLeft = scrollLeft - walk;
+                });
+                
+                container.style.cursor = 'grab';
+            });
+            
+            // 키보드 네비게이션
+            document.addEventListener('keydown', function(e) {
+                const focusedContainer = document.querySelector(
+                    '.cv-scroll:hover, .genre-tags-container:hover, .character-cards-container:hover, .llm-cards-container:hover, .llm-cards-horizontal:hover'
+                );
+                
+                if (focusedContainer) {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        focusedContainer.scrollLeft -= 200;
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        focusedContainer.scrollLeft += 200;
+                    }
+                }
+            });
+            
+            // 터치 디바이스 스크롤 개선
+            if ('ontouchstart' in window) {
+                horizontalContainers.forEach(container => {
+                    container.style.scrollBehavior = 'smooth';
+                    container.style.WebkitOverflowScrolling = 'touch';
+                });
+            }
+        });
+
+        // ==========================================
+        // 스크롤 성능 최적화
+        // ==========================================
+        const optimizeScroll = () => {
+            const containers = document.querySelectorAll(
+                '.cv-scroll, .genre-tags-container, .character-cards-container, .llm-cards-container, .llm-cards-horizontal'
+            );
+            
+            containers.forEach(container => {
+                container.style.scrollBehavior = 'smooth';
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.transform = 'none';
+                        } else {
+                            entry.target.style.transform = 'translateZ(0)';
+                        }
+                    });
+                }, {
+                    root: container,
+                    rootMargin: '50px'
+                });
+                
+                Array.from(container.children).forEach(child => {
+                    observer.observe(child);
+                });
+            });
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', optimizeScroll);
+        } else {
+            optimizeScroll();
+        }
+        </script>
+    </main>
 </body>
 </html>
