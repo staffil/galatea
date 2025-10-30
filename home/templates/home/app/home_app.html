@@ -136,12 +136,44 @@
     </div>
 </div>
 
-<!-- <script>
-    // ✅ 3초 후 메인 페이지로 이동
-    setTimeout(function() {
-        window.location.href = '/main/';  // 메인 URL로 변경
-    }, 3000);  // 3000ms = 3초
-</script> -->
+<script>
+    // ✅ 높이 강제 설정 (이전에 했던 방법!)
+    function fixHeight() {
+        const vh = window.innerHeight;
+        document.documentElement.style.height = vh + 'px';
+        document.body.style.height = vh + 'px';
+        document.querySelector('.splash-container').style.height = vh + 'px';
+    }
+    
+    fixHeight();
+    window.addEventListener('resize', fixHeight);
+    
+    // ✅ 페이지 로드 확인
+    let ready = false;
+    
+    window.addEventListener('load', function() {
+        ready = true;
+        document.getElementById('splash').classList.add('loaded');
+        
+        // 3초 후 이동
+        setTimeout(function() {
+            window.location.href = '/main/';
+        }, 3000);
+    });
+    
+    // 즉시 실행 (DOMContentLoaded)
+    document.addEventListener('DOMContentLoaded', function() {
+        fixHeight();
+        document.getElementById('splash').classList.add('loaded');
+        
+        if (!ready) {
+            // load 이벤트 안 왔으면 여기서 타이머 시작
+            setTimeout(function() {
+                window.location.href = '/main/';
+            }, 3000);
+        }
+    });
+</script>
 
 </body>
 </html>
