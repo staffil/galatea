@@ -30,7 +30,8 @@ urlpatterns = [
 
     # 앱 전용
     path("app/", views.home_app_view, name="home_app"),
-    path("main_app/", views.main_app, name="main_app")
+    path("main_app/", views.main_app, name="main_app"),
+    path("llm_intro_app/<int:llm_id>", views.llm_intro_app, name="llm_intro_app")
 
 ]
 

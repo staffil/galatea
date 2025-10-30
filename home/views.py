@@ -635,3 +635,21 @@ def main_app(request):
     }
 
     return render(request, 'home/app/main_app.html', context)
+
+
+
+def llm_intro_app(request, llm_id):
+    # id로 특정 LLM을 가져오면서 is_public=True 조건 적용
+    try:
+        llm = LLM.objects.get(id=llm_id, is_public=True)
+    except LLM.DoesNotExist:
+        raise Http404(_("LLM을 찾을 수 없습니다."))
+    
+    # 팔로우 여부 확인
+    is_following = request.user in llm.user.followers.all()
+    
+    return render(request, 'home/llm_intro.html', {
+        'llm_list': [llm],       # 템플릿에서는 for문으로 사용
+        'followers_ids': is_following,
+    })
+
