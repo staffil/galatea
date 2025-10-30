@@ -653,3 +653,42 @@ def llm_intro_app(request, llm_id):
         'followers_ids': is_following,
     })
 
+
+def llm_section_app(request):
+    
+
+    language_code = getattr(request, 'LANGUAGE_CODE', get_language()) or 'ko'
+    language = get_language()
+
+        # LLM 랜덤 캐시 처리
+    now = datetime.now()
+    hour_key = now.strftime('%Y%m%d_%H')
+    cache_key = f'llm_random_list_{language}_{hour_key}'
+    llm_cache_key = f'llm_random_list_{language}_{hour_key}'
+    voice_cache_key = f'voice_random_list_{language}_{hour_key}'
+    llm_list_ids = cache.get(llm_cache_key)
+    if llm_list_ids is None:
+        llm_list_ids = list(LLM.objects.filter(is_public=True).values_list('id', flat=True))
+        random.shuffle(llm_list_ids)
+        cache.set(llm_cache_key, llm_list_ids, timeout=10)
+
+        # 캐시된 순서대로 LLM 객체 가져오기
+    llm_list = list(LLM.objects.filter(id__in=llm_list_ids).prefetch_related('genres'))
+    llm_list.sort(key=lambda x: llm_list_ids.index(x.id))
+    if request.user.is_authenticated:
+        for llm in llm_list:
+            try:
+                like_obj = LlmLike.objects.get(user=request.user, llm=llm, is_like=True)
+                llm.user_has_liked = True
+            except LlmLike.DoesNotExist:
+                llm.user_has_liked = False
+    else:
+        for llm in llm_list:
+            llm.user_has_liked = False
+    context ={
+        
+        "llm_list": llm_list,
+        "LANGUAGE_CODE": language_code,
+    }
+
+    return render (request, "home/app/llm_section_app.html",context)
