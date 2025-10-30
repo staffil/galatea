@@ -403,10 +403,10 @@ def verify_payment_v2(request):
             'Content-Type': 'application/json'
         }
         
-        api_url = f'https://api.portone.io/payments/{payment_id}'
-        print(f"API 호출: {api_url}")
+        approve_url = f'https://api.portone.io/payments/{payment_id}/approve'
+        print(f"API 호출: {approve_url}")
         
-        response = requests.get(api_url, headers=headers)
+        response = requests.post(approve_url, headers=headers, json={})
         
         print(f"V2 API 응답 상태: {response.status_code}")
         print(f"V2 API 응답 내용: {response.text}")
