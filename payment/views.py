@@ -187,157 +187,117 @@ def payment_charge(request):
         return render(request, "payment/payment.html", context)
     else:
         return redirect('payment:payment_choice')
+
 # views.py
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.conf import settings
-from .models import Payment, PaymentRank, PaymentMethod, Token, TokenHistory, PaymentStats
+import os
 import requests
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import PaymentRank, Payment, PaymentMethod, Token, TokenHistory, PaymentStats
 
 @login_required
 def payment_complete(request):
     """
-    결제 완료 후 redirectUrl에서 호출되는 뷰
-    PortOne V2와 IMP V1 공통 처리
+    KG 이니시스 V2 결제 완료 후 redirectUrl로 돌아올 때 호출.
+    PortOne 서버 검증 후 결제 처리.
     """
-    user = request.user
-    merchant_uid = request.GET.get('merchant_uid')
-    rank_id = request.GET.get('rank_id')
-    payment_id = request.GET.get('paymentId')  # V2에서는 paymentId, V1에서는 imp_uid
+    merchant_uid = request.GET.get("merchant_uid")
+    rank_id = request.GET.get("rank_id")
 
     if not merchant_uid or not rank_id:
-        return render(request, 'payment/complete.html', {
+        return JsonResponse({
             'status': 'error',
-            'message': '잘못된 접근입니다.'
-        })
+            'message': 'merchant_uid 또는 rank_id가 없습니다.'
+        }, status=400)
 
+    # 등급 정보 조회
     try:
         plan = PaymentRank.objects.get(id=rank_id)
     except PaymentRank.DoesNotExist:
-        return render(request, 'payment/complete.html', {
+        return JsonResponse({
             'status': 'error',
-            'message': '잘못된 등급 ID입니다.'
-        })
+            'message': '잘못된 등급 ID'
+        }, status=400)
 
-    # PortOne V2 결제 확인
-    if payment_id:
-        headers = {
-            'Authorization': f'PortOne {settings.PORTONE_V2_API_SECRET}',
-            'Content-Type': 'application/json'
-        }
-        api_url = f'https://api.portone.io/payments/{payment_id}'
-        response = requests.get(api_url, headers=headers)
+    # PortOne V2 API 호출
+    secret = os.environ.get("PORTONE_V2_API_SECRET")
+    headers = {
+        "Authorization": f"PortOne {secret}",
+        "Content-Type": "application/json"
+    }
 
-        if response.status_code == 200:
-            payment_data = response.json()
-            if payment_data.get('status') != 'PAID':
-                return render(request, 'payment/complete.html', {
-                    'status': 'failed',
-                    'message': f"결제 상태: {payment_data.get('status')}"
-                })
+    api_url = f"https://api.portone.io/v2/payments/{merchant_uid}"
+    try:
+        resp = requests.get(api_url, headers=headers, timeout=10)
+        if resp.status_code != 200:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'API 호출 실패: {resp.status_code} - {resp.text}'
+            }, status=500)
 
-            # 결제 수단 처리
-            currency = payment_data.get('currency', 'KRW')
-            amount_data = payment_data.get('amount', {})
-            if currency == 'USD':
-                amount = amount_data.get('total', 0) / 100
-                payment_method = PaymentMethod.objects.filter(name='paypal').first()
-            else:
-                amount = amount_data.get('total', 0)
-                payment_method = PaymentMethod.objects.filter(name__icontains='inicis').first() or PaymentMethod.objects.first()
+        payment_data = resp.json()
+        status = payment_data.get("status")
+        currency = payment_data.get("currency", "KRW")
+        amount_data = payment_data.get("amount", {})
 
-            # Payment 생성
-            payment = Payment.objects.create(
-                user=user,
-                amount=amount,
-                payment_method=payment_method,
-                status='paid',
-                imp_uid=payment_id,
-                merchant_uid=merchant_uid,
-                payment_rank=plan
-            )
-
-            # 토큰 충전
-            token, _ = Token.objects.get_or_create(user=user)
-            token.total_token += plan.freetoken
-            token.payment = payment
-            token.save()
-
-            # TokenHistory 기록
-            TokenHistory.objects.create(
-                user=user,
-                change_type=TokenHistory.CHARGE,
-                amount=plan.freetoken,
-                total_voice_generated=0
-            )
-
-            # PaymentStats 갱신
-            stats, _ = PaymentStats.objects.get_or_create(id=1)
-            stats.total_payments += 1
-            stats.success_count += 1
-            stats.save()
-
-            return render(request, 'payment/complete.html', {
-                'status': 'success',
-                'message': '결제가 완료되었습니다.',
-                'payment': payment,
-                'plan': plan
+        if status != "PAID":
+            return JsonResponse({
+                'status': 'failed',
+                'message': f'결제 상태: {status}'
             })
 
+        # 결제 금액 계산
+        if currency == "USD":
+            amount = amount_data.get("total", 0) / 100
+            payment_method = PaymentMethod.objects.filter(name='paypal').first()
         else:
-            return render(request, 'payment/complete.html', {
-                'status': 'error',
-                'message': f"결제 검증 실패: {response.status_code}"
-            })
+            amount = amount_data.get("total", 0)
+            payment_method = PaymentMethod.objects.filter(name__icontains='inicis').first() or PaymentMethod.objects.first()
 
-    # IMP V1 결제 처리
-    else:
-        imp_uid = request.GET.get('imp_uid')
-        if not imp_uid:
-            return render(request, 'payment/complete.html', {
-                'status': 'error',
-                'message': '결제 정보가 없습니다.'
-            })
-
-        # 실제로는 IMP REST API로 imp_uid 검증 가능
-        # 여기서는 간단히 결제 성공 처리 예시
-        payment_method = PaymentMethod.objects.filter(name__icontains='inicis').first() or PaymentMethod.objects.first()
+        # 결제 기록 생성
         payment = Payment.objects.create(
-            user=user,
-            amount=plan.price,  # V1에서는 plan.price로 처리
+            user=request.user,
+            amount=amount,
             payment_method=payment_method,
             status='paid',
-            imp_uid=imp_uid,
+            imp_uid=merchant_uid,
             merchant_uid=merchant_uid,
             payment_rank=plan
         )
 
         # 토큰 충전
-        token, _ = Token.objects.get_or_create(user=user)
+        token, created = Token.objects.get_or_create(user=request.user)
         token.total_token += plan.freetoken
         token.payment = payment
         token.save()
 
-        # TokenHistory 기록
+        # 토큰 히스토리 기록
         TokenHistory.objects.create(
-            user=user,
+            user=request.user,
             change_type=TokenHistory.CHARGE,
             amount=plan.freetoken,
             total_voice_generated=0
         )
 
         # PaymentStats 갱신
-        stats, _ = PaymentStats.objects.get_or_create(id=1)
+        stats, created = PaymentStats.objects.get_or_create(id=1)
         stats.total_payments += 1
         stats.success_count += 1
         stats.save()
 
-        return render(request, 'payment/complete.html', {
+        return JsonResponse({
             'status': 'success',
-            'message': '결제가 완료되었습니다.',
-            'payment': payment,
-            'plan': plan
+            'message': '결제가 완료되었습니다.'
         })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
 
 
 import time
