@@ -247,3 +247,5 @@ window.requestPay = function(pgName, btn) {
         requestPayV1(pgName, btn);
     }
 };
+
+await PortOne.approvePayment({ paymentId: response.paymentId });
