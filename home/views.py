@@ -648,7 +648,7 @@ def llm_intro_app(request, llm_id):
     # 팔로우 여부 확인
     is_following = request.user in llm.user.followers.all()
     
-    return render(request, 'home/llm_intro.html', {
+    return render(request, 'home/app/llm_intro_app.html', {
         'llm_list': [llm],       # 템플릿에서는 for문으로 사용
         'followers_ids': is_following,
     })
