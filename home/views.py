@@ -691,4 +691,4 @@ def llm_section_app(request):
         "LANGUAGE_CODE": language_code,
     }
 
-    return render (request, "home/app/llm_section_app.html",context)
+    return render (request, "home/app/7llm_section_app.html",context)
