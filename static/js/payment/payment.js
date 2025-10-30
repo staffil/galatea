@@ -151,6 +151,7 @@ async function requestPayPalV2(btn) {
                 rank_id: rank_id
             })
         });
+        await PortOne.approvePayment({ paymentId: response.paymentId });
 
         const result = await verificationResult.json();
         
