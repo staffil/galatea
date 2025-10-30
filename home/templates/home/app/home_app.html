@@ -160,19 +160,7 @@
             window.location.href = '/main/';
         }, 3000);
     });
-    
-    // 즉시 실행 (DOMContentLoaded)
-    document.addEventListener('DOMContentLoaded', function() {
-        fixHeight();
-        document.getElementById('splash').classList.add('loaded');
-        
-        if (!ready) {
-            // load 이벤트 안 왔으면 여기서 타이머 시작
-            setTimeout(function() {
-                window.location.href = '/main/';
-            }, 2000);
-        }
-    });
+
 </script>
 
 </body>
