@@ -1116,19 +1116,19 @@ main {
         });
     })();
 
-
 document.addEventListener("DOMContentLoaded", function() {
-    const cards = document.getElementById(".llm-card");
-    cards.forEach(cards => {
-        card.addEventListener("click", ()=> {
+    const cards = document.querySelectorAll(".llm-card");  // ✅ 클래스 전체 선택
+
+    cards.forEach(card => {
+        card.addEventListener("click", () => {
             const llmId = card.getAttribute("data-llm-id");
             if (llmId) {
-                window.location.href= `llm_intro_app/${llmId}`
+                window.location.href = `/ko/llm_intro_app/${llmId}`;  // ✅ 절대 경로로 이동
             }
-        })
-    })
-})
-  
+        });
+    });
+});
+
 </script>
 
 </body>
