@@ -1,0 +1,282 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GALATEA</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Noto+Sans:wght@300;600;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            min-height: 100vh;
+            color: #ffffff;
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 15px 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-family: "Bungee", sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 5;
+            margin-bottom: 60px;
+        }
+
+        .circle-bg {
+            position: absolute;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .circle-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+        }
+
+        .circle-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+        }
+
+        .circle-4 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+        }
+
+        .circle-5 {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .circle-5 img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+        }
+
+        .welcome-text {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #e2e8f0;
+            margin-bottom: 15px;
+            text-transform: lowercase;
+            letter-spacing: 0.05em;
+        }
+
+        .galatea-text {
+            font-size: 5rem;
+            font-weight: 900;
+            color: #ffffff;
+            font-family: "Bungee", sans-serif;
+            margin-bottom: 0;
+            letter-spacing: 0.02em;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            width: 100%;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 767px) {
+            .logo {
+                top: 20px;
+                left: 20px;
+                padding: 12px 20px;
+            }
+
+            .logo img {
+                width: 50px;
+                height: 50px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .welcome-text {
+                font-size: 2rem;
+            }
+
+            .galatea-text {
+                font-size: 3.5rem;
+            }
+
+            .circle-1 { width: 450px; height: 450px; }
+            .circle-2 { width: 350px; height: 350px; }
+            .circle-3 { width: 250px; height: 250px; }
+            .circle-4 { width: 170px; height: 170px; }
+            .circle-5 { width: 110px; height: 110px; }
+
+            .button-container {
+                max-width: 280px;
+            }
+
+            .btn {
+                padding: 16px 30px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="logo">        
+        <img src="/static/img/logo.png" alt="Galatea Logo">
+        <h1>GALATEA</h1>
+    </div>
+
+    <div class="container">
+        <div class="circle-bg circle-1"></div>
+        <div class="circle-bg circle-2"></div>
+        <div class="circle-bg circle-3"></div>
+        <div class="circle-bg circle-4"></div>
+        <div class="circle-bg circle-5">
+            <img src="/static/img/logo.png" alt="Galatea Logo">
+        </div>
+
+        <div class="welcome-text">{% trans "welcome to" %}</div>
+        <div class="galatea-text">GALATEA</div>
+    </div>
+
+    <div class="button-container">
+        <button class="btn btn-main" onclick="handleClick('main')">{% trans "MAIN" %}</button>
+        <button class="btn btn-signup" onclick="handleClick('signup')">{% trans "SIGN UP" %}</button>
+        <button class="btn btn-login" onclick="handleClick('login')">{% trans "LOGIN" %}</button>
+    </div>
+</div>
+
+<script>
+    const URL_SIGNUP = "{% url 'register:signup' %}";
+    const URL_LOGIN = "{% url 'register:login' %}";
+    
+    function handleClick(action) {
+        if (action === 'main') {
+            window.location.href = '/';
+        } else if (action === 'signup') {
+            window.location.href = URL_SIGNUP;
+        } else if (action === 'login') {
+            window.location.href = URL_LOGIN;
+        }
+    }
+</script>
+
+</body>
+</html>
