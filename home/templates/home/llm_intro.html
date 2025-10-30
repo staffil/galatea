@@ -5,329 +5,30 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
-<meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇" />
-<meta property="og:image" content="https://galatea.website/static/img/intro2.png">
-<meta property="og:url" content="https://galatea.website" />
-<meta property="og:type" content="website" />
-<meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로 대화 경험을 제공합니다.">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
 
 <title>{% trans '마이페이지' %} - GALATEA</title>
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    height: 100%;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
-}
-
-body {
-    height: 100%;
-    min-height: 100%;
-    font-family: 'Inter', 'Noto Sans KR', -apple-system, sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
-    color: #ffffff;
-    overflow-x: hidden;
-    padding: 20px 15px;
-}
-
-.glt2-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    max-width: 500px;
-    margin: 0 auto;
-    padding-bottom: 20px;
-}
-
-.glt2-card {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-}
-
-.glt2-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
-}
-
-.glt2-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 200px;
-    background-size: cover;
-    background-position: center;
-    filter: blur(3px);
-    opacity: 0.3;
-}
-
-.glt2-content {
-    position: relative;
-    z-index: 1;
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(15,15,35,0.95), rgba(26,26,46,0.95));
-}
-
-.glt2-header {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.glt2-header img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid rgba(139, 92, 246, 0.5);
-    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
-}
-
-.glt2-like-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(139, 92, 246, 0.2);
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
-
-.glt2-like-btn:hover {
-    background: rgba(139, 92, 246, 0.4);
-    transform: scale(1.1);
-}
-
-.heart-empty::before {
-    content: '🤍';
-}
-
-.heart-filled::before {
-    content: '❤️';
-}
-
-.glt2-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 12px;
-    text-align: center;
-}
-
-.glt2-description {
-    font-size: 1rem;
-    color: #b8c5d1;
-    line-height: 1.6;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.glt2-stats {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    font-size: 0.95rem;
-    color: #94a3b8;
-    margin-bottom: 20px;
-    padding: 12px;
-    background: rgba(139, 92, 246, 0.1);
-    border-radius: 12px;
-}
-
-.glt2-user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 15px;
-    background: rgba(139, 92, 246, 0.1);
-    border-radius: 12px;
-    margin-bottom: 15px;
-}
-
-.glt2-user-info img {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(139, 92, 246, 0.3);
-}
-
-.glt2-user-info span {
-    flex: 1;
-    font-weight: 600;
-    color: #ffffff;
-}
-
-.glt2-follow-btn {
-    padding: 8px 18px;
-    background: rgba(139, 92, 246, 0.2);
-    border: 1px solid rgba(139, 92, 246, 0.5);
-    border-radius: 20px;
-    color: white;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.glt2-follow-btn:hover {
-    background: rgba(139, 92, 246, 0.4);
-    transform: translateY(-2px);
-}
-
-.glt2-chat-btn {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 15px;
-    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
-}
-
-.glt2-chat-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
-}
-
-.glt2-genre-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-}
-
-.glt2-genre-tag {
-    padding: 6px 14px;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* 모달 */
-.glt2-modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-.glt2-modal-card {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 20px;
-    max-width: 500px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    animation: modalSlideIn 0.3s ease;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.glt2-modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    font-size: 2rem;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-    transition: all 0.3s ease;
-    line-height: 1;
-}
-
-.glt2-modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: rotate(90deg);
-}
-
-.glt2-modal-content {
-    padding: 20px;
-}
-
-/* 반응형 */
-@media (min-width: 768px) {
-    .glt2-container {
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 1200px;
-    }
-}
-
-@media (max-width: 480px) {
-    body {
-        padding: 15px 10px;
-    }
-
-    .glt2-card {
-        border-radius: 16px;
-    }
-
-    .glt2-title {
-        font-size: 1.5rem;
-    }
-
-    .glt2-header img {
-        width: 100px;
-        height: 100px;
-    }
-
-    .glt2-chat-btn {
-        padding: 12px;
-        font-size: 1rem;
-    }
-}
-</style>
 </head>
 
 <body>
@@ -337,7 +38,7 @@ body {
     {% if item.llm_background_image %}
         <div class="glt2-bg" style="background-image: url('{{ item.llm_background_image.url }}');"></div>
     {% endif %}
-    <div class="glt2-content">
+    <div class="glt2-content" style="background:linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
         <div class="glt2-header">
             {% if item.llm_image %}
             <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="{% trans 'LLM 이미지' %}" loading="lazy">
@@ -346,11 +47,16 @@ body {
             <button class="glt2-like-btn" data-id="{{ item.id }}">
                 {% if item.user_has_liked %}<span class="heart-filled"></span>{% else %}<span class="heart-empty"></span>{% endif %}
             </button>
+
             {% endif %}
+
         </div>
         <div class="glt2-title">{{ item.title }}</div>
         <div class="glt2-description">{{ item.description }}</div>
         <div class="glt2-stats">
+
+
+
             ❤️ {% trans "좋아요" %}: {{ item.llm_like_count }}
             👤 {% trans "팔로우" %}: {{ item.user.follow_count }}
         </div>
@@ -360,7 +66,7 @@ body {
             {% else %}
             <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
             {% endif %}
-            <span>{{ item.user.nickname }}</span>
+            <span style="color:#fff;">{{ item.user.nickname }}</span>
             {% if user.is_authenticated and user != item.user %}
             <button class="glt2-follow-btn" data-id="{{ item.user.id }}">
                 {% if item.user_is_following_user %}{% trans "Following" %}{% else %}{% trans "Follow" %}{% endif %}
@@ -388,8 +94,12 @@ body {
     </div>
 </div>
 
+<script src="{% static 'js/home/llm_intro.js' %}">
+
+
+</script>
 <script>
-    // 높이 강제 설정
+       // 높이 강제 설정
     function fixHeight() {
         const vh = window.innerHeight;
         document.documentElement.style.height = vh + 'px';
@@ -400,101 +110,6 @@ body {
     window.addEventListener('resize', fixHeight);
     window.addEventListener('orientationchange', fixHeight);
 
-    // 모달 관련
-    const modalOverlay = document.getElementById('glt2ModalOverlay');
-    const modalContent = document.getElementById('glt2ModalContent');
-    const modalClose = document.getElementById('glt2ModalClose');
-
-    function openModal(content) {
-        modalContent.innerHTML = content;
-        modalOverlay.style.display = 'flex';
-    }
-
-    function closeModal() {
-        modalOverlay.style.display = 'none';
-        modalContent.innerHTML = '';
-    }
-
-    modalClose.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) closeModal();
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
-    });
-
-    // 좋아요 버튼
-    document.addEventListener('click', (e) => {
-        const likeBtn = e.target.closest('.glt2-like-btn');
-        if (!likeBtn) return;
-
-        const llmId = likeBtn.dataset.id;
-        
-        fetch('/like_toggle/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `llm_id=${llmId}`
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'like') {
-                likeBtn.innerHTML = '<span class="heart-filled"></span>';
-            } else if (data.status === 'unlike') {
-                likeBtn.innerHTML = '<span class="heart-empty"></span>';
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(err => console.error('좋아요 토글 오류:', err));
-    });
-
-    // 팔로우 버튼
-    document.addEventListener('click', (e) => {
-        const followBtn = e.target.closest('.glt2-follow-btn');
-        if (!followBtn) return;
-
-        const userId = followBtn.dataset.id;
-        
-        fetch('/toggle_follow/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `user_id=${userId}`
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'follow') {
-                followBtn.textContent = '{% trans "Following" %}';
-            } else if (data.status === 'unfollow') {
-                followBtn.textContent = '{% trans "Follow" %}';
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(err => console.error('팔로우 토글 오류:', err));
-    });
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
 </script>
-
 </body>
 </html>
