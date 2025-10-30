@@ -14,14 +14,20 @@
             padding: 0;
             box-sizing: border-box;
         }
+    /* ✅ 이렇게 수정! */
+    html {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+    }
 
-        html, body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            min-height: 100vh;
-            color: #ffffff;
-            font-family: 'Noto Sans', sans-serif;
-        }
-
+    body {
+        height: 100%;
+        min-height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+        color: #ffffff;
+        font-family: 'Noto Sans', sans-serif;
+        overflow-x: hidden;
+    }
         body::before {
             content: '';
             position: fixed;
@@ -262,7 +268,6 @@
         <button class="btn btn-login" onclick="handleClick('login')">{% trans "LOGIN" %}</button>
     </div>
 </div>
-
 <script>
     const URL_SIGNUP = "{% url 'register:signup' %}";
     const URL_LOGIN = "{% url 'register:login' %}";
@@ -276,7 +281,18 @@
             window.location.href = URL_LOGIN;
         }
     }
-</script>
 
+    // ✅ 이거 추가!
+    function fixHeight() {
+        const vh = window.innerHeight;
+        document.documentElement.style.height = vh + 'px';
+        document.body.style.height = vh + 'px';
+        document.querySelector('.wrapper').style.minHeight = vh + 'px';
+    }
+    
+    fixHeight();
+    window.addEventListener('resize', fixHeight);
+    window.addEventListener('orientationchange', fixHeight);
+</script>
 </body>
 </html>
