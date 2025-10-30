@@ -903,12 +903,44 @@ main {
                         {% endfor %}
                     </div>
                 </div>
+
+
+
+                               <div class="llm-row">
+                    <div class="llm-cards-horizontal">
+                        {% for item in llm_list|slice:"40:50" %}
+                        <div class="llm-card" 
+                             data-llm-id="{{ item.id }}" 
+                             data-llm-title="{{ item.title|escapejs }}" 
+                             data-llm-image="{% if item.llm_image %}{{ item.llm_image.url }}{% else %}/static/images/default.png{% endif %}">
+                            <div class="llm-card-body">
+                                <div class="llm-image-container">
+                                    {% if item.llm_image %}
+                                        <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                                    {% endif %}
+                                </div>
+                                <div class="llm-name">{{ item.title }}</div>
+                                <div class="genre-tags">
+                                    {% for genre in item.genres.all %}
+                                        <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                                    {% empty %}
+                                        <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
                 
-                <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
+                
+                <a href="{% url 'home:llm_section_app' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
         </div>
 
-        <!-- 인기있는 팔로워 -->
+        <!-- 인기있는 팔로워
         <div class="popular-users-section">
             <h2 class="section-title">{% trans '인기 있는 팔로워' %}</h2>
             <div class="users-list">
@@ -936,7 +968,7 @@ main {
                 </div>
                 {% endfor %}
             </div>
-        </div>
+        </div> -->
 
         <!-- 이벤트 -->
         <div class="popular-users-section">

@@ -1,0 +1,544 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'ko' }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GALATEA AI",
+      "url": "https://www.galatea.website",
+      "logo": "https://www.galatea.website/static/img/logo.png"
+    }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+        }
+
+        body {
+            height: 100%;
+            min-height: 100vh;
+            font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+            color: #ffffff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+        }
+
+        /* 배경 원들 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -150px;
+            left: -150px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -100px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 10%;
+            left: 10%;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: -90px;
+            right: 20%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 50%;
+            left: -110px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 헤더 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            padding: 80px 10px 20px;
+            min-height: 100vh;
+        }
+
+        /* 섹션 타이틀 */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* LLM 컨테이너 */
+        .llm-container2 {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* LLM 카드 컨테이너 */
+        .llm-cards-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 5px;
+        }
+
+        /* LLM 카드 */
+        .llm-card {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            touch-action: manipulation;
+        }
+
+        .llm-card:active {
+            transform: scale(0.95);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        /* 카드 바디 */
+        .llm-card-body {
+            padding: 0;
+        }
+
+        /* 이미지 컨테이너 */
+        .llm-image-container {
+            width: 100%;
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .llm-image-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, transparent, rgba(15, 15, 35, 0.8));
+            pointer-events: none;
+        }
+
+        .llm-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .llm-card:active .llm-image-container img {
+            transform: scale(1.1);
+        }
+
+        /* LLM 이름 */
+        .llm-name {
+            padding: 12px 12px 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            line-height: 1.3;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 장르 태그 */
+        .genre-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 0 8px 12px;
+            justify-content: center;
+        }
+
+        .genre-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        /* 태블릿 */
+        @media (min-width: 576px) {
+            .main-content {
+                padding: 80px 15px 30px;
+            }
+
+            .llm-cards-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+                padding: 0;
+            }
+
+            .llm-image-container {
+                height: 160px;
+            }
+
+            .llm-name {
+                font-size: 1.05rem;
+                padding: 14px 12px 10px;
+            }
+
+            .genre-tag {
+                font-size: 0.75rem;
+                padding: 5px 12px;
+            }
+        }
+
+        /* 데스크톱 */
+        @media (min-width: 768px) {
+            .main-content {
+                padding: 80px 20px 40px;
+            }
+
+            .llm-container2 {
+                max-width: 1200px;
+            }
+
+            .llm-cards-container {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+            }
+
+            .llm-image-container {
+                height: 180px;
+            }
+
+            .llm-name {
+                font-size: 1.1rem;
+                padding: 16px 14px 12px;
+                min-height: 60px;
+            }
+
+            .genre-tag {
+                font-size: 0.8rem;
+                padding: 6px 14px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .llm-cards-container {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .llm-cards-container {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* 부드러운 스크롤 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 로딩 애니메이션 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .llm-card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* iOS 스타일 탭 하이라이트 제거 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button, a, .llm-card {
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* Safe Area 대응 (노치 디자인) */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+            
+            .main-content {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* 빈 상태 메시지 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #b8c5d1;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 배경 원들 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <!-- LLM 추천 섹션 -->
+    <div class="main-content">
+        <div class="llm-container2">
+            <h2 class="section-title">{% trans '추천' %}</h2>
+            <div class="llm-cards-container">
+                {% for item in llm_list %}
+                <div class="llm-card" data-llm-id="{{ item.id }}">
+                    <div class="llm-card-body">
+                        <div class="llm-image-container">
+                            {% if item.llm_image %}
+                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
+                            {% else %}
+                                <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
+                            {% endif %}
+                        </div>
+                        <div class="llm-name">{{ item.title }}</div>
+                        <div class="genre-tags">
+                            {% for genre in item.genres.all %}
+                                <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+                            {% empty %}
+                                <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <h3>{% trans "등록된 AI가 없습니다" %}</h3>
+                    <p>{% trans "곧 새로운 AI가 추가될 예정입니다." %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cookie 가져오기
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 높이 강제 설정
+        function fixHeight() {
+            const vh = window.innerHeight;
+            document.documentElement.style.height = vh + 'px';
+            document.body.style.height = 'auto';
+        }
+        
+        fixHeight();
+        window.addEventListener('resize', fixHeight);
+        window.addEventListener('orientationchange', fixHeight);
+
+        // ==========================================
+        // LLM 카드 클릭 이벤트 (앱 환경 최적화)
+        // ==========================================
+        (function initLLMCards() {
+            'use strict';
+            
+            const handleCardClick = function(e) {
+                const llmCard = e.target.closest('.llm-card');
+                if (!llmCard) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const llmId = llmCard.dataset.llmId;
+                if (!llmId) {
+                    console.warn('LLM ID not found');
+                    return;
+                }
+                
+                console.log('LLM Card clicked:', llmId);
+                
+                // 페이지 이동
+                window.location.href = `/ko/llm_intro_app/${llmId}`;
+            };
+            
+            // 클릭과 터치 이벤트 모두 처리
+            document.addEventListener('click', handleCardClick);
+            document.addEventListener('touchend', handleCardClick);
+            
+            console.log('LLM cards initialized:', document.querySelectorAll('.llm-card').length);
+        })();
+
+        // ==========================================
+        // 스크롤 복원
+        // ==========================================
+        (function() {
+            // 페이지 로드 시 이전 스크롤 위치 복원
+            if ('scrollRestoration' in history) {
+                history.scrollRestoration = 'manual';
+            }
+            
+            const scrollPos = sessionStorage.getItem('scrollPos');
+            if (scrollPos) {
+                window.scrollTo(0, parseInt(scrollPos));
+                sessionStorage.removeItem('scrollPos');
+            }
+            
+            // 페이지 이동 전 스크롤 위치 저장
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.setItem('scrollPos', window.scrollY);
+            });
+        })();
+
+        console.log('Page loaded');
+        console.log('Language:', '{{ LANGUAGE_CODE }}');
+    </script>
+</body>
+</html>

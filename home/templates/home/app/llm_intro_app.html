@@ -518,11 +518,11 @@
                     {% if item.llm_image %}
                     <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="{% trans 'LLM 이미지' %}" loading="lazy">
                     {% endif %}
-                    {% if user.is_authenticated and user != item.user %}
+                    <!-- {% if user.is_authenticated and user != item.user %}
                     <button class="glt2-like-btn" data-id="{{ item.id }}">
                         {% if item.user_has_liked %}<span class="heart-filled"></span>{% else %}<span class="heart-empty"></span>{% endif %}
                     </button>
-                    {% endif %}
+                    {% endif %} -->
                 </div>
                 <div class="glt2-title">{{ item.title }}</div>
                 <div class="glt2-description">{{ item.description }}</div>
