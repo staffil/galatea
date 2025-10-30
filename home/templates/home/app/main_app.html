@@ -1116,181 +1116,19 @@ main {
         });
     })();
 
-    // ==========================================
-    // 모달 관련
-    // ==========================================
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalContent = document.getElementById('modalContent');
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
 
-    function openModal(llmId, title, imgSrc) {
-        console.log('Opening modal:', llmId, title, imgSrc);
-        modalContent.innerHTML = `
-            <div class="modal-header">
-                <img src="${imgSrc || '/static/images/default.png'}" alt="${title}">
-            </div>
-            <div class="modal-body">
-                <h2>${title}</h2>
-                <div class="modal-actions">
-                    <a href="/chat/${llmId}/" class="btn-chat">{% trans "채팅하기" %}</a>
-                </div>
-            </div>
-        `;
-        modalOverlay.style.display = 'flex';
-    }
-
-    function openUserModal(userId, nickname, imgSrc, followerCount) {
-        console.log('Opening user modal:', userId, nickname);
-        modalContent.innerHTML = `
-            <div class="modal-header">
-                <img src="${imgSrc || '/static/images/default_user.png'}" alt="${nickname}">
-            </div>
-            <div class="modal-body">
-                <h2>${nickname}</h2>
-                <p class="follower-info">${followerCount} {% trans "팔로워" %}</p>
-                <div class="modal-actions">
-                    <button class="glt2-follow-btn" data-id="${userId}">
-                        {% trans "Follow" %}
-                    </button>
-                </div>
-            </div>
-        `;
-        modalOverlay.style.display = 'flex';
-    }
-
-    function closeModal() {
-        modalOverlay.style.display = 'none';
-        modalContent.innerHTML = '';
-    }
-
-    // 모달 닫기 이벤트
-    modalCloseBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        closeModal();
-    });
-
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) closeModal();
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modalOverlay.style.display === 'flex') {
-            closeModal();
-        }
-    });
-
-    // ==========================================
-    // LLM 카드 클릭 이벤트 (앱 환경 최적화)
-    // ==========================================
-    (function initLLMCards() {
-        'use strict';
-        
-        const handleCardClick = function(e) {
-            const llmCard = e.target.closest('.llm-card');
-            if (!llmCard) return;
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const llmId = llmCard.dataset.llmId;
-            const llmTitle = llmCard.dataset.llmTitle;
-            const llmImage = llmCard.dataset.llmImage;
-            
-            if (!llmId) {
-                console.warn('LLM ID not found');
-                return;
-            }
-            
-            console.log('LLM Card clicked:', llmId, llmTitle, llmImage);
-            openModal(llmId, llmTitle, llmImage);
-        };
-        
-        // 클릭과 터치 이벤트 모두 처리
-        document.addEventListener('click', handleCardClick);
-        document.addEventListener('touchend', handleCardClick);
-        
-        console.log('LLM cards initialized:', document.querySelectorAll('.llm-card').length);
-    })();
-
-    // ==========================================
-    // 유저 카드 클릭 이벤트
-    // ==========================================
-    (function initUserCards() {
-        'use strict';
-        
-        const handleUserCardClick = function(e) {
-            const userCard = e.target.closest('.user-card');
-            if (!userCard) return;
-            
-            // 팔로우 버튼 클릭은 제외
-            if (e.target.closest('.glt2-follow-btn')) return;
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const userId = userCard.dataset.userId;
-            const userNickname = userCard.dataset.userNickname;
-            const userImage = userCard.dataset.userImage;
-            const userFollowers = userCard.dataset.userFollowers;
-            
-            if (!userId) {
-                console.warn('User ID not found');
-                return;
-            }
-            
-            console.log('User Card clicked:', userId, userNickname);
-            openUserModal(userId, userNickname, userImage, userFollowers);
-        };
-        
-        document.addEventListener('click', handleUserCardClick);
-        document.addEventListener('touchend', handleUserCardClick);
-        
-        console.log('User cards initialized:', document.querySelectorAll('.user-card').length);
-    })();
-
-    // ==========================================
-    // 팔로우 토글
-    // ==========================================
-    document.addEventListener('click', (e) => {
-        const followBtn = e.target.closest('.glt2-follow-btn');
-        if (!followBtn) return;
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        const userId = followBtn.dataset.id;
-        if (!userId) return;
-
-        fetch("{% url 'home:toggle_follow' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": getCookie('csrftoken'),
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `user_id=${encodeURIComponent(userId)}`
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'follow') {
-                followBtn.textContent = '{% trans "Following" %}';
-                followBtn.classList.add('following');
-            } else if (data.status === 'unfollow') {
-                followBtn.textContent = '{% trans "Follow" %}';
-                followBtn.classList.remove('following');
-            } else {
-                alert(data.message);
+document.addEventListener("DOMContentLoaded", function() {
+    const cards = document.getElementById(".llm-card");
+    cards.forEach(cards => {
+        card.addEventListener("click", ()=> {
+            const llmId = card.getAttribute("data-llm-id");
+            if (llmId) {
+                window.location.href= `llm_intro_app/${llmId}`
             }
         })
-        .catch(err => console.error('팔로우 토글 오류:', err));
-    });
-
-    // ==========================================
-    // 디버깅 로그
-    // ==========================================
-    console.log('Page loaded');
-    console.log('Total LLM cards:', document.querySelectorAll('.llm-card').length);
-    console.log('Total User cards:', document.querySelectorAll('.user-card').length);
+    })
+})
+  
 </script>
 
 </body>

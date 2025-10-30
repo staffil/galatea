@@ -1,0 +1,115 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+<title>{% trans '마이페이지' %} - GALATEA</title>
+
+</head>
+
+<body>
+<div class="glt2-container">
+{% for item in llm_list %}
+<div class="glt2-card">
+    {% if item.llm_background_image %}
+        <div class="glt2-bg" style="background-image: url('{{ item.llm_background_image.url }}');"></div>
+    {% endif %}
+    <div class="glt2-content" style="background:linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);">
+        <div class="glt2-header">
+            {% if item.llm_image %}
+            <img src="{{ item.llm_image.url|default:'/static/images/default.png' }}" alt="{% trans 'LLM 이미지' %}" loading="lazy">
+            {% endif %}
+            {% if user.is_authenticated and user != item.user %}
+            <button class="glt2-like-btn" data-id="{{ item.id }}">
+                {% if item.user_has_liked %}<span class="heart-filled"></span>{% else %}<span class="heart-empty"></span>{% endif %}
+            </button>
+
+            {% endif %}
+
+        </div>
+        <div class="glt2-title">{{ item.title }}</div>
+        <div class="glt2-description">{{ item.description }}</div>
+        <div class="glt2-stats">
+
+
+
+            ❤️ {% trans "좋아요" %}: {{ item.llm_like_count }}
+            👤 {% trans "팔로우" %}: {{ item.user.follow_count }}
+        </div>
+        <div class="glt2-user-info">
+            {% if item.user.user_image %}
+            <img src="{{ item.user.user_image.url }}" alt="" loading="lazy">
+            {% else %}
+            <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
+            {% endif %}
+            <span style="color:#fff;">{{ item.user.nickname }}</span>
+            {% if user.is_authenticated and user != item.user %}
+            <button class="glt2-follow-btn" data-id="{{ item.user.id }}">
+                {% if item.user_is_following_user %}{% trans "Following" %}{% else %}{% trans "Follow" %}{% endif %}
+            </button>
+            {% endif %}
+        </div>
+        <button class="glt2-chat-btn" onclick="window.location.href='/customer_ai/chat/{{ item.id }}/'">{% trans "대화하기" %}</button>
+        <div class="glt2-genre-tags">
+            {% for genre in item.genres.all %}
+            <div class="glt2-genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
+            {% empty %}
+            <div class="glt2-genre-tag" style="background-color: #999;">{% trans "장르 없음" %}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+<!-- 모달 -->
+<div class="glt2-modal-overlay" id="glt2ModalOverlay">
+    <div class="glt2-modal-card">
+        <button class="glt2-modal-close" id="glt2ModalClose">&times;</button>
+        <div class="glt2-modal-content" id="glt2ModalContent"></div>
+    </div>
+</div>
+
+<script src="{% static 'js/home/llm_intro.js' %}">
+
+
+</script>
+<script>
+       // 높이 강제 설정
+    function fixHeight() {
+        const vh = window.innerHeight;
+        document.documentElement.style.height = vh + 'px';
+        document.body.style.height = 'auto';
+    }
+    
+    fixHeight();
+    window.addEventListener('resize', fixHeight);
+    window.addEventListener('orientationchange', fixHeight);
+
+</script>
+</body>
+</html>
