@@ -545,7 +545,7 @@ def server_error(request):
 
 
 
-
+# ____________________________________________________________________________
 # 앱 전용
 def home_app_view(request):
     return render(request, "home/app/home_app.html")
@@ -692,3 +692,52 @@ def llm_section_app(request):
     }
 
     return render (request, "home/app/llm_section_app.html",context)
+
+
+
+
+def gerne_all_app(request):
+    genre = Genre.objects.all()
+    llm_list = LLM.objects.all()
+    language = get_language()
+
+
+    for l in llm_list:
+        for g in l.genres.all():
+            name_field = f'name_{language}'
+            g.display_name = getattr(g, name_field, g.name)
+    context = {
+        "languages": settings.LANGUAGES,
+        "genre_list": genre,
+
+    }
+
+    return render(request,'home/app/gerne_all_app.html', context)
+
+
+#검색하기
+def search_llm_app(request):
+    query = request.GET.get('q', '')
+    result = []
+
+    if query:
+        result = LLM.objects.filter(title__icontains = query, is_public=True)
+    return render(request, 'common/app/search_llm_app.html', {
+        'query': query,
+        'results': result
+    })
+
+
+def genre_detail_app(request, genres_id):
+    genres = get_object_or_404(Genre, id =genres_id)
+
+    llm_list = genres.llms.all().order_by("?")
+    language_code = getattr(request, 'LANGUAGE_CODE', get_language()) or 'ko'
+
+    context ={
+        "genres": genres,
+        "llm_list": llm_list,
+        "LANGUAGE_CODE": language_code
+    }
+    return render (request, "home/app/genre_detail_app.html", context)
+
