@@ -1090,7 +1090,7 @@ def make_ai_app(request):
 
         # VoiceList 연결 및 업데이트 코드 (필요시 추가)
 
-        return redirect("customer_ai:chat_view", llm_id=llm.id)
+        return redirect("customer_ai:custom_app", llm_id=llm.id)
 
     # GET 요청시 (페이지 렌더링용)
     voice_list = VoiceList.objects.filter(user=request.user,).select_related("celebrity").order_by("-created_at")
@@ -1103,3 +1103,52 @@ def make_ai_app(request):
     return render(request, "customer_ai/app/make_ai_app.html", context)
 
 
+
+
+@login_required
+def custom_app(request, llm_id):
+    try:
+        llm = LLM.objects.get(id=llm_id)
+        
+    except LLM.DoesNotExist:
+        llm= None
+
+    if llm.user != request.user and not llm.is_public:
+        return HttpResponseForbidden(_("이 LLM에 접근할 권한이 없습니다."))
+
+
+
+
+    return render(request, "customer_ai/app/custom_app.html", {
+        "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
+        "llm_id": llm_id,
+        "llm": llm
+    })
+
+@login_required
+def vision_app(request,llm_id):
+    try:
+        llm = LLM.objects.get(id=llm_id)
+    except LLM.DoesNotExist:
+        llm= None
+    return render(request, "customer_ai/app/vision_app.html", {
+        "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
+        "llm_id": llm_id,
+        "llm": llm
+    })
+
+
+logger = logging.getLogger(__name__)
+
+
+@login_required
+def novel_app(request, llm_id):
+    try:
+        llm = LLM.objects.get(id=llm_id)
+    except LLM.DoesNotExist:
+        llm = None
+    return render(request, "customer_ai/app/novel_app.html",{
+        "custom_ai_name": request.session.get('custom_AI_name', 'AI'),
+        "llm_id": llm_id,
+        "llm": llm
+    })

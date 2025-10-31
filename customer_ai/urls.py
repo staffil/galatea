@@ -40,5 +40,8 @@ urlpatterns = [
     # 앱 전용
     path("ai_name_app/", views.ai_name_app, name="ai_name_app"),
     path("make_ai_app/", views.make_ai_app, name="make_ai_app"),
+    path("custom_app/<int:llm_id>/", views.custom_app, name="custom_app"),
+    path("vision_app/<int:llm_id>/", views.vision_app, name="vision_app"),
+    path("novel_app/<int:llm_id>/", views.novel_app, name="novel_app"),
 
 ]
