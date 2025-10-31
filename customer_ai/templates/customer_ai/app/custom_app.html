@@ -695,7 +695,7 @@ body::before {
         width: 220px;
         left: -220px;
         padding: 12px 15px 20px;
-        max-height: calc(100vh - 60px);
+        max-height: calc(200vh - 60px);
         top: 60px;
     }
 
@@ -788,7 +788,7 @@ body::before {
 @media (max-height: 600px) {
     .sidebar {
         max-height: calc(100vh - 50px);
-        top: 100px;
+        top: 50px;
         padding: 10px 15px 15px;
     }
 
@@ -856,6 +856,7 @@ button, .mode-option {
             padding-top: max(12px, env(safe-area-inset-top));
             padding-bottom: max(20px, env(safe-area-inset-bottom));
             max-height: calc(100vh - 60px - env(safe-area-inset-bottom));
+            margin-top: 60px;
         }
     }
 }
