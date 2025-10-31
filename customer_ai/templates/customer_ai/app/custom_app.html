@@ -4,23 +4,17 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Voice Chat UI</title>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
-        <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
-    <meta property="og:description" content="{{ llm.name }}" />
-{% if llm.llm_image %}
-  <meta property="og:image" content="{{ llm.llm_image.url }}">
-{% endif %}
-
-    <meta property="og:url" content="https://galatea.website" />
-    <meta property="og:type" content="website" />
-    <!-- Open Graph (SNS 공유용) -->
+    
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
-    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
-    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:description" content="{{ llm.name }}" />
+    {% if llm.llm_image %}
+      <meta property="og:image" content="{{ llm.llm_image.url }}">
+    {% endif %}
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
 
@@ -28,883 +22,977 @@
     <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
 
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "GALATEA AI",
-  "url": "https://www.galatea.website",
-  "logo": "https://www.galatea.website/static/img/logo.png"
-}
-</script>
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GALATEA AI",
+      "url": "https://www.galatea.website",
+      "logo": "https://www.galatea.website/static/img/logo.png"
+    }
+    </script>
 
+    <style>
+        /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
+        
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-color: #0f0f23 !important;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: scroll;
+            background-color: #0f0f23 !important;
+            color: #ffffff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            z-index: -1;
+        }
+
+        /* 배경 원들 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -150px;
+            left: -150px;
+            animation: chatFloat 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -100px;
+            animation: chatFloat 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 10%;
+            left: 10%;
+            animation: chatFloat 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: -90px;
+            right: 20%;
+            animation: chatFloat 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 50%;
+            left: -110px;
+            animation: chatFloat 16s ease-in-out infinite;
+        }
+
+        @keyframes chatFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            position: fixed !important;
+            top: 70px !important;
+            left: 20px !important;
+            z-index: 1001 !important;
+            cursor: pointer;
+            padding: 10px;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            margin: 0 !important;
+        }
+
+        .hamburger:active {
+            transform: scale(0.95);
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #8b5cf6;
+            margin: 5px 0;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* App Container */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            min-height: 100vh;
+            padding-top: 65px;
+        }
+
+        /* Sidebar - 외부 컨테이너 */
+        .sidebar,
+        aside.sidebar,
+        #sidebar {
+            position: fixed !important;
+            top: 65px !important;
+            left: -300px !important;
+            width: 280px !important;
+            height: calc(100vh - 65px) !important;
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 0 !important;
+            transition: left 0.3s ease !important;
+            z-index: 999 !important;
+            overflow: hidden !important;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+            margin: 0 !important;
+        }
+
+        .sidebar.active,
+        aside.sidebar.active,
+        #sidebar.active {
+            left: 0 !important;
+        }
+
+        /* Sidebar - 내부 스크롤 컨테이너 */
+        .sidebar-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            padding: 20px 25px 30px !important;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+
+        .sidebar h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: sticky;
+            top: 0;
+            background-color: rgba(26, 26, 46, 0.95);
+            padding: 10px 0;
+            z-index: 10;
+        }
+
+        /* Mode Options */
+        .mode-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .mode-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .mode-option:active {
+            transform: scale(0.98);
+        }
+
+        .mode-option.active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .mode-option input[type="radio"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .mode-option label {
+            flex: 1;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-option label i {
+            color: #8b5cf6;
+            font-size: 1.1rem;
+        }
+
+        /* Share Button */
+        .share-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .share-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            min-height: calc(100vh - 65px);
+        }
+
+        /* AI Showcase */
+        .ai-showcase {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: chatFadeIn 0.6s ease-out;
+            flex-shrink: 0;
+        }
+
+        @keyframes chatFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .ai-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            min-height: 200px;
+            max-height: calc(100vh - 450px);
+        }
+
+        /* Message */
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: chatMessageSlide 0.3s ease-out;
+        }
+
+        @keyframes chatMessageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .message.user .message-content {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        /* Typing Bubbles */
+        .typing-bubbles {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 14px 18px;
+        }
+
+        .typing-bubbles span {
+            width: 8px;
+            height: 8px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            display: block;
+            animation: bounce 1s infinite ease-in-out;
+        }
+
+        .typing-bubbles span:nth-child(2) { 
+            animation-delay: 0.2s; 
+        }
+
+        .typing-bubbles span:nth-child(3) { 
+            animation-delay: 0.4s; 
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { 
+                transform: scale(0); 
+                opacity: 0.5;
+            }
+            40% { 
+                transform: scale(1); 
+                opacity: 1;
+            }
+        }
+
+        /* Input Section */
+        .input-section {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .text-input {
+            flex: 1;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .text-input::placeholder {
+            color: #b8c5d1;
+            opacity: 0.6;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Controls Row */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .record-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .record-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.5);
+        }
+
+        .record-btn.recording {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(239, 68, 68, 0.8);
+            }
+        }
+
+        .record-status {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #b8c5d1;
+        }
+
+        /* Recognized Text */
+        .recognized-text {
+            padding: 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            color: #8b5cf6;
+            font-size: 0.85rem;
+            min-height: 40px;
+            display: none;
+        }
+
+        .recognized-text:not(:empty) {
+            display: block;
+        }
+
+        /* Audio Player */
+        .audio-player {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .hamburger {
+                top: 65px !important;
+                left: 15px !important;
+            }
+
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                width: 250px !important;
+                left: -250px !important;
+                height: calc(100vh - 65px) !important;
+                top: 65px !important;
+            }
+
+            .sidebar-wrapper {
+                padding: 15px 20px 25px !important;
+            }
+
+            .sidebar h3 {
+                font-size: 1.2rem;
+                margin-bottom: 15px;
+            }
+
+            .mode-option {
+                padding: 12px;
+            }
+
+            .mode-option label {
+                font-size: 0.9rem;
+            }
+
+            .share-btn {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .ai-image {
+                width: 100px;
+                height: 100px;
+            }
+
+            .ai-showcase {
+                margin-bottom: 15px;
+            }
+
+            .chat-messages {
+                min-height: 150px;
+                max-height: calc(100vh - 400px);
+                padding: 15px;
+            }
+
+            .message-content {
+                max-width: 80%;
+                font-size: 0.9rem;
+            }
+
+            .input-section {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hamburger {
+                top: 60px !important;
+                left: 10px !important;
+            }
+
+            .app-container {
+                padding-top: 60px;
+            }
+
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                width: 220px !important;
+                left: -220px !important;
+                height: calc(100vh - 60px) !important;
+                top: 60px !important;
+            }
+
+            .sidebar-wrapper {
+                padding: 12px 15px 20px !important;
+            }
+
+            .sidebar h3 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+                padding: 8px 0;
+            }
+
+            .mode-options {
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .mode-option {
+                padding: 10px 12px;
+            }
+
+            .mode-option input[type="radio"] {
+                width: 16px;
+                height: 16px;
+                margin-right: 10px;
+            }
+
+            .mode-option label {
+                font-size: 0.85rem;
+                gap: 6px;
+            }
+
+            .mode-option label i {
+                font-size: 1rem;
+            }
+
+            .share-btn {
+                padding: 10px;
+                font-size: 0.9rem;
+                margin-bottom: 15px;
+            }
+
+            .main-content {
+                padding: 10px;
+            }
+
+            .ai-image {
+                width: 80px;
+                height: 80px;
+            }
+
+            .ai-showcase {
+                margin-bottom: 10px;
+            }
+
+            .chat-messages {
+                min-height: 120px;
+                max-height: calc(100vh - 380px);
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .message-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+
+            .message-content {
+                max-width: 85%;
+                font-size: 0.85rem;
+                padding: 12px 14px;
+            }
+
+            .input-section {
+                padding: 12px;
+            }
+
+            .text-input {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .send-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+
+            .record-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* 작은 화면 추가 대응 */
+        @media (max-height: 700px) {
+            .chat-messages {
+                min-height: 100px !important;
+                max-height: calc(100vh - 350px) !important;
+            }
+
+            .ai-image {
+                width: 70px !important;
+                height: 70px !important;
+            }
+
+            .ai-showcase {
+                margin-bottom: 8px !important;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .hamburger {
+                top: 50px !important;
+            }
+
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                height: calc(100vh - 50px) !important;
+                top: 50px !important;
+            }
+
+            .sidebar-wrapper {
+                padding: 10px 15px 15px !important;
+            }
+
+            .sidebar h3 {
+                font-size: 1rem;
+                margin-bottom: 10px;
+                padding: 5px 0;
+            }
+
+            .mode-options {
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+
+            .mode-option {
+                padding: 8px 10px;
+            }
+
+            .mode-option label {
+                font-size: 0.8rem;
+            }
+
+            .share-btn {
+                padding: 8px;
+                font-size: 0.85rem;
+                margin-bottom: 10px;
+            }
+
+            .chat-messages {
+                min-height: 80px !important;
+                max-height: calc(100vh - 320px) !important;
+            }
+
+            .ai-image {
+                width: 60px !important;
+                height: 60px !important;
+            }
+        }
+
+        /* iOS 스타일 탭 하이라이트 제거 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button, .mode-option {
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* Safe Area 대응 */
+        @supports (padding: max(0px)) {
+            .app-container {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+            
+            .main-content {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                height: calc(100vh - 65px - env(safe-area-inset-bottom)) !important;
+            }
+
+            .sidebar-wrapper {
+                padding-top: max(20px, env(safe-area-inset-top)) !important;
+                padding-bottom: max(30px, env(safe-area-inset-bottom)) !important;
+            }
+
+            @media (max-width: 768px) {
+                .sidebar,
+                aside.sidebar,
+                #sidebar {
+                    height: calc(100vh - 65px - env(safe-area-inset-bottom)) !important;
+                }
+
+                .sidebar-wrapper {
+                    padding-top: max(15px, env(safe-area-inset-top)) !important;
+                    padding-bottom: max(25px, env(safe-area-inset-bottom)) !important;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .sidebar,
+                aside.sidebar,
+                #sidebar {
+                    height: calc(100vh - 60px - env(safe-area-inset-bottom)) !important;
+                }
+
+                .sidebar-wrapper {
+                    padding-top: max(12px, env(safe-area-inset-top)) !important;
+                    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+                }
+            }
+        }
+    </style>
 </head>
 
-<style>
-    /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
-
-html {
-    height: 100%;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-    background-color: #0f0f23 !important;
-    scroll-behavior: smooth;
-}
-
-body {
-    min-height: 100vh;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-    background-attachment: scroll;
-    background-color: #0f0f23 !important;
-    color: #ffffff;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    position: relative;
-    margin: 0;
-    padding: 0;
-}
-
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-    z-index: -1;
-}
-
-/* 배경 원들 */
-.circle-bg {
-    position: fixed;
-    border-radius: 50%;
-    opacity: 0.1;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.circle-1 {
-    width: 300px;
-    height: 300px;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    top: -150px;
-    left: -150px;
-    animation: chatFloat 20s ease-in-out infinite;
-}
-
-.circle-2 {
-    width: 200px;
-    height: 200px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    top: 20%;
-    right: -100px;
-    animation: chatFloat 15s ease-in-out infinite reverse;
-}
-
-.circle-3 {
-    width: 250px;
-    height: 250px;
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-    bottom: 10%;
-    left: 10%;
-    animation: chatFloat 18s ease-in-out infinite;
-}
-
-.circle-4 {
-    width: 180px;
-    height: 180px;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    bottom: -90px;
-    right: 20%;
-    animation: chatFloat 12s ease-in-out infinite reverse;
-}
-
-.circle-5 {
-    width: 220px;
-    height: 220px;
-    background: linear-gradient(135deg, #fa709a, #fee140);
-    top: 50%;
-    left: -110px;
-    animation: chatFloat 16s ease-in-out infinite;
-}
-
-@keyframes chatFloat {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    33% {
-        transform: translate(30px, -30px) scale(1.1);
-    }
-    66% {
-        transform: translate(-20px, 20px) scale(0.9);
-    }
-}
-
-/* Header */
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-}
-
-/* Hamburger Menu */
-.hamburger {
-    position: fixed !important;
-    top: 70px !important;
-    left: 20px !important;
-    z-index: 1001 !important;
-    cursor: pointer;
-    padding: 10px;
-    background: rgba(26, 26, 46, 0.8);
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    transition: all 0.3s ease;
-    -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
-    margin-top: 0 !important; /* 인라인 스타일 덮어쓰기 */
-}
-.hamburger:active {
-    transform: scale(0.95);
-    background: rgba(139, 92, 246, 0.2);
-}
-
-.hamburger span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background: #8b5cf6;
-    margin: 5px 0;
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-/* App Container */
-.app-container {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    min-height: 100vh;
-    padding-top: 65px;
-}
-
-/* Sidebar */
-/* Sidebar - 강제 적용 */
-.sidebar {
-    position: fixed !important;
-    top: 65px !important;
-    left: -300px !important;
-    width: 280px !important;
-    height: auto !important;
-    max-height: calc(100vh - 65px) !important;
-    background: rgba(26, 26, 46, 0.95) !important;
-    backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(139, 92, 246, 0.2);
-    padding: 20px 25px 30px;
-    transition: left 0.3s ease !important;
-    z-index: 999 !important;
-
-    overflow-x: hidden;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
-    -webkit-overflow-scrolling: touch;
-}
-.sidebar.active {
-    left: 0 !important;
-}
-.sidebar h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    position: sticky;
-    top: 0;
-    background-color: rgba(26, 26, 46, 0.95);
-    padding: 10px 0;
-    z-index: 10;
-}
-
-/* Mode Options */
-.mode-options {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 25px;
-}
-
-.mode-option {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    background: rgba(139, 92, 246, 0.1);
-    border: 2px solid rgba(139, 92, 246, 0.3);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
-}
-
-.mode-option:active {
-    transform: scale(0.98);
-}
-
-.mode-option.active {
-    background: rgba(139, 92, 246, 0.2);
-    border-color: #8b5cf6;
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-}
-
-.mode-option input[type="radio"] {
-    margin-right: 12px;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.mode-option label {
-    flex: 1;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #ffffff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.mode-option label i {
-    color: #8b5cf6;
-    font-size: 1.1rem;
-}
-
-/* Share Button */
-.share-btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    font-family: 'Inter', sans-serif;
-    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
-    margin-bottom: 20px;
-}
-
-.share-btn:active {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-}
-
-/* Main Content */
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-/* AI Showcase */
-.ai-showcase {
-    text-align: center;
-    margin-bottom: 25px;
-    animation: chatFadeIn 0.6s ease-out;
-}
-
-@keyframes chatFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.ai-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid rgba(139, 92, 246, 0.5);
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-    transition: all 0.3s ease;
-}
-
-.ai-image:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
-}
-
-/* Chat Messages */
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    background: rgba(26, 26, 46, 0.6);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    margin-bottom: 20px;
-    min-height: 400px;
-    max-height: 600px;
-}
-
-/* Message */
-.message {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    animation: chatMessageSlide 0.3s ease-out;
-}
-
-@keyframes chatMessageSlide {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.message.user {
-    flex-direction: row-reverse;
-}
-
-.message-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.message.user .message-avatar {
-    background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.message-content {
-    max-width: 70%;
-    padding: 14px 18px;
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 16px;
-    color: #ffffff;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    word-wrap: break-word;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.message.user .message-content {
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.2);
-}
-
-/* Typing Bubbles */
-.typing-bubbles {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    padding: 14px 18px;
-}
-
-.typing-bubbles span {
-    width: 8px;
-    height: 8px;
-    background: #8b5cf6;
-    border-radius: 50%;
-    display: block;
-    animation: bounce 1s infinite ease-in-out;
-}
-
-.typing-bubbles span:nth-child(2) { 
-    animation-delay: 0.2s; 
-}
-
-.typing-bubbles span:nth-child(3) { 
-    animation-delay: 0.4s; 
-}
-
-@keyframes bounce {
-    0%, 80%, 100% { 
-        transform: scale(0); 
-        opacity: 0.5;
-    }
-    40% { 
-        transform: scale(1); 
-        opacity: 1;
-    }
-}
-
-/* Input Section */
-.input-section {
-    background: rgba(26, 26, 46, 0.6);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 20px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.input-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.text-input {
-    flex: 1;
-    padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(139, 92, 246, 0.3);
-    border-radius: 16px;
-    color: #ffffff;
-    font-size: 0.95rem;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.3s ease;
-}
-
-.text-input:focus {
-    outline: none;
-    border-color: #8b5cf6;
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-}
-
-.text-input::placeholder {
-    color: #b8c5d1;
-    opacity: 0.6;
-}
-
-.send-btn {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
-}
-
-.send-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-}
-
-/* Controls Row */
-.controls-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: rgba(139, 92, 246, 0.05);
-    border-radius: 12px;
-    margin-bottom: 15px;
-}
-
-.record-btn {
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-    border: none;
-    border-radius: 50%;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.record-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.5);
-}
-
-.record-btn.recording {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-    }
-    50% {
-        box-shadow: 0 4px 25px rgba(239, 68, 68, 0.8);
-    }
-}
-
-.record-status {
-    flex: 1;
-    font-size: 0.9rem;
-    color: #b8c5d1;
-}
-
-/* Recognized Text */
-.recognized-text {
-    padding: 12px;
-    background: rgba(139, 92, 246, 0.1);
-    border-radius: 12px;
-    color: #8b5cf6;
-    font-size: 0.85rem;
-    min-height: 40px;
-    display: none;
-}
-
-.recognized-text:not(:empty) {
-    display: block;
-}
-
-/* Audio Player */
-.audio-player {
-    margin-top: 15px;
-    padding: 15px;
-    background: rgba(139, 92, 246, 0.1);
-    border-radius: 12px;
-}
-
-.audio-player audio {
-    width: 100%;
-    border-radius: 8px;
-    outline: none;
-}
-
-/* 스크롤바 커스터마이징 */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(15, 15, 35, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #8b5cf6, #06b6d4);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #764ba2, #667eea);
-}
-
-/* 반응형 */
-@media (max-width: 768px) {
-    .hamburger {
-        top: 65px;
-        left: 15px;
-    }
-
-    .sidebar {
-        width: 250px;
-        left: -250px;
-        padding: 15px 20px 25px;
-        max-height: calc(100vh - 65px);
-    }
-
-    .sidebar h3 {
-        font-size: 1.2rem;
-        margin-bottom: 15px;
-    }
-
-    .mode-option {
-        padding: 12px;
-    }
-
-    .mode-option label {
-        font-size: 0.9rem;
-    }
-
-    .share-btn {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
-
-    .main-content {
-        padding: 15px;
-    }
-
-    .ai-image {
-        width: 100px;
-        height: 100px;
-    }
-
-    .chat-messages {
-        min-height: 350px;
-        max-height: 500px;
-        padding: 15px;
-    }
-
-    .message-content {
-        max-width: 80%;
-        font-size: 0.9rem;
-    }
-
-    .input-section {
-        padding: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .hamburger {
-        top: 60px;
-        left: 10px;
-    }
-
-    .app-container {
-        padding-top: 60px;
-    }
-
-    .sidebar {
-        width: 220px;
-        left: -220px;
-        padding: 12px 15px 20px;
-        max-height: calc(200vh - 60px);
-        top: 60px;
-    }
-
-    .sidebar h3 {
-        font-size: 1.1rem;
-        margin-bottom: 12px;
-        padding: 8px 0;
-    }
-
-    .mode-options {
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .mode-option {
-        padding: 10px 12px;
-    }
-
-    .mode-option input[type="radio"] {
-        width: 16px;
-        height: 16px;
-        margin-right: 10px;
-    }
-
-    .mode-option label {
-        font-size: 0.85rem;
-        gap: 6px;
-    }
-
-    .mode-option label i {
-        font-size: 1rem;
-    }
-
-    .share-btn {
-        padding: 10px;
-        font-size: 0.9rem;
-        margin-bottom: 15px;
-    }
-
-    .main-content {
-        padding: 10px;
-    }
-
-    .ai-image {
-        width: 80px;
-        height: 80px;
-    }
-
-    .chat-messages {
-        min-height: 300px;
-        max-height: 450px;
-        padding: 12px;
-    }
-
-    .message-avatar {
-        width: 35px;
-        height: 35px;
-        font-size: 1.2rem;
-    }
-
-    .message-content {
-        max-width: 85%;
-        font-size: 0.85rem;
-        padding: 12px 14px;
-    }
-
-    .input-section {
-        padding: 12px;
-    }
-
-    .text-input {
-        padding: 12px 16px;
-        font-size: 0.9rem;
-    }
-
-    .send-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-    }
-
-    .record-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-    }
-}
-
-/* 작은 안드로이드 기기 대응 */
-@media (max-height: 600px) {
-    .sidebar {
-        max-height: calc(100vh - 50px);
-        top: 50px;
-        padding: 10px 15px 15px;
-    }
-
-    .sidebar h3 {
-        font-size: 1rem;
-        margin-bottom: 10px;
-        padding: 5px 0;
-    }
-
-    .mode-options {
-        gap: 8px;
-        margin-bottom: 15px;
-    }
-
-    .mode-option {
-        padding: 8px 10px;
-    }
-
-    .mode-option label {
-        font-size: 0.8rem;
-    }
-
-    .share-btn {
-        padding: 8px;
-        font-size: 0.85rem;
-        margin-bottom: 10px;
-    }
-}
-
-/* iOS 스타일 탭 하이라이트 제거 */
-* {
-    -webkit-tap-highlight-color: transparent;
-}
-
-button, .mode-option {
-    -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
-}
-
-/* Safe Area 대응 */
-@supports (padding: max(0px)) {
-    .app-container {
-        padding-left: max(0px, env(safe-area-inset-left));
-        padding-right: max(0px, env(safe-area-inset-right));
-    }
-    
-    .main-content {
-        padding-bottom: max(20px, env(safe-area-inset-bottom));
-    }
-
-    .sidebar {
-        padding-top: max(20px, env(safe-area-inset-top));
-        padding-bottom: max(30px, env(safe-area-inset-bottom));
-        max-height: calc(100vh - 65px - env(safe-area-inset-bottom));
-    }
-
-    @media (max-width: 768px) {
-        .sidebar {
-            padding-top: max(15px, env(safe-area-inset-top));
-            padding-bottom: max(25px, env(safe-area-inset-bottom));
-        }
-    }
-
-    @media (max-width: 480px) {
-        .sidebar {
-            padding-top: max(12px, env(safe-area-inset-top));
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
-            max-height: calc(100vh - 60px - env(safe-area-inset-bottom));
-            margin-top: 60px;
-        }
-    }
-}
-</style>
-
 <body>
+    <!-- 배경 원들 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
     <!-- Header -->
+    <header class="header">
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
 
-<header class="header">
-    {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
-    {% else %}
-        {% include "common/loginHeader.html" %}
-    {% endif %}
-
-
-</header>
+    <!-- Hamburger Menu -->
     <div class="hamburger" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
     </div>
 
-    <div class="app-container" >
+    <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar" style="height: 3000px;">
-            <h3>🎯 {% trans '모드 선택' %}</h3>
-            <div class="mode-options">
-                <div class="mode-option active">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
-                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-wrapper">
+                <h3>🎯 {% trans '모드 선택' %}</h3>
+                <div class="mode-options">
+                    <div class="mode-option active">
+                        <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
+                        <label><i class="fas fa-comment"></i> TEXT MODE</label>
+                    </div>
+
+                    <div class="mode-option">
+                        <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                        <label><i class="fas fa-eye"></i> VISION MODE</label>
+                    </div>
+
+                    <div class="mode-option">
+                        <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                        <label><i class="fas fa-book"></i> NOVEL MODE</label>
+                    </div>
                 </div>
 
-                <div class="mode-option">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
-                    <label><i class="fas fa-eye"></i> VISION MODE</label>
-                </div>
-
-                <div class="mode-option">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
-                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
-                </div>
-
+                <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+                    {% trans '공유하기' %}
+                </button>
             </div>
-
-    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-        {% trans '공유하기' %}
-    </button>
         </aside>
 
         <!-- Main Content -->
@@ -914,7 +1002,6 @@ button, .mode-option {
                 {% if llm.llm_image %}
                     <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
                 {% endif %}
-                
             </div>
 
             <!-- Chat Messages -->
@@ -957,105 +1044,83 @@ button, .mode-option {
         </main>
     </div>
 
+    <script>
+        const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+        const CSRF_TOKEN = "{{ csrf_token }}";
+        const LLM_ID = {{ llm_id }}; 
+        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
 
-<script>
-// 사이드바 토글
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('active');
-}
+        // Django 번역 문자열을 JS에서 사용할 객체
+        const messages = {
+            recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+            recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+            micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+            recognizedText: "{% trans '인식된 텍스트: ' %}",
+            audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+            errorOccurred: "{% trans '오류 발생: ' %}",
+            shareCopied: "{% trans '링크가 복사되었습니다!' %}"
+        };
 
-// 채팅 영역 높이 동적 조정
-function adjustChatHeight() {
-    const chatMessages = document.querySelector('.chat-messages');
-    const aiShowcase = document.querySelector('.ai-showcase');
-    const inputSection = document.querySelector('.input-section');
-    
-    if (chatMessages && aiShowcase && inputSection) {
-        const viewportHeight = window.innerHeight;
-        const headerHeight = 65;
-        const showcaseHeight = aiShowcase.offsetHeight;
-        const inputHeight = inputSection.offsetHeight;
-        const padding = 60; // 여유 공간
-        
-        const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
-        
-        chatMessages.style.maxHeight = `${availableHeight}px`;
-        chatMessages.style.minHeight = `${Math.min(availableHeight, 120)}px`;
-    }
-}
+        // 사이드바 토글
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
 
-// 페이지 로드 및 리사이즈 시 실행
-document.addEventListener('DOMContentLoaded', function() {
-    adjustChatHeight();
-    
-    window.addEventListener('resize', adjustChatHeight);
-    window.addEventListener('orientationchange', function() {
-        setTimeout(adjustChatHeight, 100);
-    });
-    
-    // 사이드바 외부 클릭 시 닫기
-    document.addEventListener('click', function(event) {
-        const sidebar = document.getElementById('sidebar');
-        const hamburger = document.querySelector('.hamburger');
-        
-        if (sidebar && hamburger) {
-            if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
-                sidebar.classList.remove('active');
+        // 채팅 영역 높이 동적 조정
+        function adjustChatHeight() {
+            const chatMessages = document.querySelector('.chat-messages');
+            const aiShowcase = document.querySelector('.ai-showcase');
+            const inputSection = document.querySelector('.input-section');
+            
+            if (chatMessages && aiShowcase && inputSection) {
+                const viewportHeight = window.innerHeight;
+                const headerHeight = 65;
+                const showcaseHeight = aiShowcase.offsetHeight;
+                const inputHeight = inputSection.offsetHeight;
+                const padding = 60;
+                
+                const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
+                
+                chatMessages.style.maxHeight = `${Math.max(availableHeight, 120)}px`;
+                chatMessages.style.minHeight = `${Math.min(availableHeight, 120)}px`;
             }
         }
-    });
-});
 
-// 높이 강제 설정
-function fixHeight() {
-    const vh = window.innerHeight;
-    document.documentElement.style.height = vh + 'px';
-    document.body.style.height = 'auto';
-    adjustChatHeight(); // 채팅 높이도 재조정
-}
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            adjustChatHeight();
+            
+            // 사이드바 외부 클릭 시 닫기
+            document.addEventListener('click', function(event) {
+                const sidebar = document.getElementById('sidebar');
+                const hamburger = document.querySelector('.hamburger');
+                
+                if (sidebar && hamburger) {
+                    if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+                        sidebar.classList.remove('active');
+                    }
+                }
+            });
+        });
 
-fixHeight();
-window.addEventListener('resize', fixHeight);
-window.addEventListener('orientationchange', fixHeight);
-
-</script>
-<script>
-    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
-    const CSRF_TOKEN = "{{ csrf_token }}";
-    const LLM_ID = {{ llm_id }}; 
-        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";  // 문자열
-
-</script>
-
-<script>
-    // Django 번역 문자열을 JS에서 사용할 객체
-    const messages = {
-        recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
-        recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
-        micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
-        recognizedText: "{% trans '인식된 텍스트: ' %}",
-        audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
-        errorOccurred: "{% trans '오류 발생: ' %}",
-        shareCopied: "{% trans '링크가 복사되었습니다!' %}"
-    };
-
-
-            // 높이 강제 설정
+        // 높이 강제 설정
         function fixHeight() {
             const vh = window.innerHeight;
             document.documentElement.style.height = vh + 'px';
             document.body.style.height = 'auto';
+            adjustChatHeight();
         }
         
         fixHeight();
         window.addEventListener('resize', fixHeight);
-        window.addEventListener('orientationchange', fixHeight);
+        window.addEventListener('orientationchange', function() {
+            setTimeout(fixHeight, 100);
+        });
 
-</script>
-<script src="{% static 'js/customer_ai/custom.js' %}">
-   
-</script>
-
+        console.log('Chat page loaded');
+    </script>
+    
+    <script src="{% static 'js/customer_ai/custom.js' %}"></script>
 </body>
 </html>
