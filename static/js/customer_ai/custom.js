@@ -3,7 +3,7 @@ let audioChunks = [];
 let isRecording = false;
 let stream;
 
-const baseUrl = window.location.pathname.replace(/\/(chat|vision|novel)\/\d+\/?$/, '');
+const baseUrl = window.location.pathname.replace(/\/(chat|vision|novel|custom_app|vision_app|novel_app)\/\d+\/?$/, '');
 
 // 오디오 폴링을 위한 전역 변수들
 let audioCheckIntervals = new Map(); // conversation_id별 인터벌 저장
