@@ -741,3 +741,41 @@ def genres_detail_app(request, genres_id):
     }
     return render (request, "home/app/genres_detail_app.html", context)
 
+
+
+from django.utils import timezone
+from user_auth.models import Referral, Coupon
+@login_required
+def invite_app(request):
+    gift_list = Gift.objects.all()
+
+    invite_code = request.session.get('invite_code')  # 기존 세션 코드
+    invite_link = None
+
+    if request.method == "POST":
+        # 새 코드 생성
+        invite_code = generate_code()
+        request.session['invite_code'] = invite_code
+        invite_link = request.build_absolute_uri(f"/")
+
+        # Referral DB에 저장 (inviter = 현재 사용자)
+        Referral.objects.create(
+            inviter=request.user,
+            code=invite_code,
+            is_active=True,
+            created_at=timezone.now()
+        )
+
+    else:
+        if invite_code:
+            invite_link = request.build_absolute_uri(f"/invite_app/?code={invite_code}")
+
+    context = {
+        "gift_list": gift_list,
+        "invite_code": invite_code,
+        "invite_link": invite_link,
+    }
+    return render(request, "home/app/invite_app.html", context)
+
+
+

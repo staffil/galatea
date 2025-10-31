@@ -5,14 +5,14 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>{% trans '친구 초대하기' %}</title>
-    <link rel="stylesheet" href="{% static 'css/makeImage/image.css' %}?v=5">
-    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
-    <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
     <meta property="og:url" content="{{ invite_link }}">
     <meta property="og:description" content="나만의 초대 코드: {{ invite_code }}">
-        <!-- Open Graph (SNS 공유용) -->
+    
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -23,14 +23,14 @@
     <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
 
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "GALATEA AI",
-  "url": "https://www.galatea.website",
-  "logo": "https://www.galatea.website/static/img/logo.png"
-}
-</script>
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GALATEA AI",
+      "url": "https://www.galatea.website",
+      "logo": "https://www.galatea.website/static/img/logo.png"
+    }
+    </script>
 
     <style>
         * {
@@ -39,94 +39,175 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-color: #0f0f23 !important;
         }
 
+        body {
+            height: 100%;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: scroll;
+            background-color: #0f0f23 !important;
+            color: #ffffff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            z-index: -1;
+        }
+
+        /* 배경 원들 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -150px;
+            left: -150px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -100px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 10%;
+            left: 10%;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: -90px;
+            right: 20%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 50%;
+            left: -110px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 헤더 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        /* 메인 컨텐츠 */
         .main-content {
+            position: relative;
+            z-index: 1;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 80px 15px 30px;
+            min-height: 100vh;
         }
 
+        /* 이벤트 섹션 */
+        .popular-users-section {
+            margin-bottom: 30px;
+        }
 
+        .event_list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .event_list img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
 
         /* 페이지 제목 */
         .page-title {
             text-align: center;
-            margin: 40px 0;
+            margin: 30px 0;
         }
 
         .page-title h1 {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 700;
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: 800;
             margin-bottom: 10px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
         .page-title p {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.1rem;
-            font-weight: 300;
+            color: #b8c5d1;
+            font-size: 1rem;
+            font-weight: 400;
         }
 
         /* 초대 코드 생성 섹션 */
         .invite-generator {
-            background: white;
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
             text-align: center;
-        }
-
-        .invite-generator h2 {
-            color: #333;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .invite-generator p {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        .generate-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            text-transform: none;
-        }
-
-        .generate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-
-        .generate-btn:active {
-            transform: translateY(-1px);
-        }
-
-        /* 초대 결과 섹션 */
-        .invite-container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             animation: slideIn 0.5s ease-out;
         }
 
@@ -141,87 +222,139 @@
             }
         }
 
-        .invite-container h3 {
-            color: #333;
+        .invite-generator h2 {
+            color: #ffffff;
             font-size: 1.6rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .invite-generator p {
+            color: #b8c5d1;
             margin-bottom: 25px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            text-transform: none;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+            touch-action: manipulation;
+        }
+
+        .generate-btn:active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        /* 초대 결과 섹션 */
+        .invite-container {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .invite-container h3 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .invite-item {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #f8f9ff;
+            margin-bottom: 20px;
+            padding: 18px;
+            background: rgba(139, 92, 246, 0.1);
             border-radius: 15px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #8b5cf6;
         }
 
         .invite-item label {
             display: block;
-            font-weight: 600;
-            color: #555;
+            font-weight: 700;
+            color: #8b5cf6;
             margin-bottom: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .invite-value {
-            background: white;
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 14px;
             border-radius: 10px;
-            border: 2px solid #e1e5e9;
+            border: 1px solid rgba(139, 92, 246, 0.3);
             font-family: 'Courier New', monospace;
-            font-size: 0.95rem;
-            color: #333;
+            font-size: 0.9rem;
+            color: #ffffff;
             word-break: break-all;
             line-height: 1.5;
         }
 
         .copy-section {
             text-align: center;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid #e1e5e9;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
         }
 
         .copy-btn {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 28px;
             border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(86, 171, 47, 0.3);
-        }
-
-        .copy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(86, 171, 47, 0.4);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            -webkit-tap-highlight-color: rgba(16, 185, 129, 0.3);
+            touch-action: manipulation;
         }
 
         .copy-btn:active {
-            transform: translateY(0);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .copy-section p {
+            margin-top: 15px;
+            color: #b8c5d1;
+            font-size: 0.85rem;
+            line-height: 1.5;
         }
 
         /* 성공 메시지 */
         .success-message {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
-            background: #4CAF50;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-            z-index: 1000;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            z-index: 1001;
             opacity: 0;
             transform: translateX(100%);
             transition: all 0.3s ease;
+            font-weight: 600;
         }
 
         .success-message.show {
@@ -230,27 +363,35 @@
         }
 
         /* 반응형 디자인 */
-        @media (max-width: 768px) {
+        @media (min-width: 576px) {
             .main-content {
-                padding: 15px;
+                padding: 90px 20px 40px;
             }
 
             .page-title h1 {
-                font-size: 2rem;
+                font-size: 2.3rem;
             }
 
             .invite-generator, .invite-container {
-                padding: 25px;
-                margin: 20px 0;
+                padding: 35px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                padding: 100px 30px 50px;
             }
 
-            .generate-btn {
-                padding: 12px 30px;
-                font-size: 1rem;
+            .page-title h1 {
+                font-size: 2.5rem;
             }
 
-            .invite-value {
-                font-size: 0.85rem;
+            .invite-generator, .invite-container {
+                padding: 40px;
+            }
+
+            .event_list {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -263,14 +404,79 @@
                 padding: 20px;
             }
 
-            .event_list img {
-                width: 100%;
-                height: 100px;
+            .generate-btn {
+                padding: 12px 25px;
+                font-size: 0.95rem;
+            }
+
+            .invite-value {
+                font-size: 0.8rem;
+            }
+
+            .success-message {
+                left: 20px;
+                right: 20px;
+                transform: translateY(-100%);
+            }
+
+            .success-message.show {
+                transform: translateY(0);
             }
         }
- </style>
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* 부드러운 스크롤 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* iOS 스타일 탭 하이라이트 제거 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* Safe Area 대응 (노치 디자인) */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+            
+            .main-content {
+                padding-bottom: max(30px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- 배경 원들 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
     <header>
         {% if not user.is_authenticated %}
             {% include "common/notLoginHeader.html" %}
@@ -323,10 +529,10 @@
 
             <div class="copy-section">
                 <input type="hidden" id="fullInvite" value="{% blocktrans %}링크: {{ invite_link }} | 코드: {{ invite_code }}{% endblocktrans %}">
-                <button type="button" class="copy-btn" onclick="copyFullInvite()">
+                <button type="button" class="copy-btn" id="copyBtn">
                     📋 {% trans '전체 정보 복사하기' %}
                 </button>
-                <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
+                <p>
                     {% trans "친구들에게 링크를 보내거나 코드를 알려주세요! (친구에게 회원가입 이후 오른쪽 상단 mypage -> '친구 초대 코드받기'로 들어가서 코드를 입력하세요!)" %}
                 </p>
             </div>
@@ -339,9 +545,32 @@
     </div>
 
     <script>
+        // 높이 강제 설정
+        function fixHeight() {
+            const vh = window.innerHeight;
+            document.documentElement.style.height = vh + 'px';
+            document.body.style.height = 'auto';
+        }
+        
+        fixHeight();
+        window.addEventListener('resize', fixHeight);
+        window.addEventListener('orientationchange', fixHeight);
+
+        // ==========================================
+        // 복사 버튼 클릭 이벤트
+        // ==========================================
+        document.addEventListener('click', function(e) {
+            const copyBtn = e.target.closest('#copyBtn');
+            if (!copyBtn) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            copyFullInvite();
+        });
+
         function copyFullInvite() {
             const textToCopy = document.getElementById("fullInvite").value;
-            const successMessage = document.getElementById("successMessage");
 
             // 클립보드 API 사용 (모던 브라우저)
             if (navigator.clipboard && window.isSecureContext) {
@@ -396,6 +625,8 @@
                 }, index * 200);
             });
         });
+
+        console.log('Page loaded');
     </script>
 </body>
 </html>
