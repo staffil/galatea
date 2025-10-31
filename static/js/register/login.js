@@ -20,6 +20,3 @@ function openSocialLogin(provider) {
     }, 1000);
 }
 
-// 디버깅용 (필요시 제거)
-const GOOGLE_CLIENT_ID = "{{ google_client_id }}";
-console.log("GOOGLE_CLIENT_ID:", GOOGLE_CLIENT_ID);
