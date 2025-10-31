@@ -991,7 +991,7 @@ main {
                 <h2 class="section-title">{% trans "장르" %}</h2>
                 <div class="genre-tags-container">
                     {% for genre in genre_list|slice:":8" %}
-                    <a href="{% url 'home:genres_detail' genre.id %}">
+                    <a href="{% url 'home:genres_detail_app' genre.id %}">
                         <div class="genre-tag-box">
                             {% if genre.genre_image %}
                                 <img src="{{ genre.genre_image.url }}" alt="{{ genre.name }}" loading="lazy">
