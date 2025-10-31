@@ -728,7 +728,7 @@ def search_llm_app(request):
     })
 
 
-def genre_detail_app(request, genres_id):
+def genres_detail_app(request, genres_id):
     genres = get_object_or_404(Genre, id =genres_id)
 
     llm_list = genres.llms.all().order_by("?")
@@ -739,5 +739,5 @@ def genre_detail_app(request, genres_id):
         "llm_list": llm_list,
         "LANGUAGE_CODE": language_code
     }
-    return render (request, "home/app/genre_detail_app.html", context)
+    return render (request, "home/app/genres_detail_app.html", context)
 
