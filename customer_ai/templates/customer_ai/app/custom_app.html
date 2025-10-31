@@ -1044,90 +1044,65 @@
         </main>
     </div>
 
-    <script>
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
-        const CSRF_TOKEN = "{{ csrf_token }}";
-        const LLM_ID = {{ llm_id }}; 
-        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
+<script>
+  const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+  const CSRF_TOKEN = "{{ csrf_token }}";
+  const LLM_ID = {{ llm_id }}; 
+  const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
 
-        // Django 번역 문자열을 JS에서 사용할 객체
-        const messages = {
-            recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
-            recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
-            micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
-            recognizedText: "{% trans '인식된 텍스트: ' %}",
-            audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
-            errorOccurred: "{% trans '오류 발생: ' %}",
-            shareCopied: "{% trans '링크가 복사되었습니다!' %}"
-        };
-
-        // 사이드바 토글
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-        }
-
-        // 채팅 영역 높이 동적 조정
-        function adjustChatHeight() {
-            const chatMessages = document.querySelector('.chat-messages');
-            const aiShowcase = document.querySelector('.ai-showcase');
-            const inputSection = document.querySelector('.input-section');
-            
-            if (chatMessages && aiShowcase && inputSection) {
-                const viewportHeight = window.innerHeight;
-                const headerHeight = 65;
-                const showcaseHeight = aiShowcase.offsetHeight;
-                const inputHeight = inputSection.offsetHeight;
-                const padding = 60;
-                
-                const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
-                
-                chatMessages.style.maxHeight = `${Math.max(availableHeight, 120)}px`;
-                chatMessages.style.minHeight = `${Math.min(availableHeight, 120)}px`;
-            }
-        }
-
-        // 페이지 로드 시 실행
-        document.addEventListener('DOMContentLoaded', function() {
-            adjustChatHeight();
-            
-            // 사이드바 외부 클릭 시 닫기
-            document.addEventListener('click', function(event) {
-                const sidebar = document.getElementById('sidebar');
-                const hamburger = document.querySelector('.hamburger');
-                
-                if (sidebar && hamburger) {
-                    if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
-                        sidebar.classList.remove('active');
-                    }
-                }
-            });
-        });
+  // ✅ 1. Viewport Height Fix
   function setViewportHeight() {
     document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
   }
   window.addEventListener('resize', setViewportHeight);
+  window.addEventListener('orientationchange', () => setTimeout(setViewportHeight, 100));
   window.addEventListener('load', setViewportHeight);
-  setViewportHeight();
-        // 높이 강제 설정
-        function fixHeight() {
-            const vh = window.innerHeight;
-            document.documentElement.style.height = vh + 'px';
-            document.body.style.height = 'auto';
-            adjustChatHeight();
-        }
-        
-        fixHeight();
-        window.addEventListener('resize', fixHeight);
-        window.addEventListener('orientationchange', function() {
-            setTimeout(fixHeight, 100);
-        });
+  document.addEventListener('DOMContentLoaded', setViewportHeight);
 
-        console.log('Chat page loaded');
+  // ✅ 2. Sidebar Toggle
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+  }
 
-        
-    </script>
+  // ✅ 3. 채팅 높이 자동 조정
+  function adjustChatHeight() {
+    const chatMessages = document.querySelector('.chat-messages');
+    const aiShowcase = document.querySelector('.ai-showcase');
+    const inputSection = document.querySelector('.input-section');
     
-    <script src="{% static 'js/customer_ai/custom.js' %}"></script>
+    if (chatMessages && aiShowcase && inputSection) {
+      const viewportHeight = window.innerHeight;
+      const headerHeight = 65;
+      const showcaseHeight = aiShowcase.offsetHeight;
+      const inputHeight = inputSection.offsetHeight;
+      const padding = 60;
+      
+      const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
+      chatMessages.style.maxHeight = `${Math.max(availableHeight, 120)}px`;
+      chatMessages.style.minHeight = `${Math.min(availableHeight, 120)}px`;
+    }
+  }
+
+  // ✅ 4. 초기 실행
+  document.addEventListener('DOMContentLoaded', function() {
+    setViewportHeight();
+    adjustChatHeight();
+
+    // 외부 클릭 시 사이드바 닫기
+    document.addEventListener('click', function(event) {
+      const sidebar = document.getElementById('sidebar');
+      const hamburger = document.querySelector('.hamburger');
+      if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+        sidebar.classList.remove('active');
+      }
+    });
+  });
+
+  console.log('✅ Chat page fully loaded with viewport fix');
+</script>
+
+<script src="{% static 'js/customer_ai/custom.js' %}"></script>
+
 </body>
 </html>
