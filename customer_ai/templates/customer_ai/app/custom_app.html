@@ -965,8 +965,36 @@ function toggleSidebar() {
     sidebar.classList.toggle('active');
 }
 
-// 사이드바 외부 클릭 시 닫기
+// 채팅 영역 높이 동적 조정
+function adjustChatHeight() {
+    const chatMessages = document.querySelector('.chat-messages');
+    const aiShowcase = document.querySelector('.ai-showcase');
+    const inputSection = document.querySelector('.input-section');
+    
+    if (chatMessages && aiShowcase && inputSection) {
+        const viewportHeight = window.innerHeight;
+        const headerHeight = 65;
+        const showcaseHeight = aiShowcase.offsetHeight;
+        const inputHeight = inputSection.offsetHeight;
+        const padding = 60; // 여유 공간
+        
+        const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
+        
+        chatMessages.style.maxHeight = `${availableHeight}px`;
+        chatMessages.style.minHeight = `${Math.min(availableHeight, 120)}px`;
+    }
+}
+
+// 페이지 로드 및 리사이즈 시 실행
 document.addEventListener('DOMContentLoaded', function() {
+    adjustChatHeight();
+    
+    window.addEventListener('resize', adjustChatHeight);
+    window.addEventListener('orientationchange', function() {
+        setTimeout(adjustChatHeight, 100);
+    });
+    
+    // 사이드바 외부 클릭 시 닫기
     document.addEventListener('click', function(event) {
         const sidebar = document.getElementById('sidebar');
         const hamburger = document.querySelector('.hamburger');
@@ -978,6 +1006,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// 높이 강제 설정
+function fixHeight() {
+    const vh = window.innerHeight;
+    document.documentElement.style.height = vh + 'px';
+    document.body.style.height = 'auto';
+    adjustChatHeight(); // 채팅 높이도 재조정
+}
+
+fixHeight();
+window.addEventListener('resize', fixHeight);
+window.addEventListener('orientationchange', fixHeight);
+
 </script>
 <script>
     const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
