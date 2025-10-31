@@ -24,7 +24,6 @@ def mypage_view(request):
         "llm":llm
     }
     return render(request, "mypage/mypage.html", context)
-@login_required
 
 @login_required
 def mypage_update(request):
@@ -542,3 +541,18 @@ def token_less(request):
     return render(request, "mypage/token_less.html", {
         "consume_history": page_obj,  # page_obj 넘김
     })
+
+
+
+#ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+# 앱 전용
+
+@login_required(login_url='/register/login/')
+def mypage_app(request):
+    user = request.user  
+    llm = LLM.objects.filter(user=user).first()
+    context = {
+        'user': user,
+        "llm":llm
+    }
+    return render(request, "mypage/app/mypage_app.html", context)
