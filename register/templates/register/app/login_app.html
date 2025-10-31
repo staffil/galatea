@@ -32,14 +32,7 @@
 </head>
 <body>
 
-  
-<header>
-    {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
-    {% else %}
-        {% include "common/loginHeader.html" %}
-    {% endif %}
-</header>
+
 
 <div class="container">
   <div class="circle-bg circle-1"></div>
@@ -51,7 +44,9 @@
 
 <div class="login-box" role="main" aria-label="로그인 폼">
   <div class="img-wapper">
-    <img src="{% static 'img/logo.png' %}" alt="Galatea Logo">
+                <a href="{% url 'home:main_app' %}">
+                    <img src="/static/img/logo.png" alt="Galatea Logo" />
+                </a>
     <h1>GALATEA</h1>
   </div>
 
@@ -102,7 +97,7 @@
     </div>
 
     <!-- 기본 로그인 버튼 -->
-    <button type="submit">LOGIN</button>
+    <button type="submit" class="login-btn">LOGIN</button>
   </form>
 
   <a href="{% url 'register:signup' %}" class="signup">SIGN UP</a>
