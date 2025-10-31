@@ -176,9 +176,19 @@
             background-clip: text;
         }
 
+        /* Table Wrapper for Horizontal Scroll */
+        .make-ai-page .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+        }
+
         /* Table */
         .make-ai-page table {
             width: 100%;
+            min-width: 800px;
             border-collapse: collapse;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
@@ -190,16 +200,17 @@
         }
 
         .make-ai-page table th {
-            padding: 15px 10px;
+            padding: 15px 12px;
             text-align: center;
             font-weight: 700;
             color: #8b5cf6;
             font-size: 0.9rem;
             border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+            white-space: nowrap;
         }
 
         .make-ai-page table td {
-            padding: 15px 10px;
+            padding: 15px 12px;
             text-align: center;
             border-bottom: 1px solid rgba(139, 92, 246, 0.1);
             color: #b8c5d1;
@@ -208,6 +219,44 @@
 
         .make-ai-page table tr:hover {
             background: rgba(139, 92, 246, 0.05);
+        }
+
+        /* 번호 컬럼 */
+        .make-ai-page table th:nth-child(1),
+        .make-ai-page table td:nth-child(1) {
+            width: 60px;
+        }
+
+        /* 생성 날짜 컬럼 */
+        .make-ai-page table th:nth-child(2),
+        .make-ai-page table td:nth-child(2) {
+            width: 150px;
+            white-space: nowrap;
+        }
+
+        /* 목소리 이름 컬럼 */
+        .make-ai-page table th:nth-child(3),
+        .make-ai-page table td:nth-child(3) {
+            min-width: 120px;
+        }
+
+        /* 목소리 번호 컬럼 */
+        .make-ai-page table th:nth-child(4),
+        .make-ai-page table td:nth-child(4) {
+            min-width: 150px;
+            word-break: break-all;
+        }
+
+        /* 샘플 재생 컬럼 */
+        .make-ai-page table th:nth-child(5),
+        .make-ai-page table td:nth-child(5) {
+            min-width: 180px;
+        }
+
+        /* 복사하기 컬럼 */
+        .make-ai-page table th:nth-child(6),
+        .make-ai-page table td:nth-child(6) {
+            width: 120px;
         }
 
         .make-ai-page .copy-btn {
@@ -221,6 +270,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
         }
 
         .make-ai-page .copy-btn:active {
@@ -248,6 +298,18 @@
         .make-ai-page .empty-state button a {
             color: white;
             text-decoration: none;
+        }
+
+        /* Audio Player */
+        .make-ai-page audio {
+            width: 150px;
+            height: 30px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .make-ai-page audio::-webkit-media-controls-panel {
+            background: rgba(139, 92, 246, 0.2);
         }
 
         /* Pagination */
@@ -558,25 +620,20 @@
             color: #b8c5d1;
             font-size: 0.9rem;
             margin-top: 15px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* Audio Player */
-        .make-ai-page audio {
-            width: 150px;
-            height: 30px;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        .make-ai-page audio::-webkit-media-controls-panel {
-            background: rgba(139, 92, 246, 0.2);
-        }
-
-        /* 반응형 */
+        /* 반응형 - 테이블 */
         @media (max-width: 1024px) {
             .make-ai-page .container {
                 grid-template-columns: 1fr;
                 gap: 20px;
+            }
+
+            .make-ai-page table {
+                min-width: 700px;
             }
         }
 
@@ -586,20 +643,33 @@
             }
 
             .make-ai-page .voice-list-container {
-                padding: 20px;
+                padding: 20px 15px;
             }
 
             .make-ai-page .voice-list-container h2 {
                 font-size: 1.5rem;
+                margin-bottom: 20px;
             }
 
             .make-ai-page table {
+                min-width: 650px;
                 font-size: 0.75rem;
             }
 
             .make-ai-page table th,
             .make-ai-page table td {
-                padding: 10px 5px;
+                padding: 10px 8px;
+                font-size: 0.75rem;
+            }
+
+            .make-ai-page .copy-btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+
+            .make-ai-page audio {
+                width: 120px;
+                height: 25px;
             }
 
             .make-ai-page .left-panel,
@@ -618,12 +688,31 @@
             }
 
             .make-ai-page .voice-list-container {
-                padding: 15px;
+                padding: 15px 10px;
+            }
+
+            .make-ai-page .voice-list-container h2 {
+                font-size: 1.3rem;
             }
 
             .make-ai-page table {
-                display: block;
-                overflow-x: auto;
+                min-width: 600px;
+            }
+
+            .make-ai-page table th,
+            .make-ai-page table td {
+                padding: 8px 6px;
+                font-size: 0.7rem;
+            }
+
+            .make-ai-page .copy-btn {
+                padding: 5px 10px;
+                font-size: 0.7rem;
+            }
+
+            .make-ai-page audio {
+                width: 100px;
+                height: 24px;
             }
 
             .make-ai-page textarea {
@@ -645,6 +734,7 @@
         /* 스크롤바 커스터마이징 */
         ::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
@@ -699,50 +789,53 @@
         <!-- Voice List Section -->
         <div class="voice-list-container">
             <h2>{% trans '저장된 음성 목록'%}</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>{% trans '번호' %}</th>
-                        <th>{% trans '생성 날짜' %}</th>
-                        <th>{% trans '목소리 이름' %}</th>
-                        <th>{% trans '목소리 번호' %}</th>
-                        <th>{% trans '샘플 재생' %}</th>
-                        <th>{% trans '복사하기' %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if voice_list %}
-                        {% for voice in voice_list %}
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
-                            <td>{{ voice.voice_name }}</td>
-                            <td>{{ voice.voice_id }}</td>
-                            <td>
-                                {% if voice.sample_url %}
-                                <audio controls>
-                                    <source src="{{ voice.sample_url }}" type="audio/mpeg">
-                                    {% trans '지원하지 않는 브라우저입니다.' %}
-                                </audio>
-                                {% else %}
-                                {% trans '샘플 없음' %}
-                                {% endif %}
-                            </td>
-                            <td>
-                                <button class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans '선택하기' %}</button>
+                            <th>{% trans '번호' %}</th>
+                            <th>{% trans '생성 날짜' %}</th>
+                            <th>{% trans '목소리 이름' %}</th>
+                            <th>{% trans '목소리 번호' %}</th>
+                            <th>{% trans '샘플 재생' %}</th>
+                            <th>{% trans '복사하기' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if voice_list %}
+                            {% for voice in voice_list %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ voice.voice_name }}</td>
+                                <td>{{ voice.voice_id }}</td>
+                                <td>
+                                    {% if voice.sample_url %}
+                                    <audio controls>
+                                        <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                                        {% trans '지원하지 않는 브라우저입니다.' %}
+                                    </audio>
+                                    {% else %}
+                                    {% trans '샘플 없음' %}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans '선택하기' %}</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                {% trans '저장된 음성이 없습니다.' %}
+                                <button><a href="{% url 'home:voice_all' %}">{% trans '목소리 선택하기->'%}</a></button>
                             </td>
                         </tr>
-                        {% endfor %}
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="empty-state">
-                            {% trans '저장된 음성이 없습니다.' %}
-                            <button><a href="{% url 'home:voice_all' %}">{% trans '목소리 선택하기->'%}</a></button>
-                        </td>
-                    </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
 
             {% if voice_list.has_other_pages %}
             <div class="pagination">
