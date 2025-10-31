@@ -938,6 +938,7 @@ aside.sidebar,
 </head>
 
 <body>
+      <div class="chat-container">
     <!-- 배경 원들 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
@@ -1037,7 +1038,7 @@ aside.sidebar,
             </div>
         </main>
     </div>
-
+</div>
     <script>
         const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
         const CSRF_TOKEN = "{{ csrf_token }}";
@@ -1114,7 +1115,13 @@ aside.sidebar,
 
         console.log('Chat page loaded');
 
-
+  function setViewportHeight() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  window.addEventListener('resize', setViewportHeight);
+  window.addEventListener('orientationchange', setViewportHeight);
+  setViewportHeight();
         // 모바일 vh 버그 대응
 function setVh() {
     let vh = window.innerHeight * 0.01;
