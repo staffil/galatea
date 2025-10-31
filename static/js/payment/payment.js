@@ -5,9 +5,7 @@ function getCsrfToken() {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
-        if (name === 'csrftoken') {
-            return value;
-        }
+        if (name === 'csrftoken') return value;
     }
     return '';
 }
@@ -22,9 +20,7 @@ async function requestInicisV2(btn) {
     btn.classList.add('loading');
 
     try {
-        if (typeof PortOne === 'undefined') {
-            throw new Error("PortOne V2 SDK not loaded");
-        }
+        if (typeof PortOne === 'undefined') throw new Error("PortOne V2 SDK not loaded");
 
         const paymentData = {
             storeId: "store-05d93aaf-0f35-4c20-b72e-e56011f78d9e",
@@ -40,26 +36,42 @@ async function requestInicisV2(btn) {
                 phoneNumber: btn.getAttribute("data-buyer-tel") || "",
                 email: btn.getAttribute("data-buyer-email") || ""
             },
-            // 결제 완료 후 이동할 페이지
             redirectUrl: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`
         };
 
         console.log("=== KG Inicis V2 Payment Data ===", paymentData);
 
         const response = await PortOne.requestPayment(paymentData);
-
         console.log("=== KG Inicis V2 Response ===", response);
-        console.log("Response paymentId:", response.paymentId);
-        console.log("Response 전체:", JSON.stringify(response, null, 2));
 
         if (response.code != null) {
             alert(`결제 실패: ${response.message}`);
             return;
         }
 
-        // ✅ 서버 검증 fetch 제거
-        alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
-        
+        // 서버로 POST → 실제 승인(confirm) 처리
+        const verifyRes = await fetch("/payment/verify_payment_v2/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCsrfToken()
+            },
+            body: JSON.stringify({
+                payment_id: response.paymentId,
+                merchant_uid: merchant_uid,
+                rank_id: rank_id
+            })
+        });
+        const verifyData = await verifyRes.json();
+        console.log("Server verification response:", verifyData);
+
+        if (verifyData.status === 'success') {
+            alert("결제가 완료되었습니다!");
+            window.location.href = `/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
+        } else {
+            alert(`결제 실패: ${verifyData.message}`);
+        }
+
     } catch (error) {
         console.error('KG Inicis V2 Payment error:', error);
         alert("결제 처리 중 오류가 발생했습니다: " + error.message);
@@ -78,9 +90,7 @@ async function requestPayPalV2(btn) {
     btn.classList.add('loading');
 
     try {
-        if (typeof PortOne === 'undefined') {
-            throw new Error("PortOne V2 SDK not loaded");
-        }
+        if (typeof PortOne === 'undefined') throw new Error("PortOne V2 SDK not loaded");
 
         const paymentData = {
             storeId: "store-05d93aaf-0f35-4c20-b72e-e56011f78d9e",
@@ -100,14 +110,35 @@ async function requestPayPalV2(btn) {
         console.log("=== PayPal V2 Payment Data ===", paymentData);
 
         const response = await PortOne.requestPayment(paymentData);
+        console.log("=== PayPal V2 Response ===", response);
 
         if (response.code != null) {
             alert(`결제 실패: ${response.message}`);
             return;
         }
 
-        console.log("=== PayPal V2 Response ===", response);
-        alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
+        // 서버로 POST → 실제 승인(confirm) 처리
+        const verifyRes = await fetch("/payment/verify_payment_v2/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCsrfToken()
+            },
+            body: JSON.stringify({
+                payment_id: response.paymentId,
+                merchant_uid: merchant_uid,
+                rank_id: rank_id
+            })
+        });
+        const verifyData = await verifyRes.json();
+        console.log("Server verification response:", verifyData);
+
+        if (verifyData.status === 'success') {
+            alert("결제가 완료되었습니다!");
+            window.location.href = `/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
+        } else {
+            alert(`결제 실패: ${verifyData.message}`);
+        }
 
     } catch (error) {
         console.error('PayPal V2 Payment error:', error);
@@ -117,21 +148,17 @@ async function requestPayPalV2(btn) {
     }
 }
 
-// 기존 V1 결제 함수
+// 기존 V1 결제 함수 (아임포트)
 function requestPayV1(pgName, btn) {
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
     const rank_id = btn.getAttribute("data-rank-id");
     const isMobile = window.innerWidth <= 480;
 
-    // PG사별 코드 매핑
     let pgCode;
     const pgLower = pgName.toLowerCase();
-    if (pgLower === "kakaopay" || pgLower === "kakao") {
-        pgCode = "kakaopay.CA36348663";
-    } else {
-        pgCode = pgLower;
-    }
+    if (pgLower === "kakaopay" || pgLower === "kakao") pgCode = "kakaopay.CA36348663";
+    else pgCode = pgLower;
 
     let data = {
         pg: pgCode,
@@ -145,9 +172,7 @@ function requestPayV1(pgName, btn) {
         name: "GALATEA 등급 결제",
     };
 
-    if (isMobile) {
-        data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
-    }
+    if (isMobile) data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
 
     console.log("=== V1 request_pay data ===", data);
 
@@ -182,27 +207,3 @@ window.requestPay = function(pgName, btn) {
         requestPayV1(pgName, btn);
     }
 };
-const response = await PortOne.requestPayment(paymentData);
-
-console.log("=== KG Inicis V2 Response ===", response);
-
-if (response.code != null) {
-    alert(`결제 실패: ${response.message}`);
-    return;
-}
-
-// ✅ 서버 검증 호출
-await fetch("/payment/verify_payment_v2/", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCsrfToken()
-    },
-    body: JSON.stringify({
-        payment_id: response.paymentId,
-        merchant_uid: merchant_uid,
-        rank_id: rank_id
-    })
-});
-
-alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
