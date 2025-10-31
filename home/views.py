@@ -778,4 +778,6 @@ def invite_app(request):
     return render(request, "home/app/invite_app.html", context)
 
 
-
+def logout_app(request):
+    logout(request)
+    return redirect('register:login_app') 
