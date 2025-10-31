@@ -5,7 +5,9 @@ function getCsrfToken() {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
-        if (name === 'csrftoken') return value;
+        if (name === 'csrftoken') {
+            return value;
+        }
     }
     return '';
 }
@@ -20,7 +22,9 @@ async function requestInicisV2(btn) {
     btn.classList.add('loading');
 
     try {
-        if (typeof PortOne === 'undefined') throw new Error("PortOne V2 SDK not loaded");
+        if (typeof PortOne === 'undefined') {
+            throw new Error("PortOne V2 SDK not loaded");
+        }
 
         const paymentData = {
             storeId: "store-05d93aaf-0f35-4c20-b72e-e56011f78d9e",
@@ -36,6 +40,7 @@ async function requestInicisV2(btn) {
                 phoneNumber: btn.getAttribute("data-buyer-tel") || "",
                 email: btn.getAttribute("data-buyer-email") || ""
             },
+            // 팝업 내 처리 후 redirectUrl은 단순 완료 페이지
             redirectUrl: `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`
         };
 
@@ -49,7 +54,7 @@ async function requestInicisV2(btn) {
             return;
         }
 
-        // 서버로 POST → 실제 승인(confirm) 처리
+        // 서버 검증 POST 요청 (팝업 내에서)
         const verifyRes = await fetch("/payment/verify_payment_v2/", {
             method: "POST",
             headers: {
@@ -62,6 +67,7 @@ async function requestInicisV2(btn) {
                 rank_id: rank_id
             })
         });
+
         const verifyData = await verifyRes.json();
         console.log("Server verification response:", verifyData);
 
@@ -90,7 +96,9 @@ async function requestPayPalV2(btn) {
     btn.classList.add('loading');
 
     try {
-        if (typeof PortOne === 'undefined') throw new Error("PortOne V2 SDK not loaded");
+        if (typeof PortOne === 'undefined') {
+            throw new Error("PortOne V2 SDK not loaded");
+        }
 
         const paymentData = {
             storeId: "store-05d93aaf-0f35-4c20-b72e-e56011f78d9e",
@@ -117,7 +125,7 @@ async function requestPayPalV2(btn) {
             return;
         }
 
-        // 서버로 POST → 실제 승인(confirm) 처리
+        // 서버 검증 POST 요청
         const verifyRes = await fetch("/payment/verify_payment_v2/", {
             method: "POST",
             headers: {
@@ -130,6 +138,7 @@ async function requestPayPalV2(btn) {
                 rank_id: rank_id
             })
         });
+
         const verifyData = await verifyRes.json();
         console.log("Server verification response:", verifyData);
 
@@ -148,7 +157,7 @@ async function requestPayPalV2(btn) {
     }
 }
 
-// 기존 V1 결제 함수 (아임포트)
+// 기존 V1 결제 함수
 function requestPayV1(pgName, btn) {
     const merchant_uid = "order_" + new Date().getTime();
     const amountKRW = parseInt(btn.getAttribute("data-price"), 10);
@@ -157,8 +166,11 @@ function requestPayV1(pgName, btn) {
 
     let pgCode;
     const pgLower = pgName.toLowerCase();
-    if (pgLower === "kakaopay" || pgLower === "kakao") pgCode = "kakaopay.CA36348663";
-    else pgCode = pgLower;
+    if (pgLower === "kakaopay" || pgLower === "kakao") {
+        pgCode = "kakaopay.CA36348663";
+    } else {
+        pgCode = pgLower;
+    }
 
     let data = {
         pg: pgCode,
@@ -172,7 +184,9 @@ function requestPayV1(pgName, btn) {
         name: "GALATEA 등급 결제",
     };
 
-    if (isMobile) data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
+    if (isMobile) {
+        data.m_redirect_url = `https://galatea.website/payment/complete/?merchant_uid=${merchant_uid}&rank_id=${rank_id}`;
+    }
 
     console.log("=== V1 request_pay data ===", data);
 
