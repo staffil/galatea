@@ -185,24 +185,18 @@
         }
 
         /* Sidebar - 외부 컨테이너 */
-        .sidebar,
-        aside.sidebar,
-        #sidebar {
-            position: fixed !important;
-            top: 65px !important;
-            left: 0 !important;
-            width: 280px !important;
-            height: calc(100vh - 65px) !important;
-            background: rgba(26, 26, 46, 0.95) !important;
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(139, 92, 246, 0.2);
-            padding: 0 !important;
-            transition: left 0.3s ease !important;
-            z-index: 999 !important;
-            overflow: hidden !important;
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
-            margin: 0 !important;
-        }
+.sidebar,
+aside.sidebar,
+#sidebar {
+    position: fixed !important;
+    top: 65px !important;
+    left: -280px !important; /* 숨김 기본값 */
+    width: 280px !important;
+    height: calc(var(--vh, 100vh) - 65px) !important; /* 고정된 높이 대신 동적 vh 사용 */
+    background: rgba(26, 26, 46, 0.95) !important;
+    z-index: 2000 !important; /* 헤더보다 높게 */
+    transition: left 0.3s ease !important;
+}
 
         .sidebar.active,
         aside.sidebar.active,
