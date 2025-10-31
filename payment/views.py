@@ -187,84 +187,33 @@ def payment_charge(request):
         return render(request, "payment/payment.html", context)
     else:
         return redirect('payment:payment_choice')
-# views.py
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.conf import settings
-from .models import Payment, PaymentRank, PaymentMethod, Token, TokenHistory, PaymentStats
-import requests
+
+
 @login_required
 def payment_complete(request):
-    user = request.user
-    merchant_uid = request.GET.get('merchant_uid')
-    rank_id = request.GET.get('rank_id')
-    payment_id = request.GET.get('paymentId')  # PortOne V2
-    imp_uid = request.GET.get('imp_uid')      # IMP V1
+    imp_uid = request.GET.get("imp_uid")
+    merchant_uid = request.GET.get("merchant_uid")
+    rank_id = request.GET.get("rank_id")
 
-    if not merchant_uid or not rank_id:
-        return render(request, 'payment/complete.html', {'status': 'error', 'message': '잘못된 접근입니다.'})
+    status = "unknown"
 
-    try:
-        plan = PaymentRank.objects.get(id=rank_id)
-    except PaymentRank.DoesNotExist:
-        return render(request, 'payment/complete.html', {'status': 'error', 'message': '잘못된 등급 ID입니다.'})
+    # 모바일에서 imp_uid가 넘어오면 서버에서 검증
+    if imp_uid and merchant_uid and rank_id:
+        result = verify_payment_server(imp_uid, merchant_uid, int(rank_id), request.user)
+        status = result.get("status", "failed")
 
-    # PortOne V2 처리
-    if payment_id:
-        headers = {'Authorization': f'PortOne {settings.PORTONE_V2_API_SECRET}'}
-        api_url = f'https://api.portone.io/payments/{payment_id}'
-        response = requests.get(api_url, headers=headers)
+    latest_payment = Payment.objects.filter(user=request.user).order_by('-paid_at').first()
+    
+    context = {
+        "status": status if imp_uid else (latest_payment.status if latest_payment else "unknown"),
+        "payment": latest_payment,
+        "amount": latest_payment.amount if latest_payment else 0,
+        "charged_token": latest_payment.amount if latest_payment else 0,
+        "transactions": TokenHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
+    }
 
-        if response.status_code != 200:
-            return render(request, 'payment/complete.html', {'status': 'error', 'message': '결제 검증 실패'})
+    return render(request, "payment/payment_complete.html", context)
 
-        payment_data = response.json()
-        if payment_data.get('status') != 'PAID':
-            return render(request, 'payment/complete.html', {'status': 'failed', 'message': f"결제 상태: {payment_data.get('status')}"})
-
-        # 금액 & 결제수단
-        currency = payment_data.get('currency', 'KRW')
-        amount_data = payment_data.get('amount', {})
-        amount = amount_data.get('total', 0)
-        if currency == 'USD':
-            amount /= 100
-            payment_method = PaymentMethod.objects.filter(name='paypal').first()
-        else:
-            payment_method = PaymentMethod.objects.filter(name__icontains='inicis').first() or PaymentMethod.objects.first()
-
-        # Payment 생성
-        payment = Payment.objects.create(
-            user=user, amount=amount, payment_method=payment_method,
-            status='paid', imp_uid=payment_id, merchant_uid=merchant_uid,
-            payment_rank=plan
-        )
-
-    # IMP V1 처리
-    elif imp_uid:
-        amount = plan.price
-        payment_method = PaymentMethod.objects.filter(name__icontains='inicis').first() or PaymentMethod.objects.first()
-        payment = Payment.objects.create(
-            user=user, amount=amount, payment_method=payment_method,
-            status='paid', imp_uid=imp_uid, merchant_uid=merchant_uid,
-            payment_rank=plan
-        )
-    else:
-        return render(request, 'payment/complete.html', {'status': 'error', 'message': '결제 정보 없음'})
-
-    # 토큰 충전
-    token, _ = Token.objects.get_or_create(user=user)
-    token.total_token += plan.freetoken
-    token.payment = payment
-    token.save()
-    TokenHistory.objects.create(user=user, change_type=TokenHistory.CHARGE, amount=plan.freetoken, total_voice_generated=0)
-
-    # PaymentStats 갱신
-    stats, _ = PaymentStats.objects.get_or_create(id=1)
-    stats.total_payments += 1
-    stats.success_count += 1
-    stats.save()
-
-    return render(request, 'payment/complete.html', {'status': 'success', 'message': '결제가 완료되었습니다.', 'payment': payment, 'plan': plan})
 
 import time
 @login_required
@@ -369,8 +318,8 @@ def verify_payment_v2(request):
             'Authorization': f'PortOne {settings.PORTONE_V2_API_SECRET}',
             'Content-Type': 'application/json'
         }
+        
         api_url = f'https://api.portone.io/payments/{payment_id}'
-
         print(f"API 호출: {api_url}")
         
         response = requests.get(api_url, headers=headers)
