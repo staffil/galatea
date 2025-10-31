@@ -561,7 +561,7 @@ header {
     </div>
 
     <div class="right-section">
-        <a href="{% url 'logout' %}" class="nav-button">{% trans "로그아웃" %}</a>
+        <a href="{% url 'logout' next='/main_app/?login=success' %}" class="nav-button">{% trans "로그아웃" %}</a>
         <a href="{% url 'mypage:mypage' %}">
             <div class="profile-circle" title="{% trans '내 프로필' %}">
                 <div class="profile-inner">
