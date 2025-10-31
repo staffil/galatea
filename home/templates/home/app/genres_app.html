@@ -522,11 +522,12 @@
     <!-- 헤더 -->
     <header>
         {% if not user.is_authenticated %}
-            {% include "common/notLoginHeader.html" %}
+            {% include "common/app/notLoginHeader.html" %}
         {% else %}
-            {% include "common/loginHeader.html" %}
+            {% include "common/app/loginHeader.html" %}
         {% endif %}
     </header>
+
 
     <!-- 메인 콘텐츠 -->
     <div class="main-content">
@@ -551,7 +552,7 @@
         <!-- 장르 그리드 -->
         <div class="genres-grid" id="genresGrid">
             {% for genre in genre_list %}
-            <a href="{% url 'home:genres_detail' genre.id %}" style="text-decoration: none;">
+            <a href="{% url 'home:genres_detail_app' genre.id %}" style="text-decoration: none;">
                 <div class="genre-card" data-genre="{{ genre.name|lower }}" data-genre-id="{{ genre.id }}">
                     <div class="genre-card-image">
                         {% if genre.genre_image %}

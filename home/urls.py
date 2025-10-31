@@ -35,7 +35,7 @@ urlpatterns = [
     path("llm_section_app/", views.llm_section_app, name="llm_section_app"),
     path("gerne_all_app/", views.gerne_all_app, name="gerne_all_app"),
     path("search_llm_app/", views.search_llm_app, name="search_llm_app"),
-    path("genre_detail_app/", views.genre_detail_app, name="genre_detail_app"),
+    path("genres_detail_app/<int:genres_id>/", views.genres_detail_app, name="genres_detail_app"),
 
 ]
 
