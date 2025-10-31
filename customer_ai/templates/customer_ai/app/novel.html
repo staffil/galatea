@@ -1,0 +1,127 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '소설 모드' %}</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/novel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<style>
+    .gray-text {
+    color: rgb(93, 92, 92);
+}
+
+</style>
+<body>
+    <!-- Header -->
+    <header class="header">
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+    
+    <div class="hamburger" style="margin-top: 80px;" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-options">
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';">
+                    <label><i class="fas fa-comment"></i> {% trans 'TEXT MODE' %}</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                    <label><i class="fas fa-eye"></i> {% trans 'VISION MODE' %}</label>
+                </div>
+
+                <div class="mode-option active">
+                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <label><i class="fas fa-book"></i> {% trans 'NOVEL MODE' %}</label>
+                </div>
+
+
+            </div>
+            <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+                {% trans '공유하기' %}
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="ai-showcase">
+                {% if llm.llm_image %}
+                    <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image">
+                {% endif %}
+
+                <p><strong>입력 방법:</strong> 일반 텍스트(대사) 또는 .행동이나 상황 묘사.</p>
+<p>💬 안녕하세요 (대사) | ⚡ .문을 열었다. (행동)</p>
+            </div>
+
+            <!-- Novel Output -->
+            <div class="novel-output" id="novel-container">
+                <p>{% trans 'AI가 소설체로 답변할 예정입니다...' %}</p>
+                <div class="page-number" id="page-number">1</div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <input type="text" id="text-input" placeholder="{% trans '이야기를 진행해 주세요...' %}" 
+                       onkeydown="if(event.key==='Enter'){ sendNovel(); }">
+                <button onclick="sendNovel()">{% trans '전송' %}</button>
+
+                <!-- Audio Player -->
+                <div class="audio-player" id="audio-container" style="display:none;">
+                    <audio id="tts-audio" controls></audio>
+                </div>
+            </div>
+        </main>
+    </div>
+<script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+    const LLM_ID = {{ llm_id }}; 
+        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";  // 문자열
+            const NOVEL_PROCESS_URL = "{% url 'novel_process' %}";
+
+
+</script>
+    <script src="{% static 'js/customer_ai/novel.js' %}">
+  
+    </script>
+</body>
+</html>
