@@ -149,8 +149,8 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 LOGIN_URL = "/register/login/"
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/main"
+LOGOUT_REDIRECT_URL = "/main"
 
 # allauth 설정
 SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
