@@ -299,7 +299,7 @@ label {
 }
 
 /* Login Button */
-button[type="submit"] {
+.login-btn[type="submit"] {
     margin-top: 10px;
     width: 100%;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -320,7 +320,7 @@ button[type="submit"] {
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
-button[type="submit"]::before {
+.login-btn[type="submit"]::before {
     content: '';
     position: absolute;
     top: 0;
@@ -331,17 +331,17 @@ button[type="submit"]::before {
     transition: left 0.8s ease;
 }
 
-button[type="submit"]:hover::before {
+.login-btn[type="submit"]:hover::before {
     left: 100%;
 }
 
-button[type="submit"]:hover {
+.login-btn[type="submit"]:hover {
     background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
     transform: translateY(-3px);
     box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
 }
 
-button[type="submit"]:active {
+.login-btn[type="submit"]:active {
     transform: translateY(-1px);
     transition: all 0.1s ease;
 }
