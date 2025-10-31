@@ -9,6 +9,6 @@ urlpatterns  = [
     path('auth/google/callback/', views.google_callback, name='google_callback'),  
 
 
-    path('login_app/', views.login_view, name='login_app'),
-    path('signup_app/', views.signup, name='signup_app'),
+    path('login_app/', views.login_app, name='login_app'),
+    path('signup_app/', views.signup_app, name='signup_app'),
 ]
