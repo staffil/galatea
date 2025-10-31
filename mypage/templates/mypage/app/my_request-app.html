@@ -1,0 +1,88 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mypage/my_request.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+  
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+   <!-- 배경 원형 효과 (distribute.css에서 사용) -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+    
+    <div class="request-container">
+        <h1 class="page-title">{% trans "나의 요청글 목록" %}</h1>
+        
+        {% if request_list %}
+            {% for request in request_list %}
+                <div class="request-item">
+                    <div class="status-indicator {% if not request.response %}pending{% endif %}"></div>
+                    
+                    <div class="request-title">{{ request.title }}</div>
+                    
+                    <div class="request-content">{{ request.content }}</div>
+                    
+                    <div class="request-response">
+                        {% if request.response %}
+                            {{ request.response }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-message">
+                <p>{% trans "아직 요청글이 없습니다." %}</p>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

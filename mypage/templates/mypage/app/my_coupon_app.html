@@ -1,0 +1,392 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+    <style>
+/* 초대 코드 폼을 정중앙에 배치하는 간단한 CSS */
+
+/* mypage 스타일 변수 */
+:root {
+    --primary: #667eea;
+    --primary-dark: #5a6fd8;
+    --secondary: #764ba2;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --border: rgba(255, 255, 255, 0.1);
+    --glow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+/* 배경 애니메이션 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* 기존 원형 배경 숨김 */
+.circle-bg {
+    display: none;
+}
+
+/* 메시지 컨테이너 - 인라인 스타일 덮어쓰기 */
+.message-container {
+    position: fixed !important;
+    top: 30px !important;
+    right: 30px !important;
+    left: auto !important;
+    margin-left: 0 !important;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+.message-container .alert {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(20px);
+    font-weight: 500;
+    color: var(--text-primary);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.message-container .alert.success {
+    border-left-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.message-container .alert.error {
+    border-left-color: #f44336;
+    color: #f44336;
+}
+
+/* 폼을 정중앙에 배치 */
+form[action*="my_coupon"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+    
+    width: 90%;
+    max-width: 500px;
+    z-index: 100 !important;
+    
+    animation: fadeInUp 0.6s ease-out;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* 터치 이벤트 보장 */
+    pointer-events: auto;
+    touch-action: manipulation;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+.sidebar-menu{
+    padding: 0;
+}
+
+/* 폼 제목 */
+form[action*="my_coupon"]::before {
+    display: block;
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+form[action*="my_coupon"]::after {
+    content: "{% trans '친구로부터 받은 초대 코드를 입력하여 특별한 혜택을 받아보세요!' %}";
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+
+/* 라벨 스타일 */
+form[action*="my_coupon"] label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* 입력 필드 */
+form[action*="my_coupon"] input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    
+    /* 모바일 터치 최적화 */
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-height: 44px; /* iOS 터치 최소 크기 */
+}
+
+form[action*="my_coupon"] input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+form[action*="my_coupon"] input[type="text"]::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+/* 버튼 */
+form[action*="my_coupon"] button[type="submit"] {
+    width: 100%;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    margin-top: 10px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    /* 모바일 터치 최적화 */
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    min-height: 44px; /* iOS 터치 최소 크기 */
+    user-select: none;
+}
+
+form[action*="my_coupon"] button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    form[action*="my_coupon"] {
+        width: calc(100% - 40px) !important; /* 양옆 20px씩 여백 */
+        max-width: 460px !important; /* 최대 너비 제한 */
+        padding: 30px 20px;
+        z-index: 100 !important;
+        position: fixed !important;
+        margin: 0 20px !important; /* 명시적 여백 */
+    }
+    
+    form[action*="my_coupon"]::before {
+        font-size: 1.5rem;
+    }
+    
+    form[action*="my_coupon"]::after {
+        font-size: 0.9rem;
+    }
+    
+    .message-container {
+        position: fixed !important;
+        top: 20px !important;
+        right: 20px !important;
+        left: 20px !important;
+        max-width: none;
+        z-index: 1000 !important;
+    }
+    
+    /* 모바일에서 입력 필드 크기 조정 */
+    form[action*="my_coupon"] input[type="text"] {
+        padding: 16px 15px;
+        font-size: 16px; /* iOS 줌 방지 */
+        min-height: 48px;
+    }
+    
+    form[action*="my_coupon"] button[type="submit"] {
+        padding: 16px 30px;
+        min-height: 48px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    form[action*="my_coupon"] {
+        width: calc(100% - 30px) !important; /* 양옆 15px씩 여백 */
+        max-width: 450px !important;
+        padding: 25px 15px;
+        z-index: 100 !important;
+        margin: 0 15px !important; /* 명시적 여백 */
+    }
+    
+    form[action*="my_coupon"]::before {
+        font-size: 1.3rem;
+    }
+    
+    form[action*="my_coupon"]::after {
+        font-size: 0.85rem;
+    }
+    
+    form[action*="my_coupon"] input[type="text"] {
+        padding: 18px 15px;
+        font-size: 16px; /* iOS 줌 방지 */
+        min-height: 50px;
+    }
+    
+    form[action*="my_coupon"] button[type="submit"] {
+        padding: 18px 30px;
+        min-height: 50px;
+    }
+    
+    .message-container {
+        right: 15px !important;
+        left: 15px !important;
+    }
+}
+    </style>
+</head>
+<body>
+      
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+
+    <!-- 메시지 표시 -->
+    {% if messages %}
+    <div class="message-container" style="margin-left: 1000px;">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- 쿠폰 입력 폼 -->
+    <form method="post" action="{% url 'mypage:my_coupon' %}">
+        {% csrf_token %}
+        <label>{% trans "초대 코드 입력" %}</label>
+        <input type="text" name="invite_code" placeholder="{% trans '초대 코드를 입력하세요' %}" required>
+        <button type="submit">{% trans "적용" %}</button>
+    </form>
+    
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script>
+
+
+        // 입력 필드 개선
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.querySelector('input[name="invite_code"]');
+            
+            if (input) {
+                // 자동 대문자 변환
+                input.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+            }
+        });
+
+        // 메시지 자동 사라짐
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.animation = 'slideInFromRight 0.5s ease-out reverse';
+                setTimeout(() => {
+                    alert.remove();
+                }, 500);
+            });
+        }, 4000);
+    </script>
+</body>
+</html>

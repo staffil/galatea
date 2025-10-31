@@ -1,0 +1,643 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/mypage/mypageUpdate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<style>
+/* 마이페이지 CSS - 자연스러운 GALATEA 스타일 */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* 배경 원형 효과 */
+.circle-bg {
+    position: fixed;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06));
+    backdrop-filter: blur(1px);
+    z-index: -1;
+    animation: float 8s ease-in-out infinite;
+}
+
+.circle-1 {
+    width: 180px;
+    height: 180px;
+    top: 8%;
+    left: 3%;
+    animation-delay: 0s;
+}
+
+.circle-2 {
+    width: 120px;
+    height: 120px;
+    top: 25%;
+    right: 8%;
+    animation-delay: 1.5s;
+}
+
+.circle-3 {
+    width: 220px;
+    height: 220px;
+    bottom: 25%;
+    left: 8%;
+    animation-delay: 3s;
+}
+
+.circle-4 {
+    width: 90px;
+    height: 90px;
+    top: 55%;
+    right: 25%;
+    animation-delay: 4.5s;
+}
+
+.circle-5 {
+    width: 160px;
+    height: 160px;
+    bottom: 8%;
+    right: 3%;
+    animation-delay: 6s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateY(-15px) rotate(90deg);
+        opacity: 0.6;
+    }
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+    margin-left: 0;
+    padding: 60px 30px 40px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* 페이지 헤더 */
+.page-header {
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+
+.page-subtitle {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+/* 토큰 사용 히스토리 컨테이너 */
+.token-history-container {
+    background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(6,182,212,0.04));
+    border: 1px solid rgba(139,92,246,0.15);
+    border-radius: 16px;
+    padding: 28px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(139,92,246,0.15);
+}
+
+/* 히스토리 헤더 */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(139,92,246,0.15);
+}
+
+.history-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.history-count {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* 토큰 히스토리 아이템 */
+.token-item {
+    background: linear-gradient(135deg, rgba(139,92,246,0.05), rgba(6,182,212,0.03));
+    border: 1px solid rgba(139,92,246,0.12);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.token-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(139,92,246,0.2);
+    border-color: rgba(139,92,246,0.25);
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.05));
+}
+
+.token-item:last-child {
+    margin-bottom: 0;
+}
+
+/* 토큰 아이템 내용 - 2열로 수정 */
+.token-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+}
+
+.token-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.token-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+}
+
+.token-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.token-amount {
+    color: #f87171;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.token-date {
+    color: #06b6d4;
+    font-weight: 500;
+}
+
+/* 빈 상태 */
+.empty-state {
+    text-align: center;
+    padding: 50px 30px;
+    color: #64748b;
+}
+
+.empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.empty-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #94a3b8;
+}
+
+.empty-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 350px;
+    margin: 0 auto;
+    color: #64748b;
+}
+
+/* 통계 요약 카드 (선택사항) */
+.stats-summary {
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06));
+    border: 1px solid rgba(139,92,246,0.15);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.total-tokens {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 6px;
+}
+
+.stats-label {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* 반응형 디자인 */
+
+/* 태블릿 */
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 50px 25px 30px;
+        max-width: 900px;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .token-history-container {
+        padding: 24px;
+    }
+    
+    .token-content {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        text-align: left;
+    }
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 40px 20px 20px;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .token-history-container {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    .history-header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .history-title {
+        font-size: 1.3rem;
+    }
+    
+    .token-item {
+        padding: 16px;
+        margin-bottom: 10px;
+    }
+    
+    .token-content {
+        gap: 12px;
+    }
+    
+    .token-value {
+        font-size: 14px;
+    }
+    
+    .token-amount {
+        font-size: 15px;
+    }
+    
+    .empty-state {
+        padding: 40px 20px;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+    }
+    
+    .empty-title {
+        font-size: 1.2rem;
+    }
+    
+    .stats-summary {
+        padding: 16px;
+    }
+    
+    .total-tokens {
+        font-size: 1.6rem;
+    }
+}
+
+/* 소형 모바일 */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 30px 16px 16px;
+    }
+    
+    .page-title {
+        font-size: 1.6rem;
+    }
+    
+    .token-history-container {
+        padding: 16px;
+    }
+    
+    .history-title {
+        font-size: 1.2rem;
+    }
+    
+    .token-item {
+        padding: 14px;
+    }
+    
+    .token-label {
+        font-size: 10px;
+    }
+    
+    .token-value {
+        font-size: 13px;
+    }
+    
+    .token-amount {
+        font-size: 14px;
+    }
+    
+    .empty-description {
+        font-size: 0.9rem;
+    }
+    
+    .stats-summary {
+        padding: 14px;
+    }
+    
+    .total-tokens {
+        font-size: 1.4rem;
+    }
+    
+    .stats-label {
+        font-size: 12px;
+    }
+}
+
+/* 초소형 모바일 */
+@media (max-width: 360px) {
+    .main-content {
+        padding: 25px 12px 12px;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .token-history-container {
+        padding: 14px;
+    }
+    
+    .history-title {
+        font-size: 1.1rem;
+    }
+    
+    .token-item {
+        padding: 12px;
+    }
+    
+    .token-content {
+        gap: 10px;
+    }
+    
+    .history-count {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+}
+
+/* 부드러운 애니메이션 */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.token-item {
+    animation: slideIn 0.4s ease-out;
+}
+
+.token-item:nth-child(1) { animation-delay: 0.05s; }
+.token-item:nth-child(2) { animation-delay: 0.1s; }
+.token-item:nth-child(3) { animation-delay: 0.15s; }
+.token-item:nth-child(4) { animation-delay: 0.2s; }
+.token-item:nth-child(5) { animation-delay: 0.25s; }
+
+/* 페이지 전체 페이드인 */
+.main-content {
+    animation: slideIn 0.6s ease-out;
+}
+
+/* 포커스 상태 개선 */
+.token-item:focus-within {
+    outline: 2px solid rgba(139,92,246,0.5);
+    outline-offset: 2px;
+}
+
+/* 다크모드 호환성 */
+@media (prefers-color-scheme: light) {
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+        color: #1e293b;
+    }
+    
+    .page-title,
+    .token-value,
+    .history-title {
+        color: #1e293b;
+    }
+    
+    .page-subtitle,
+    .token-label {
+        color: #64748b;
+    }
+    
+    .empty-description {
+        color: #475569;
+    }
+}
+<.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.pagination a {
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.pagination a:hover {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+}
+
+.pagination span {
+    padding: 8px 14px;
+    color: #e2e8f0;
+    font-size: 14px;
+    font-weight: 600;
+}
+</style>
+<body>
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+
+   <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    {% include "common/sidebar.html" %}
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">{% trans "마이페이지" %}</h1>
+            <p class="page-subtitle">{% trans "토큰 사용 내역을 확인하세요" %}</p>
+        </div>
+
+        <div class="token-history-container">
+            <div class="history-header">
+                <h2 class="history-title">{% trans "토큰 사용 히스토리" %}</h2>
+                <span class="history-count">{{ consume_history.paginator.count }}{% trans "개 항목" %}</span>
+            </div>
+
+            {% for token in consume_history %}
+            <div class="token-item">
+                <div class="token-content">
+                    <div class="token-info">
+                        <span class="token-label">{% trans "소모량" %}</span>
+                        <span class="token-value token-amount">{{ token.amount }} 토큰</span>
+                    </div>
+                    <div class="token-info">
+                        <span class="token-label">{% trans "날짜" %}</span>
+                        <span class="token-value token-date">{{ token.created_at|date:"Y-m-d H:i" }}</span>
+                    </div>
+                    {% if token.llm %}
+                    <div class="token-info">
+                        <span class="token-label">{% trans "AI 이름" %}</span>
+                        <span class="token-value">{{ token.llm.name }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <div class="empty-icon">📊</div>
+                <h3 class="empty-title">{% trans "사용 내역이 없습니다" %}</h3>
+                <p class="empty-description">{% trans "아직 AI와 대화한 기록이 없습니다. 대화를 시작해보세요!" %}</p>
+            </div>
+            {% endfor %}
+
+            <!-- ✅ 페이지네이션 -->
+            {% if consume_history.has_other_pages %}
+            <div class="pagination">
+                {% if consume_history.has_previous %}
+                    <a href="?page={{ consume_history.previous_page_number }}">« 이전</a>
+                {% endif %}
+
+                <span>{{ consume_history.number }} / {{ consume_history.paginator.num_pages }}</span>
+
+                {% if consume_history.has_next %}
+                    <a href="?page={{ consume_history.next_page_number }}">다음 »</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{% static 'js/sidebar.js' %}"></script>
+
+</body>
+</html>

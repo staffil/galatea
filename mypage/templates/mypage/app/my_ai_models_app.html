@@ -1,0 +1,287 @@
+{% load static %} 
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '마이페이지' %} - GALATEA</title>
+
+    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_models.css' %}?v={{ STATIC_VERSION }}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+  
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+
+    <div class="main-content">
+        <div class="ai-config-container">
+            <!-- 좌측: 이미지, 이름(select), 프롬프트 -->
+            <div class="left-section">
+                <div class="sidebar-profile">
+                    <img id="llmImage" 
+                         src="{% if llm_list|length > 0 and llm_list.0.llm_image %}{{ llm_list.0.llm_image.url }}{% endif %}" 
+                         alt="{% trans 'AI 이미지' %}"/>
+                    <p id="noImageText" style="display: none; color: white;">{% trans '생성된 이미지가 없습니다.' %}</p>
+                </div>
+                <select id="llmSelect" name="llm_id" onchange="updatePromptAndVoice()">
+                    {% for llm in llm_list %}
+                    <option
+                        value="{{ llm.id }}"
+                        data-prompt="{{ llm.prompt|escape }}"
+                        data-voice-id="{{ llm.voice.voice_id }}"
+                        data-language="{{ llm.language }}"
+                        data-stability="{{ llm.stability }}"
+                        data-speed="{{ llm.speed }}"
+                        data-style="{{ llm.style }}"
+                        data-temperature="{{ llm.temperature }}"
+                        data-model="{{ llm.model }}"
+                        {% if llm.llm_image %}data-llm-image="{{ llm.llm_image.url }}"{% endif %}
+                    >
+                        {{ llm.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <div class="prompt-section">
+                    <label>{% trans '프롬프트' %}</label>
+                    <textarea class="prompt-textarea" id="promptDisplay" readonly></textarea>
+                </div>
+            </div>
+
+            <!-- 우측: 슬라이더, 언어, voice -->
+            <div class="right-sections">
+                <div class="language-group">
+                    <label>{% trans '언어' %}</label>
+                    <div class="language-description">{% trans '언어를 선택해주세요' %}</div>
+                    <div class="language-selector" id="languageDisplay">US-en</div>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">{% trans '안정감' %}</div>
+                    <input class="text" id="stabilitySlider" />
+                    <span id="stabilityValue">0.5</span>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">{% trans '음성 속도' %}</div>
+                    <input class="text" id="speedSlider" />
+                    <span id="speedValue">0.5</span>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">{% trans '목소리 스타일' %}</div>
+                    <input class="text" id="styleSlider" />
+                    <span id="styleValue">0.5</span>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-label">{% trans '창의성' %}</div>
+                    <input class="text" id="temperatureSlider" />
+                    <span id="temperatureValue">0.5</span>
+                </div>
+                <div class="voice-section">
+                    <label>Voice id</label>
+                    <input type="text" class="voice-id-input" id="voiceIdDisplay" readonly />
+                </div>
+            </div>
+
+            <!-- 하단 버튼 -->
+            <div class="bottom-section">
+                <a href="{% url 'customer_ai:chat_view' llm.id %}" class="action-button">{% trans '대화하기' %}</a>
+                <a href="{% url 'mypage:my_ai_models_update' llm.id %}" class="action-button">{% trans '수정하기' %}</a>
+                <a href="{% url 'mypage:my_ai_models_delete' llm.id %}" class="action-button delete-button" onclick="return confirm('{% trans "해당 AI를 삭제하시겠습니까?" %}')">{% trans '삭제하기' %}</a>
+                {% if llm.is_public %}
+                    <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">{% trans '공유한 AI 수정하기' %}</a>
+                {% else %}
+                    <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">{% trans '공유하기' %}</a>
+                {% endif %}
+            </div>
+
+            <!-- Hidden inputs -->
+            <input type="hidden" id="promptInput" readonly />
+            <input type="hidden" id="voiceIdInput" readonly />
+            <input type="hidden" id="languageInput" readonly />
+            <input type="hidden" id="stabilityInput" readonly />
+            <input type="hidden" id="speedInput" readonly />
+            <input type="hidden" id="styleInput" readonly />
+            <input type="hidden" id="temperatureInput" readonly />
+            <input type="hidden" id="modelInput" readonly />
+        </div>
+    </div>
+
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script>
+        // 초기 UI 세팅
+function initializeUIWithCurrentLlm() {
+    const initialLlm = {
+        id: "{{ llm.id|default:''|escapejs }}",
+        prompt: "{{ llm.prompt|default:''|escapejs }}",
+        voiceId: "{% if llm.voice %}{{ llm.voice.voice_id|default:''|escapejs }}{% endif %}",
+        language: "{{ llm.language|default:''|escapejs }}",
+        stability: "{{ llm.stability|default:0.5|escapejs }}",
+        speed: "{{ llm.speed|default:0.5|escapejs }}",
+        style: "{{ llm.style|default:0.5|escapejs }}",
+        temperature: "{{ llm.temperature|default:0.5|escapejs }}",
+        model: "{{ llm.model|default:''|escapejs }}",
+        llmImage: "{% if llm.llm_image %}{{ llm.llm_image.url }}{% endif %}"
+    };
+
+    // 이미지 처리
+    const llmImageElem = document.getElementById("llmImage");
+    const noImageText = document.getElementById("noImageText");
+    if (initialLlm.llmImage) {
+        llmImageElem.src = initialLlm.llmImage;
+        llmImageElem.style.display = "block";
+        noImageText.style.display = "none";
+    } else {
+        llmImageElem.style.display = "none";
+        noImageText.style.display = "block";
+    }
+
+    // 텍스트/Voice/Language/Model 설정
+    document.getElementById("promptInput").value = initialLlm.prompt;
+    document.getElementById("promptDisplay").value = initialLlm.prompt;
+    document.getElementById("voiceIdInput").value = initialLlm.voiceId;
+    document.getElementById("voiceIdDisplay").value = initialLlm.voiceId;
+    document.getElementById("languageInput").value = initialLlm.language;
+    document.getElementById("languageDisplay").textContent = initialLlm.language;
+    document.getElementById("modelInput").value = initialLlm.model;
+    if(document.getElementById("modelDisplay")){
+        document.getElementById("modelDisplay").textContent = initialLlm.model;
+    }
+
+    // 슬라이더 초기화
+    const sliders = ["stability", "speed", "style", "temperature"];
+    sliders.forEach(slider => {
+        const sliderElem = document.getElementById(`${slider}Slider`);
+        const valueElem = document.getElementById(`${slider}Value`);
+        const inputElem = document.getElementById(`${slider}Input`);
+        if(sliderElem && valueElem && inputElem){
+            sliderElem.value = initialLlm[slider];
+            valueElem.textContent = initialLlm[slider];
+            inputElem.value = initialLlm[slider];
+        }
+    });
+
+    // select 초기값 설정
+    const llmSelect = document.getElementById("llmSelect");
+    if (llmSelect && initialLlm.id) {
+        for (let i = 0; i < llmSelect.options.length; i++) {
+            if (llmSelect.options[i].value === initialLlm.id) {
+                llmSelect.selectedIndex = i;
+                break;
+            }
+        }
+    }
+}
+
+// 선택된 LLM 업데이트
+function updatePromptAndVoice() {
+    const llmSelect = document.getElementById("llmSelect");
+    const selectedOption = llmSelect.options[llmSelect.selectedIndex];
+
+    // URL 업데이트
+    const selectedLlmId = selectedOption.value;
+    const currentPath = window.location.pathname;
+    const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
+    if (window.location.pathname !== newUrl) window.location.href = newUrl;
+
+    // 프롬프트/Voice 업데이트
+    document.getElementById("promptDisplay").value = selectedOption.dataset.prompt || "";
+    document.getElementById("voiceIdDisplay").value = selectedOption.dataset.voiceId || "";
+    document.getElementById("voiceIdInput").value = selectedOption.dataset.voiceId || "";
+    document.getElementById("languageDisplay").textContent = selectedOption.dataset.language || "";
+    document.getElementById("languageInput").value = selectedOption.dataset.language || "";
+
+    // 슬라이더 업데이트
+    const sliders = ["stability", "speed", "style", "temperature"];
+    sliders.forEach(slider => {
+        const value = selectedOption.dataset[slider] || 0.5;
+        const sliderElem = document.getElementById(`${slider}Slider`);
+        const valueElem = document.getElementById(`${slider}Value`);
+        const inputElem = document.getElementById(`${slider}Input`);
+        if(sliderElem && valueElem && inputElem){
+            sliderElem.value = value;
+            valueElem.textContent = value;
+            inputElem.value = value;
+        }
+    });
+
+    // 이미지 업데이트
+    const llmImageElem = document.getElementById("llmImage");
+    const noImageText = document.getElementById("noImageText");
+    if (selectedOption.dataset.llmImage) {
+        llmImageElem.src = selectedOption.dataset.llmImage;
+        llmImageElem.style.display = "block";
+        noImageText.style.display = "none";
+    } else {
+        llmImageElem.style.display = "none";
+        noImageText.style.display = "block";
+    }
+}
+
+// 슬라이더 이벤트 리스너 설정
+function setupSliderListeners() {
+    const sliders = ["stability", "speed", "style", "temperature"];
+    sliders.forEach(slider => {
+        const sliderElem = document.getElementById(`${slider}Slider`);
+        const valueElem = document.getElementById(`${slider}Value`);
+        const inputElem = document.getElementById(`${slider}Input`);
+        if(sliderElem && valueElem && inputElem){
+            sliderElem.oninput = () => {
+                valueElem.textContent = sliderElem.value;
+                inputElem.value = sliderElem.value;
+            };
+        }
+    });
+}
+
+// 초기화
+window.onload = function () {
+    initializeUIWithCurrentLlm();
+    setupSliderListeners();
+};
+
+
+    </script>
+
+</body>
+</html>
