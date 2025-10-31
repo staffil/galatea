@@ -35,4 +35,10 @@ urlpatterns = [
 
     # REST API 경로
     path('api/', include(router.urls)),
+
+
+    # 앱 전용
+    path("ai_name_app/", views.ai_name_app, name="ai_name_app"),
+    path("make_ai_app/", views.make_ai_app, name="make_ai_app"),
+
 ]

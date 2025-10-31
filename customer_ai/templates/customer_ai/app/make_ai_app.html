@@ -1,0 +1,927 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>MAKE AI:{% trans 'AI 만들기'%}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GALATEA AI",
+      "url": "https://www.galatea.website",
+      "logo": "https://www.galatea.website/static/img/logo.png"
+    }
+    </script>
+
+    <style>
+        /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
+        
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-color: #0f0f23 !important;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: scroll;
+            background-color: #0f0f23 !important;
+            color: #ffffff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            z-index: -1;
+        }
+
+        /* 메인 컨테이너 */
+        .make-ai-page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 80px 20px 40px;
+        }
+
+        /* 배경 원들 */
+        .make-ai-page .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .make-ai-page .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -150px;
+            left: -150px;
+            animation: makeAiFloat 20s ease-in-out infinite;
+        }
+
+        .make-ai-page .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -100px;
+            animation: makeAiFloat 15s ease-in-out infinite reverse;
+        }
+
+        .make-ai-page .circle-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 10%;
+            left: 10%;
+            animation: makeAiFloat 18s ease-in-out infinite;
+        }
+
+        .make-ai-page .circle-4 {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: -90px;
+            right: 20%;
+            animation: makeAiFloat 12s ease-in-out infinite reverse;
+        }
+
+        .make-ai-page .circle-5 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 50%;
+            left: -110px;
+            animation: makeAiFloat 16s ease-in-out infinite;
+        }
+
+        @keyframes makeAiFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* Voice List Container */
+        .make-ai-page .voice-list-container {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: makeAiFadeIn 0.6s ease-out;
+        }
+
+        @keyframes makeAiFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .make-ai-page .voice-list-container h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Table */
+        .make-ai-page table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .make-ai-page table thead {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .make-ai-page table th {
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 700;
+            color: #8b5cf6;
+            font-size: 0.9rem;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .make-ai-page table td {
+            padding: 15px 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            color: #b8c5d1;
+            font-size: 0.85rem;
+        }
+
+        .make-ai-page table tr:hover {
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .make-ai-page .copy-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .make-ai-page .copy-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .make-ai-page .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: #b8c5d1;
+        }
+
+        .make-ai-page .empty-state button {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .make-ai-page .empty-state button a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Pagination */
+        .make-ai-page .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .make-ai-page .pagination a,
+        .make-ai-page .pagination span {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .make-ai-page .pagination a:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .make-ai-page .pagination .current {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: transparent;
+        }
+
+        .make-ai-page .pagination .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Form Container */
+        .make-ai-page .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            animation: makeAiFadeIn 0.6s ease-out 0.2s both;
+        }
+
+        /* Panels */
+        .make-ai-page .left-panel,
+        .make-ai-page .right-panel {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Form Group */
+        .make-ai-page .form-group {
+            margin-bottom: 25px;
+        }
+
+        .make-ai-page .form-group h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .make-ai-page .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: #b8c5d1;
+            margin-bottom: 8px;
+        }
+
+        /* Textarea */
+        .make-ai-page textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .make-ai-page textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .make-ai-page textarea::placeholder {
+            color: #b8c5d1;
+            opacity: 0.6;
+        }
+
+        /* Input */
+        .make-ai-page input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .make-ai-page input[type="text"]:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .make-ai-page input[type="text"]::placeholder {
+            color: #b8c5d1;
+            opacity: 0.6;
+        }
+
+        /* Select */
+        .make-ai-page .custom-select-wrapper {
+            margin-bottom: 15px;
+        }
+
+        .make-ai-page .custom-select {
+            position: relative;
+        }
+
+        .make-ai-page select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b5cf6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .make-ai-page select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .make-ai-page select option {
+            background: #1a1a2e;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        .make-ai-page .custom-select-wrapper p {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #b8c5d1;
+            line-height: 1.4;
+        }
+
+        /* Range Container */
+        .make-ai-page .range-container {
+            margin-bottom: 25px;
+        }
+
+        .make-ai-page .range-container label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .make-ai-page .range-container label span {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .make-ai-page input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            margin-bottom: 10px;
+        }
+
+        .make-ai-page input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .make-ai-page input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+
+        .make-ai-page input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .make-ai-page .range-container p {
+            font-size: 0.8rem;
+            color: #b8c5d1;
+            line-height: 1.4;
+        }
+
+        /* Buttons */
+        .make-ai-page button[type="submit"] {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .make-ai-page button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .make-ai-page button[type="submit"]:hover::before {
+            left: 100%;
+        }
+
+        .make-ai-page button[type="submit"]:active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Auto Prompt Button */
+        .make-ai-page .generate-button {
+            display: block;
+            margin: 30px auto;
+            max-width: 400px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .make-ai-page .generate-button:active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .make-ai-page > p {
+            text-align: center;
+            color: #b8c5d1;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        /* Audio Player */
+        .make-ai-page audio {
+            width: 150px;
+            height: 30px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .make-ai-page audio::-webkit-media-controls-panel {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .make-ai-page .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .make-ai-page {
+                padding: 70px 15px 30px;
+            }
+
+            .make-ai-page .voice-list-container {
+                padding: 20px;
+            }
+
+            .make-ai-page .voice-list-container h2 {
+                font-size: 1.5rem;
+            }
+
+            .make-ai-page table {
+                font-size: 0.75rem;
+            }
+
+            .make-ai-page table th,
+            .make-ai-page table td {
+                padding: 10px 5px;
+            }
+
+            .make-ai-page .left-panel,
+            .make-ai-page .right-panel {
+                padding: 20px;
+            }
+
+            .make-ai-page .form-group h2 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .make-ai-page {
+                padding: 65px 10px 20px;
+            }
+
+            .make-ai-page .voice-list-container {
+                padding: 15px;
+            }
+
+            .make-ai-page table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .make-ai-page textarea {
+                min-height: 150px;
+                font-size: 0.85rem;
+            }
+
+            .make-ai-page button[type="submit"] {
+                padding: 14px;
+                font-size: 1rem;
+            }
+
+            .make-ai-page .generate-button {
+                padding: 14px 24px;
+                font-size: 1rem;
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* iOS 스타일 탭 하이라이트 제거 */
+        .make-ai-page * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .make-ai-page button {
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* Safe Area 대응 */
+        @supports (padding: max(0px)) {
+            .make-ai-page {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-bottom: max(40px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <div class="make-ai-page">
+        <!-- 배경 원들 -->
+        <div class="circle-bg circle-1"></div>
+        <div class="circle-bg circle-2"></div>
+        <div class="circle-bg circle-3"></div>
+        <div class="circle-bg circle-4"></div>
+        <div class="circle-bg circle-5"></div>
+
+        <!-- Voice List Section -->
+        <div class="voice-list-container">
+            <h2>{% trans '저장된 음성 목록'%}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{% trans '번호' %}</th>
+                        <th>{% trans '생성 날짜' %}</th>
+                        <th>{% trans '목소리 이름' %}</th>
+                        <th>{% trans '목소리 번호' %}</th>
+                        <th>{% trans '샘플 재생' %}</th>
+                        <th>{% trans '복사하기' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if voice_list %}
+                        {% for voice in voice_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>{{ voice.voice_name }}</td>
+                            <td>{{ voice.voice_id }}</td>
+                            <td>
+                                {% if voice.sample_url %}
+                                <audio controls>
+                                    <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                                    {% trans '지원하지 않는 브라우저입니다.' %}
+                                </audio>
+                                {% else %}
+                                {% trans '샘플 없음' %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans '선택하기' %}</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            {% trans '저장된 음성이 없습니다.' %}
+                            <button><a href="{% url 'home:voice_all' %}">{% trans '목소리 선택하기->'%}</a></button>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            {% if voice_list.has_other_pages %}
+            <div class="pagination">
+                {% if voice_list.has_previous %}
+                    <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans '이전' %}</a>
+                {% else %}
+                    <span class="disabled">&laquo; {% trans '이전' %}</span>
+                {% endif %}
+
+                {% for page_num in voice_list.paginator.page_range %}
+                    {% if page_num == voice_list.number %}
+                        <span class="current">{{ page_num }}</span>
+                    {% else %}
+                        <a href="?page={{ page_num }}">{{ page_num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if voice_list.has_next %}
+                    <a href="?page={{ voice_list.next_page_number }}">{% trans '다음' %} &raquo;</a>
+                {% else %}
+                    <span class="disabled">{% trans '다음' %} &raquo;</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- AI Generation Form -->
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="container">
+                <div class="left-panel">
+                    <div class="form-group">
+                        <h2>Prompt</h2>
+                        <textarea placeholder="{% trans '최대한 자세히 쓰세요. 프롬프트에 따라 원하는 대답을 얻을 수 있습니다. 프롬프트는 700자 이내로 적어주세요.' %}" name="prompt" id="prompt"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <h2>Voice id</h2>
+                        <input type="text" placeholder="" name="voice_id" id="voice_id" readonly>
+                    </div>
+                </div>
+
+                <div class="right-panel">
+                    <div class="form-group">
+                        <h2>{% trans '언어' %}</h2>
+                        <label for="language">{% trans '언어를 선택해주세요' %}</label>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select">
+                                <select name="language" id="language">
+                                    <option value="en" selected>English (US)</option>
+                                    <option value="ko">한국어</option>
+                                    <option value="hi">हिन्दी (Hindi)</option>
+                                    <option value="pt">Português</option>
+                                    <option value="zh">中文 (Chinese)</option>
+                                    <option value="es">Español (Spanish)</option>
+                                    <option value="fr">Français (French)</option>
+                                    <option value="ja">日本語 (Japanese)</option>
+                                    <option value="ar">العربية (Arabic)</option>
+                                    <option value="ru">Русский (Russian)</option>
+                                    <option value="id">Bahasa Indonesia</option>
+                                    <option value="it">Italiano</option>
+                                    <option value="nl">Nederlands (Dutch)</option>
+                                    <option value="tr">Türkçe (Turkish)</option>
+                                    <option value="pl">Polski (Polish)</option>
+                                    <option value="sv">Svenska (Swedish)</option>
+                                    <option value="fil">Filipino</option>
+                                    <option value="ms">Bahasa Melayu</option>
+                                    <option value="ro">Română (Romanian)</option>
+                                    <option value="uk">Українська (Ukrainian)</option>
+                                    <option value="el">Ελληνικά (Greek)</option>
+                                    <option value="cs">Čeština (Czech)</option>
+                                    <option value="da">Dansk (Danish)</option>
+                                    <option value="fi">Suomi (Finnish)</option>
+                                    <option value="bg">Български (Bulgarian)</option>
+                                    <option value="hr">Hrvatski (Croatian)</option>
+                                    <option value="sk">Slovenčina (Slovak)</option>
+                                    <option value="ta">தமிழ் (Tamil)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="range-container">
+                        <label for="stability">{% trans '안정감' %}<span id="stabilityValue">0.5</span></label>
+                        <input type="range" id="stability" name="stability" min="0" max="1" step="0.5" value="0.5">
+                        <p>{% trans '음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다.' %}</p>
+                    </div>
+
+                    <div class="range-container">
+                        <label for="speed">{% trans '음성 속도' %}<span id="speedValue">1</span></label>
+                        <input type="range" id="speed" name="speed" min="0.7" max="1.2" step="0.01" value="1">
+                        <p>{% trans '해당 AI의 음성 속도를 조절할 수 있습니다.' %}</p>
+                    </div>
+
+                    <div class="range-container">
+                        <label for="style">{% trans '목소리 스타일'%}<span id="styleValue">0.5</span></label>
+                        <input type="range" id="style" name="style" min="0" max="1" step="0.01" value="0.5">
+                        <p>{% trans '값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다.' %}</p>
+                    </div>
+
+                    <div class="range-container">
+                        <label for="temperature">{% trans '창의성' %}<span id="temperatureValue">1</span></label>
+                        <input type="range" id="temperature" name="temperature" min="0" max="2" step="0.01" value="1">
+                        <p>{% trans 'AI의 창의성을 정합니다' %}</p>
+                    </div>
+
+                    <div class="form-group">
+                        <h2>{% trans '모델 선택하기' %}</h2>
+                        <label for="model">{% trans '모델을 선택해 주세요' %}</label>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select">
+                                <select name="model" id="model">
+                                    <option value="gpt:gpt-4o-mini">GPT4o-mini</option>
+                                    <option value="grok:grok-3-mini">Grok-3-mini</option>
+                                </select>
+                            </div>
+                            <p>{% trans 'GROK-3-mini 버전은 GPT-4o-mini에 비해 대답시간이 느릴수 있습니다. 대신 더 다양한 대화를 할 수 있습니다.' %}</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" onclick="return check()">{% trans 'AI 생성하기' %}</button>
+                </div>
+            </div>
+        </form>
+
+        <button type="button" id="auto_prompt" class="generate-button">대신 만들어줘!</button>
+        <p>{% trans '대신 만들어줘를 눌러 보세요. AI가 프롬프트를 더 자세하게 적어 줄 겁니다.'%}</p>
+    </div>
+
+    <script>
+        // 높이 강제 설정
+        function fixHeight() {
+            const vh = window.innerHeight;
+            document.documentElement.style.height = vh + 'px';
+            document.body.style.height = 'auto';
+        }
+        
+        fixHeight();
+        window.addEventListener('resize', fixHeight);
+        window.addEventListener('orientationchange', fixHeight);
+
+        // Range 값 표시
+        const ranges = [
+            { id: 'stability', valueId: 'stabilityValue' },
+            { id: 'speed', valueId: 'speedValue' },
+            { id: 'style', valueId: 'styleValue' },
+            { id: 'temperature', valueId: 'temperatureValue' }
+        ];
+
+        ranges.forEach(range => {
+            const input = document.getElementById(range.id);
+            const valueSpan = document.getElementById(range.valueId);
+            
+            input.addEventListener('input', function() {
+                valueSpan.textContent = this.value;
+            });
+        });
+
+        // Django 번역 문자열을 JS에서 사용할 객체
+        const messages = {
+            recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+            recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+            micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+            recognizedText: "{% trans '인식된 텍스트: ' %}",
+            audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+            errorOccurred: "{% trans '오류 발생: ' %}",
+            shareCopied: "{% trans '링크가 복사되었습니다!' %}",
+            aiGenerateConfirm: "{% trans '이대로 AI를 생성하시겠습니까?' %}",
+            promptRequired: "{% trans '프롬프트을 입력해 주세요' %}",
+            voiceSelectRequired: "{% trans '목소리를 선택해 주세요' %}",
+            promptRefined: "{% trans '프롬프트가 좀 더 구체화 되었습니다.' %}",
+            promptError: "{% trans '프롬프트 생성 중 오류가 발생했습니다.' %}",
+            serverError: "{% trans '서버 요청중 오류 발생' %}",
+            voiceSelected: "{% trans '해당 voice id 가 선택되었습니다.' %}"
+        };
+    </script>
+    <script>
+        const AUTO_PROMPT_URL = "{% url 'auto_prompt' %}";
+    </script>
+    <script src="{% static 'js/customer_ai/make_ai.js' %}"></script>
+</body>
+</html>

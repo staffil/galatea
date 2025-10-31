@@ -981,6 +981,30 @@ class LLMViewSet(viewsets.ModelViewSet):
 #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 #앱 연결
 
+def ai_name_app(request):
+    if request.method == 'POST':
+        llm_name = request.POST.get('llm_name')
+        user_image = request.FILES.get('user_image')
+
+        if not llm_name or not user_image:
+            return render(request, 'customer_ai/app/ai_name_app.html', {'error': _('이름과 이미지를 모두 입력해주세요.')})
+
+        # 이미지와 이름을 세션에 저장
+        request.session['llm_name'] = llm_name
+        request.session['llm_image'] = user_image.name  # 파일명만 저장
+
+        # user_image 읽고 base64로 인코딩하여 문자열로 변환 후 저장
+        user_image_content = user_image.read()  # bytes
+        user_image_base64 = base64.b64encode(user_image_content).decode('utf-8')
+        request.session['user_image_content'] = user_image_base64
+
+        return redirect('customer_ai:make_ai_app')  # 다음 스텝으로 이동
+    else:
+        return render(request, 'customer_ai/app/ai_name_app.html')
+
+
+
+
 @csrf_exempt
 @login_required
 def make_ai_app(request):
@@ -1077,3 +1101,5 @@ def make_ai_app(request):
         'voice_list': page_obj,
     }
     return render(request, "customer_ai/app/make_ai_app.html", context)
+
+
