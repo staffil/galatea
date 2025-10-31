@@ -59,7 +59,10 @@
         <h2 class="section-title">{{ genres.name }}</h2>
         <div class="llm-cards-container">
             {% for item in llm_list %}
-            <div class="llm-card" onclick="openModal({{ item.id }})">
+                        <div class="llm-card" 
+                             data-llm-id="{{ item.id }}" 
+                             data-llm-title="{{ item.title|escapejs }}" 
+                             data-llm-image="{% if item.llm_image %}{{ item.llm_image.url }}{% else %}/static/images/default.png{% endif %}">
                 <div class="llm-card-body">
                     <div class="llm-image-container">
                         {% if item.llm_image %}
@@ -83,53 +86,22 @@
 
     </div>
 </div>
+
 <script>
-    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
-    const USER_ID = "{{ user.id }}";
-    const LLM_id = "{{ item.id }}"
-</script>
+document.addEventListener("DOMContentLoaded", function() {
+    const cards = document.querySelectorAll(".llm-card");  // ✅ 클래스 전체 선택
 
-<script src="{% static 'js/home/llm_section.js' %}"></script>
-<script>
-
-
-// 팔로우 버튼
-document.addEventListener('click', e => {
-    const followBtn = e.target.closest('.glt2-follow-btn');
-    if (!followBtn) return;
-
-    fetch("{% url 'home:toggle_follow' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `user_id=${followBtn.dataset.id}`
-    })
-    .then(res => res.json())
-    .then(data => {
-        followBtn.textContent = data.status === 'follow' ? 'Following' : 'Follow';
+    cards.forEach(card => {
+        card.addEventListener("click", () => {
+            const llmId = card.getAttribute("data-llm-id");
+            if (llmId) {
+                window.location.href = `/ko/llm_intro_app/${llmId}`;  // ✅ 절대 경로로 이동
+            }
+        });
     });
 });
 
-// 좋아요 버튼
-document.addEventListener('click', e => {
-    const likeBtn = e.target.closest('.glt2-like-btn');
-    if (!likeBtn) return;
 
-    fetch("{% url 'home:like_toggle' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `llm_id=${likeBtn.dataset.id}`
-    })
-    .then(res => res.json())
-    .then(data => {
-        likeBtn.textContent = data.status === 'like' ? '❤️' : '♡';
-    });
-});
 </script>
 </body>
 </html>
