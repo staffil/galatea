@@ -197,7 +197,7 @@
             backdrop-filter: blur(20px);
             border-right: 1px solid rgba(139, 92, 246, 0.2);
             padding: 0 !important;
-            transition: transform 0.3s ease !important; 
+            transition: left 0.3s ease !important;
             z-index: 999 !important;
             overflow: hidden !important;
             box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
@@ -207,8 +207,7 @@
         .sidebar.active,
         aside.sidebar.active,
         #sidebar.active {
-    transform: translateX(0) !important;  /* left → transform */
-    -webkit-transform: translateX(0) !important;
+            left: 0 !important;
         }
 
         /* Sidebar - 내부 스크롤 컨테이너 */
@@ -1066,7 +1065,6 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('active');
-            void sidebar.offsetWidth;
         }
 
         // 채팅 영역 높이 동적 조정
@@ -1121,6 +1119,18 @@
         });
 
         console.log('Chat page loaded');
+
+
+        // 모바일 vh 버그 대응
+function setVh() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+window.addEventListener('resize', setVh);
+window.addEventListener('orientationchange', setVh);
+setVh();
+
     </script>
     
     <script src="{% static 'js/customer_ai/custom.js' %}"></script>
