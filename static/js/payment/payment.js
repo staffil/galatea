@@ -182,3 +182,27 @@ window.requestPay = function(pgName, btn) {
         requestPayV1(pgName, btn);
     }
 };
+const response = await PortOne.requestPayment(paymentData);
+
+console.log("=== KG Inicis V2 Response ===", response);
+
+if (response.code != null) {
+    alert(`결제 실패: ${response.message}`);
+    return;
+}
+
+// ✅ 서버 검증 호출
+await fetch("/payment/verify_payment_v2/", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCsrfToken()
+    },
+    body: JSON.stringify({
+        payment_id: response.paymentId,
+        merchant_uid: merchant_uid,
+        rank_id: rank_id
+    })
+});
+
+alert("결제 요청이 완료되었습니다. 결제 페이지로 이동합니다.");
