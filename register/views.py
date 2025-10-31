@@ -88,3 +88,63 @@ def google_callback(request):
         # JWT 토큰 검증 및 사용자 생성/로그인 처리
         # (구글 라이브러리로 JWT 디코딩 필요)
         return JsonResponse({'success': True})
+    
+
+
+
+#ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+# 앱 전용
+
+def signup_app(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = Users(
+                username=form.cleaned_data['username'],
+                nickname=form.cleaned_data['nickname'],
+                password=make_password(form.cleaned_data['password1']),
+                email=form.cleaned_data['email'],
+                phonenumber=form.cleaned_data['phone']
+            )
+            user.save()
+            return redirect('register:login_app')
+    else:
+        form = SignupForm()
+
+    return render(request, 'register/app/signup_app.html', {'form': form})
+
+
+
+def login_app(request):
+    language = get_language()
+    site = Site.objects.get(id=settings.SITE_ID)
+
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('home:main_app')
+            else:
+                form.add_error(None, "아이디 또는 비밀번호가 올바르지 않습니다.")
+    else:
+        form = LoginForm()
+
+    try:
+        google_url = reverse('socialaccount_login', args=['google'])
+        github_url = reverse('socialaccount_login', args=['github'])
+    except Exception as e:
+        google_url = '#'
+        github_url = '#'
+        print("Reverse Error:", e)
+
+    return render(request, 'register/app/login_app.html', {
+        'form': form,
+        'site': site,
+        'google_login_url': google_url,
+        'github_login_url': github_url,
+        "LANGUAGE_CODE": language,
+    })
