@@ -1,0 +1,536 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>{% trans 'AI 이름 입력' %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GALATEA AI",
+      "url": "https://www.galatea.website",
+      "logo": "https://www.galatea.website/static/img/logo.png"
+    }
+    </script>
+
+    <style>
+        /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
+        
+        /* 기본 리셋 (헤더 제외) */
+        .ai-name-page * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-color: #0f0f23 !important;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            height: 100%;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: scroll;
+            background-color: #0f0f23 !important;
+            color: #ffffff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            z-index: -1;
+        }
+
+        /* 배경 원들 */
+        .ai-name-page .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ai-name-page .circle-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -150px;
+            left: -150px;
+            animation: aiNameFloat 20s ease-in-out infinite;
+        }
+
+        .ai-name-page .circle-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -100px;
+            animation: aiNameFloat 15s ease-in-out infinite reverse;
+        }
+
+        .ai-name-page .circle-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 10%;
+            left: 10%;
+            animation: aiNameFloat 18s ease-in-out infinite;
+        }
+
+        .ai-name-page .circle-4 {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: -90px;
+            right: 20%;
+            animation: aiNameFloat 12s ease-in-out infinite reverse;
+        }
+
+        .ai-name-page .circle-5 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 50%;
+            left: -110px;
+            animation: aiNameFloat 16s ease-in-out infinite;
+        }
+
+        @keyframes aiNameFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 페이지 컨테이너 */
+        .ai-name-page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px 30px;
+        }
+
+        /* 메인 컨텐츠 */
+        .ai-name-page .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            animation: aiNameFadeInUp 0.6s ease-out;
+        }
+
+        @keyframes aiNameFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 제목 */
+        .ai-name-page h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            line-height: 1.3;
+        }
+
+        /* 에러 메시지 */
+        .ai-name-page .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-left: 4px solid #ef4444;
+            color: #fca5a5;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            animation: aiNameErrorSlide 0.3s ease;
+        }
+
+        @keyframes aiNameErrorSlide {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 폼 */
+        .ai-name-page form {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* 텍스트 입력 */
+        .ai-name-page input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .ai-name-page input[type="text"]::placeholder {
+            color: #b8c5d1;
+            opacity: 0.7;
+        }
+
+        .ai-name-page input[type="text"]:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1), 0 0 20px rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 파일 입력 래퍼 */
+        .ai-name-page .file-input-wrapper {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .ai-name-page input[type="file"] {
+            display: none;
+        }
+
+        .ai-name-page .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px dashed rgba(139, 92, 246, 0.4);
+            border-radius: 16px;
+            color: #b8c5d1;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            touch-action: manipulation;
+        }
+
+        .ai-name-page .file-input-label:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .ai-name-page .file-input-label:active {
+            transform: scale(0.98);
+        }
+
+        .ai-name-page .file-input-label.has-file {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.4);
+            border-style: solid;
+            color: #10b981;
+        }
+
+        .ai-name-page .file-icon {
+            font-size: 1.5rem;
+        }
+
+        .ai-name-page #file-text {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* 제출 버튼 */
+        .ai-name-page button[type="submit"] {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-name-page button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .ai-name-page button[type="submit"]:hover::before {
+            left: 100%;
+        }
+
+        .ai-name-page button[type="submit"]:active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        /* 반응형 */
+        @media (min-width: 1200px) {
+            .ai-name-page {
+                padding: 90px 30px 50px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .ai-name-page {
+                padding: 100px 30px 50px;
+            }
+
+            .ai-name-page h1 {
+                font-size: 2.5rem;
+                margin-bottom: 40px;
+            }
+
+            .ai-name-page form {
+                padding: 50px 40px;
+            }
+
+            .ai-name-page input[type="text"] {
+                padding: 18px 24px;
+                font-size: 1.05rem;
+            }
+
+            .ai-name-page .file-input-label {
+                padding: 18px 24px;
+                font-size: 1.05rem;
+            }
+
+            .ai-name-page button[type="submit"] {
+                padding: 20px;
+                font-size: 1.15rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ai-name-page {
+                padding: 80px 20px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ai-name-page {
+                padding: 70px 15px 20px;
+            }
+
+            .ai-name-page h1 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+
+            .ai-name-page form {
+                padding: 25px 20px;
+            }
+
+            .ai-name-page input[type="text"] {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+
+            .ai-name-page .file-input-label {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+
+            .ai-name-page .file-icon {
+                font-size: 1.2rem;
+            }
+
+            .ai-name-page button[type="submit"] {
+                padding: 14px;
+                font-size: 1rem;
+            }
+
+            .ai-name-page .error-message {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* iOS 스타일 탭 하이라이트 제거 */
+        .ai-name-page * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ai-name-page button, 
+        .ai-name-page label {
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+        }
+
+        /* Safe Area 대응 (노치 디자인) */
+        @supports (padding: max(0px)) {
+            .ai-name-page {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+                padding-bottom: max(30px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <div class="ai-name-page">
+        <!-- 배경 원들 -->
+        <div class="circle-bg circle-1"></div>
+        <div class="circle-bg circle-2"></div>
+        <div class="circle-bg circle-3"></div>
+        <div class="circle-bg circle-4"></div>
+        <div class="circle-bg circle-5"></div>
+
+        <div class="main-container">
+            <h1>✨ {% trans '당신의 AI 이름과 사진을 입력하세요'%} ✨</h1>
+
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'customer_ai:input_ai_name' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="text" name="llm_name" placeholder="✏️ {% trans 'AI 이름을 입력해주세요' %}" required />
+                
+                <div class="file-input-wrapper">
+                    <input type="file" name="user_image" accept="image/*" required id="file-input" />
+                    <label for="file-input" class="file-input-label" id="file-label">
+                        <span class="file-icon">📷</span>
+                        <span id="file-text">{% trans '사진을 선택해주세요' %}</span>
+                    </label>
+                </div>
+                
+                <button type="submit">🚀 {% trans '완료' %}</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 높이 강제 설정
+        function fixHeight() {
+            const vh = window.innerHeight;
+            document.documentElement.style.height = vh + 'px';
+            document.body.style.height = 'auto';
+        }
+        
+        fixHeight();
+        window.addEventListener('resize', fixHeight);
+        window.addEventListener('orientationchange', fixHeight);
+
+        // 파일 선택 시 라벨 텍스트 변경
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const fileLabel = document.getElementById('file-label');
+            const fileText = document.getElementById('file-text');
+            
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                fileText.textContent = fileName.length > 20 ? fileName.substring(0, 20) + '...' : fileName;
+                fileLabel.classList.add('has-file');
+            } else {
+                fileText.textContent = "{% trans '사진을 선택해주세요' %}";
+                fileLabel.classList.remove('has-file');
+            }
+        });
+
+        console.log('Page loaded');
+    </script>
+
+    <script src="{% static 'js/customer_ai/ai_name.js' %}"></script>
+</body>
+</html>

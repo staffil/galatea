@@ -974,3 +974,106 @@ class LLMViewSet(viewsets.ModelViewSet):
     queryset = LLM.objects.all()
     serializer_class = LLMSerializer
     permission_classes = [permissions.IsAdminUser]
+
+
+
+
+#ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+#앱 연결
+
+@csrf_exempt
+@login_required
+def make_ai_app(request):
+    if request.method == "POST":
+        ai_name = request.session.get('llm_name')
+        if not ai_name:
+            return JsonResponse({"error": _("AI 이름이 세션에 없습니다.")}, status=400)
+
+        style_prompt = request.POST.get("prompt")
+        temperature = float(request.POST.get("temperature", 1))
+        stability = float(request.POST.get("stability", 0))
+        style = float(request.POST.get("style", 0))
+        language = request.POST.get("language", "")
+        speed = float(request.POST.get("speed", 0))
+        voice_id = request.POST.get("voice_id")
+        model_type = request.POST.get("model", "gpt:gpt-4o-mini")
+
+
+        api_provider, model_name = model_type.split(":", 1)
+
+        request.session['custom_prompt'] = style_prompt
+        request.session['custom_temperature'] = temperature
+        request.session['custom_stability'] = stability
+        request.session['custom_style'] = style
+        request.session['custom_language'] = language
+        request.session['custom_speed'] = speed
+        request.session['custom_voice_id'] = voice_id
+        request.session['custom_model'] = model_name
+        request.session['chat_history'] = []
+        
+        if not voice_id:
+            return JsonResponse({"error": _("voice_id 값이 없습니다.")}, status=400)
+        
+        if not style_prompt:
+            return JsonResponse({"error": _("prompt 값이 없습니다.")}, status=400)
+        
+        if len(style_prompt) > 700:
+            return JsonResponse({"error": _("현재 프롬프트 값이 1000자가 넘었습니다.")}, status=400)
+
+        voice, created = VoiceList.objects.get_or_create(user=request.user, voice_id=voice_id)
+
+
+        # 세션에서 이미지 데이터 가져오기
+        image_content = request.session.get('user_image_content')
+        image_name = request.session.get('llm_image')
+
+        # LLM 객체 생성
+        llm = LLM.objects.create(
+            user=request.user,
+            voice=voice,
+            temperature=temperature,
+            stability=stability,
+            style=style,
+            language=language,
+            speed=speed,
+            name=ai_name,
+            model=model_type, 
+            prompt=style_prompt,
+        )
+
+        # 이미지가 세션에 있으면 저장 (base64 디코딩 후 저장)
+        if image_content and image_name:
+            decoded_img = base64.b64decode(image_content)
+            # BytesIO로 열기
+            img_io = io.BytesIO(decoded_img)
+            img = Image.open(img_io).convert("RGB")  # WebP는 RGB 필요
+            webp_io = io.BytesIO()
+            
+            # WebP로 저장
+            img.save(webp_io, format='WEBP', quality=85)
+            
+            # 파일명 확장자도 .webp로 변경
+            webp_name = image_name.rsplit('.', 1)[0] + '.webp'
+            llm.llm_image.save(webp_name, ContentFile(webp_io.getvalue()))
+            llm.save()
+        else :
+            return JsonResponse({"error": _("이미지가 없습니다.")}, status=400)
+
+
+        for key in ['custom_prompt']:
+            if key in request.session:
+                del request.session[key]
+
+        # VoiceList 연결 및 업데이트 코드 (필요시 추가)
+
+        return redirect("customer_ai:chat_view", llm_id=llm.id)
+
+    # GET 요청시 (페이지 렌더링용)
+    voice_list = VoiceList.objects.filter(user=request.user,).select_related("celebrity").order_by("-created_at")
+    paginator = Paginator(voice_list, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'voice_list': page_obj,
+    }
+    return render(request, "customer_ai/app/make_ai_app.html", context)

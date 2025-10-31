@@ -1,0 +1,244 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAKE AI:{% trans 'AI 만들기'%}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/make_ai.css' %}">
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+
+    
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+    <!-- Voice List Section -->
+    <div class="voice-list-container">
+    <h2>{% trans '저장된 음성 목록'%}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>{% trans '번호' %}</th>
+                <th>{% trans '생성 날짜' %}</th>
+                <th>{% trans '목소리 이름' %}</th>
+                <th>{% trans '목소리 번호' %}</th>
+                <th>{% trans '샘플 재생' %}</th>
+                <th>{% trans '복사하기' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if voice_list %}
+                {% for voice in voice_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{{ voice.voice_name }}</td>
+                    <td>{{ voice.voice_id }}</td>
+                    <td>
+                        {% if voice.sample_url %}
+                        <audio controls style="width:150px;">
+                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                            {% trans '지원하지 않는 브라우저입니다.' %}
+                        </audio>
+                        {% else %}
+                        {% trans '샘플 없음' %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans '선택하기' %}</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="6" class="empty-state">{% trans '저장된 음성이 없습니다.' %}</td>
+                <button><a href="{% url 'home:voice_all' %}">{% trans '목소리 선택하기->'%}</a></button>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+
+    {% if voice_list.has_other_pages %}
+    <div class="pagination">
+        {% if voice_list.has_previous %}
+            <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans '이전' %}</a>
+        {% else %}
+            <span class="disabled">&laquo; {% trans '이전' %}</span>
+        {% endif %}
+
+        {% for page_num in voice_list.paginator.page_range %}
+            {% if page_num == voice_list.number %}
+                <span class="current">{{ page_num }}</span>
+            {% else %}
+                <a href="?page={{ page_num }}">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if voice_list.has_next %}
+            <a href="?page={{ voice_list.next_page_number }}">{% trans '다음' %} &raquo;</a>
+        {% else %}
+            <span class="disabled">{% trans '다음' %} &raquo;</span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+    <!-- AI Generation Form -->
+    <form action="" method="post">
+            {% csrf_token %}
+        <div class="container">
+            <div class="left-panel">
+                <div class="form-group">
+                    <h2>Prompt</h2>
+                    <textarea placeholder="{% trans '최대한 자세히 쓰세요. 프롬프트에 따라 원하는 대답을 얻을 수 있습니다. 프롬프트는 700자 이내로 적어주세요.' %}" name="prompt" id="prompt"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <h2>Voice id</h2>
+                    <input type="text" placeholder="" name="voice_id" id="voice_id" readonly>
+                </div>
+            </div>
+
+
+            <div class="right-panel">
+                <div class="form-group">
+                    <h2>{% trans '언어' %}</h2>
+                    <label for="language">{% trans '언어를 선택해주세요' %}</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select">
+                            <select name="language" id="language">
+                                <option value="en" selected>English (US)</option>
+                                <option value="ko">한국어</option>
+                                <option value="hi">हिन्दी (Hindi)</option>
+                                <option value="pt">Português</option>
+                                <option value="zh">中文 (Chinese)</option>
+                                <option value="es">Español (Spanish)</option>
+                                <option value="fr">Français (French)</option>
+                                <option value="ja">日本語 (Japanese)</option>
+                                <option value="ar">العربية (Arabic)</option>
+                                <option value="ru">Русский (Russian)</option>
+                                <option value="id">Bahasa Indonesia</option>
+                                <option value="it">Italiano</option>
+                                <option value="nl">Nederlands (Dutch)</option>
+                                <option value="tr">Türkçe (Turkish)</option>
+                                <option value="pl">Polski (Polish)</option>
+                                <option value="sv">Svenska (Swedish)</option>
+                                <option value="fil">Filipino</option>
+                                <option value="ms">Bahasa Melayu</option>
+                                <option value="ro">Română (Romanian)</option>
+                                <option value="uk">Українська (Ukrainian)</option>
+                                <option value="el">Ελληνικά (Greek)</option>
+                                <option value="cs">Čeština (Czech)</option>
+                                <option value="da">Dansk (Danish)</option>
+                                <option value="fi">Suomi (Finnish)</option>
+                                <option value="bg">Български (Bulgarian)</option>
+                                <option value="hr">Hrvatski (Croatian)</option>
+                                <option value="sk">Slovenčina (Slovak)</option>
+                                <option value="ta">தமிழ் (Tamil)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="range-container">
+                    <label for="stability">{% trans '안정감' %}<span id="stabilityValue">0.5</span></label>
+                    <input type="range" id="stability" name="stability" min="0" max="1" step="0.5" value="0.5">
+                    <p>{% trans '음성의 톤의 일관성을 조절합니다. 값이 낮으면 더 다양한 감정이 표현되고 값이 높으면 안정적이고 단조로운 목소리가 생성됩니다.' %}</p>
+                </div>
+
+                <div class="range-container">
+                    <label for="speed">{% trans '음성 속도' %}<span id="speedValue">1</span></label>
+                    <input type="range" id="speed" name="speed" min="0.7" max="1.2" step="0.01" value="1">
+                    <p>{% trans '해당 AI의 음성 속도를 조절할 수 있습니다.' %}</p>
+                </div>
+
+                <div class="range-container">
+                    <label for="style">{% trans '목소리 스타일'%}<span id="styleValue">0.5</span></label>
+                    <input type="range" id="style" name="style" min="0" max="1" step="0.01" value="0.5">
+                    <p>{% trans '값이 높으면 높을수록 해당 voice의 감정이 증폭됩니다.' %}</p>
+                </div>
+
+                <div class="range-container">
+                    <label for="temperature">{% trans '창의성' %}<span id="temperatureValue">1</span></label>
+                    <input type="range" id="temperature" name="temperature" min="0" max="2" step="0.01" value="1">
+                    <p>{% trans 'AI의 창의성을 정합니다' %}</p>
+                </div>
+
+                <div class="form-group">
+                    <h2>{% trans '모델 선택하기' %}</h2>
+                    <label for="model">{% trans '모델을 선택해 주세요' %}</label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select">
+                            <select name="model" id="model">
+                                <!-- <option value="gpt-3.5-turbo" selected>GPT3 turbo</option> -->
+                                <option value="gpt:gpt-4o-mini">GPT4o-mini</option>
+                                <option value="grok:grok-3-mini">Grok-3-mini</option>
+                            </select>
+                        </div>
+                        <p>{% trans 'GROK-3-mini 버전은 GPT-4o-mini에 비해 대답시간이 느릴수 있습니다. 대신 더 다양한 대화를 할 수 있습니다.' %}</p>
+                    </div>
+                </div>
+
+                <button type="submit" onclick="return check()">{% trans 'AI 생성하기' %}</button>
+            </div>
+        </div>
+    </form>
+
+                <button type="submit" id="auto_prompt" class="btn generate-button">대신 만들어줘!</button>
+                <p>{% trans '대신 만들어줘를 눌러 보세요. AI가 프롬프트를 더 자세하게 적어 줄 겁니다.'%}</p>
+
+<script>
+    // Django 번역 문자열을 JS에서 사용할 객체
+    const messages = {
+        recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+        recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+        micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+        recognizedText: "{% trans '인식된 텍스트: ' %}",
+        audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+        errorOccurred: "{% trans '오류 발생: ' %}",
+        shareCopied: "{% trans '링크가 복사되었습니다!' %}",
+        aiGenerateConfirm: "{% trans '이대로 AI를 생성하시겠습니까?' %}",
+        promptRequired: "{% trans '프롬프트을 입력해 주세요' %}",
+        voiceSelectRequired: "{% trans '목소리를 선택해 주세요' %}",
+        promptRefined: "{% trans '프롬프트가 좀 더 구체화 되었습니다.' %}",
+        promptError: "{% trans '프롬프트 생성 중 오류가 발생했습니다.' %}",
+        serverError: "{% trans '서버 요청중 오류 발생' %}",
+        voiceSelected: "{% trans '해당 voice id 가 선택되었습니다.' %}"
+    };
+</script>
+<script>
+  const AUTO_PROMPT_URL = "{% url 'auto_prompt' %}";
+</script>
+<script src="{% static 'js/customer_ai/make_ai.js' %}"></script>
+
+</body>
+</html>

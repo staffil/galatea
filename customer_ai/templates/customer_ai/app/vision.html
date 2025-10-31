@@ -1,0 +1,558 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '비전 모드' %}</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/vision.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+
+
+
+<body>
+    <!-- Header -->
+<header class="header">
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+
+
+</header>
+    <div class="hamburger" style="margin-top: 50px; " onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-options">
+                <div class="mode-option">
+                    <input type="radio" name="mode"  onclick="location.href='/customer_ai/chat/{{llm_id}}';">
+                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
+                </div>
+
+                <div class="mode-option active">
+                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/vision/{{llm_id}}';" checked>
+                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
+                </div>
+
+
+            </div>
+
+    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+        {% trans '공유하기' %}
+    </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Section -->
+
+            <p class="chat-subtitle">{% trans '카메라로 실시간 대화해보세요' %}</p>
+
+            <!-- Video Container -->
+            <div class="video-container">
+                <!-- AI Image Section -->
+                <div class="video-section">
+                    <div class="section-title">
+                        <i class="fas fa-robot"></i>
+                        {% trans 'AI 캐릭터' %}
+                    </div>
+                    {% if llm.llm_image %}
+                        <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image" />
+                    {% else %}
+                        <div class="no-image">{% trans '생성된 이미지가 없습니다' %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Webcam Section -->
+                <div class="video-section">
+                    <div class="section-title">
+                        <i class="fas fa-video"></i>
+                        {% trans '실시간 카메라' %}
+                    </div>
+                    <video id="webcam" autoplay playsinline></video>
+                </div>
+            </div>
+            <!-- Audio Section -->
+            <div class="audio-section">
+                <div class="audio-controls">
+                    <button class="record-btn" id="record-btn" onclick="toggleRecording()">
+                        <i class="fas fa-microphone" id="record-icon"></i>
+                    </button>
+                    <div class="record-status" id="record-status">
+                        {% trans '녹음을 시작하려면 버튼을 누르세요' %}
+                    </div>
+                </div>
+                
+                <div class="recognized-text" id="recognized-text-display"></div>
+                
+                <!-- Audio Player -->
+                <div class="audio-player" id="audio-container" style="display: none;">
+                    <audio id="tts-audio" controls></audio>
+                </div>
+            </div>
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="control-row">
+                    <button class="vision-toggle" id="toggle-vision-btn">
+                        <i class="fas fa-play"></i>
+                        {% trans '비전 모드 시작' %}
+                    </button>
+                    <div class="vision-status" id="vision-result">
+                        {% trans '비전 모드 준비 중...' %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <div class="result-card">
+                    <div class="result-title">
+                        <i class="fas fa-microphone"></i>
+                        {% trans '음성 인식 결과' %}
+                    </div>
+                    <div class="result-content" id="recognized-text">
+                        {% trans '음성 인식 대기 중...' %}
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">
+                        <i class="fas fa-robot"></i>
+                        {% trans 'AI 응답' %}
+                    </div>
+                    <div class="result-content" id="response">
+                        {% trans 'AI 응답 대기 중...' %}
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+    </div>
+<script>
+const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
+
+const video = document.getElementById('webcam');
+const canvas = document.createElement('canvas');
+const toggleBtn = document.getElementById('toggle-vision-btn');
+const visionResult = document.getElementById('vision-result');
+const ttsAudio = document.getElementById('tts-audio');
+const responseDiv = document.getElementById('response');
+const recognizedText = document.getElementById('recognized-text');
+const recognizedTextDisplay = document.getElementById('recognized-text-display');
+
+let streaming = false;
+let intervalId = null;
+let isVisionRunning = false;
+let latestVisionResult = '';
+
+let isProcessingVision = false;
+let isPlayingAudio = false;
+
+// 오디오 폴링을 위한 전역 변수들
+let audioCheckIntervals = new Map();
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    
+    sidebar.classList.toggle('active');
+    hamburger.classList.toggle('active');
+}
+
+// 오디오 상태 확인 함수
+function checkAudioStatus(conversationId, maxAttempts = 40) {
+    let attempts = 0;
+    
+    // 상태 표시
+    responseDiv.innerHTML = responseDiv.textContent + '<br><small style="color: #666; font-style: italic;">🎵 음성 생성 중...</small>';
+
+    const checkInterval = setInterval(() => {
+        attempts++;
+        
+        fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.ready && data.audio_url) {
+                    // 오디오 준비 완료
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    // 상태 업데이트
+                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '🔊 음성 재생');
+                    
+                    // 오디오 재생
+                    playVisionAudio(data.audio_url);
+                    
+                } else if (attempts >= maxAttempts) {
+                    // 최대 시도 횟수 초과
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '⚠️ 음성 생성 시간 초과');
+                }
+            })
+            .catch(error => {
+                console.error('오디오 상태 확인 오류:', error);
+                
+                if (attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+                    
+                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '⚠️ 음성 생성 실패');
+                }
+            });
+    }, 500);
+    
+    audioCheckIntervals.set(conversationId, checkInterval);
+}
+
+// 오디오 재생 함수
+function playVisionAudio(audioUrl) {
+    ttsAudio.src = audioUrl + '?t=' + new Date().getTime();
+    document.getElementById('audio-container').style.display = 'block';
+    
+    ttsAudio.onplay = () => {
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '▶️ 재생 중...');
+    };
+    
+    ttsAudio.onended = () => {
+        isPlayingAudio = false;
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('▶️ 재생 중...', '<small style="color: #95a5a6;">✓ 재생 완료</small>');
+        // 3초 후 상태 메시지 제거
+        setTimeout(() => {
+            responseDiv.innerHTML = responseDiv.innerHTML.replace('<small style="color: #95a5a6;">✓ 재생 완료</small>', '');
+        }, 3000);
+    };
+    
+    ttsAudio.onerror = () => {
+        isPlayingAudio = false;
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '<small style="color: #e74c3c;">⚠️ 재생 실패</small>');
+    };
+    
+    ttsAudio.play().catch(error => {
+        console.error('오디오 재생 실패:', error);
+        isPlayingAudio = false;
+        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '<small style="color: #e74c3c;">⚠️ 재생 실패</small>');
+    });
+}
+
+// 웹캠 시작
+async function startWebcam() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        video.srcObject = stream;
+        video.classList.add('active');
+        streaming = true;
+        visionResult.textContent = "{% trans '웹캠이 시작되었습니다' %}";
+    } catch (err) {
+        alert("{% trans '웹캠 접근 실패: ' %}" + err);
+        visionResult.textContent = "{% trans '웹캠 접근 실패' %}";
+        visionResult.className = "vision-status";
+    }
+}
+
+// 웹캠 중지
+function stopWebcam() {
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    video.classList.remove('active');
+    streaming = false;
+}
+
+// 이미지 분석 서버 전송 함수
+async function sendFrameToServer() {
+    if (!streaming) return;
+    if (isProcessingVision) return;
+    if (isPlayingAudio) return;
+
+    isProcessingVision = true;
+    visionResult.className = "vision-status processing";
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    canvas.toBlob(async (blob) => {
+        if (!blob) {
+            isProcessingVision = false;
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', blob, 'frame.jpg');
+
+        try {
+            const response = await fetch(`${baseUrl}/vision_process/`, {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) throw new Error("{% trans '서버 응답 오류' %}");
+            const data = await response.json();
+            visionResult.textContent = data.result;
+            visionResult.className = "vision-status active";
+            latestVisionResult = data.result;
+        } catch (err) {
+            console.error('Vision error:', err);
+            visionResult.textContent = "{% trans '분석 오류 발생' %}";
+            visionResult.className = "vision-status";
+        } finally {
+            isProcessingVision = false;
+        }
+    }, 'image/jpeg');
+}
+
+// GPT 응답 요청 (수정된 버전 - 새로운 방식 적용)
+async function sendText(text) {
+    if (!text || !text.trim()) return;
+    const currentLlmId = "{{ llm_id }}";
+    
+    isPlayingAudio = true;
+    responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
+
+    const formData = new FormData();
+    formData.append('text', text);
+    formData.append('vision', latestVisionResult);
+    formData.append('llm_id', currentLlmId);
+
+    try {
+        const res = await fetch(`${baseUrl}/generate_response/`, {
+            method: 'POST',
+            body: formData,
+        });
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || '응답 실패');
+        }
+        
+        const data = await res.json();
+        console.log('서버 응답:', data);
+
+        // 텍스트 즉시 표시
+        responseDiv.textContent = data.ai_text;
+        
+        // 백그라운드에서 오디오 상태 확인 시작
+        if (data.conversation_id) {
+            setTimeout(() => {
+                checkAudioStatus(data.conversation_id);
+            }, 1000);
+        } else {
+            // conversation_id가 없으면 기존 방식으로 폴백
+            if (data.audio_url) {
+                setTimeout(() => {
+                    playVisionAudio(data.audio_url);
+                }, 300);
+            } else {
+                isPlayingAudio = false;
+            }
+        }
+        
+    } catch (err) {
+        responseDiv.textContent = '응답 중 오류 발생: ' + err.message;
+        console.error(err);
+        isPlayingAudio = false;
+    }
+}
+
+// 비전 모드 토글
+toggleBtn.addEventListener('click', () => {
+    if (!isVisionRunning) {
+        startVisionMode();
+    } else {
+        stopVisionMode();
+    }
+});
+
+// 비전 모드 시작
+async function startVisionMode() {
+    if (!streaming) await startWebcam();
+    
+    isVisionRunning = true;
+    intervalId = setInterval(sendFrameToServer, 1500);
+    
+    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> {% trans "비전 모드 중지" %}';
+    toggleBtn.classList.add('active');
+    
+    visionResult.textContent = "{% trans '비전 모드 실행 중...' %}";
+    visionResult.className = "vision-status processing";
+}
+
+// 비전 모드 중지
+function stopVisionMode() {
+    clearInterval(intervalId);
+    stopWebcam();
+    isVisionRunning = false;
+    
+    toggleBtn.innerHTML = '<i class="fas fa-play"></i> {% trans "비전 모드 시작" %}';
+    toggleBtn.classList.remove('active');
+    
+    visionResult.textContent = "{% trans '비전 모드 중지됨' %}";
+    visionResult.className = "vision-status";
+}
+
+// 녹음 관련 (수정된 버전)
+let mediaRecorder;
+let audioChunks = [];
+let isRecording = false;
+let stream;
+
+function toggleRecording() {
+    const recordBtn = document.getElementById("record-btn");
+    const recordIcon = document.getElementById("record-icon");
+    const recordStatus = document.getElementById("record-status");
+
+    if (!isRecording) {
+        navigator.mediaDevices
+            .getUserMedia({ audio: true })
+            .then((s) => {
+                stream = s;
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.start();
+                isRecording = true;
+
+                recordIcon.className = "fas fa-stop";
+                recordBtn.classList.add("recording");
+                recordStatus.textContent = "{% trans '녹음 중... 다시 누르면 종료됩니다' %}";
+
+                mediaRecorder.addEventListener("dataavailable", (event) => {
+                    audioChunks.push(event.data);
+                });
+
+                mediaRecorder.addEventListener("stop", () => {
+                    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+                    const formData = new FormData();
+                    formData.append("audio", audioBlob, "recorded.wav");
+
+                    fetch(`${baseUrl}/upload_audio/`, {
+                        method: "POST",
+                        body: formData,
+                    })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        recognizedText.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
+                        recognizedTextDisplay.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
+                        recognizedTextDisplay.style.display = "block";
+                        
+                        setTimeout(() => {
+                            recognizedTextDisplay.style.display = "none";
+                        }, 3000);
+                        
+                        // 새로운 방식으로 텍스트 전송 (오디오는 폴링으로 처리)
+                        sendText(data.text);
+                    })
+                    .catch((error) => {
+                        alert("{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}" + error.message);
+                    });
+                });
+            })
+            .catch((err) => {
+                alert("{% trans '마이크 권한을 허용해주세요.' %}");
+                console.error(err);
+            });
+    } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        recordIcon.className = "fas fa-microphone";
+        recordBtn.classList.remove("recording");
+        recordStatus.textContent = "{% trans '녹음을 시작하려면 버튼을 누르세요' %}";
+        
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    }
+}
+
+// 모바일에서 사이드바 외부 클릭 시 닫기
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    
+    if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+        if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+            sidebar.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+    }
+});
+
+// 화면 크기 변경 시 사이드바 상태 리셋
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    
+    if (window.innerWidth > 1024) {
+        sidebar.classList.remove('active');
+        hamburger.classList.remove('active');
+    }
+});
+
+// 페이지 언로드 시 모든 오디오 확인 인터벌 정리
+window.addEventListener('beforeunload', () => {
+    audioCheckIntervals.forEach((interval, conversationId) => {
+        clearInterval(interval);
+    });
+    audioCheckIntervals.clear();
+});
+
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', () => {
+    // 초기 상태 설정
+    visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
+    recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
+    responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
+    
+    console.log('Vision Chat UI initialized with fast text response and background audio generation');
+});
+
+// 링크 복사하기
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("share-btn")) {
+        const link = e.target.getAttribute("data-link");
+        navigator.clipboard.writeText(link).then(() => {
+            alert("링크가 복사되었습니다!");
+        });
+    }
+});
+</script>
+</body>
+</html>
