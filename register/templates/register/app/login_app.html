@@ -86,11 +86,11 @@
 
     <!-- 소셜 로그인 버튼들 -->
     <div style="display: flex; gap: 15px; justify-content: center; margin: 20px 0;">
-<a href="{% provider_login_url 'google' %}">
+<a href="{% provider_login_url 'google' process='login' next='/main_app/?login=success' %}">
     <img src="{% static 'img/google.png' %}" alt="Google Login" width="40" style="border-radius: 50%;">
 </a>
-<a href="{% provider_login_url 'github' %}">
-    <img src="{% static 'img/github.png' %}" alt="github Login" width="40" style="border-radius: 50%;">
+<a href="{% provider_login_url 'github' process='login' next='/main_app/?login=success' %}">
+    <img src="{% static 'img/github.png' %}" alt="GitHub Login" width="40" style="border-radius: 50%;">
 </a>
 
 
