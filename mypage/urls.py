@@ -29,6 +29,7 @@ urlpatterns = [
     path('token_less/', views.token_less, name='token_less'),
     
 
+    path("mypage_app/", views.mypage_app, name="mypage_app"),
 
 
 ]
