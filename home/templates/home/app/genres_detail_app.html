@@ -40,20 +40,39 @@
 
 html {
     height: 100%;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+    /* fixed 제거 */
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    /* 안드로이드를 위한 폴백 */
+    background-color: #0f0f23 !important;
 }
 
 body {
     height: 100%;
     min-height: 100vh;
     font-family: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%) fixed;
+    /* fixed 제거하고 scroll로 변경 */
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    background-attachment: scroll;
+    /* 안드로이드를 위한 폴백 */
+    background-color: #0f0f23 !important;
     color: #ffffff;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     position: relative;
+}
+
+/* 배경이 스크롤되는 것을 방지하려면 이렇게 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    z-index: -1;
 }
 
 /* 배경 원들 */
