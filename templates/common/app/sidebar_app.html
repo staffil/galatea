@@ -10,47 +10,27 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* 안드로이드 최적화: 고정 높이 제거 */
+        /* 안드로이드 최적화 - 근본적 수정 */
         * {
             -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
         }
         
         html {
-            min-height: 100vh;
-            height: auto;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            background-color: #0f0f23 !important;
+            background: #0f0f23;
             scroll-behavior: smooth;
         }
 
         body {
-            min-height: 100vh;
-            height: auto;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            background-attachment: scroll;
-            background-color: #0f0f23 !important;
+            background-attachment: fixed;
             color: #ffffff;
-            overflow-x: hidden;
-            overflow-y: auto;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            position: relative;
             margin: 0;
             padding: 0;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            z-index: -1;
-            pointer-events: none;
+            position: relative;
         }
 
         /* 배경 원들 */
@@ -119,17 +99,14 @@
             }
         }
 
-        /* 페이지 컨테이너 - 안드로이드 최적화 */
+        /* 페이지 컨테이너 - 완전 재설계 */
         .mypage-container {
             position: relative;
             z-index: 1;
-            min-height: 100vh;
-            height: auto;
-            display: flex;
-            align-items: flex-start; /* center에서 flex-start로 변경 */
-            justify-content: center;
-            padding: 80px 20px 60px; /* 하단 여백 증가 */
             width: 100%;
+            padding: 100px 20px 80px;
+            display: flex;
+            justify-content: center;
         }
 
         /* Sidebar */
@@ -143,7 +120,6 @@
             backdrop-filter: blur(20px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             animation: mypageFadeIn 0.6s ease-out;
-            margin: 20px 0; /* 상하 여백 추가 */
         }
 
         @keyframes mypageFadeIn {
@@ -305,13 +281,11 @@
         /* 반응형 */
         @media (max-width: 768px) {
             .mypage-container {
-                padding: 70px 15px 50px;
-                align-items: flex-start; /* 모바일에서도 상단 정렬 */
+                padding: 90px 15px 60px;
             }
 
             #sidebar {
                 padding: 30px 20px;
-                margin: 0;
             }
 
             #sidebar h1 {
@@ -341,14 +315,12 @@
 
         @media (max-width: 480px) {
             .mypage-container {
-                padding: 65px 10px 40px;
-                align-items: flex-start;
+                padding: 80px 10px 50px;
             }
 
             #sidebar {
                 padding: 25px 15px;
                 border-radius: 20px;
-                margin: 0;
             }
 
             #sidebar h1 {
@@ -380,17 +352,6 @@
             }
         }
 
-        /* 안드로이드 Chrome 특화 */
-        @supports (-webkit-touch-callout: none) {
-            body {
-                min-height: -webkit-fill-available;
-            }
-            
-            .mypage-container {
-                min-height: -webkit-fill-available;
-            }
-        }
-
         /* 스크롤바 커스터마이징 */
         ::-webkit-scrollbar {
             width: 8px;
@@ -412,10 +373,10 @@
         /* Safe Area 대응 */
         @supports (padding: max(0px)) {
             .mypage-container {
-                padding-top: max(80px, calc(80px + env(safe-area-inset-top)));
+                padding-top: max(100px, calc(100px + env(safe-area-inset-top)));
                 padding-left: max(20px, env(safe-area-inset-left));
                 padding-right: max(20px, env(safe-area-inset-right));
-                padding-bottom: max(60px, env(safe-area-inset-bottom));
+                padding-bottom: max(80px, env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -444,42 +405,35 @@
             
             <ul class="sidebar-menu">
                 <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
-                <li><a href="{% url 'home:main' %}">{% trans 'Main 으로' %}</a></li>
-                <li><a href="{% url 'mypage:mypage' %}">{% trans '프로필' %}</a></li>
+                <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+                <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
                 
                 {% if llm %}
-                    <li><a href="{% url 'mypage:my_ai_models' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+                    <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
                 {% else %}
                     <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
                 {% endif %}
 
                 {% if llm %}
-                    <li><a href="{% url 'mypage:my_ai_conversation' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+                    <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
                 {% else %}
                     <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
                 {% endif %}
                 
-                <li><a href="{% url 'mypage:my_voice' %}">{% trans 'Voice ID 목록' %}</a></li>
-                <li><a href="{% url 'mypage:personal_profile' %}">{% trans '당신의 프로필 내역' %}</a></li>
-                <li><a href="{% url 'mypage:llm_like' %}">{% trans '좋아하는 AI' %}</a></li>
-                <li><a href="{% url 'mypage:follow_list' %}">{% trans '팔로우 목록' %}</a></li>
-                <li><a href="{% url 'mypage:token' %}">{% trans '토큰 내역' %}</a></li>
-                <li><a href="{% url 'mypage:token_less' %}">{% trans '토큰 차감 내역' %}</a></li>
-                <li><a href="{% url 'mypage:my_request' %}">{% trans '요청 글 목록' %}</a></li>
-                <li><a href="{% url 'mypage:my_coupon' %}">{% trans '친구 초대 코드받기' %}</a></li>
+                <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+                <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+                <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+                <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+                <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+                <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+                <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+                <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
             </ul>
         </div>
     </div>
 
     <script>
-        // 안드로이드 최적화: 불필요한 높이 조작 제거
         console.log('MyPage loaded');
-        
-        // 스크롤 복원 (뒤로가기 시)
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-        window.scrollTo(0, 0);
     </script>
 </body>
 </html>
