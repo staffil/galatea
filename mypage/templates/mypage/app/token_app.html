@@ -1,0 +1,134 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#8b5cf6">
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mypage/token.css' %}">
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+
+    <header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg"></div>
+    <div class="circle-bg"></div>
+    <div class="circle-bg"></div>
+  <!-- 햄버거 메뉴 버튼 -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">{% trans "토큰 관리" %}</h1>
+        </div>
+
+        <div class="token-summary">
+            <h2>{% trans "토큰 요약" %}</h2>
+            <ul class="token-stats">
+                <li class="token-card total">
+                    <span class="token-icon"></span>
+                    <div class="token-info">
+                        <div class="token-label">{% trans "총 토큰" %}</div>
+                        <div class="token-value">{{ total|default:"0" }}</div>
+                        <div class="token-description">{% trans "구매한 전체 토큰" %}</div>
+                    </div>
+                </li>
+                <li class="token-card used">
+                    <span class="token-icon"></span>
+                    <div class="token-info">
+                        <div class="token-label">{% trans "사용한 토큰" %}</div>
+                        <div class="token-value">{{ used|default:"0" }}</div>
+                        <div class="token-description">{% trans "이미 소모된 토큰" %}</div>
+                    </div>
+                </li>
+                <li class="token-card remaining">
+                    <span class="token-icon"></span>
+                    <div class="token-info">
+                        <div class="token-label">{% trans "남은 토큰" %}</div>
+                        <div class="token-value">{{ remaining|default:"0" }}</div>
+                        <div class="token-description">{% trans "사용 가능한 토큰" %}</div>
+                    </div>
+                </li>
+            </ul>
+            
+            <!-- 토큰 사용률 진행률 바 -->
+            <div class="token-progress">
+<div class="token-progress-bar" style="width: {{ usage_percent }}%"></div>
+<div class="token-progress-text">
+    {% trans "토큰 사용률" %}: <strong>{{ usage_percent|floatformat:1 }}%</strong>
+</div>
+
+        </div>
+
+        <div class="payment-section">
+            <h3>{% trans "결제 내역" %}</h3>
+            <table class="payment-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "날짜" %}</th>
+                        <th>{% trans "상태" %}</th>
+                        <th>{% trans "결제 금액" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if payments %}
+                        {% for p in payments %}
+                        <tr>
+                            <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
+                            <td>{{ p.status }}</td>
+                            <td>{{ p.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">{% trans "결제 내역이 없습니다." %}</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+<script src="{% static 'js/sidebar.js' %}"></script>
+
+    <script src="{% static 'js/mypage/token.js' %}">
+
+    </script>
+</body>
+</html>

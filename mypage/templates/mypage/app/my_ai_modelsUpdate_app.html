@@ -1,0 +1,265 @@
+{% load static %} 
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "마이페이지" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_modelsUpdate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+  
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+   <!-- 배경 원형 효과 (distribute.css에서 사용) -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+           {% include "common/sidebar.html" %}
+
+
+    <div class="main-content">
+<form id="ai-update-form" action="" method="post" enctype="multipart/form-data">
+             <div class="form-group">
+                    <label for="llm_image">{% trans "AI 이미지" %}</label>
+                    <input type="file" name="llm_image" id="llm_image">
+                    {% if llm.llm_image %}
+                        <div class="image-preview">
+                            <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}">
+                        </div>
+                    {% endif %}
+                </div>
+            <div class="container">
+            <div class="left-panel">
+                <div class="form-group">
+                    <label for="name">{% trans "AI 이름" %}</label>
+                    <input type="text" id="name" name="name" value="{{ llm.name }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="prompt">{% trans "프롬프트" %}</label>
+                    <textarea style="height: 500px;" name="prompt" id="prompt">{{ llm.prompt }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="voice_id">{% trans "Voice ID" %}</label>
+                    <input type="text" name="voice_id" id="voice_id" value="{{ llm.voice.voice_id }}">
+                </div>
+
+               
+            </div>
+
+            <div class="right-panel">
+                <div class="form-group">
+                    <label for="language">{% trans "언어" %}</label>
+                    <select name="language" id="language">
+                    <option value="en" {% if llm.language == "en" %}selected{% endif %}>English (US)</option>
+                        <option value="ko" {% if llm.language == "ko" %}selected{% endif %}>{% trans "Korean" %}</option>
+                        <option value="hi" {% if llm.language == "hi" %}selected{% endif %}>{% trans "Hindi" %}</option>
+                        <option value="pt" {% if llm.language == "pt" %}selected{% endif %}>{% trans "Portuguese" %}</option>
+                        <option value="zh" {% if llm.language == "zh" %}selected{% endif %}>{% trans "Chinese" %}</option>
+                        <option value="es" {% if llm.language == "es" %}selected{% endif %}>{% trans "Spanish" %}</option>
+                        <option value="fr" {% if llm.language == "fr" %}selected{% endif %}>{% trans "French" %}</option>
+                        <option value="ja" {% if llm.language == "ja" %}selected{% endif %}>{% trans "Japanese" %}</option>
+                        <option value="ar" {% if llm.language == "ar" %}selected{% endif %}>{% trans "Arabic" %}</option>
+                        <option value="ru" {% if llm.language == "ru" %}selected{% endif %}>{% trans "Russian" %}</option>
+                        <option value="id" {% if llm.language == "id" %}selected{% endif %}>{% trans "Indonesian" %}</option>
+                        <option value="it" {% if llm.language == "it" %}selected{% endif %}>{% trans "Italian" %}</option>
+                        <option value="nl" {% if llm.language == "nl" %}selected{% endif %}>{% trans "Dutch" %}</option>
+                        <option value="tr" {% if llm.language == "tr" %}selected{% endif %}>{% trans "Turkish" %}</option>
+                        <option value="pl" {% if llm.language == "pl" %}selected{% endif %}>{% trans "Polish" %}</option>
+                        <option value="sv" {% if llm.language == "sv" %}selected{% endif %}>{% trans "Swedish" %}</option>
+                        <option value="fil" {% if llm.language == "fil" %}selected{% endif %}>{% trans "Filipino" %}</option>
+                        <option value="ms" {% if llm.language == "ms" %}selected{% endif %}>{% trans "Malay" %}</option>
+                        <option value="ro" {% if llm.language == "ro" %}selected{% endif %}>{% trans "Romanian" %}</option>
+                        <option value="uk" {% if llm.language == "uk" %}selected{% endif %}>{% trans "Ukrainian" %}</option>
+                        <option value="el" {% if llm.language == "el" %}selected{% endif %}>{% trans "Greek" %}</option>
+                        <option value="cs" {% if llm.language == "cs" %}selected{% endif %}>{% trans "Czech" %}</option>
+                        <option value="da" {% if llm.language == "da" %}selected{% endif %}>{% trans "Danish" %}</option>
+                        <option value="fi" {% if llm.language == "fi" %}selected{% endif %}>{% trans "Finnish" %}</option>
+                        <option value="bg" {% if llm.language == "bg" %}selected{% endif %}>{% trans "Bulgarian" %}</option>
+                        <option value="hr" {% if llm.language == "hr" %}selected{% endif %}>{% trans "Croatian" %}</option>
+                        <option value="sk" {% if llm.language == "sk" %}selected{% endif %}>{% trans "Slovak" %}</option>
+                        <option value="ta" {% if llm.language == "ta" %}selected{% endif %}>{% trans "Tamil" %}</option>
+                    </select>
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">{% trans "Stability" %}</div>
+                    <div class="slider-description">
+                        {% trans "생성된 음성이 얼마나 안정적인지 조절합니다." %}<br>
+                        {% trans "값이 높을수록 더 일관된 음성이 생성됩니다." %}
+                    </div>
+                    <div class="slider-control">
+                        <span></span>
+                        <span class="slider-value" id="stabilityValue">{{ llm.stability }}</span>
+                    </div>
+                    <input type="range" id="stability" name="stability" min="0" max="1" step="0.5" value="{{ llm.stability }}" class="slider">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">{% trans "Speed" %}</div>
+                    <div class="slider-description">{% trans "AI 답변 속도를 조절합니다." %}</div>
+                    <div class="slider-control">
+                        <span></span>
+                        <span class="slider-value" id="speedValue">{{ llm.speed }}</span>
+                    </div>
+                    <input type="range" id="speed" name="speed" min="0.7" max="1.2" step="0.01" value="{{ llm.speed }}" class="slider">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">{% trans "Style" %}</div>
+                    <div class="slider-description">{% trans "스타일을 설정할 수 있습니다." %}</div>
+                    <div class="slider-control">
+                        <span></span>
+                        <span class="slider-value" id="styleValue">{{ llm.style }}</span>
+                    </div>
+                    <input type="range" id="style" name="style" min="0" max="1" step="0.01" value="{{ llm.style }}" class="slider">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">{% trans "Temperature" %}</div>
+                    <div class="slider-description">{% trans "AI의 창의성과 랜덤성을 조절합니다." %}</div>
+                    <div class="slider-control">
+                        <span></span>
+                        <span class="slider-value" id="temperatureValue">{{ llm.temperature }}</span>
+                    </div>
+                    <input type="range" id="temperature" name="temperature" min="0" max="2" step="0.01" value="{{ llm.temperature }}" class="slider">
+                </div>
+
+                <div class="form-group">
+                    <label for="model">{% trans "모델" %}</label>
+                    <select name="model" id="model">
+<option value="gpt:gpt-4o-mini" {% if llm.model == "gpt:gpt-4o-mini" %}selected{% endif %}>GPT4o-mini</option>
+<option value="grok:grok-3-mini" {% if llm.model == "grok:grok-3-mini" %}selected{% endif %}>Grok-3-mini</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="voice-panel">
+                <div class="voice-list-container">
+                    <h3>{% trans "저장된 음성 목록" %}</h3>
+                    <table class="voice-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "번호" %}</th>
+                                <th>{% trans "날짜" %}</th>
+                                <th>{% trans "이름" %}</th>
+                                <th>{% trans "Voice ID" %}</th>
+                                <th>{% trans "샘플" %}</th>
+                                <th>{% trans "선택" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if voice_list %}
+                                {% for voice in voice_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ voice.created_at|date:"m-d" }}</td>
+                                    <td>{{ voice.voice_name|truncatechars:8 }}</td>
+                                    <td>{{ voice.voice_id|truncatechars:8 }}</td>
+                                    <td>
+                                        {% if voice.sample_url %}
+                                        <audio controls class="voice-audio">
+                                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                                        </audio>
+                                        {% else %}
+                                        <span style="font-size: 11px;">{% trans "없음" %}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans "선택" %}</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                     {% if voice_list.has_other_pages %}
+                <div class="pagination">
+                    {% if voice_list.has_previous %}
+                        <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
+                    {% else %}
+                        <span class="disabled">&laquo; {% trans "이전" %}</span>
+                    {% endif %}
+
+                    {% for page_num in voice_list.paginator.page_range %}
+                        {% if page_num == voice_list.number %}
+                            <span class="current">{{ page_num }}</span>
+                        {% else %}
+                            <a href="?page={{ page_num }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if voice_list.has_next %}
+                        <a href="?page={{ voice_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
+                    {% else %}
+                        <span class="disabled">{% trans "다음" %} &raquo;</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    {% trans "저장된 음성이 없습니다." %}
+                                    <br>
+                                    <a href="{% url 'makeVoice:make_voice' %}" class="make-voice-btn">{% trans "음성 만들기" %}</a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" class="submit-btn">{% trans "AI 수정하기" %}</button>
+            </div>
+            </div>
+
+        </form>
+    </div>
+
+    
+<script src="{% static 'js/sidebar.js' %}"></script>
+
+  <script src="{% static 'js/mypage/my_ai_modelsUpdate.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "좋아한 AI - GALATEA" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/mypage/llm_like.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+
+      
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+
+    <div class="main-content">
+        <!-- 좋아한 AI 섹션 -->
+        <div class="section">
+            <h2 class="section-title">{% trans "좋아한 AI" %}</h2>
+            <div id="liked-container">
+                {% for item in liked_list %}
+                <div class="llm-card" onclick="openModal({{ item.id }})">
+                    <div class="llm-card-body">
+                        <div class="llm-image-container">
+                            {% if item.llm_image %}
+                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/80x80/8b5cf6/FFFFFF?text=AI" alt="{% trans '기본 이미지' %}">
+                            {% endif %}
+                        </div>
+                        <div class="llm-info">
+                            <div class="llm-name">{{ item.title }}</div>
+                            <div class="genre-tags">
+                                {% for genre in item.genres.all %}
+                                    <div class="genre-tag" style="background-color: {{ genre.color }};">
+                                        {{ genre.display_name }}
+                                    </div>
+                                {% empty %}
+                                    <div class="genre-tag" style="background-color: #999;">{% trans "장르 없음" %}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">{% trans "좋아한 AI가 없습니다" %}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script>
+        // LLM 모달
+        function openModal(llm_id) {
+            const modalHTML = `
+            <div id="llm-modal">
+                <div class="modal-overlay" onclick="closeModal()"></div>
+                <div class="modal-content">
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                    <div id="llm-container" class="llm-container"></div>
+                </div>
+            </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.body.style.overflow = "hidden";
+            document.documentElement.style.overflow = "hidden";
+
+            const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
+            fetch(`/{% get_current_language as LANGUAGE_CODE %}intro/${llm_id}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('llm-container').innerHTML = html;
+                });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('llm-modal');
+            if (modal) modal.remove();
+            document.body.style.overflow = "auto";
+            document.documentElement.style.overflow = "auto";
+        }
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // like btn
+document.addEventListener('click', (e)=>{
+    const likeBtn = e.target.closest('.glt2-like-btn');
+    if (!likeBtn) return;
+
+    const userId = likeBtn.dataset.id;
+
+    fetch("{% url 'home:like_toggle' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `llm_id=${userId}`
+    })
+    .then(response => response.json())
+    .then(data=>{
+        if (data.status === 'like'){
+            likeBtn.innerHTML  = '<span class="heart-filled"></span>';
+        } else if(data.status === 'unlike'){
+            likeBtn.innerHTML  = '<span class="heart-empty"></span>';
+        } else{
+            alert(data.message)
+        }
+ 
+
+            
+
+
+    })
+    .catch(err => console.error('{% trans "좋아요 토글 오류:" %}', err))
+})
+
+//팔로우 토글
+document.addEventListener('click', (e) => {
+    const followBtn = e.target.closest('.glt2-follow-btn');
+    if (!followBtn) return;
+
+    const userId = followBtn.dataset.id;
+    if (!userId) return;
+
+    fetch("{% url 'home:toggle_follow' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `user_id=${encodeURIComponent(userId)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'follow') {
+            followBtn.textContent = '{% trans "Following" %}';
+            followBtn.classList.add('following');
+        } else if (data.status === 'unfollow') {
+            followBtn.textContent = '{% trans "Follow" %}';
+            followBtn.classList.remove('following');
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
+});
+  
+    </script>
+</body>
+</html>

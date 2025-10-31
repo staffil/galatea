@@ -1,0 +1,234 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "마이페이지 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+  
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+   <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 사이드바 오버레이 (모바일용) -->
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+
+    <div class="main-content">
+        <div class="payment-section">
+            <div class="payment-header">
+                <h3>{% trans "MY voice" %}</h3>
+                <div class="calendar-icon">🎶</div>
+            </div>
+
+            <!-- 데스크톱 테이블 뷰 -->
+            <div class="table-responsive">
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "번호" %}</th>
+                            <th>{% trans "생성 날짜" %}</th>
+                            <th>{% trans "voice 이름" %}</th>
+                            <th>{% trans "voice id" %}</th>
+                            <th>{% trans "샘플 재생" %}</th>
+                            <th>{% trans "복사하기" %}</th>
+                            <!-- <th>{% trans "공유하기" %}</th> -->
+                            <th>{% trans "삭제하기" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if voice_list %}
+                            {% for voice in voice_list %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ voice.voice_name }}</td>
+                                    <td>{{ voice.voice_id }}</td>
+                                    <td>
+                                        {% if voice.sample_url %}
+                                            <audio controls style="width:150px;">
+                                                <source src="{{ voice.sample_url }}" type="audio/mpeg" />
+                                                {% trans "지원하지 않는 브라우저입니다." %}
+                                            </audio>
+                                        {% else %}
+                                            {% trans "샘플 없음" %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="copy-btn" onclick="copyToClipboard('{{ voice.voice_id }}')">{% trans "복사" %}</button>
+                                    </td>
+                                    {% comment %}
+
+                                    <!-- <td>
+                                        <form action="{% url 'mypage:toggle_voice_public' voice.id %}" method="post">
+                                            {% csrf_token %}
+                                        {% if voice.is_public %}
+                                        <button type="submit" class="share_voice">{% trans "공유 취소하기" %}</button>
+                                        {% else %}
+                                        <button type="submit" class="share_voice">{% trans "공유하기" %}</button>
+                                        {% endif %}
+                                        </form>
+                                    </td> -->
+                                    {% endcomment %}
+
+                                    <td>
+                                        <form action="{% url 'mypage:my_voice_delete' voice.id %}" method="post" onsubmit="return confirm('{% trans '정말 삭제하시겠습니까?' %}')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="delete-btn">{% trans "삭제" %}</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="empty-state">{% trans "저장된 음성이 없습니다." %}</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 모바일 카드 뷰 -->
+            <div class="voice-card-container">
+                {% if voice_list %}
+                    {% for voice in voice_list %}
+                        <div class="voice-card">
+                            <div class="voice-card-header">
+                                <div class="voice-number">{{ forloop.counter }}</div>
+                                <div class="voice-date">{{ voice.created_at|date:"Y-m-d H:i" }}</div>
+                            </div>
+                            
+                            <div class="voice-info">
+                                <div class="voice-name">{{ voice.voice_name }}</div>
+                                <div class="voice-id" onclick="copyToClipboard('{{ voice.voice_id }}')">
+                                    {{ voice.voice_id }}
+                                    <span style="font-size: 0.7rem; opacity: 0.7; display: block; margin-top: 4px;">
+                                        {% trans "탭하여 복사" %}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {% if voice.sample_url %}
+                                <div class="voice-audio">
+                                    <audio controls>
+                                        <source src="{{ voice.sample_url }}" type="audio/mpeg" />
+                                        {% trans "지원하지 않는 브라우저입니다." %}
+                                    </audio>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="voice-actions">
+                                <button class="copy-btn" onclick="copyToClipboard('{{ voice.voice_id }}')">
+                                    📋 {% trans "ID 복사" %}
+                                </button>
+                                {% comment %}
+
+                                <!-- <form action="{% url 'mypage:toggle_voice_public' voice.id %}" method="post" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="share_voice">
+                                        {% if voice.is_public %}
+                                            🔒 {% trans "공유 취소" %}
+                                        {% else %}
+                                            🌐 {% trans "공유하기" %}
+                                        {% endif %}
+                                    </button>
+                                </form> -->
+                                {% endcomment %}
+
+                                
+                                <form action="{% url 'mypage:my_voice_delete' voice.id %}" method="post" 
+                                      onsubmit="return confirm('{% trans '정말 삭제하시겠습니까?' %}')" 
+                                      style="margin: 0; grid-column: 1 / -1;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn">
+                                        🗑️ {% trans "삭제하기" %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-card">
+                        <div class="empty-icon">🎤</div>
+                        <div class="empty-text">{% trans "저장된 음성이 없습니다." %}</div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- 페이지네이션 -->
+            {% if voice_list.has_other_pages %}
+                <div class="pagination">
+                    {% if voice_list.has_previous %}
+                        <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
+                    {% else %}
+                        <span class="disabled">&laquo; {% trans "이전" %}</span>
+                    {% endif %}
+
+                    {% for page_num in voice_list.paginator.page_range %}
+                        {% if page_num == voice_list.number %}
+                            <span class="current">{{ page_num }}</span>
+                        {% else %}
+                            <a href="?page={{ page_num }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if voice_list.has_next %}
+                        <a href="?page={{ voice_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
+                    {% else %}
+                        <span class="disabled">{% trans "다음" %} &raquo;</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+
+    <script src="{% static 'js/mypage/my_voice.js' %}"></script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
+
+</body>
+</html>

@@ -450,8 +450,7 @@
         // 높이 강제 설정
         function fixHeight() {
             const vh = window.innerHeight;
-            document.documentElement.style.height = vh + 'px';
-            document.body.style.height = 'auto';
+    document.body.style.minHeight = '100vh';
         }
         
         fixHeight();

@@ -1,0 +1,360 @@
+{% load static %} 
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '마이페이지' %} - GALATEA</title>
+
+    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_models.css' %}?v={{ STATIC_VERSION }}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_conversation.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+    <style>
+
+    </style>
+</head>
+<body>
+
+      
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+</header>
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 햄버거 메뉴 버튼 -->
+    <button class="menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    {% include "common/sidebar.html" %}
+
+    <div class="main-content">
+        <!-- 페이지 헤더 -->
+        <div class="page-header fade-in">
+            <h1 class="page-title">{% trans 'AI 대화 내역' %}</h1>
+            <p class="page-subtitle">{% trans '나의 AI와 나눈 모든 대화를 확인하고 관리하세요' %}</p>
+        </div>
+
+        <!-- AI 선택 섹션 -->
+        <div class="ai-selector-section fade-in">
+            <h2 class="ai-selector-title">{% trans 'AI 선택' %}</h2>
+            <div class="ai-grid" id="aiGrid">
+                <!-- AI 카드들이 여기에 동적으로 생성됩니다 -->
+            </div>
+        </div>
+
+        <!-- 대화 내역 섹션 -->
+        <div class="conversations-section fade-in">
+            <div class="conversations-header">
+                <h2 class="conversations-title">{% trans '대화 내역' %}</h2>
+                <div class="selected-ai-info" id="selectedAiInfo" style="display: none;">
+                    <span class="selected-ai-name" id="selectedAiName"></span>
+                    <span class="conversation-stats" id="conversationStats"></span>
+                </div>
+            </div>
+            
+            <div class="conversations-list" id="conversationsList">
+                <div class="empty-state">
+                    <div class="empty-icon">💬</div>
+                    <h3 class="empty-title">{% trans 'AI를 선택해주세요' %}</h3>
+                    <p class="empty-description">{% trans '위에서 AI를 선택하면 해당 AI와의 대화 내역을 확인할 수 있습니다.' %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script>
+        // Django에서 전달받은 데이터를 JavaScript 변수로 변환
+        const conversationsData = [
+            {% for conversation in llm_list %}
+            {
+                id: {{ conversation.id }},
+                llmName: "{{ conversation.llm.name|escapejs }}",
+                llmId: {{ conversation.llm.id }},
+                userMessage: "{{ conversation.user_message|escapejs }}",
+                llmResponse: "{{ conversation.llm_response|escapejs }}",
+                responseAudio: "{% if conversation.response_audio %}{{ conversation.response_audio|escapejs }}{% else %}''{% endif %}",
+                createdAt: "{{ conversation.created_at|date:'c' }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        let selectedAiId = null;
+        let aiList = {};
+
+        // 데이터 초기화
+        function initializeData() {
+            // AI별로 대화 데이터 그룹화
+            conversationsData.forEach(conversation => {
+                const aiId = conversation.llmId;
+                const aiName = conversation.llmName;
+                
+                if (!aiList[aiId]) {
+                    aiList[aiId] = {
+                        name: aiName,
+                        conversations: []
+                    };
+                }
+                
+                aiList[aiId].conversations.push(conversation);
+            });
+
+            // 각 AI의 대화를 최신 순으로 정렬
+            Object.keys(aiList).forEach(aiId => {
+                aiList[aiId].conversations.sort((a, b) => 
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                );
+            });
+        }
+
+        // AI 그리드 렌더링
+        function renderAiGrid() {
+            const aiGrid = document.getElementById('aiGrid');
+            const aiIds = Object.keys(aiList);
+            
+            if (aiIds.length === 0) {
+                aiGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🤖</div>
+                        <h3 class="empty-title">{% trans '대화 기록이 없습니다' %}</h3>
+                        <p class="empty-description">{% trans 'AI와 대화를 시작해보세요!' %}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            aiGrid.innerHTML = aiIds.map(aiId => {
+                const ai = aiList[aiId];
+                const conversationCount = ai.conversations.length;
+                
+                return `
+                    <div class="ai-card" data-ai-id="${aiId}" onclick="selectAi(${aiId})">
+                        <div class="ai-icon">🤖</div>
+                        <div class="ai-name">${ai.name}</div>
+                        <div class="ai-count">${conversationCount}{% trans '개의 대화' %}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // AI 선택
+        function selectAi(aiId) {
+            selectedAiId = aiId;
+            
+            // 선택된 AI 카드 하이라이트
+            document.querySelectorAll('.ai-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-ai-id="${aiId}"]`).classList.add('selected');
+            
+            // 선택된 AI 정보 표시
+            const ai = aiList[aiId];
+            const selectedAiInfo = document.getElementById('selectedAiInfo');
+            const selectedAiName = document.getElementById('selectedAiName');
+            const conversationStats = document.getElementById('conversationStats');
+            
+            selectedAiName.textContent = ai.name;
+            conversationStats.textContent = `{% trans '총' %} ${ai.conversations.length}{% trans '개의 대화' %}`;
+            selectedAiInfo.style.display = 'flex';
+            
+            // 대화 내역 렌더링
+            renderConversations(aiId);
+        }
+
+        // 대화 내역 렌더링
+        function renderConversations(aiId) {
+            const conversationsList = document.getElementById('conversationsList');
+            const ai = aiList[aiId];
+            
+            if (!ai || ai.conversations.length === 0) {
+                conversationsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💬</div>
+                        <h3 class="empty-title">{% trans '대화 기록이 없습니다' %}</h3>
+                        <p class="empty-description">{% trans '선택한 AI와 아직 대화를 나누지 않았습니다.' %}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 날짜별로 그룹화
+            const conversationsByDate = {};
+            ai.conversations.forEach(conversation => {
+                const date = new Date(conversation.createdAt).toLocaleDateString('ko-KR');
+                if (!conversationsByDate[date]) {
+                    conversationsByDate[date] = [];
+                }
+                conversationsByDate[date].push(conversation);
+            });
+
+            const conversationsHtml = Object.keys(conversationsByDate).map(date => {
+                const dayConversations = conversationsByDate[date];
+                
+                return dayConversations.map(conversation => `
+                    <div class="conversation-item">
+                        <div class="conversation-header">
+                            <span class="conversation-date">${date}</span>
+                            <span class="conversation-time">${formatTime(conversation.createdAt)}</span>
+                        </div>
+                        <div class="message-pair">
+                            <div class="user-message">
+                                <div class="message-text">${conversation.userMessage}</div>
+                            </div>
+                            <div class="ai-message">
+                                <div class="message-text">${conversation.llmResponse}</div>
+                            </div>
+                        <div class="ai-message">
+                            ${conversation.responseAudio ? `
+                                <audio controls>
+                                    <source src="${conversation.responseAudio}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            ` : ''}
+                        </div>
+                        </div>
+                    </div>
+                `).join('');
+            }).join('');
+
+            conversationsList.innerHTML = conversationsHtml;
+        }
+
+        // 시간 포맷팅
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('ko-KR', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+        }
+
+
+        // 검색 기능 (추후 확장 가능)
+        function searchConversations(query) {
+            if (!selectedAiId) return;
+            
+            const ai = aiList[selectedAiId];
+            const filteredConversations = ai.conversations.filter(conversation => 
+                conversation.userMessage.toLowerCase().includes(query.toLowerCase()) ||
+                conversation.llmResponse.toLowerCase().includes(query.toLowerCase()) ||
+                conversation.responseAudio.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            // 필터링된 결과로 임시 AI 객체 생성
+            const tempAi = { ...ai, conversations: filteredConversations };
+            
+            // 검색 결과 렌더링 (현재는 구현되지 않음)
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            renderAiGrid();
+            
+            // 첫 번째 AI 자동 선택 (옵션)
+            const firstAiId = Object.keys(aiList)[0];
+            if (firstAiId) {
+                selectAi(firstAiId);
+            }
+        });
+
+        // 슬라이더 설정 (기존 코드 유지)
+        function setupSliderListeners() {
+            const sliders = [
+                { id: "stabilitySlider", valueId: "stabilityValue", inputId: "stabilityInput" },
+                { id: "speedSlider", valueId: "speedValue", inputId: "speedInput" },
+                { id: "styleSlider", valueId: "styleValue", inputId: "styleInput" },
+                { id: "temperatureSlider", valueId: "temperatureValue", inputId: "temperatureInput" }
+            ];
+
+            sliders.forEach(slider => {
+                const element = document.getElementById(slider.id);
+                if (element) {
+                    element.oninput = function() {
+                        const valueElement = document.getElementById(slider.valueId);
+                        const inputElement = document.getElementById(slider.inputId);
+                        
+                        if (valueElement) valueElement.textContent = this.value;
+                        if (inputElement) inputElement.value = this.value;
+                    };
+                }
+            });
+        }
+
+        window.onload = function() {
+            setupSliderListeners();
+        };
+
+        // 키보드 단축키
+        document.addEventListener('keydown', function(e) {
+            // ESC로 사이드바 닫기
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+
+        // 스크롤 애니메이션
+        function observeElements() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                observer.observe(item);
+            });
+        }
+
+        // 디바운스 함수
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>
