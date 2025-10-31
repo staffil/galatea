@@ -438,9 +438,9 @@ button, a, .llm-card {
     <!-- 헤더 -->
     <header>
         {% if not user.is_authenticated %}
-            {% include "common/notLoginHeader.html" %}
+            {% include "common/app/notLoginHeader.html" %}
         {% else %}
-            {% include "common/loginHeader.html" %}
+            {% include "common/app/loginHeader.html" %}
         {% endif %}
     </header>
 
