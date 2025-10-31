@@ -546,6 +546,9 @@ def token_less(request):
 
 #ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 # 앱 전용
+def sidebar_app(request):
+    return render(request, "mypage/app/sidebar_app.html")
+
 
 @login_required(login_url='/register/login/')
 def mypage_app(request):
