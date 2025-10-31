@@ -4,17 +4,23 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voice Chat UI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
-    
-    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+        <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="{{ llm.name }}" />
-    {% if llm.llm_image %}
-      <meta property="og:image" content="{{ llm.llm_image.url }}">
-    {% endif %}
+{% if llm.llm_image %}
+  <meta property="og:image" content="{{ llm.llm_image.url }}">
+{% endif %}
+
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
 
@@ -22,16 +28,18 @@
     <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
 
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "GALATEA AI",
-      "url": "https://www.galatea.website",
-      "logo": "https://www.galatea.website/static/img/logo.png"
-    }
-    </script>
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
 
-    <style>
+</head>
+
+<style>
         /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
         
         html {
@@ -729,28 +737,21 @@
                 padding-bottom: max(20px, env(safe-area-inset-bottom));
             }
         }
-    </style>
-</head>
+</style>
 
 <body>
-    <!-- 배경 원들 -->
-    <div class="circle-bg circle-1"></div>
-    <div class="circle-bg circle-2"></div>
-    <div class="circle-bg circle-3"></div>
-    <div class="circle-bg circle-4"></div>
-    <div class="circle-bg circle-5"></div>
-
     <!-- Header -->
-    <header class="header">
-        {% if not user.is_authenticated %}
-            {% include "common/notLoginHeader.html" %}
-        {% else %}
-            {% include "common/loginHeader.html" %}
-        {% endif %}
-    </header>
 
-    <!-- Hamburger Menu -->
-    <div class="hamburger" onclick="toggleSidebar()">
+<header class="header">
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+
+
+</header>
+    <div class="hamburger" style="margin-top: 50px;" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
@@ -775,11 +776,12 @@
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
                     <label><i class="fas fa-book"></i> NOVEL MODE</label>
                 </div>
+
             </div>
 
-            <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-                {% trans '공유하기' %}
-            </button>
+    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+        {% trans '공유하기' %}
+    </button>
         </aside>
 
         <!-- Main Content -->
@@ -789,6 +791,7 @@
                 {% if llm.llm_image %}
                     <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
                 {% endif %}
+                
             </div>
 
             <!-- Chat Messages -->
@@ -830,41 +833,28 @@
             </div>
         </main>
     </div>
+<script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+    const LLM_ID = {{ llm_id }}; 
+        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";  // 문자열
 
-    <script>
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
-        const CSRF_TOKEN = "{{ csrf_token }}";
-        const LLM_ID = {{ llm_id }}; 
-        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
+</script>
 
-        // Django 번역 문자열을 JS에서 사용할 객체
-        const messages = {
-            recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
-            recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
-            micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
-            recognizedText: "{% trans '인식된 텍스트: ' %}",
-            audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
-            errorOccurred: "{% trans '오류 발생: ' %}",
-            shareCopied: "{% trans '링크가 복사되었습니다!' %}"
-        };
+<script>
+    // Django 번역 문자열을 JS에서 사용할 객체
+    const messages = {
+        recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+        recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+        micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+        recognizedText: "{% trans '인식된 텍스트: ' %}",
+        audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+        errorOccurred: "{% trans '오류 발생: ' %}",
+        shareCopied: "{% trans '링크가 복사되었습니다!' %}"
+    };
 
-        // 사이드바 토글
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-        }
 
-        // 사이드바 외부 클릭시 닫기
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const hamburger = document.querySelector('.hamburger');
-            
-            if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
-                sidebar.classList.remove('active');
-            }
-        });
-
-        // 높이 강제 설정
+            // 높이 강제 설정
         function fixHeight() {
             const vh = window.innerHeight;
             document.documentElement.style.height = vh + 'px';
@@ -875,9 +865,10 @@
         window.addEventListener('resize', fixHeight);
         window.addEventListener('orientationchange', fixHeight);
 
-        console.log('Chat page loaded');
-    </script>
-    
-    <script src="{% static 'js/customer_ai/custom.js' %}"></script>
+</script>
+<script src="{% static 'js/customer_ai/custom.js' %}">
+   
+</script>
+
 </body>
 </html>
