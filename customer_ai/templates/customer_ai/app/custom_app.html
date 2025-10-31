@@ -952,11 +952,11 @@
     <div class="circle-bg circle-5"></div>
 
     <!-- Header -->
-    <header class="header">
+    <header>
         {% if not user.is_authenticated %}
-            {% include "common/notLoginHeader.html" %}
+            {% include "common/app/notLoginHeader.html" %}
         {% else %}
-            {% include "common/loginHeader.html" %}
+            {% include "common/app/loginHeader.html" %}
         {% endif %}
     </header>
 
