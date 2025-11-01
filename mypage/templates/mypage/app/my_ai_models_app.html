@@ -676,9 +676,9 @@
   
 <header>
     {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
+        {% include "common/app/notLoginHeader.html" %}
     {% else %}
-        {% include "common/loginHeader.html" %}
+        {% include "common/app/loginHeader.html" %}
     {% endif %}
 </header>
 
@@ -812,8 +812,8 @@
 
             <!-- 하단 버튼 -->
             <div class="bottom-section">
-                <a href="{% url 'customer_ai:chat_view' llm.id %}" class="action-button">{% trans '대화하기' %}</a>
-                <a href="{% url 'mypage:my_ai_models_update' llm.id %}" class="action-button">{% trans '수정하기' %}</a>
+                <a href="{% url 'customer_ai:custom_app' llm.id %}" class="action-button">{% trans '대화하기' %}</a>
+                <a href="{% url 'mypage:my_ai_models_update_app' llm.id %}" class="action-button">{% trans '수정하기' %}</a>
                 <a href="{% url 'mypage:my_ai_models_delete' llm.id %}" class="action-button delete-button" onclick="return confirm('{% trans "해당 AI를 삭제하시겠습니까?" %}')">{% trans '삭제하기' %}</a>
                 {% if llm.is_public %}
                     <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">{% trans '공유한 AI 수정하기' %}</a>
