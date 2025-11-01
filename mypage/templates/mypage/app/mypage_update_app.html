@@ -47,17 +47,9 @@
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- 햄버거 메뉴 버튼 (모바일용) -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-
-    <!-- 사이드바 오버레이 (모바일용) -->
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
-          {% include "common/sidebar.html" %}
-
+    <a href="{% url 'mypage:sidebar_app'%}" class="menu-btn">
+        <i class="fas fa-bars"></i> MENU
+    </a>
 
     <div class="main-content">
         <div class="profile-section">
@@ -102,7 +94,7 @@
                         <input type="file" name="user_image" accept="image/*" />
                     </div>
                     <button type="submit" class="submit-btn" onclick="return check()">{% trans "수정완료" %}</button>
-                    <a href="{% url 'mypage:mypage' %}">{% trans "이전으로" %}</a>
+                    <a href="{% url 'mypage:mypage_app' %}">{% trans "이전으로" %}</a>
                 </form>
             </div>
         </div>
