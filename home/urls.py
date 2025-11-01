@@ -38,6 +38,7 @@ urlpatterns = [
     path("genres_detail_app/<int:genres_id>/", views.genres_detail_app, name="genres_detail_app"),
     path("invite_app/", views.invite_app, name="invite_app"),
     path('logout_app/', views.logout_app, name='logout_app'),
+    path('voice_all_app/', views.voice_all_app, name='voice_all_app'),
 
 ]
 

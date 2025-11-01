@@ -781,3 +781,13 @@ def invite_app(request):
 def logout_app(request):
     logout(request)
     return redirect('register:login_app') 
+
+
+@login_required
+def voice_all_app(request):
+    voice = CelebrityVoice.objects.all().order_by("?")
+    context = {
+        "voice_list": voice
+
+    }
+    return render(request, "home/app/voice_all_app.html", context)
