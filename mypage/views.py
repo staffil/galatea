@@ -596,7 +596,29 @@ def mypage_update_app(request):
     }
     return render(request, 'mypage/app/mypage_update_app.html', context)
 
+@login_required
+def my_ai_models_app(request, llm_id):
+    user = request.user
+    llm_list = LLM.objects.filter(user=user).select_related('voice')
+    llm= get_object_or_404(LLM, id=llm_id)
+    context = {
+        "llm_list" : llm_list,
+        "llm":llm
+    }
+    return render(request, "mypage/app/my_ai_models_app.html", context)
 
+
+from customer_ai.models import Conversation, Prompt
+@login_required
+def my_ai_conversation_app(request, llm_id):
+    user = request.user
+    llm_list = Conversation.objects.filter(user=user)
+    llm= get_object_or_404(LLM, id=llm_id)
+    context = {
+        "llm_list" : llm_list,
+        "llm":llm
+    }
+    return render(request, "mypage/app/my_ai_conversation_app.html", context)
 
 @login_required
 def my_voice(request):
@@ -632,13 +654,3 @@ def my_voice_delete(request, voice_id):
         return redirect('mypage:my_voice')
             
 
-@login_required
-def my_ai_models(request, llm_id):
-    user = request.user
-    llm_list = LLM.objects.filter(user=user).select_related('voice')
-    llm= get_object_or_404(LLM, id=llm_id)
-    context = {
-        "llm_list" : llm_list,
-        "llm":llm
-    }
-    return render(request, "mypage/my_ai_models.html", context)

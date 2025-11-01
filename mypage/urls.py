@@ -32,6 +32,8 @@ urlpatterns = [
     path("mypage_app/", views.mypage_app, name="mypage_app"),
     path('sidebar_app/', views.sidebar_app, name='sidebar_app'),
     path('mypage_update_app/', views.mypage_update_app, name='mypage_update_app'),
+    path('my_ai_models_app/<int:llm_id>', views.my_ai_models_app, name='my_ai_models_app'),
+    path('my_ai_conversation_app/<int:llm_id>', views.my_ai_conversation_app, name='my_ai_conversation_app'),
 
 
 ]

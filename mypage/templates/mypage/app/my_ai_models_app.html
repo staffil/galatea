@@ -1,15 +1,15 @@
 {% load static %} 
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans '마이페이지' %} - GALATEA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>{% trans '내 AI 모델들' %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_models.css' %}?v={{ STATIC_VERSION }}">
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-        <!-- Open Graph (SNS 공유용) -->
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -29,6 +29,643 @@
 }
 </script>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 배경 원형 효과 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 메뉴 버튼 */
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* 사이드바 오버레이 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        /* 사이드바 헤더 */
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        /* 사이드바 프로필 */
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* 사이드바 메뉴 */
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        /* 특정 메뉴 스타일 */
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+        }
+
+        /* AI 설정 컨테이너 */
+        .ai-config-container {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.6s ease-out;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 좌측 섹션 */
+        .left-section {
+            margin-bottom: 30px;
+        }
+
+        .sidebar-profile {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-profile img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile p {
+            color: #b8c5d1;
+            font-size: 0.9rem;
+        }
+
+        #llmSelect {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #llmSelect:focus {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .prompt-section label {
+            display: block;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            resize: vertical;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 우측 섹션 */
+        .right-sections {
+            margin-bottom: 30px;
+        }
+
+        .language-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+        }
+
+        .language-group label {
+            display: block;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .language-description {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .language-selector {
+            padding: 12px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* 슬라이더 */
+        .slider-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+        }
+
+        .slider-label {
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        .slider-container span {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Voice 섹션 */
+        .voice-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+        }
+
+        .voice-section label {
+            display: block;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .voice-id-input {
+            width: 100%;
+            padding: 12px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        /* 하단 버튼 */
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .action-button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border: none;
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .action-button:active {
+            transform: scale(0.97);
+        }
+
+        .delete-button {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* 태블릿 이상 */
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .ai-config-container {
+                padding: 40px 35px;
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+
+            .bottom-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .bottom-section {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* Safe Area 대응 */
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        /* body 스크롤 막기 */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
   
@@ -39,6 +676,7 @@
         {% include "common/loginHeader.html" %}
     {% endif %}
 </header>
+
     <!-- 배경 원형 효과 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
@@ -46,15 +684,59 @@
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- 햄버거 메뉴 버튼 -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- 메뉴 버튼 -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
     </button>
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
 
-    {% include "common/sidebar.html" %}
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- 사이드바 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
+    </div>
 
     <div class="main-content">
         <div class="ai-config-container">
@@ -64,7 +746,7 @@
                     <img id="llmImage" 
                          src="{% if llm_list|length > 0 and llm_list.0.llm_image %}{{ llm_list.0.llm_image.url }}{% endif %}" 
                          alt="{% trans 'AI 이미지' %}"/>
-                    <p id="noImageText" style="display: none; color: white;">{% trans '생성된 이미지가 없습니다.' %}</p>
+                    <p id="noImageText" style="display: none;">{% trans '생성된 이미지가 없습니다.' %}</p>
                 </div>
                 <select id="llmSelect" name="llm_id" onchange="updatePromptAndVoice()">
                     {% for llm in llm_list %}
@@ -99,22 +781,22 @@
                 </div>
                 <div class="slider-container">
                     <div class="slider-label">{% trans '안정감' %}</div>
-                    <input class="text" id="stabilitySlider" />
+                    <input type="range" class="text" id="stabilitySlider" min="0" max="1" step="0.1" value="0.5" />
                     <span id="stabilityValue">0.5</span>
                 </div>
                 <div class="slider-container">
                     <div class="slider-label">{% trans '음성 속도' %}</div>
-                    <input class="text" id="speedSlider" />
+                    <input type="range" class="text" id="speedSlider" min="0" max="1" step="0.1" value="0.5" />
                     <span id="speedValue">0.5</span>
                 </div>
                 <div class="slider-container">
                     <div class="slider-label">{% trans '목소리 스타일' %}</div>
-                    <input class="text" id="styleSlider" />
+                    <input type="range" class="text" id="styleSlider" min="0" max="1" step="0.1" value="0.5" />
                     <span id="styleValue">0.5</span>
                 </div>
                 <div class="slider-container">
                     <div class="slider-label">{% trans '창의성' %}</div>
-                    <input class="text" id="temperatureSlider" />
+                    <input type="range" class="text" id="temperatureSlider" min="0" max="1" step="0.1" value="0.5" />
                     <span id="temperatureValue">0.5</span>
                 </div>
                 <div class="voice-section">
@@ -147,141 +829,167 @@
         </div>
     </div>
 
-    <script src="{% static 'js/sidebar.js' %}"></script>
     <script>
-        // 초기 UI 세팅
-function initializeUIWithCurrentLlm() {
-    const initialLlm = {
-        id: "{{ llm.id|default:''|escapejs }}",
-        prompt: "{{ llm.prompt|default:''|escapejs }}",
-        voiceId: "{% if llm.voice %}{{ llm.voice.voice_id|default:''|escapejs }}{% endif %}",
-        language: "{{ llm.language|default:''|escapejs }}",
-        stability: "{{ llm.stability|default:0.5|escapejs }}",
-        speed: "{{ llm.speed|default:0.5|escapejs }}",
-        style: "{{ llm.style|default:0.5|escapejs }}",
-        temperature: "{{ llm.temperature|default:0.5|escapejs }}",
-        model: "{{ llm.model|default:''|escapejs }}",
-        llmImage: "{% if llm.llm_image %}{{ llm.llm_image.url }}{% endif %}"
-    };
+        // 사이드바 토글
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
 
-    // 이미지 처리
-    const llmImageElem = document.getElementById("llmImage");
-    const noImageText = document.getElementById("noImageText");
-    if (initialLlm.llmImage) {
-        llmImageElem.src = initialLlm.llmImage;
-        llmImageElem.style.display = "block";
-        noImageText.style.display = "none";
-    } else {
-        llmImageElem.style.display = "none";
-        noImageText.style.display = "block";
-    }
-
-    // 텍스트/Voice/Language/Model 설정
-    document.getElementById("promptInput").value = initialLlm.prompt;
-    document.getElementById("promptDisplay").value = initialLlm.prompt;
-    document.getElementById("voiceIdInput").value = initialLlm.voiceId;
-    document.getElementById("voiceIdDisplay").value = initialLlm.voiceId;
-    document.getElementById("languageInput").value = initialLlm.language;
-    document.getElementById("languageDisplay").textContent = initialLlm.language;
-    document.getElementById("modelInput").value = initialLlm.model;
-    if(document.getElementById("modelDisplay")){
-        document.getElementById("modelDisplay").textContent = initialLlm.model;
-    }
-
-    // 슬라이더 초기화
-    const sliders = ["stability", "speed", "style", "temperature"];
-    sliders.forEach(slider => {
-        const sliderElem = document.getElementById(`${slider}Slider`);
-        const valueElem = document.getElementById(`${slider}Value`);
-        const inputElem = document.getElementById(`${slider}Input`);
-        if(sliderElem && valueElem && inputElem){
-            sliderElem.value = initialLlm[slider];
-            valueElem.textContent = initialLlm[slider];
-            inputElem.value = initialLlm[slider];
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
         }
-    });
 
-    // select 초기값 설정
-    const llmSelect = document.getElementById("llmSelect");
-    if (llmSelect && initialLlm.id) {
-        for (let i = 0; i < llmSelect.options.length; i++) {
-            if (llmSelect.options[i].value === initialLlm.id) {
-                llmSelect.selectedIndex = i;
-                break;
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // ESC 키로 사이드바 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+
+        // 초기 UI 세팅
+        function initializeUIWithCurrentLlm() {
+            const initialLlm = {
+                id: "{{ llm.id|default:''|escapejs }}",
+                prompt: "{{ llm.prompt|default:''|escapejs }}",
+                voiceId: "{% if llm.voice %}{{ llm.voice.voice_id|default:''|escapejs }}{% endif %}",
+                language: "{{ llm.language|default:''|escapejs }}",
+                stability: "{{ llm.stability|default:0.5|escapejs }}",
+                speed: "{{ llm.speed|default:0.5|escapejs }}",
+                style: "{{ llm.style|default:0.5|escapejs }}",
+                temperature: "{{ llm.temperature|default:0.5|escapejs }}",
+                model: "{{ llm.model|default:''|escapejs }}",
+                llmImage: "{% if llm.llm_image %}{{ llm.llm_image.url }}{% endif %}"
+            };
+
+            // 이미지 처리
+            const llmImageElem = document.getElementById("llmImage");
+            const noImageText = document.getElementById("noImageText");
+            if (initialLlm.llmImage) {
+                llmImageElem.src = initialLlm.llmImage;
+                llmImageElem.style.display = "block";
+                noImageText.style.display = "none";
+            } else {
+                llmImageElem.style.display = "none";
+                noImageText.style.display = "block";
+            }
+
+            // 텍스트/Voice/Language/Model 설정
+            document.getElementById("promptInput").value = initialLlm.prompt;
+            document.getElementById("promptDisplay").value = initialLlm.prompt;
+            document.getElementById("voiceIdInput").value = initialLlm.voiceId;
+            document.getElementById("voiceIdDisplay").value = initialLlm.voiceId;
+            document.getElementById("languageInput").value = initialLlm.language;
+            document.getElementById("languageDisplay").textContent = initialLlm.language;
+            document.getElementById("modelInput").value = initialLlm.model;
+            if(document.getElementById("modelDisplay")){
+                document.getElementById("modelDisplay").textContent = initialLlm.model;
+            }
+
+            // 슬라이더 초기화
+            const sliders = ["stability", "speed", "style", "temperature"];
+            sliders.forEach(slider => {
+                const sliderElem = document.getElementById(`${slider}Slider`);
+                const valueElem = document.getElementById(`${slider}Value`);
+                const inputElem = document.getElementById(`${slider}Input`);
+                if(sliderElem && valueElem && inputElem){
+                    sliderElem.value = initialLlm[slider];
+                    valueElem.textContent = initialLlm[slider];
+                    inputElem.value = initialLlm[slider];
+                }
+            });
+
+            // select 초기값 설정
+            const llmSelect = document.getElementById("llmSelect");
+            if (llmSelect && initialLlm.id) {
+                for (let i = 0; i < llmSelect.options.length; i++) {
+                    if (llmSelect.options[i].value === initialLlm.id) {
+                        llmSelect.selectedIndex = i;
+                        break;
+                    }
+                }
             }
         }
-    }
-}
 
-// 선택된 LLM 업데이트
-function updatePromptAndVoice() {
-    const llmSelect = document.getElementById("llmSelect");
-    const selectedOption = llmSelect.options[llmSelect.selectedIndex];
+        // 선택된 LLM 업데이트
+        function updatePromptAndVoice() {
+            const llmSelect = document.getElementById("llmSelect");
+            const selectedOption = llmSelect.options[llmSelect.selectedIndex];
 
-    // URL 업데이트
-    const selectedLlmId = selectedOption.value;
-    const currentPath = window.location.pathname;
-    const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
-    if (window.location.pathname !== newUrl) window.location.href = newUrl;
+            // URL 업데이트
+            const selectedLlmId = selectedOption.value;
+            const currentPath = window.location.pathname;
+            const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
+            if (window.location.pathname !== newUrl) window.location.href = newUrl;
 
-    // 프롬프트/Voice 업데이트
-    document.getElementById("promptDisplay").value = selectedOption.dataset.prompt || "";
-    document.getElementById("voiceIdDisplay").value = selectedOption.dataset.voiceId || "";
-    document.getElementById("voiceIdInput").value = selectedOption.dataset.voiceId || "";
-    document.getElementById("languageDisplay").textContent = selectedOption.dataset.language || "";
-    document.getElementById("languageInput").value = selectedOption.dataset.language || "";
+            // 프롬프트/Voice 업데이트
+            document.getElementById("promptDisplay").value = selectedOption.dataset.prompt || "";
+            document.getElementById("voiceIdDisplay").value = selectedOption.dataset.voiceId || "";
+            document.getElementById("voiceIdInput").value = selectedOption.dataset.voiceId || "";
+            document.getElementById("languageDisplay").textContent = selectedOption.dataset.language || "";
+            document.getElementById("languageInput").value = selectedOption.dataset.language || "";
 
-    // 슬라이더 업데이트
-    const sliders = ["stability", "speed", "style", "temperature"];
-    sliders.forEach(slider => {
-        const value = selectedOption.dataset[slider] || 0.5;
-        const sliderElem = document.getElementById(`${slider}Slider`);
-        const valueElem = document.getElementById(`${slider}Value`);
-        const inputElem = document.getElementById(`${slider}Input`);
-        if(sliderElem && valueElem && inputElem){
-            sliderElem.value = value;
-            valueElem.textContent = value;
-            inputElem.value = value;
+            // 슬라이더 업데이트
+            const sliders = ["stability", "speed", "style", "temperature"];
+            sliders.forEach(slider => {
+                const value = selectedOption.dataset[slider] || 0.5;
+                const sliderElem = document.getElementById(`${slider}Slider`);
+                const valueElem = document.getElementById(`${slider}Value`);
+                const inputElem = document.getElementById(`${slider}Input`);
+                if(sliderElem && valueElem && inputElem){
+                    sliderElem.value = value;
+                    valueElem.textContent = value;
+                    inputElem.value = value;
+                }
+            });
+
+            // 이미지 업데이트
+            const llmImageElem = document.getElementById("llmImage");
+            const noImageText = document.getElementById("noImageText");
+            if (selectedOption.dataset.llmImage) {
+                llmImageElem.src = selectedOption.dataset.llmImage;
+                llmImageElem.style.display = "block";
+                noImageText.style.display = "none";
+            } else {
+                llmImageElem.style.display = "none";
+                noImageText.style.display = "block";
+            }
         }
-    });
 
-    // 이미지 업데이트
-    const llmImageElem = document.getElementById("llmImage");
-    const noImageText = document.getElementById("noImageText");
-    if (selectedOption.dataset.llmImage) {
-        llmImageElem.src = selectedOption.dataset.llmImage;
-        llmImageElem.style.display = "block";
-        noImageText.style.display = "none";
-    } else {
-        llmImageElem.style.display = "none";
-        noImageText.style.display = "block";
-    }
-}
-
-// 슬라이더 이벤트 리스너 설정
-function setupSliderListeners() {
-    const sliders = ["stability", "speed", "style", "temperature"];
-    sliders.forEach(slider => {
-        const sliderElem = document.getElementById(`${slider}Slider`);
-        const valueElem = document.getElementById(`${slider}Value`);
-        const inputElem = document.getElementById(`${slider}Input`);
-        if(sliderElem && valueElem && inputElem){
-            sliderElem.oninput = () => {
-                valueElem.textContent = sliderElem.value;
-                inputElem.value = sliderElem.value;
-            };
+        // 슬라이더 이벤트 리스너 설정
+        function setupSliderListeners() {
+            const sliders = ["stability", "speed", "style", "temperature"];
+            sliders.forEach(slider => {
+                const sliderElem = document.getElementById(`${slider}Slider`);
+                const valueElem = document.getElementById(`${slider}Value`);
+                const inputElem = document.getElementById(`${slider}Input`);
+                if(sliderElem && valueElem && inputElem){
+                    sliderElem.oninput = () => {
+                        valueElem.textContent = sliderElem.value;
+                        inputElem.value = sliderElem.value;
+                    };
+                }
+            });
         }
-    });
-}
 
-// 초기화
-window.onload = function () {
-    initializeUIWithCurrentLlm();
-    setupSliderListeners();
-};
-
-
+        // 초기화
+        window.onload = function () {
+            initializeUIWithCurrentLlm();
+            setupSliderListeners();
+        };
     </script>
-
 </body>
 </html>
