@@ -559,3 +559,86 @@ def mypage_app(request):
         "llm":llm
     }
     return render(request, "mypage/app/mypage_app.html", context)
+
+
+
+
+@login_required
+def mypage_update_app(request):
+    user = request.user
+
+    if request.method == 'POST':
+        nickname = request.POST.get("nickname")
+        email = request.POST.get('email')
+        phonenumber = request.POST.get('phonenumber')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        user_image = request.FILES.get('user_image')
+
+        if password1 != password2:
+            messages.error(request, _("비밀번호가 일치하지 않습니다."))
+            return redirect('mypage:mypage_update_app')
+
+        user.email = email
+        user.phonenumber = phonenumber
+        user.nickname = nickname
+        if user_image:
+            user.user_image = user_image
+        if password1:
+            user.password = make_password(password1)
+
+        user.save()
+        messages.success(request, _("프로필이 성공적으로 수정되었습니다."))
+        return redirect('mypage:mypage')
+
+    context = {
+        'user': user
+    }
+    return render(request, 'mypage/app/mypage_update_app.html', context)
+
+
+
+@login_required
+def my_voice(request):
+    user = request.user
+
+    voice_list = VoiceList.objects.filter(user=request.user).select_related("celebrity").order_by("-created_at")
+    paginator = Paginator(voice_list, 5) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number) 
+    llm = LLM.objects.filter(user=user).first()
+
+
+    context = {
+        'voice_list': page_obj,
+        "llm":llm
+
+    }
+    return render(request, "mypage/my_voice.html",context)
+
+
+@login_required
+def my_voice_delete(request, voice_id):
+
+    if request.method == 'POST':
+        user = request.user
+        try:
+            voice = VoiceList.objects.get(id=voice_id, user=user)
+            voice.delete()
+            messages.success(request, _("보이스가 삭제되었습니다."))
+        except VoiceList.DoesNotExist:
+            messages.error(request, _("해당 보이스가 없습니다."))
+        
+        return redirect('mypage:my_voice')
+            
+
+@login_required
+def my_ai_models(request, llm_id):
+    user = request.user
+    llm_list = LLM.objects.filter(user=user).select_related('voice')
+    llm= get_object_or_404(LLM, id=llm_id)
+    context = {
+        "llm_list" : llm_list,
+        "llm":llm
+    }
+    return render(request, "mypage/my_ai_models.html", context)
