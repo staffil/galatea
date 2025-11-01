@@ -564,7 +564,7 @@ header {
 <a href="{% url 'home:logout_app' %}?next=/main_app/" class="nav-button">
   {% trans "로그아웃" %}
 </a>
-        <a href="{% url 'mypage:sidebar_app' %}">
+        <a href="{% url 'mypage:mypage_app' %}">
             <div class="profile-circle" title="{% trans '내 프로필' %}">
                 <div class="profile-inner">
                     {% if user.user_image %}
