@@ -366,14 +366,34 @@
             gap: 25px;
         }
 
-        /* 좌측 패널 */
+        /* 좌측/우측 패널 */
         .left-panel, .right-panel, .voice-panel {
             background: rgba(26, 26, 46, 0.85);
             border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 20px;
-            padding: 25px 20px;
+            padding: 30px 20px;
             backdrop-filter: blur(20px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .right-panel {
+            animation-delay: 0.1s;
+        }
+
+        .voice-panel {
+            animation-delay: 0.2s;
         }
 
         /* 폼 그룹 */
@@ -422,18 +442,19 @@
             box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
         }
 
-        /* 이미지 프리뷰 */
+        /* 이미지 프리뷰 - AI 모델 페이지와 동일한 크기 */
         .image-preview {
             margin-top: 15px;
             text-align: center;
         }
 
         .image-preview img {
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 12px;
-            border: 3px solid rgba(139, 92, 246, 0.5);
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
         }
 
         /* 슬라이더 컨테이너 */
@@ -505,12 +526,18 @@
             text-align: center;
         }
 
-        /* 보이스 테이블 */
+        /* 보이스 테이블 - 더 크고 읽기 쉽게 */
+        .voice-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
         .voice-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
-            margin-bottom: 20px;
+            min-width: 700px;
         }
 
         .voice-table thead {
@@ -518,21 +545,21 @@
         }
 
         .voice-table th {
-            padding: 10px 6px;
+            padding: 14px 12px;
             text-align: center;
             font-weight: 700;
             color: #8b5cf6;
             border-bottom: 2px solid rgba(139, 92, 246, 0.3);
             white-space: nowrap;
-            font-size: 0.7rem;
+            font-size: 0.9rem;
         }
 
         .voice-table td {
-            padding: 10px 6px;
+            padding: 14px 12px;
             text-align: center;
             border-bottom: 1px solid rgba(139, 92, 246, 0.1);
             vertical-align: middle;
-            font-size: 0.75rem;
+            font-size: 0.9rem;
         }
 
         .voice-table tbody tr {
@@ -544,18 +571,61 @@
         }
 
         .voice-audio {
-            width: 100px;
-            height: 28px;
+            width: 150px;
+            height: 32px;
+        }
+
+        /* 모바일에서 테이블 크기 */
+        @media (max-width: 768px) {
+            .voice-table {
+                min-width: 650px;
+            }
+
+            .voice-table th {
+                padding: 12px 8px;
+                font-size: 0.8rem;
+            }
+
+            .voice-table td {
+                padding: 12px 8px;
+                font-size: 0.85rem;
+            }
+
+            .voice-audio {
+                width: 120px;
+                height: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .voice-table {
+                min-width: 600px;
+            }
+
+            .voice-table th {
+                padding: 10px 6px;
+                font-size: 0.75rem;
+            }
+
+            .voice-table td {
+                padding: 10px 6px;
+                font-size: 0.8rem;
+            }
+
+            .voice-audio {
+                width: 100px;
+                height: 28px;
+            }
         }
 
         /* 버튼 스타일 */
         .copy-btn {
-            padding: 6px 10px;
+            padding: 8px 16px;
             background: linear-gradient(135deg, #06b6d4, #0891b2);
             border: none;
             border-radius: 8px;
             color: #ffffff;
-            font-size: 0.7rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -589,19 +659,19 @@
         .make-voice-btn {
             display: inline-block;
             margin-top: 10px;
-            padding: 8px 16px;
+            padding: 10px 20px;
             background: linear-gradient(135deg, #10b981, #059669);
             border-radius: 8px;
             color: #ffffff;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             color: #a0aec0;
         }
 
@@ -616,13 +686,13 @@
         }
 
         .pagination a, .pagination span {
-            padding: 6px 10px;
+            padding: 8px 14px;
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 8px;
             color: #ffffff;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
             transition: all 0.3s ease;
         }
@@ -663,32 +733,13 @@
                 grid-column: 1 / -1;
             }
 
-            .voice-table {
-                font-size: 0.85rem;
-            }
-
-            .voice-table th {
-                padding: 12px 8px;
-                font-size: 0.8rem;
-            }
-
-            .voice-table td {
-                padding: 12px 8px;
-                font-size: 0.85rem;
-            }
-
-            .voice-audio {
-                width: 150px;
-                height: 32px;
-            }
-
-            .copy-btn {
-                padding: 8px 14px;
-                font-size: 0.8rem;
-            }
-
             .sidebar {
                 max-width: 450px;
+            }
+
+            .image-preview img {
+                width: 180px;
+                height: 180px;
             }
         }
 
@@ -730,38 +781,15 @@
         body.sidebar-open {
             overflow: hidden;
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .left-panel, .right-panel, .voice-panel {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .right-panel {
-            animation-delay: 0.1s;
-        }
-
-        .voice-panel {
-            animation-delay: 0.2s;
-        }
     </style>
 </head>
 <body>
   
 <header>
     {% if not user.is_authenticated %}
-        {% include "common/app/notLoginHeader.html" %}
+        {% include "common/notLoginHeader.html" %}
     {% else %}
-        {% include "common/app/loginHeader.html" %}
+        {% include "common/loginHeader.html" %}
     {% endif %}
 </header>
 
@@ -932,53 +960,58 @@
                 <div class="voice-panel">
                     <div class="voice-list-container">
                         <h3><i class="fas fa-list"></i> {% trans "저장된 음성 목록" %}</h3>
-                        <table class="voice-table">
-                            <thead>
-                                <tr>
-                                    <th>{% trans "번호" %}</th>
-                                    <th>{% trans "날짜" %}</th>
-                                    <th>{% trans "이름" %}</th>
-                                    <th>{% trans "Voice ID" %}</th>
-                                    <th>{% trans "샘플" %}</th>
-                                    <th>{% trans "선택" %}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if voice_list %}
-                                    {% for voice in voice_list %}
+                        
+                        <div class="voice-table-wrapper">
+                            <table class="voice-table">
+                                <thead>
                                     <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>{{ voice.created_at|date:"m-d" }}</td>
-                                        <td>{{ voice.voice_name|truncatechars:10 }}</td>
-                                        <td style="font-size: 0.65rem; font-family: monospace;">{{ voice.voice_id|truncatechars:10 }}</td>
-                                        <td>
-                                            {% if voice.sample_url %}
-                                            <audio controls class="voice-audio">
-                                                <source src="{{ voice.sample_url }}" type="audio/mpeg">
-                                            </audio>
-                                            {% else %}
-                                            <span style="color: #6b7280;">-</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <button type="button" class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans "선택" %}</button>
+                                        <th>{% trans "번호" %}</th>
+                                        <th>{% trans "생성 날짜" %}</th>
+                                        <th>{% trans "음성 이름" %}</th>
+                                        <th>{% trans "Voice ID" %}</th>
+                                        <th>{% trans "샘플 재생" %}</th>
+                                        <th>{% trans "선택" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if voice_list %}
+                                        {% for voice in voice_list %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ voice.created_at|date:"Y-m-d" }}</td>
+                                            <td>{{ voice.voice_name }}</td>
+                                            <td style="font-size: 0.8rem; font-family: monospace; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ voice.voice_id }}</td>
+                                            <td>
+                                                {% if voice.sample_url %}
+                                                <audio controls class="voice-audio">
+                                                    <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                                                </audio>
+                                                {% else %}
+                                                <span style="color: #6b7280;">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button type="button" class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">
+                                                    <i class="fas fa-check"></i> {% trans "선택" %}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="6" class="empty-state">
+                                            <div style="font-size: 3rem; margin-bottom: 15px;">🎤</div>
+                                            {% trans "저장된 음성이 없습니다." %}
+                                            <br>
+                                            <a href="{% url 'makeVoice:make_voice' %}" class="make-voice-btn">
+                                                <i class="fas fa-plus-circle"></i> {% trans "음성 만들기" %}
+                                            </a>
                                         </td>
                                     </tr>
-                                    {% endfor %}
-                                {% else %}
-                                <tr>
-                                    <td colspan="6" class="empty-state">
-                                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🎤</div>
-                                        {% trans "저장된 음성이 없습니다." %}
-                                        <br>
-                                        <a href="{% url 'makeVoice:make_voice' %}" class="make-voice-btn">
-                                            <i class="fas fa-plus-circle"></i> {% trans "음성 만들기" %}
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
 
                         {% if voice_list.has_other_pages %}
                         <div class="pagination">
@@ -1076,7 +1109,6 @@
             const voiceIdInput = document.getElementById('voice_id');
             if (voiceIdInput) {
                 voiceIdInput.value = voiceId;
-                // 토스트 메시지
                 showToast('✅ Voice ID가 선택되었습니다!');
             }
         }
