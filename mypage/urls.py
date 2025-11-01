@@ -34,6 +34,9 @@ urlpatterns = [
     path('mypage_update_app/', views.mypage_update_app, name='mypage_update_app'),
     path('my_ai_models_app/<int:llm_id>', views.my_ai_models_app, name='my_ai_models_app'),
     path('my_ai_conversation_app/<int:llm_id>', views.my_ai_conversation_app, name='my_ai_conversation_app'),
+    path('my_voice_app/', views.my_voice_app, name='my_voice_app'),
+    path('my_voice_delete_app/', views.my_voice_delete_app, name='my_voice_delete_app'),
+    path('my_ai_models_update_app/<int:llm_id>/', views.my_ai_models_update_app, name='my_ai_models_update_app'),
 
 
 ]

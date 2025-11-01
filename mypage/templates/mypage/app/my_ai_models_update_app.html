@@ -1,15 +1,15 @@
 {% load static %} 
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "마이페이지" %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/mypage/my_ai_modelsUpdate.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-        <!-- Open Graph (SNS 공유용) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>{% trans "AI 수정하기" %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -29,237 +29,1106 @@
 }
 </script>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 배경 원형 효과 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 메뉴 버튼 */
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* 사이드바 오버레이 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        /* 사이드바 헤더 */
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        /* 사이드바 프로필 */
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* 사이드바 메뉴 */
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        /* 특정 메뉴 스타일 */
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 폼 컨테이너 */
+        #ai-update-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        /* 좌측 패널 */
+        .left-panel, .right-panel, .voice-panel {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 25px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 폼 그룹 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #a0aec0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="file"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        /* 이미지 프리뷰 */
+        .image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        /* 슬라이더 컨테이너 */
+        .slider-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+        }
+
+        .slider-label {
+            color: #a0aec0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .slider-description {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .slider-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .slider-value {
+            padding: 6px 12px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        /* 보이스 패널 */
+        .voice-list-container h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* 보이스 테이블 */
+        .voice-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            margin-bottom: 20px;
+        }
+
+        .voice-table thead {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .voice-table th {
+            padding: 10px 6px;
+            text-align: center;
+            font-weight: 700;
+            color: #8b5cf6;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+            white-space: nowrap;
+            font-size: 0.7rem;
+        }
+
+        .voice-table td {
+            padding: 10px 6px;
+            text-align: center;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            vertical-align: middle;
+            font-size: 0.75rem;
+        }
+
+        .voice-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .voice-table tbody tr:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .voice-audio {
+            width: 100px;
+            height: 28px;
+        }
+
+        /* 버튼 스타일 */
+        .copy-btn {
+            padding: 6px 10px;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border: none;
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            margin-top: 10px;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.97);
+        }
+
+        .make-voice-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 8px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+        }
+
+        /* 페이지네이션 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a, .pagination span {
+            padding: 6px 10px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:active {
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(0.95);
+        }
+
+        .pagination .current {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-color: #8b5cf6;
+        }
+
+        .pagination .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 태블릿 이상 */
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .voice-panel {
+                grid-column: 1 / -1;
+            }
+
+            .voice-table {
+                font-size: 0.85rem;
+            }
+
+            .voice-table th {
+                padding: 12px 8px;
+                font-size: 0.8rem;
+            }
+
+            .voice-table td {
+                padding: 12px 8px;
+                font-size: 0.85rem;
+            }
+
+            .voice-audio {
+                width: 150px;
+                height: 32px;
+            }
+
+            .copy-btn {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* Safe Area 대응 */
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        /* body 스크롤 막기 */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .left-panel, .right-panel, .voice-panel {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .right-panel {
+            animation-delay: 0.1s;
+        }
+
+        .voice-panel {
+            animation-delay: 0.2s;
+        }
+    </style>
 </head>
 <body>
   
 <header>
     {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
+        {% include "common/app/notLoginHeader.html" %}
     {% else %}
-        {% include "common/loginHeader.html" %}
+        {% include "common/app/loginHeader.html" %}
     {% endif %}
 </header>
-   <!-- 배경 원형 효과 (distribute.css에서 사용) -->
+
+    <!-- 배경 원형 효과 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- 햄버거 메뉴 버튼 (모바일용) -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- 메뉴 버튼 -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
     </button>
 
-    <!-- 사이드바 오버레이 (모바일용) -->
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-           {% include "common/sidebar.html" %}
+    <!-- 사이드바 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
+    </div>
 
     <div class="main-content">
-<form id="ai-update-form" action="" method="post" enctype="multipart/form-data">
-             <div class="form-group">
-                    <label for="llm_image">{% trans "AI 이미지" %}</label>
-                    <input type="file" name="llm_image" id="llm_image">
-                    {% if llm.llm_image %}
-                        <div class="image-preview">
-                            <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}">
-                        </div>
-                    {% endif %}
-                </div>
+        <form id="ai-update-form" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
             <div class="container">
-            <div class="left-panel">
-                <div class="form-group">
-                    <label for="name">{% trans "AI 이름" %}</label>
-                    <input type="text" id="name" name="name" value="{{ llm.name }}">
-                </div>
-
-                <div class="form-group">
-                    <label for="prompt">{% trans "프롬프트" %}</label>
-                    <textarea style="height: 500px;" name="prompt" id="prompt">{{ llm.prompt }}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="voice_id">{% trans "Voice ID" %}</label>
-                    <input type="text" name="voice_id" id="voice_id" value="{{ llm.voice.voice_id }}">
-                </div>
-
-               
-            </div>
-
-            <div class="right-panel">
-                <div class="form-group">
-                    <label for="language">{% trans "언어" %}</label>
-                    <select name="language" id="language">
-                    <option value="en" {% if llm.language == "en" %}selected{% endif %}>English (US)</option>
-                        <option value="ko" {% if llm.language == "ko" %}selected{% endif %}>{% trans "Korean" %}</option>
-                        <option value="hi" {% if llm.language == "hi" %}selected{% endif %}>{% trans "Hindi" %}</option>
-                        <option value="pt" {% if llm.language == "pt" %}selected{% endif %}>{% trans "Portuguese" %}</option>
-                        <option value="zh" {% if llm.language == "zh" %}selected{% endif %}>{% trans "Chinese" %}</option>
-                        <option value="es" {% if llm.language == "es" %}selected{% endif %}>{% trans "Spanish" %}</option>
-                        <option value="fr" {% if llm.language == "fr" %}selected{% endif %}>{% trans "French" %}</option>
-                        <option value="ja" {% if llm.language == "ja" %}selected{% endif %}>{% trans "Japanese" %}</option>
-                        <option value="ar" {% if llm.language == "ar" %}selected{% endif %}>{% trans "Arabic" %}</option>
-                        <option value="ru" {% if llm.language == "ru" %}selected{% endif %}>{% trans "Russian" %}</option>
-                        <option value="id" {% if llm.language == "id" %}selected{% endif %}>{% trans "Indonesian" %}</option>
-                        <option value="it" {% if llm.language == "it" %}selected{% endif %}>{% trans "Italian" %}</option>
-                        <option value="nl" {% if llm.language == "nl" %}selected{% endif %}>{% trans "Dutch" %}</option>
-                        <option value="tr" {% if llm.language == "tr" %}selected{% endif %}>{% trans "Turkish" %}</option>
-                        <option value="pl" {% if llm.language == "pl" %}selected{% endif %}>{% trans "Polish" %}</option>
-                        <option value="sv" {% if llm.language == "sv" %}selected{% endif %}>{% trans "Swedish" %}</option>
-                        <option value="fil" {% if llm.language == "fil" %}selected{% endif %}>{% trans "Filipino" %}</option>
-                        <option value="ms" {% if llm.language == "ms" %}selected{% endif %}>{% trans "Malay" %}</option>
-                        <option value="ro" {% if llm.language == "ro" %}selected{% endif %}>{% trans "Romanian" %}</option>
-                        <option value="uk" {% if llm.language == "uk" %}selected{% endif %}>{% trans "Ukrainian" %}</option>
-                        <option value="el" {% if llm.language == "el" %}selected{% endif %}>{% trans "Greek" %}</option>
-                        <option value="cs" {% if llm.language == "cs" %}selected{% endif %}>{% trans "Czech" %}</option>
-                        <option value="da" {% if llm.language == "da" %}selected{% endif %}>{% trans "Danish" %}</option>
-                        <option value="fi" {% if llm.language == "fi" %}selected{% endif %}>{% trans "Finnish" %}</option>
-                        <option value="bg" {% if llm.language == "bg" %}selected{% endif %}>{% trans "Bulgarian" %}</option>
-                        <option value="hr" {% if llm.language == "hr" %}selected{% endif %}>{% trans "Croatian" %}</option>
-                        <option value="sk" {% if llm.language == "sk" %}selected{% endif %}>{% trans "Slovak" %}</option>
-                        <option value="ta" {% if llm.language == "ta" %}selected{% endif %}>{% trans "Tamil" %}</option>
-                    </select>
-                </div>
-
-                <div class="slider-container">
-                    <div class="slider-label">{% trans "Stability" %}</div>
-                    <div class="slider-description">
-                        {% trans "생성된 음성이 얼마나 안정적인지 조절합니다." %}<br>
-                        {% trans "값이 높을수록 더 일관된 음성이 생성됩니다." %}
+                <!-- 좌측 패널 -->
+                <div class="left-panel">
+                    <div class="form-group">
+                        <label for="llm_image"><i class="fas fa-image"></i> {% trans "AI 이미지" %}</label>
+                        <input type="file" name="llm_image" id="llm_image">
+                        {% if llm.llm_image %}
+                            <div class="image-preview">
+                                <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}">
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="slider-control">
-                        <span></span>
-                        <span class="slider-value" id="stabilityValue">{{ llm.stability }}</span>
+
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-robot"></i> {% trans "AI 이름" %}</label>
+                        <input type="text" id="name" name="name" value="{{ llm.name }}" required>
                     </div>
-                    <input type="range" id="stability" name="stability" min="0" max="1" step="0.5" value="{{ llm.stability }}" class="slider">
-                </div>
 
-                <div class="slider-container">
-                    <div class="slider-label">{% trans "Speed" %}</div>
-                    <div class="slider-description">{% trans "AI 답변 속도를 조절합니다." %}</div>
-                    <div class="slider-control">
-                        <span></span>
-                        <span class="slider-value" id="speedValue">{{ llm.speed }}</span>
+                    <div class="form-group">
+                        <label for="prompt"><i class="fas fa-edit"></i> {% trans "프롬프트" %}</label>
+                        <textarea name="prompt" id="prompt" required>{{ llm.prompt }}</textarea>
                     </div>
-                    <input type="range" id="speed" name="speed" min="0.7" max="1.2" step="0.01" value="{{ llm.speed }}" class="slider">
-                </div>
 
-                <div class="slider-container">
-                    <div class="slider-label">{% trans "Style" %}</div>
-                    <div class="slider-description">{% trans "스타일을 설정할 수 있습니다." %}</div>
-                    <div class="slider-control">
-                        <span></span>
-                        <span class="slider-value" id="styleValue">{{ llm.style }}</span>
+                    <div class="form-group">
+                        <label for="voice_id"><i class="fas fa-microphone"></i> {% trans "Voice ID" %}</label>
+                        <input type="text" name="voice_id" id="voice_id" value="{{ llm.voice.voice_id }}" required>
                     </div>
-                    <input type="range" id="style" name="style" min="0" max="1" step="0.01" value="{{ llm.style }}" class="slider">
                 </div>
 
-                <div class="slider-container">
-                    <div class="slider-label">{% trans "Temperature" %}</div>
-                    <div class="slider-description">{% trans "AI의 창의성과 랜덤성을 조절합니다." %}</div>
-                    <div class="slider-control">
-                        <span></span>
-                        <span class="slider-value" id="temperatureValue">{{ llm.temperature }}</span>
+                <!-- 우측 패널 -->
+                <div class="right-panel">
+                    <div class="form-group">
+                        <label for="language"><i class="fas fa-globe"></i> {% trans "언어" %}</label>
+                        <select name="language" id="language">
+                            <option value="en" {% if llm.language == "en" %}selected{% endif %}>English (US)</option>
+                            <option value="ko" {% if llm.language == "ko" %}selected{% endif %}>한국어</option>
+                            <option value="hi" {% if llm.language == "hi" %}selected{% endif %}>Hindi</option>
+                            <option value="pt" {% if llm.language == "pt" %}selected{% endif %}>Portuguese</option>
+                            <option value="zh" {% if llm.language == "zh" %}selected{% endif %}>Chinese</option>
+                            <option value="es" {% if llm.language == "es" %}selected{% endif %}>Spanish</option>
+                            <option value="fr" {% if llm.language == "fr" %}selected{% endif %}>French</option>
+                            <option value="ja" {% if llm.language == "ja" %}selected{% endif %}>Japanese</option>
+                            <option value="ar" {% if llm.language == "ar" %}selected{% endif %}>Arabic</option>
+                            <option value="ru" {% if llm.language == "ru" %}selected{% endif %}>Russian</option>
+                        </select>
                     </div>
-                    <input type="range" id="temperature" name="temperature" min="0" max="2" step="0.01" value="{{ llm.temperature }}" class="slider">
+
+                    <div class="slider-container">
+                        <div class="slider-label">{% trans "안정감" %}</div>
+                        <div class="slider-description">
+                            {% trans "생성된 음성이 얼마나 안정적인지 조절합니다." %}
+                        </div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="stabilityValue">{{ llm.stability }}</span>
+                        </div>
+                        <input type="range" id="stability" name="stability" min="0" max="1" step="0.1" value="{{ llm.stability }}" class="slider">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">{% trans "음성 속도" %}</div>
+                        <div class="slider-description">{% trans "AI 답변 속도를 조절합니다." %}</div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="speedValue">{{ llm.speed }}</span>
+                        </div>
+                        <input type="range" id="speed" name="speed" min="0.7" max="1.2" step="0.01" value="{{ llm.speed }}" class="slider">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">{% trans "목소리 스타일" %}</div>
+                        <div class="slider-description">{% trans "스타일을 설정할 수 있습니다." %}</div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="styleValue">{{ llm.style }}</span>
+                        </div>
+                        <input type="range" id="style" name="style" min="0" max="1" step="0.01" value="{{ llm.style }}" class="slider">
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-label">{% trans "창의성" %}</div>
+                        <div class="slider-description">{% trans "AI의 창의성과 랜덤성을 조절합니다." %}</div>
+                        <div class="slider-control">
+                            <span></span>
+                            <span class="slider-value" id="temperatureValue">{{ llm.temperature }}</span>
+                        </div>
+                        <input type="range" id="temperature" name="temperature" min="0" max="2" step="0.01" value="{{ llm.temperature }}" class="slider">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="model"><i class="fas fa-cogs"></i> {% trans "모델" %}</label>
+                        <select name="model" id="model">
+                            <option value="gpt:gpt-4o-mini" {% if llm.model == "gpt:gpt-4o-mini" %}selected{% endif %}>GPT-4o-mini</option>
+                            <option value="grok:grok-3-mini" {% if llm.model == "grok:grok-3-mini" %}selected{% endif %}>Grok-3-mini</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="model">{% trans "모델" %}</label>
-                    <select name="model" id="model">
-<option value="gpt:gpt-4o-mini" {% if llm.model == "gpt:gpt-4o-mini" %}selected{% endif %}>GPT4o-mini</option>
-<option value="grok:grok-3-mini" {% if llm.model == "grok:grok-3-mini" %}selected{% endif %}>Grok-3-mini</option>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="voice-panel">
-                <div class="voice-list-container">
-                    <h3>{% trans "저장된 음성 목록" %}</h3>
-                    <table class="voice-table">
-                        <thead>
-                            <tr>
-                                <th>{% trans "번호" %}</th>
-                                <th>{% trans "날짜" %}</th>
-                                <th>{% trans "이름" %}</th>
-                                <th>{% trans "Voice ID" %}</th>
-                                <th>{% trans "샘플" %}</th>
-                                <th>{% trans "선택" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if voice_list %}
-                                {% for voice in voice_list %}
+                <!-- 보이스 패널 -->
+                <div class="voice-panel">
+                    <div class="voice-list-container">
+                        <h3><i class="fas fa-list"></i> {% trans "저장된 음성 목록" %}</h3>
+                        <table class="voice-table">
+                            <thead>
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ voice.created_at|date:"m-d" }}</td>
-                                    <td>{{ voice.voice_name|truncatechars:8 }}</td>
-                                    <td>{{ voice.voice_id|truncatechars:8 }}</td>
-                                    <td>
-                                        {% if voice.sample_url %}
-                                        <audio controls class="voice-audio">
-                                            <source src="{{ voice.sample_url }}" type="audio/mpeg">
-                                        </audio>
-                                        {% else %}
-                                        <span style="font-size: 11px;">{% trans "없음" %}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <button type="button" class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans "선택" %}</button>
+                                    <th>{% trans "번호" %}</th>
+                                    <th>{% trans "날짜" %}</th>
+                                    <th>{% trans "이름" %}</th>
+                                    <th>{% trans "Voice ID" %}</th>
+                                    <th>{% trans "샘플" %}</th>
+                                    <th>{% trans "선택" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if voice_list %}
+                                    {% for voice in voice_list %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ voice.created_at|date:"m-d" }}</td>
+                                        <td>{{ voice.voice_name|truncatechars:10 }}</td>
+                                        <td style="font-size: 0.65rem; font-family: monospace;">{{ voice.voice_id|truncatechars:10 }}</td>
+                                        <td>
+                                            {% if voice.sample_url %}
+                                            <audio controls class="voice-audio">
+                                                <source src="{{ voice.sample_url }}" type="audio/mpeg">
+                                            </audio>
+                                            {% else %}
+                                            <span style="color: #6b7280;">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="copy-btn" onclick="selectVoiceId('{{ voice.voice_id }}')">{% trans "선택" %}</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="empty-state">
+                                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🎤</div>
+                                        {% trans "저장된 음성이 없습니다." %}
+                                        <br>
+                                        <a href="{% url 'makeVoice:make_voice' %}" class="make-voice-btn">
+                                            <i class="fas fa-plus-circle"></i> {% trans "음성 만들기" %}
+                                        </a>
                                     </td>
                                 </tr>
-                                {% endfor %}
-                                     {% if voice_list.has_other_pages %}
-                <div class="pagination">
-                    {% if voice_list.has_previous %}
-                        <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
-                    {% else %}
-                        <span class="disabled">&laquo; {% trans "이전" %}</span>
-                    {% endif %}
+                                {% endif %}
+                            </tbody>
+                        </table>
 
-                    {% for page_num in voice_list.paginator.page_range %}
-                        {% if page_num == voice_list.number %}
-                            <span class="current">{{ page_num }}</span>
-                        {% else %}
-                            <a href="?page={{ page_num }}">{{ page_num }}</a>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if voice_list.has_next %}
-                        <a href="?page={{ voice_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
-                    {% else %}
-                        <span class="disabled">{% trans "다음" %} &raquo;</span>
-                    {% endif %}
-                </div>
-            {% endif %}
+                        {% if voice_list.has_other_pages %}
+                        <div class="pagination">
+                            {% if voice_list.has_previous %}
+                                <a href="?page={{ voice_list.previous_page_number }}">
+                                    <i class="fas fa-chevron-left"></i> {% trans "이전" %}
+                                </a>
                             {% else %}
-                            <tr>
-                                <td colspan="6" class="empty-state">
-                                    {% trans "저장된 음성이 없습니다." %}
-                                    <br>
-                                    <a href="{% url 'makeVoice:make_voice' %}" class="make-voice-btn">{% trans "음성 만들기" %}</a>
-                                </td>
-                            </tr>
+                                <span class="disabled">
+                                    <i class="fas fa-chevron-left"></i> {% trans "이전" %}
+                                </span>
                             {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-                <button type="submit" class="submit-btn">{% trans "AI 수정하기" %}</button>
-            </div>
-            </div>
 
+                            {% for page_num in voice_list.paginator.page_range %}
+                                {% if page_num == voice_list.number %}
+                                    <span class="current">{{ page_num }}</span>
+                                {% else %}
+                                    <a href="?page={{ page_num }}">{{ page_num }}</a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if voice_list.has_next %}
+                                <a href="?page={{ voice_list.next_page_number }}">
+                                    {% trans "다음" %} <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% else %}
+                                <span class="disabled">
+                                    {% trans "다음" %} <i class="fas fa-chevron-right"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-save"></i> {% trans "AI 수정하기" %}
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 
-    
-<script src="{% static 'js/sidebar.js' %}"></script>
+    <script>
+        // 사이드바 토글
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
 
-  <script src="{% static 'js/mypage/my_ai_modelsUpdate.js' %}"></script>
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
+        }
 
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // ESC 키로 사이드바 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+
+        // 슬라이더 업데이트
+        const sliders = [
+            { id: 'stability', valueId: 'stabilityValue' },
+            { id: 'speed', valueId: 'speedValue' },
+            { id: 'style', valueId: 'styleValue' },
+            { id: 'temperature', valueId: 'temperatureValue' }
+        ];
+
+        sliders.forEach(slider => {
+            const element = document.getElementById(slider.id);
+            const valueElement = document.getElementById(slider.valueId);
+            
+            if (element && valueElement) {
+                element.addEventListener('input', function() {
+                    valueElement.textContent = this.value;
+                });
+            }
+        });
+
+        // Voice ID 선택
+        function selectVoiceId(voiceId) {
+            const voiceIdInput = document.getElementById('voice_id');
+            if (voiceIdInput) {
+                voiceIdInput.value = voiceId;
+                // 토스트 메시지
+                showToast('✅ Voice ID가 선택되었습니다!');
+            }
+        }
+
+        // 토스트 메시지
+        function showToast(message) {
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(139, 92, 246, 0.95);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                animation: slideUp 0.3s ease-out;
+            `;
+
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-50%) translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideUp 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 2700);
+        }
+    </script>
 </body>
 </html>

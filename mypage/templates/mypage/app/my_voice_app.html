@@ -1,14 +1,15 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% trans "마이페이지 - GALATEA" %}</title>
-    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-        <!-- Open Graph (SNS 공유용) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <title>{% trans "내 보이스 목록 - GALATEA" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -28,34 +29,754 @@
 }
 </script>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 배경 원형 효과 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 메뉴 버튼 */
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* 사이드바 오버레이 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        /* 사이드바 헤더 */
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        /* 사이드바 프로필 */
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* 사이드바 메뉴 */
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        /* 특정 메뉴 스타일 */
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 페이먼트 섹션 */
+        .payment-section {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .payment-header h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .calendar-icon {
+            font-size: 2rem;
+        }
+
+        /* 테이블 반응형 래퍼 */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+        }
+
+        /* 테이블 스타일 */
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 700px;
+        }
+
+        .payment-table thead {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .payment-table th {
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: 700;
+            color: #8b5cf6;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+            white-space: nowrap;
+            font-size: 0.85rem;
+        }
+
+        .payment-table td {
+            padding: 14px 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            vertical-align: middle;
+            font-size: 0.85rem;
+        }
+
+        .payment-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .payment-table tbody tr:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Voice ID 셀 스타일 */
+        .voice-id-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            color: #06b6d4;
+            font-family: 'Courier New', monospace;
+        }
+
+        .voice-id-cell:hover {
+            color: #0891b2;
+            text-decoration: underline;
+        }
+
+        /* 모바일에서 테이블 폰트 작게 */
+        @media (max-width: 768px) {
+            .payment-table {
+                font-size: 0.7rem;
+                min-width: 600px;
+            }
+
+            .payment-table th {
+                padding: 10px 6px;
+                font-size: 0.65rem;
+            }
+
+            .payment-table td {
+                padding: 10px 6px;
+                font-size: 0.7rem;
+            }
+
+            .payment-table audio {
+                width: 100px !important;
+                height: 28px;
+            }
+
+            .voice-id-cell {
+                max-width: 120px;
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .payment-table {
+                font-size: 0.65rem;
+                min-width: 550px;
+            }
+
+            .payment-table th {
+                padding: 8px 4px;
+                font-size: 0.6rem;
+            }
+
+            .payment-table td {
+                padding: 8px 4px;
+                font-size: 0.65rem;
+            }
+
+            .payment-table audio {
+                width: 80px !important;
+                height: 24px;
+            }
+
+            .voice-id-cell {
+                max-width: 100px;
+                font-size: 0.6rem;
+            }
+        }
+
+        /* 버튼 스타일 */
+        .copy-btn, .delete-btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .copy-btn, .delete-btn {
+                padding: 6px 10px;
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .copy-btn, .delete-btn {
+                padding: 5px 8px;
+                font-size: 0.6rem;
+            }
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: #ffffff;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
+        }
+
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 480px) {
+            .empty-state {
+                font-size: 0.9rem;
+                padding: 40px 15px;
+            }
+        }
+
+        /* 페이지네이션 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a, .pagination span {
+            padding: 8px 14px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:active {
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(0.95);
+        }
+
+        .pagination .current {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-color: #8b5cf6;
+        }
+
+        .pagination .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 480px) {
+            .pagination a, .pagination span {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* 태블릿 이상 */
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .payment-section {
+                padding: 40px 35px;
+            }
+
+            .payment-header h3 {
+                font-size: 2rem;
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* Safe Area 대응 */
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        /* body 스크롤 막기 */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+
+        /* 툴팁 스타일 */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
   
 <header>
     {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
+        {% include "common/app/notLoginHeader.html" %}
     {% else %}
-        {% include "common/loginHeader.html" %}
+        {% include "common/app/loginHeader.html" %}
     {% endif %}
 </header>
-   <!-- 배경 원형 효과 -->
+    <!-- 배경 원형 효과 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- 햄버거 메뉴 버튼 (모바일용) -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- 메뉴 버튼 -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
     </button>
 
-    <!-- 사이드바 오버레이 (모바일용) -->
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <!-- 사이드바 오버레이 -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    {% include "common/sidebar.html" %}
+    <!-- 사이드바 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
+    </div>
 
     <div class="main-content">
         <div class="payment-section">
@@ -64,19 +785,18 @@
                 <div class="calendar-icon">🎶</div>
             </div>
 
-            <!-- 데스크톱 테이블 뷰 -->
+            <!-- 테이블 뷰 -->
             <div class="table-responsive">
                 <table class="payment-table">
                     <thead>
                         <tr>
                             <th>{% trans "번호" %}</th>
-                            <th>{% trans "생성 날짜" %}</th>
-                            <th>{% trans "voice 이름" %}</th>
-                            <th>{% trans "voice id" %}</th>
-                            <th>{% trans "샘플 재생" %}</th>
-                            <th>{% trans "복사하기" %}</th>
-                            <!-- <th>{% trans "공유하기" %}</th> -->
-                            <th>{% trans "삭제하기" %}</th>
+                            <th>{% trans "생성날짜" %}</th>
+                            <th>{% trans "이름" %}</th>
+                            <th>{% trans "Voice ID" %}</th>
+                            <th>{% trans "재생" %}</th>
+                            <th>{% trans "복사" %}</th>
+                            <th>{% trans "삭제" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,127 +804,65 @@
                             {% for voice in voice_list %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ voice.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ voice.created_at|date:"Y-m-d" }}</td>
                                     <td>{{ voice.voice_name }}</td>
-                                    <td>{{ voice.voice_id }}</td>
+                                    <td class="voice-id-cell tooltip" 
+                                        data-tooltip="클릭하여 복사" 
+                                        onclick="copyToClipboard('{{ voice.voice_id }}')">
+                                        {{ voice.voice_id }}
+                                    </td>
                                     <td>
                                         {% if voice.sample_url %}
                                             <audio controls style="width:150px;">
                                                 <source src="{{ voice.sample_url }}" type="audio/mpeg" />
-                                                {% trans "지원하지 않는 브라우저입니다." %}
+                                                {% trans "지원안함" %}
                                             </audio>
                                         {% else %}
-                                            {% trans "샘플 없음" %}
+                                            <span style="color: #6b7280;">-</span>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <button class="copy-btn" onclick="copyToClipboard('{{ voice.voice_id }}')">{% trans "복사" %}</button>
+                                        <button class="copy-btn" onclick="copyToClipboard('{{ voice.voice_id }}')">
+                                            <i class="fas fa-copy"></i> {% trans "복사" %}
+                                        </button>
                                     </td>
-                                    {% comment %}
-
-                                    <!-- <td>
-                                        <form action="{% url 'mypage:toggle_voice_public' voice.id %}" method="post">
-                                            {% csrf_token %}
-                                        {% if voice.is_public %}
-                                        <button type="submit" class="share_voice">{% trans "공유 취소하기" %}</button>
-                                        {% else %}
-                                        <button type="submit" class="share_voice">{% trans "공유하기" %}</button>
-                                        {% endif %}
-                                        </form>
-                                    </td> -->
-                                    {% endcomment %}
-
                                     <td>
-                                        <form action="{% url 'mypage:my_voice_delete' voice.id %}" method="post" onsubmit="return confirm('{% trans '정말 삭제하시겠습니까?' %}')">
+                                        <form action="{% url 'mypage:my_voice_delete' voice.id %}" method="post" 
+                                              onsubmit="return confirm('{% trans '정말 삭제하시겠습니까?' %}')"
+                                              style="margin: 0;">
                                             {% csrf_token %}
-                                            <button type="submit" class="delete-btn">{% trans "삭제" %}</button>
+                                            <button type="submit" class="delete-btn">
+                                                <i class="fas fa-trash"></i> {% trans "삭제" %}
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="8" class="empty-state">{% trans "저장된 음성이 없습니다." %}</td>
+                                <td colspan="7" class="empty-state">
+                                    <div style="padding: 20px;">
+                                        <div style="font-size: 3rem; margin-bottom: 15px;">🎤</div>
+                                        <div>{% trans "저장된 음성이 없습니다." %}</div>
+                                    </div>
+                                </td>
                             </tr>
                         {% endif %}
                     </tbody>
                 </table>
             </div>
 
-            <!-- 모바일 카드 뷰 -->
-            <div class="voice-card-container">
-                {% if voice_list %}
-                    {% for voice in voice_list %}
-                        <div class="voice-card">
-                            <div class="voice-card-header">
-                                <div class="voice-number">{{ forloop.counter }}</div>
-                                <div class="voice-date">{{ voice.created_at|date:"Y-m-d H:i" }}</div>
-                            </div>
-                            
-                            <div class="voice-info">
-                                <div class="voice-name">{{ voice.voice_name }}</div>
-                                <div class="voice-id" onclick="copyToClipboard('{{ voice.voice_id }}')">
-                                    {{ voice.voice_id }}
-                                    <span style="font-size: 0.7rem; opacity: 0.7; display: block; margin-top: 4px;">
-                                        {% trans "탭하여 복사" %}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            {% if voice.sample_url %}
-                                <div class="voice-audio">
-                                    <audio controls>
-                                        <source src="{{ voice.sample_url }}" type="audio/mpeg" />
-                                        {% trans "지원하지 않는 브라우저입니다." %}
-                                    </audio>
-                                </div>
-                            {% endif %}
-                            
-                            <div class="voice-actions">
-                                <button class="copy-btn" onclick="copyToClipboard('{{ voice.voice_id }}')">
-                                    📋 {% trans "ID 복사" %}
-                                </button>
-                                {% comment %}
-
-                                <!-- <form action="{% url 'mypage:toggle_voice_public' voice.id %}" method="post" style="margin: 0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="share_voice">
-                                        {% if voice.is_public %}
-                                            🔒 {% trans "공유 취소" %}
-                                        {% else %}
-                                            🌐 {% trans "공유하기" %}
-                                        {% endif %}
-                                    </button>
-                                </form> -->
-                                {% endcomment %}
-
-                                
-                                <form action="{% url 'mypage:my_voice_delete' voice.id %}" method="post" 
-                                      onsubmit="return confirm('{% trans '정말 삭제하시겠습니까?' %}')" 
-                                      style="margin: 0; grid-column: 1 / -1;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="delete-btn">
-                                        🗑️ {% trans "삭제하기" %}
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-card">
-                        <div class="empty-icon">🎤</div>
-                        <div class="empty-text">{% trans "저장된 음성이 없습니다." %}</div>
-                    </div>
-                {% endif %}
-            </div>
-
             <!-- 페이지네이션 -->
             {% if voice_list.has_other_pages %}
                 <div class="pagination">
                     {% if voice_list.has_previous %}
-                        <a href="?page={{ voice_list.previous_page_number }}">&laquo; {% trans "이전" %}</a>
+                        <a href="?page={{ voice_list.previous_page_number }}">
+                            <i class="fas fa-chevron-left"></i> {% trans "이전" %}
+                        </a>
                     {% else %}
-                        <span class="disabled">&laquo; {% trans "이전" %}</span>
+                        <span class="disabled">
+                            <i class="fas fa-chevron-left"></i> {% trans "이전" %}
+                        </span>
                     {% endif %}
 
                     {% for page_num in voice_list.paginator.page_range %}
@@ -216,19 +874,141 @@
                     {% endfor %}
 
                     {% if voice_list.has_next %}
-                        <a href="?page={{ voice_list.next_page_number }}">{% trans "다음" %} &raquo;</a>
+                        <a href="?page={{ voice_list.next_page_number }}">
+                            {% trans "다음" %} <i class="fas fa-chevron-right"></i>
+                        </a>
                     {% else %}
-                        <span class="disabled">{% trans "다음" %} &raquo;</span>
+                        <span class="disabled">
+                            {% trans "다음" %} <i class="fas fa-chevron-right"></i>
+                        </span>
                     {% endif %}
                 </div>
             {% endif %}
         </div>
     </div>
 
+    <script>
+        // 사이드바 토글
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
 
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
+        }
 
-    <script src="{% static 'js/mypage/my_voice.js' %}"></script>
-    <script src="{% static 'js/sidebar.js' %}"></script>
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
+        }
 
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // ESC 키로 사이드바 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+
+        // 클립보드에 복사
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast('✅ Voice ID가 복사되었습니다!');
+                }, function(err) {
+                    console.error('복사 실패:', err);
+                    fallbackCopyToClipboard(text);
+                });
+            } else {
+                fallbackCopyToClipboard(text);
+            }
+        }
+
+        // 대체 복사 방법
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.top = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('✅ Voice ID가 복사되었습니다!');
+                } else {
+                    showToast('❌ 복사에 실패했습니다.');
+                }
+            } catch (err) {
+                console.error('복사 실패:', err);
+                showToast('❌ 복사에 실패했습니다.');
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // 토스트 메시지 표시
+        function showToast(message) {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            // 새 토스트 생성
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(139, 92, 246, 0.95);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                animation: slideUp 0.3s ease-out;
+            `;
+
+            // 애니메이션 추가
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateX(-50%) translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(-50%) translateY(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            document.body.appendChild(toast);
+
+            // 3초 후 제거
+            setTimeout(() => {
+                toast.style.animation = 'slideUp 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 2700);
+        }
+    </script>
 </body>
 </html>

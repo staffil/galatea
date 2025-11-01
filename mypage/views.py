@@ -621,7 +621,7 @@ def my_ai_conversation_app(request, llm_id):
     return render(request, "mypage/app/my_ai_conversation_app.html", context)
 
 @login_required
-def my_voice(request):
+def my_voice_app(request):
     user = request.user
 
     voice_list = VoiceList.objects.filter(user=request.user).select_related("celebrity").order_by("-created_at")
@@ -636,11 +636,13 @@ def my_voice(request):
         "llm":llm
 
     }
-    return render(request, "mypage/my_voice.html",context)
+    return render(request, "mypage/app/my_voice_app.html",context)
+
+
 
 
 @login_required
-def my_voice_delete(request, voice_id):
+def my_voice_delete_app(request, voice_id):
 
     if request.method == 'POST':
         user = request.user
@@ -651,6 +653,74 @@ def my_voice_delete(request, voice_id):
         except VoiceList.DoesNotExist:
             messages.error(request, _("해당 보이스가 없습니다."))
         
-        return redirect('mypage:my_voice')
+        return redirect('mypage:my_voice_app')
             
+@csrf_exempt
+@login_required
+def my_ai_models_update_app(request, llm_id):
+    llm = get_object_or_404(LLM, id=llm_id)
 
+    if request.method == "POST":
+        user = request.user
+
+        name = request.POST.get("name", llm.name)
+        prompt = request.POST.get("prompt", llm.prompt)
+        model = request.POST.get("model", llm.model)
+        voice_id = request.POST.get("voice_id", llm.voice.voice_id if llm.voice else None)
+        stability = request.POST.get("stability")
+        speed = request.POST.get("speed")
+        style = request.POST.get("style")
+        language = request.POST.get("language", llm.language)
+        temperature = request.POST.get("temperature")
+
+        llm.name = name
+        llm.prompt = prompt
+        llm.model = model
+
+        if voice_id:
+            try:
+                voice = VoiceList.objects.filter(voice_id=voice_id).first()
+            except VoiceList.DoesNotExist:
+                voice = VoiceList.objects.create(user=request.user, voice_id=voice_id)
+            llm.voice = voice
+
+        if stability not in [None, ""]:
+            llm.stability = float(stability)
+
+        if speed not in [None, ""]:
+            llm.speed = float(speed)
+
+        if style not in [None, ""]:
+            llm.style = float(style)
+
+        if language:
+            llm.language = language
+
+        if temperature not in [None, ""]:
+            llm.temperature = float(temperature)
+
+        if 'llm_image' in request.FILES:
+            llm.llm_image = request.FILES['llm_image']
+
+        if len(prompt) > 700:
+            return JsonResponse({"error": _("현재 프롬프트 값이 700자가 넘었습니다.")}, status=400)
+
+        llm.update_at = timezone.now()
+        llm.save()
+
+        return JsonResponse({
+            "success": True, 
+            "message": "AI 설정이 수정되었습니다.",
+            "redirect_url": f"/mypage/my_ai_models_app/{llm.id}/"  # 필요시
+        })
+
+    voice_list = VoiceList.objects.filter(user=request.user).order_by('-created_at')
+    paginator = Paginator(voice_list, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'voice_list': page_obj,
+        "llm": llm
+    }
+    return render(request, "mypage/app/my_ai_models_update_app.html", context)
