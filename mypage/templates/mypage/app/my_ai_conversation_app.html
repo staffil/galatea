@@ -247,8 +247,6 @@
             border: 3px solid rgba(139, 92, 246, 0.5);
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
             margin-bottom: 15px;
-
-            
         }
 
         .sidebar-profile-section .no-image {
@@ -386,12 +384,12 @@
             font-size: 0.95rem;
         }
 
-        /* AI 선택 섹션 */
+        /* AI 선택 섹션 - 더 작게 */
         .ai-selector-section {
             background: rgba(26, 26, 46, 0.85);
             border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 24px;
-            padding: 30px 20px;
+            padding: 25px 20px;
             backdrop-filter: blur(20px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             margin-bottom: 30px;
@@ -399,23 +397,25 @@
         }
 
         .ai-selector-title {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #8b5cf6;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
+        /* AI 그리드 - 더 작게 */
         .ai-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
         }
 
+        /* AI 카드 - 더 작게 */
         .ai-card {
             background: rgba(139, 92, 246, 0.1);
             border: 2px solid rgba(139, 92, 246, 0.2);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 12px 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -431,20 +431,26 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
+        /* AI 아이콘 - 더 작게 */
         .ai-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
         }
 
+        /* AI 이름 - 더 작게 */
         .ai-name {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #ffffff;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
+        /* AI 카운트 - 더 작게 */
         .ai-count {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             color: #a0aec0;
         }
 
@@ -592,6 +598,12 @@
         }
 
         /* 반응형 */
+        @media (min-width: 480px) {
+            .ai-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+        }
+
         @media (min-width: 768px) {
             .menu-btn {
                 top: 85px;
@@ -611,7 +623,26 @@
             }
 
             .ai-grid {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 12px;
+            }
+
+            .ai-card {
+                padding: 15px 10px;
+            }
+
+            .ai-icon {
+                font-size: 2rem;
+                margin-bottom: 8px;
+            }
+
+            .ai-name {
+                font-size: 0.9rem;
+                margin-bottom: 5px;
+            }
+
+            .ai-count {
+                font-size: 0.75rem;
             }
 
             .sidebar {
@@ -688,7 +719,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- 사이드바 -->
-    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h2>{% trans '마이페이지' %}</h2>
             <button class="sidebar-close" id="sidebarClose">
@@ -866,7 +897,7 @@
                     <div class="ai-card" data-ai-id="${aiId}" onclick="selectAi(${aiId})">
                         <div class="ai-icon">🤖</div>
                         <div class="ai-name">${ai.name}</div>
-                        <div class="ai-count">${conversationCount}{% trans '개의 대화' %}</div>
+                        <div class="ai-count">${conversationCount}개</div>
                     </div>
                 `;
             }).join('');
