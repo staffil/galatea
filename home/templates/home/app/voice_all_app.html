@@ -5,13 +5,12 @@
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <title>{% trans "GALATEA - Voice Library" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/home/voice_all.css' %}">
-    <script src="{% static 'js/home/main.js' %}"></script>
-        <!-- Open Graph (SNS 공유용) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -31,22 +30,456 @@
 }
 </script>
 
-</head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<style>
-.refresh-btn {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.refresh-btn:hover {
-    background-color: #45a049;
-}
-</style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 배경 원형 효과 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 메인 컨텐츠 */
+        .cv-main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 100px 15px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 섹션 헤더 */
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cv-section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            color: #b8c5d1;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* 보이스 컨테이너 */
+        .cv-container {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        /* 보이스 그리드 */
+        .cv-scroll {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* 보이스 카드 */
+        .voice-wrapper {
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .voice-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+
+        /* 카드 헤더 */
+        .cv-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 캐릭터 이미지 */
+        .voice-character {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            cursor: pointer;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .voice-character:hover {
+            transform: scale(1.05);
+            border-color: #8b5cf6;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .voice-character img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 플레이 오버레이 */
+        .cv-play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .voice-character:hover .cv-play-overlay {
+            opacity: 1;
+        }
+
+        .cv-play-icon {
+            width: 0;
+            height: 0;
+            border-left: 20px solid #ffffff;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 5px;
+        }
+
+        .voice-character.playing .cv-play-icon {
+            width: 4px;
+            height: 24px;
+            border: none;
+            background: linear-gradient(90deg, #ffffff 0%, #ffffff 35%, transparent 35%, transparent 65%, #ffffff 65%, #ffffff 100%);
+            margin-left: 0;
+        }
+
+        /* 보이스 정보 */
+        .cv-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .cv-info p:first-child {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .cv-info p:last-child {
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+
+        /* 프로그레스 바 */
+        .voice-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 3px;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cv-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* 오디오 숨기기 */
+        .voice-audio {
+            display: none;
+        }
+
+        /* 저장 버튼 */
+        .copy-id-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-id-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .copy-id-btn:hover::before {
+            left: 100%;
+        }
+
+        .copy-id-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* 새로고침 버튼 */
+        .refresh-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.97);
+        }
+
+        .refresh-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .cv-main-content {
+                padding: 90px 15px 50px;
+            }
+
+            .cv-section-title {
+                font-size: 1.7rem;
+            }
+
+            .cv-scroll {
+                grid-template-columns: 1fr;
+            }
+
+            .cv-container {
+                padding: 25px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cv-main-content {
+                padding: 80px 10px 40px;
+            }
+
+            .cv-section-title {
+                font-size: 1.5rem;
+            }
+
+            .voice-wrapper {
+                padding: 18px;
+            }
+
+            .voice-character {
+                width: 70px;
+                height: 70px;
+            }
+
+            .cv-info p:first-child {
+                font-size: 1rem;
+            }
+
+            .copy-id-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .refresh-btn {
+                padding: 12px 28px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* Safe Area 대응 */
+        @supports (padding: max(0px)) {
+            .cv-main-content {
+                padding-top: max(100px, calc(100px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* 로딩 애니메이션 */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .voice-wrapper.loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
 
 <body>
     <!-- 헤더 -->
@@ -57,10 +490,23 @@
             {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
-    <!-- celebrity voice 목록 -->
+
+    <!-- 배경 원형 효과 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 보이스 라이브러리 -->
     <div class="cv-main-content">
-        <h2 class="cv-section-title">{% trans '이거 한번 사용해 보세요!' %}</h2>
-        <p>{% trans '🎶가 있는 목소리는 노래가 가능힙니다.' %}</p>
+        <div class="section-header">
+            <h2 class="cv-section-title">{% trans '보이스 라이브러리' %}</h2>
+            <p class="section-subtitle">
+                <i class="fas fa-music"></i>
+                {% trans '🎶가 있는 목소리는 노래가 가능합니다.' %}
+            </p>
+        </div>
         
         <div class="cv-container">
             <div class="cv-scroll">
@@ -69,11 +515,13 @@
                     <div class="cv-header">
                         <div class="voice-character" onclick="toggleAudio(this)" data-voice-id="{{ voice.id }}">
                             {% if voice.celebrity_voice_image %}
-                                <img src="{{ voice.celebrity_voice_image.url }}" alt="" loading="lazy">
+                                <img src="{{ voice.celebrity_voice_image.url }}" alt="{{ voice.name }}" loading="lazy">
                             {% else %}
-                                <img src="{% static 'images/default_voice.png' %}" alt="" loading="lazy">
+                                <img src="{% static 'images/default_voice.png' %}" alt="{{ voice.name }}" loading="lazy">
                             {% endif %}
-                            <div class="cv-play-overlay"><div class="cv-play-icon"></div></div>
+                            <div class="cv-play-overlay">
+                                <div class="cv-play-icon"></div>
+                            </div>
                         </div>
                         <div class="cv-info">
                             <p>{{ voice.name }}</p>
@@ -85,7 +533,7 @@
                         <div class="cv-progress-bar"></div>
                     </div>
                     <button class="copy-id-btn" onclick="saveVoice({{ voice.id }})" title="Voice ID 저장">
-                        {% trans '저장하기' %}
+                        <i class="fas fa-save"></i> {% trans '저장하기' %}
                     </button>
 
                     {% if voice.sample_url %}
@@ -96,55 +544,118 @@
                 </div>
                 {% endfor %}
             </div>
-            <div style="text-align:center; margin: 20px 0;">
-    <button onclick="refreshPage()" class="refresh-btn">{% trans '새로고침' %}</button>
-</div>
+
+            <div class="refresh-container">
+                <button onclick="refreshPage()" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    {% trans '새로고침' %}
+                </button>
+            </div>
         </div>
-
-
     </div>
 
     <script>
-       function refreshPage() {
-        window.location.reload();  // 현재 페이지 새로고침
-    }
-    function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // 쿠키 이름 확인
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+        function refreshPage() {
+            window.location.reload();
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 오디오 토글
+        function toggleAudio(element) {
+            const wrapper = element.closest('.voice-wrapper');
+            const audio = wrapper.querySelector('.voice-audio');
+            const progressBar = wrapper.querySelector('.cv-progress-bar');
+            
+            if (!audio) return;
+
+            // 다른 오디오 정지
+            document.querySelectorAll('.voice-audio').forEach(a => {
+                if (a !== audio && !a.paused) {
+                    a.pause();
+                    a.currentTime = 0;
+                    const otherCharacter = a.closest('.voice-wrapper').querySelector('.voice-character');
+                    otherCharacter.classList.remove('playing');
+                }
+            });
+
+            if (audio.paused) {
+                audio.play();
+                element.classList.add('playing');
+                
+                // 프로그레스 업데이트
+                audio.addEventListener('timeupdate', function() {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    progressBar.style.width = progress + '%';
+                });
+
+                audio.addEventListener('ended', function() {
+                    element.classList.remove('playing');
+                    progressBar.style.width = '0%';
+                });
+            } else {
+                audio.pause();
+                element.classList.remove('playing');
             }
         }
-    }
-    return cookieValue;
-}
+
+        // 오디오 시크
+        function seekAudio(event, progressElement) {
+            const wrapper = progressElement.closest('.voice-wrapper');
+            const audio = wrapper.querySelector('.voice-audio');
+            
+            if (!audio) return;
+
+            const rect = progressElement.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percentage = x / rect.width;
+            audio.currentTime = percentage * audio.duration;
+        }
 
         // 목소리 저장하기
-function saveVoice(celebrityId){
-    fetch("{% url 'home:save_voice' %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie('csrftoken') // CSRF 처리
-        },
-        body: JSON.stringify({ "celebrity_id": celebrityId })
-    })
-    .then(res => res.json())
-    .then(data=>{
-        if (data.status === "ok") {
-            alert("보이스가 저장되었습니다!");
-        } else {
-            alert(data.error);
+        function saveVoice(celebrityId) {
+            fetch("{% url 'home:save_voice' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie('csrftoken')
+                },
+                body: JSON.stringify({ "celebrity_id": celebrityId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    alert("✅ 보이스가 저장되었습니다!");
+                } else {
+                    alert("❌ " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("❌ 저장 중 오류가 발생했습니다.");
+            });
         }
-    })
-    .catch(error => console.error("Error:", error));
-}
 
+        // 페이지 로드 시 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.voice-wrapper');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.05}s`;
+            });
+        });
     </script>
 </body>
 </html>
