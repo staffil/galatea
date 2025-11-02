@@ -170,3 +170,163 @@ def prompt_share_update(request, prompt_id):
         form = PromptForm(instance=prompt)
 
     return render(request, "helpdesk/prompt_share_update.html", {"form": form, "prompt": prompt})
+
+
+
+#ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+# 앱 전용
+
+def faq_app(request):
+    faq_list = Faq.objects.all()
+    return render (request, "helpdesk/app/faq_app.html", {"faq_list": faq_list})
+
+
+@login_required(login_url="register/login_app/")
+def request_app(request):
+    request_list = Requests.objects.all().order_by('-created_at')
+    return render(request, "helpdesk/app/request_app.html", {'request_list': request_list})
+
+@login_required(login_url="register/login_app/")
+def request_write_app(request):
+    if request.method == "POST":
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            req = form.save(commit=False)
+            if request.user.is_authenticated:
+                req.user = request.user
+            req.save()
+            messages.success(request, _("요청이 정상적으로 제출되었습니다."))
+            return redirect('helpdesk:request_app')
+    else:
+        form = RequestForm()
+    return render(request, "helpdesk/app/request_write_app.html", {'form':form})
+
+
+
+@login_required
+def request_detail_app(request, pk):
+    request_board = get_object_or_404(Requests, id=pk)
+
+    # 비밀글 권한 체크
+    if request_board.is_secret and not (request.user.is_superuser or request.user == request_board.user):
+        messages.error(request, _("이 글에 접근할 권한이 없습니다."))
+        return redirect('helpdesk:request_app')
+
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            form = ResponseForm(request.POST, instance=request_board)
+            if form.is_valid():
+                form.save()
+                messages.success(request, _("응답이 저장되었습니다."))
+                return redirect('helpdesk:request_detail_app', pk=pk)
+        else:
+            form = ResponseForm(instance=request_board)
+    else:
+        form = None
+
+    return render(request, 'helpdesk/app/request_detail_app.html', {
+        'request_list': request_board,
+        'response_form': form
+    })
+
+@login_required
+def request_delete_app(request, pk):
+    request_form = get_object_or_404(Requests, id = pk)
+    if request.user != request_form.user:
+        messages.error(request, _("수정 권한이 없습니다."))
+        return redirect('helpdesk:request_app', pk=pk)
+    request_form.delete()
+    messages.success(request, _("요청사항이 삭제 되었습니다"))
+    return redirect("helpdesk:request_app")
+
+
+from user_auth.models import Notice
+
+def notice_app(request):
+    notice = Notice.objects.order_by("-created_at")
+
+    context= {
+        "notice_list" : notice
+    }
+
+
+    return render(request, "helpdesk/app/notice_app.html", context)
+
+
+def notice_detail_app(request, notice_id):
+    notice = get_object_or_404(Notice, id=notice_id)
+    context= {
+        "notice": notice
+    }
+
+
+    return render (request,"helpdesk/app/notice_detail_app.html", context)
+
+from customer_ai.models import Prompt
+@login_required
+def prompt_share_app(request):
+    prompt = Prompt.objects.order_by("-created_at")
+    context = {
+        "prompt_list": prompt
+    }
+
+    return render(request, "helpdesk/app/prompt_share_app.html", context)
+
+from helpdesk.forms import PromptForm
+
+@login_required
+def prompt_share_write_app(request):
+    if request.method == "POST":
+        form = PromptForm(request.POST)
+        if form.is_valid():
+            prompt_instance = form.save(commit=False)
+            prompt_instance.user = request.user
+            prompt_instance.save()
+            return redirect('helpdesk:prompt_share_app')
+    else:  # GET 요청 시
+        form = PromptForm()
+
+    # POST 실패(is_valid=False)도 여기서 처리
+    return render(request, "helpdesk/app/prompt_share_write_app.html", {"form": form})
+
+@login_required
+def prompt_share_detail_app(request, prompt_id):
+    prompt = get_object_or_404(Prompt, id=prompt_id)
+
+    context = {
+        "prompt": prompt
+    }
+    return render(request, "helpdesk/app/prompt_share_detail_app.html", context)
+
+
+@login_required
+def prompt_share_delete_app(request, prompt_id):
+    prompt = get_object_or_404(Prompt ,id=prompt_id)
+
+    if request.user != prompt.user:
+        messages.error(request, _("삭제 권한이 없습니다."))
+        return redirect('helpdesk:prompt_share_detail_app', prompt_id=prompt.id)
+    prompt.delete()
+    messages.success(request, _("프롬프트가 삭제 되었습니다."))
+    return redirect("helpdesk:prompt_share_app")
+
+
+@login_required
+def prompt_share_update_app(request, prompt_id):
+    prompt = get_object_or_404(Prompt, id= prompt_id)
+
+    if request.user != prompt.user:
+        messages.error(request, _("수정 권한이 없습니다."))
+        return redirect('helpdesk:prompt_share_detail_app', prompt_id=prompt.id)
+    
+    if request.method =="POST":
+        form = PromptForm(request.POST , instance=prompt)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("프롬프트가 수정되었습니다."))
+            return redirect('helpdesk:prompt_share_detail_app', prompt_id=prompt.id)
+        
+    else:
+        form = PromptForm(instance=prompt)
+
+    return render(request, "helpdesk/app/prompt_share_update_app.html", {"form": form, "prompt": prompt})

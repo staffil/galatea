@@ -1,0 +1,97 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "프롬프트 공유하기" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/helpdesk/prompt_share.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+
+<body>
+
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/app/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/app/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+<main class="prompt-share-page">
+
+    <div class="page-header">
+        <h1 class="page-title">{% trans "프롬프트 공유하기" %}</h1>
+        <p class="page-description">{% trans "좋은 프롬프트를 다른 사람과 공유해 보세요!" %}</p>
+    </div>
+
+    <div class="prompt-write-section">
+        <a href="{% url 'helpdesk:prompt_share_write_app' %}" class="prompt-write-button">
+            <span class="write-button-icon">✨</span>
+            <span class="write-button-text">{% trans "프롬프트 쓰기" %}</span>
+        </a>
+    </div>
+
+    <div class="prompt-grid">
+        {% for prompt in prompt_list %}
+        <a href="{% url 'helpdesk:prompt_share_detail_app' prompt.id%}">
+        <div class="prompt-card">
+            <div class="prompt-header">
+                <div class="prompt-author">
+                    <div class="author-avatar">
+                        {{ prompt.user.username|first }}
+                    </div>
+                    <div class="author-info">
+                        <h3 class="author-name">{{ prompt.user.username }}</h3>
+                        <p class="author-role">{{ prompt.created_at }}</p>
+                    </div>
+                </div>
+                <span class="prompt-type-badge">{{ prompt.prompt_type }}</span>
+            </div>
+            
+            <h2 class="prompt-title">{{ prompt.prompt_title }}</h2>
+            
+            <p class="prompt-preview">
+                {{ prompt.prompt_content|default:_("이 프롬프트에 대한 미리보기가 제공되지 않습니다. 클릭해서 전체 내용을 확인해보세요!")|truncatechars:120 }}
+            </p>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">💡</div>
+            <h2 class="empty-title">{% trans "아직 공유된 프롬프트가 없습니다" %}</h2>
+            <p class="empty-description">{% trans "첫 번째 프롬프트를 공유해보세요!" %}</p>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+</main>
+
+<script src="{% static 'js/helpdesk/prompt_share.js' %}">
+
+</script>
+
+</body>
+</html>

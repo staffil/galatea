@@ -1,0 +1,64 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "요청하기 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/faq.css' %}">
+    <link rel="stylesheet" href="{% static 'css/helpdesk/request_write.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+
+</head>
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/app/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/app/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <main class="request-list">
+        <!-- 기존 요청 리스트 -->
+        {% for faq in faq_list %}
+        <div class="request-card">
+            <a href="#" class="request-title">{{ faq.title }}</a>
+            <div class="request-meta">{{ faq.created_at|date:"Y-m-d H:i" }}</div>
+        </div>
+        {% endfor %}
+
+        <!-- 요청 작성 폼 -->
+        <form method="post" class="request-form">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="제목" class="form-input" required>
+            <textarea name="content" placeholder="내용" class="form-textarea" required></textarea>
+            <label class="form-checkbox">
+                <input type="checkbox" name="is_secret"> 비밀글
+            </label>
+            <button type="submit" class="submit-btn">작성</button>
+        </form>
+    </main>
+</body>
+</html>
