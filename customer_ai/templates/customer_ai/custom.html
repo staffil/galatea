@@ -65,50 +65,6 @@
   40% { transform: scale(1); }
 }
 
-
-.eye {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  border-radius: 50%;
-  top: 60px;
-  box-shadow: inset -3px -3px 5px rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-
-.pupil {
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle at 30% 30%, #000, #111);
-  border-radius: 50%;
-  position: relative;
-  top: 15px;
-  left: 15px;
-  transition: all 0.2s ease;
-}
-
-
-
-.mouth {
-  position: absolute;
-  bottom: 50px;
-  left: 50%;
-  transform: translateX(-50%) scaleY(0.3);
-  width: 100px;
-  height: 50px;
-  background: #ff7f7f;
-  border-radius: 50% / 100%;
-  transition: all 0.05s linear;
-  box-shadow: inset 0 4px 6px rgba(0,0,0,0.2);
-}
-
-/* 눈 깜빡임 */
-.blink {
-  height: 8px !important;
-  transition: height 0.1s;
-}
-
 </style>
 
 <body>
@@ -165,11 +121,6 @@
                 {% endif %}
                 
             </div>
-<div class="ai-face">
-  <div class="eye left-eye"><div class="pupil"></div></div>
-  <div class="eye right-eye"><div class="pupil"></div></div>
-  <div class="mouth"></div>
-</div>
 
             <!-- Chat Messages -->
             <div class="chat-messages" id="message-area">
