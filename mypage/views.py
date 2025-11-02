@@ -724,3 +724,214 @@ def my_ai_models_update_app(request, llm_id):
         "llm": llm
     }
     return render(request, "mypage/app/my_ai_models_update_app.html", context)
+
+
+
+@login_required
+def follow_list_app(request):
+    user = request.user
+    following_list = Follow.objects.filter(follower=user).select_related("following")
+
+    follower_list = Follow.objects.filter(following=user).select_related("follower")
+
+    following_ids = set(user.following_set.values_list('following_id', flat=True))
+    follower_ids = set(user.follower_set.values_list('follower_id', flat=True))  
+
+    llm = LLM.objects.filter(user=user).first()
+
+
+    context = {
+        "following_list":following_list,
+        "follower_list":follower_list,
+        "following_ids":following_ids,
+        "follower_ids":follower_ids,
+        "llm":llm
+
+    }
+    return render(request, "mypage/app/follow_list_app.html", context)
+
+
+
+from django.utils import timezone
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+
+@login_required
+def my_coupon_app(request):
+    user = request.user
+    llm = LLM.objects.filter(user=user).first()
+
+    if request.method == "POST":
+        input_code = request.POST.get("invite_code", "").strip()
+
+        try:
+            referral = Referral.objects.get(code=input_code, is_active=True)
+        except Referral.DoesNotExist:
+            messages.error(request, "유효하지 않거나 이미 사용된 코드입니다.")
+            return redirect("mypage:my_coupon_app")
+
+        if Referral.objects.filter(invitee=user).exists():
+            messages.error(request, "이미 다른 초대 코드를 사용했습니다.")
+            return redirect("mypage:my_coupon_app")
+
+        # Referral 업데이트
+        referral.invitee = user
+        referral.is_active = False
+        referral.save()
+
+        # 1️⃣ 초대받은 사람(B)에게 토큰 충전
+        token_b, _ = Token.objects.get_or_create(user=user)
+        token_b.total_token += 0  # 충전량
+        token_b.save()
+
+        TokenHistory.objects.create(
+            user=user,
+            change_type=TokenHistory.CHARGE,
+            amount=100
+        )
+
+        # 2️⃣ 초대한 사람(A)에게 토큰 충전
+        token_a, _ = Token.objects.get_or_create(user=referral.inviter)
+        token_a.total_token += 100
+        token_a.save()
+
+
+        messages.success(request, "초대 코드가 적용되었습니다! 토큰이 지급되었습니다.")
+        return redirect("mypage:my_coupon_app")
+
+    # GET 요청: 토큰 내역 보여주기
+    user_tokens = TokenHistory.objects.filter(user=user).order_by('-created_at')
+    context = {
+        "user_tokens": user_tokens,
+        "token_obj": Token.objects.filter(user=user).first(),
+        "llm":llm
+
+    }
+    return render(request, "mypage/app/my_coupon_app.html", context)
+
+@login_required
+def token_less_app(request):
+    consume = TokenHistory.objects.filter(
+        user=request.user,
+        change_type=TokenHistory.CONSUME
+    ).order_by("-created_at")
+
+    # ✅ 페이지네이션 추가 (페이지당 10개씩)
+    paginator = Paginator(consume, 10)  
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "mypage/app/token_less_app.html", {
+        "consume_history": page_obj,  # page_obj 넘김
+    })
+
+@login_required
+def personal_profile_app(request):
+    user = request.user
+    llm_list = LLM.objects.filter(user= user, is_public=True)
+    prompt_list = Prompt.objects.filter(user= user)
+    voice_list = VoiceList.objects.filter(user=user, is_public=True)
+    llm = LLM.objects.filter(user=request.user).first()
+
+    llm_paginator = Paginator(llm_list, 3)
+    llm_page_number = request.GET.get('llm_page')
+    llm_page_obj = llm_paginator.get_page(llm_page_number)
+
+    voice_paginator = Paginator(voice_list, 3)
+    voice_page_number = request.GET.get('voice_page')
+    voice_page_obj = voice_paginator.get_page(voice_page_number)
+
+    prompt_paginator = Paginator(prompt_list, 3)
+    prompt_page_number = request.GET.get('prompt_page')
+    prompt_page_obj = prompt_paginator.get_page(prompt_page_number)
+
+    context ={
+        "llm_list": llm_page_obj,
+        "prompt_list": prompt_page_obj,
+        "voice_list": voice_page_obj,
+        "llm":llm,
+  
+    }
+    return render(request, "mypage/app/personal_profile_app.html", context)
+
+@login_required
+def my_request_app(request):
+    if request.user:
+        request_list = Requests.objects.filter(user=request.user)
+        llm = LLM.objects.filter(user=request.user).first()
+        
+
+        context = {
+            "request_list": request_list,
+            "llm": llm
+        }
+
+        
+    return render(request, "mypage/app/my_request_app.html", context)
+
+
+
+@login_required
+def llm_like_app(request):
+    user = request.user
+    liked_llms = (
+        LlmLike.objects.filter(user=user, is_like=True)
+        .select_related("llm")
+        .prefetch_related("llm__genres")
+    )
+    llms = [rel.llm for rel in liked_llms]  
+
+    language = get_language()
+    for l in llms:  # 좋아요한 LLM만 돌면 됨
+        for g in l.genres.all():
+            name_field = f"name_{language}"
+            g.display_name = getattr(g, name_field, g.name)
+
+    llm = LLM.objects.filter(user=user).first()
+
+
+    context = {
+        "liked_list": llms,
+        "languages": settings.LANGUAGES,
+        "llm":llm
+    }
+    return render(request, "mypage/app/llm_like_app.html", context)
+
+
+@login_required
+def token_app(request):
+    user = request.user
+
+    # 유저 토큰 정보 가져오기
+    token = Token.objects.filter(user=user).first()
+
+    remaining = token.remaining_tokens() if token else 0
+    total = token.total_token if token else 0
+    used = token.token_usage if token else 0
+
+    # 결제 내역
+    payments = Payment.objects.filter(user=user).order_by('-paid_at')
+
+    # LLM 정보
+    llm = LLM.objects.filter(user=user).first()
+
+    usage_percent = 0
+    if token and token.total_token > 0:
+        usage_percent = (token.token_usage / token.total_token) * 100
+
+
+    context = {
+        'remaining': remaining,
+        'total': total,
+        'used': used,
+        'payments': payments,
+        'llm': llm,
+        'usage_percent': usage_percent,
+
+
+    }
+
+    return render(request, 'mypage/app/token_app.html', context)

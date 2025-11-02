@@ -4,21 +4,17 @@
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% trans "좋아한 AI - GALATEA" %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/mypage/llm_like.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    <!-- Open Graph (SNS 공유용) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <title>{% trans "좋아하는 AI" %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
-
-    <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+    <meta name="description" content="GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다." />
 
     <script type="application/ld+json">
 {
@@ -30,175 +26,885 @@
 }
 </script>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* 메시지 컨테이너 */
+        .message-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .alert {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-left: 4px solid #8b5cf6;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(20px);
+            font-weight: 500;
+            color: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert.success {
+            border-left-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        .alert.error {
+            border-left-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .page-header::before {
+            content: '💜';
+            display: block;
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* AI 카드 그리드 */
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            animation: fadeInUp 0.6s ease-out 0.2s backwards;
+        }
+
+        .ai-card {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4, #10b981);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+
+        .ai-card:hover::before {
+            opacity: 1;
+        }
+
+        .ai-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .ai-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .ai-avatar-placeholder {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #8b5cf6;
+            font-weight: 700;
+        }
+
+        .ai-info {
+            flex: 1;
+        }
+
+        .ai-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .ai-creator {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .ai-creator i {
+            margin-right: 5px;
+            color: #8b5cf6;
+        }
+
+        .ai-description {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .ai-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ai-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .ai-stat i {
+            color: #8b5cf6;
+        }
+
+        .ai-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .btn-secondary:active {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .empty-state::before {
+            content: '💔';
+            display: block;
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        .empty-state .btn {
+            display: inline-flex;
+            max-width: 300px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .message-container {
+                top: 100px;
+                right: 30px;
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+
+            .ai-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .message-container {
+                left: 15px;
+                right: 15px;
+                max-width: none;
+            }
+
+            .ai-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 
-      
 <header>
     {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
+        {% include "common/app/notLoginHeader.html" %}
     {% else %}
-        {% include "common/loginHeader.html" %}
+        {% include "common/app/loginHeader.html" %}
     {% endif %}
 </header>
-    <!-- 배경 원형 효과 -->
+
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- 햄버거 메뉴 버튼 -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
     </button>
 
-    <!-- 사이드바 오버레이 -->
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    {% include "common/sidebar.html" %}
+    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
+    </div>
+
+    <!-- 메시지 표시 -->
+    {% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="main-content">
-        <!-- 좋아한 AI 섹션 -->
-        <div class="section">
-            <h2 class="section-title">{% trans "좋아한 AI" %}</h2>
-            <div id="liked-container">
-                {% for item in liked_list %}
-                <div class="llm-card" onclick="openModal({{ item.id }})">
-                    <div class="llm-card-body">
-                        <div class="llm-image-container">
-                            {% if item.llm_image %}
-                                <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
-                            {% else %}
-                                <img src="https://via.placeholder.com/80x80/8b5cf6/FFFFFF?text=AI" alt="{% trans '기본 이미지' %}">
-                            {% endif %}
-                        </div>
-                        <div class="llm-info">
-                            <div class="llm-name">{{ item.title }}</div>
-                            <div class="genre-tags">
-                                {% for genre in item.genres.all %}
-                                    <div class="genre-tag" style="background-color: {{ genre.color }};">
-                                        {{ genre.display_name }}
-                                    </div>
-                                {% empty %}
-                                    <div class="genre-tag" style="background-color: #999;">{% trans "장르 없음" %}</div>
-                                {% endfor %}
-                            </div>
+        <div class="page-header">
+            <h1 class="page-title">{% trans "좋아하는 AI" %}</h1>
+            <p class="page-subtitle">
+                {% trans "마음에 드는 AI들을 모아보세요!" %}
+            </p>
+        </div>
+
+        {% if liked_ais %}
+        <div class="ai-grid">
+            {% for ai in liked_ais %}
+            <div class="ai-card">
+                <div class="ai-card-header">
+                    {% if ai.llm_image %}
+                        <img src="{{ ai.llm_image.url }}" alt="{{ ai.llm_name }}" class="ai-avatar">
+                    {% else %}
+                        <div class="ai-avatar-placeholder">{{ ai.llm_name|first|default:"AI" }}</div>
+                    {% endif %}
+                    <div class="ai-info">
+                        <div class="ai-name">{{ ai.llm_name }}</div>
+                        <div class="ai-creator">
+                            <i class="fas fa-user"></i>
+                            {{ ai.user.nickname|default:"익명" }}
                         </div>
                     </div>
                 </div>
-                {% empty %}
-                <div class="empty-state">{% trans "좋아한 AI가 없습니다" %}</div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
 
-    <script src="{% static 'js/sidebar.js' %}"></script>
-    <script>
-        // LLM 모달
-        function openModal(llm_id) {
-            const modalHTML = `
-            <div id="llm-modal">
-                <div class="modal-overlay" onclick="closeModal()"></div>
-                <div class="modal-content">
-                    <button class="close-btn" onclick="closeModal()">×</button>
-                    <div id="llm-container" class="llm-container"></div>
+                <div class="ai-description">
+                    {{ ai.description|default:"설명이 없습니다." }}
+                </div>
+
+                <div class="ai-stats">
+                    <div class="ai-stat">
+                        <i class="fas fa-heart"></i>
+                        <span>{{ ai.like_count|default:"0" }}</span>
+                    </div>
+                    <div class="ai-stat">
+                        <i class="fas fa-comment"></i>
+                        <span>{{ ai.chat_count|default:"0" }}</span>
+                    </div>
+                </div>
+
+                <div class="ai-actions">
+                    <a href="{% url 'chat:chat_app' ai.id %}" class="btn btn-primary">
+                        <i class="fas fa-comments"></i>
+                        {% trans "대화하기" %}
+                    </a>
+                    <form method="post" action="{% url 'mypage:llm_unlike' ai.id %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary" style="width: 100%;">
+                            <i class="fas fa-heart-broken"></i>
+                            {% trans "취소" %}
+                        </button>
+                    </form>
                 </div>
             </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            document.body.style.overflow = "hidden";
-            document.documentElement.style.overflow = "hidden";
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <h3>{% trans "좋아하는 AI가 없습니다" %}</h3>
+            <p>{% trans "마음에 드는 AI를 찾아 하트를 눌러보세요!" %}</p>
+            <a href="{% url 'home:main_app' %}" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+                {% trans "AI 둘러보기" %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
 
-            const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}";
-            fetch(`/{% get_current_language as LANGUAGE_CODE %}intro/${llm_id}`)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('llm-container').innerHTML = html;
-                });
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
+
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
         }
 
-        function closeModal() {
-            const modal = document.getElementById('llm-modal');
-            if (modal) modal.remove();
-            document.body.style.overflow = "auto";
-            document.documentElement.style.overflow = "auto";
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
         }
 
-        // ESC 키로 모달 닫기
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
             }
         });
 
-        // like btn
-document.addEventListener('click', (e)=>{
-    const likeBtn = e.target.closest('.glt2-like-btn');
-    if (!likeBtn) return;
+        // 메시지 자동 사라짐
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            });
+        }, 4000);
 
-    const userId = likeBtn.dataset.id;
-
-    fetch("{% url 'home:like_toggle' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `llm_id=${userId}`
-    })
-    .then(response => response.json())
-    .then(data=>{
-        if (data.status === 'like'){
-            likeBtn.innerHTML  = '<span class="heart-filled"></span>';
-        } else if(data.status === 'unlike'){
-            likeBtn.innerHTML  = '<span class="heart-empty"></span>';
-        } else{
-            alert(data.message)
-        }
- 
-
-            
-
-
-    })
-    .catch(err => console.error('{% trans "좋아요 토글 오류:" %}', err))
-})
-
-//팔로우 토글
-document.addEventListener('click', (e) => {
-    const followBtn = e.target.closest('.glt2-follow-btn');
-    if (!followBtn) return;
-
-    const userId = followBtn.dataset.id;
-    if (!userId) return;
-
-    fetch("{% url 'home:toggle_follow' %}", {
-        method: "POST",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `user_id=${encodeURIComponent(userId)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'follow') {
-            followBtn.textContent = '{% trans "Following" %}';
-            followBtn.classList.add('following');
-        } else if (data.status === 'unfollow') {
-            followBtn.textContent = '{% trans "Follow" %}';
-            followBtn.classList.remove('following');
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
-});
-  
+        // 좋아요 취소 확인
+        document.querySelectorAll('.btn-secondary').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if (!confirm('{% trans "정말로 좋아요를 취소하시겠습니까?" %}')) {
+                    e.preventDefault();
+                }
+            });
+        });
     </script>
 </body>
 </html>

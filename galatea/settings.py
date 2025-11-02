@@ -179,7 +179,7 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 # 세션 / 캐시
-SESSION_COOKIE_AGE = 3600
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 14
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # 브라우저 닫아도 세션 유지 (선택사항)

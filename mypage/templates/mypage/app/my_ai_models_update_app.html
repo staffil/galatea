@@ -344,25 +344,22 @@
         }
 
         /* 메인 컨텐츠 */
-        .main-content {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            padding: 140px 15px 60px;
-        }
+.main-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 140px 15px 60px;
+    /* max-width 제거! */
+}
 
-        /* 폼 컨테이너 */
-        #ai-update-form {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
+#ai-update-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    max-width: 1000px;  /* AI 모델 페이지와 동일 */
+    margin: 0 auto;
+}
 
-        .container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-        }
 
 .left-panel, .right-panel, .voice-panel {
     background: rgba(26, 26, 46, 0.85);
@@ -372,6 +369,7 @@
     backdrop-filter: blur(20px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     animation: fadeInUp 0.6s ease-out;
+    width: 100%;
 }
 
         @keyframes fadeInUp {
@@ -784,9 +782,9 @@
   
 <header>
     {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
+        {% include "common/app/notLoginHeader.html" %}
     {% else %}
-        {% include "common/loginHeader.html" %}
+        {% include "common/app/loginHeader.html" %}
     {% endif %}
 </header>
 
@@ -806,7 +804,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- 사이드바 -->
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
         <div class="sidebar-header">
             <h2>{% trans '마이페이지' %}</h2>
             <button class="sidebar-close" id="sidebarClose">
@@ -840,14 +838,14 @@
                 <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
             {% endif %}
             
-            <li><a href="{% url 'mypage:my_voice' %}">{% trans 'Voice ID 목록' %}</a></li>
-            <li><a href="{% url 'mypage:personal_profile' %}">{% trans '당신의 프로필 내역' %}</a></li>
-            <li><a href="{% url 'mypage:llm_like' %}">{% trans '좋아하는 AI' %}</a></li>
-            <li><a href="{% url 'mypage:follow_list' %}">{% trans '팔로우 목록' %}</a></li>
-            <li><a href="{% url 'mypage:token' %}">{% trans '토큰 내역' %}</a></li>
-            <li><a href="{% url 'mypage:token_less' %}">{% trans '토큰 차감 내역' %}</a></li>
-            <li><a href="{% url 'mypage:my_request' %}">{% trans '요청 글 목록' %}</a></li>
-            <li><a href="{% url 'mypage:my_coupon' %}">{% trans '친구 초대 코드받기' %}</a></li>
+            <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
         </ul>
     </div>
 
