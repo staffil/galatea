@@ -550,7 +550,7 @@ def sidebar_app(request):
     return render(request, "mypage/app/sidebar_app.html")
 
 
-@login_required(login_url='/register/login/')
+@login_required(login_url='/register/login_app/')
 def mypage_app(request):
     user = request.user  
     llm = LLM.objects.filter(user=user).first()
@@ -563,7 +563,7 @@ def mypage_app(request):
 
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def mypage_update_app(request):
     user = request.user
 
@@ -596,7 +596,7 @@ def mypage_update_app(request):
     }
     return render(request, 'mypage/app/mypage_update_app.html', context)
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def my_ai_models_app(request, llm_id):
     user = request.user
     llm_list = LLM.objects.filter(user=user).select_related('voice')
@@ -609,7 +609,7 @@ def my_ai_models_app(request, llm_id):
 
 
 from customer_ai.models import Conversation, Prompt
-@login_required
+@login_required(login_url='/register/login_app/')
 def my_ai_conversation_app(request, llm_id):
     user = request.user
     llm_list = Conversation.objects.filter(user=user)
@@ -620,7 +620,7 @@ def my_ai_conversation_app(request, llm_id):
     }
     return render(request, "mypage/app/my_ai_conversation_app.html", context)
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def my_voice_app(request):
     user = request.user
 
@@ -641,7 +641,7 @@ def my_voice_app(request):
 
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def my_voice_delete_app(request, voice_id):
 
     if request.method == 'POST':
@@ -656,7 +656,7 @@ def my_voice_delete_app(request, voice_id):
         return redirect('mypage:my_voice_app')
             
 @csrf_exempt
-@login_required
+@login_required(login_url='/register/login_app/')
 def my_ai_models_update_app(request, llm_id):
     llm = get_object_or_404(LLM, id=llm_id)
 
@@ -727,7 +727,7 @@ def my_ai_models_update_app(request, llm_id):
 
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def follow_list_app(request):
     user = request.user
     following_list = Follow.objects.filter(follower=user).select_related("following")
@@ -759,7 +759,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils import timezone
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def my_coupon_app(request):
     user = request.user
     llm = LLM.objects.filter(user=user).first()
@@ -812,7 +812,7 @@ def my_coupon_app(request):
     }
     return render(request, "mypage/app/my_coupon_app.html", context)
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def token_less_app(request):
     consume = TokenHistory.objects.filter(
         user=request.user,
@@ -828,7 +828,7 @@ def token_less_app(request):
         "consume_history": page_obj,  # page_obj 넘김
     })
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def personal_profile_app(request):
     user = request.user
     llm_list = LLM.objects.filter(user= user, is_public=True)
@@ -857,7 +857,7 @@ def personal_profile_app(request):
     }
     return render(request, "mypage/app/personal_profile_app.html", context)
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def my_request_app(request):
     if request.user:
         request_list = Requests.objects.filter(user=request.user)
@@ -874,7 +874,7 @@ def my_request_app(request):
 
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def llm_like_app(request):
     user = request.user
     liked_llms = (
@@ -901,7 +901,7 @@ def llm_like_app(request):
     return render(request, "mypage/app/llm_like_app.html", context)
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def token_app(request):
     user = request.user
 

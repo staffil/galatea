@@ -745,7 +745,7 @@ def genres_detail_app(request, genres_id):
 
 from django.utils import timezone
 from user_auth.models import Referral, Coupon
-@login_required
+@login_required(login_url='/register/login_app/')
 def invite_app(request):
     gift_list = Gift.objects.all()
 
@@ -783,7 +783,7 @@ def logout_app(request):
     return redirect('register:login_app') 
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def voice_all_app(request):
     voice = CelebrityVoice.objects.all().order_by("?")
     context = {
