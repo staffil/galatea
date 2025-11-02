@@ -1,23 +1,20 @@
 {% load i18n static %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#8b5cf6">
-    <title>{% trans "마이페이지 - GALATEA" %}</title>
-    <link rel="stylesheet" href="{% static 'css/mypage/my_voice.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/mypage/token.css' %}">
-    <!-- Open Graph (SNS 공유용) -->
+    <title>{% trans "토큰 관리" %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
-
-    <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+    <meta name="description" content="GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다." />
 
     <script type="application/ld+json">
 {
@@ -29,38 +26,694 @@
 }
 </script>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 토큰 요약 섹션 */
+        .token-summary {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .token-summary h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .token-stats {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .token-card {
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .token-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.4);
+            background: rgba(139, 92, 246, 0.08);
+        }
+
+        .token-card.total {
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .token-card.used {
+            border-left: 4px solid #f87171;
+        }
+
+        .token-card.remaining {
+            border-left: 4px solid #10b981;
+        }
+
+        .token-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .token-card.total .token-icon {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1));
+        }
+
+        .token-card.total .token-icon::before {
+            content: '💎';
+        }
+
+        .token-card.used .token-icon {
+            background: linear-gradient(135deg, rgba(248, 113, 113, 0.2), rgba(248, 113, 113, 0.1));
+        }
+
+        .token-card.used .token-icon::before {
+            content: '📉';
+        }
+
+        .token-card.remaining .token-icon {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+        }
+
+        .token-card.remaining .token-icon::before {
+            content: '✨';
+        }
+
+        .token-info {
+            flex: 1;
+        }
+
+        .token-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .token-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .token-description {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* 진행률 바 */
+        .token-progress {
+            position: relative;
+            height: 40px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .token-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-radius: 20px;
+            transition: width 1s ease-out;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .token-progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        /* 결제 섹션 */
+        .payment-section {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.7s ease-out;
+        }
+
+        .payment-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .payment-table thead {
+            background: rgba(139, 92, 246, 0.2);
+        }
+
+        .payment-table th {
+            padding: 14px 12px;
+            text-align: center;
+            font-weight: 700;
+            color: #8b5cf6;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .payment-table td {
+            padding: 14px 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .payment-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .payment-table tbody tr:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .payment-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .token-summary, .payment-section {
+                padding: 40px 35px;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .token-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 
-    <header>
+<header>
     {% if not user.is_authenticated %}
-        {% include "common/notLoginHeader.html" %}
+        {% include "common/app/notLoginHeader.html" %}
     {% else %}
-        {% include "common/loginHeader.html" %}
+        {% include "common/app/loginHeader.html" %}
     {% endif %}
 </header>
 
-    <!-- 배경 원형 효과 -->
-    <div class="circle-bg"></div>
-    <div class="circle-bg"></div>
-    <div class="circle-bg"></div>
-  <!-- 햄버거 메뉴 버튼 -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-    <!-- 사이드바 오버레이 -->
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
 
-    {% include "common/sidebar.html" %}
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
+    </div>
+
     <div class="main-content">
         <div class="page-header">
-            <h1 class="page-title">{% trans "토큰 관리" %}</h1>
+            <h1 class="page-title"><i class="fas fa-coins"></i> {% trans "토큰 관리" %}</h1>
         </div>
 
         <div class="token-summary">
-            <h2>{% trans "토큰 요약" %}</h2>
+            <h2><i class="fas fa-chart-pie"></i> {% trans "토큰 요약" %}</h2>
             <ul class="token-stats">
                 <li class="token-card total">
                     <span class="token-icon"></span>
@@ -90,21 +743,21 @@
             
             <!-- 토큰 사용률 진행률 바 -->
             <div class="token-progress">
-<div class="token-progress-bar" style="width: {{ usage_percent }}%"></div>
-<div class="token-progress-text">
-    {% trans "토큰 사용률" %}: <strong>{{ usage_percent|floatformat:1 }}%</strong>
-</div>
-
+                <div class="token-progress-bar" style="width: {{ usage_percent }}%"></div>
+                <div class="token-progress-text">
+                    {% trans "토큰 사용률" %}: <strong>{{ usage_percent|floatformat:1 }}%</strong>
+                </div>
+            </div>
         </div>
 
         <div class="payment-section">
-            <h3>{% trans "결제 내역" %}</h3>
+            <h3><i class="fas fa-credit-card"></i> {% trans "결제 내역" %}</h3>
             <table class="payment-table">
                 <thead>
                     <tr>
-                        <th>{% trans "날짜" %}</th>
-                        <th>{% trans "상태" %}</th>
-                        <th>{% trans "결제 금액" %}</th>
+                        <th><i class="fas fa-calendar"></i> {% trans "날짜" %}</th>
+                        <th><i class="fas fa-info-circle"></i> {% trans "상태" %}</th>
+                        <th><i class="fas fa-won-sign"></i> {% trans "결제 금액" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -113,22 +766,50 @@
                         <tr>
                             <td>{{ p.paid_at|date:"Y-m-d H:i" }}</td>
                             <td>{{ p.status }}</td>
-                            <td>{{ p.amount }}</td>
+                            <td>{{ p.amount|floatformat:0 }}원</td>
                         </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="4">{% trans "결제 내역이 없습니다." %}</td>
+                            <td colspan="3" style="padding: 40px; color: #64748b;">
+                                <i class="fas fa-inbox" style="font-size: 2rem; display: block; margin-bottom: 10px; opacity: 0.5;"></i>
+                                {% trans "결제 내역이 없습니다." %}
+                            </td>
                         </tr>
                     {% endif %}
                 </tbody>
             </table>
         </div>
     </div>
-<script src="{% static 'js/sidebar.js' %}"></script>
 
-    <script src="{% static 'js/mypage/token.js' %}">
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
 
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
     </script>
 </body>
 </html>

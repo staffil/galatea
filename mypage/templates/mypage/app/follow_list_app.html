@@ -1,15 +1,14 @@
 {% load static %}
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
-    <head>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% trans "마이페이지 - GALATEA" %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/mypage/follow_list.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <title>{% trans "팔로우 목록" %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
@@ -30,10 +29,614 @@
 }
 </script>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 배경 원형 효과 */
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        /* 메뉴 버튼 */
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* 사이드바 오버레이 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        /* 사이드바 헤더 */
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        /* 사이드바 프로필 */
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* 사이드바 메뉴 */
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        /* 특정 메뉴 스타일 */
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 섹션 */
+        .section {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .count-badge {
+            padding: 6px 14px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: #8b5cf6;
+            font-weight: 700;
+        }
+
+        /* 유저 아이템 */
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .user-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateX(5px);
+        }
+
+        .user-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            flex-shrink: 0;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #a0aec0;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-subtext {
+            font-size: 0.95rem;
+            color: #6b7280;
+        }
+
+        /* 모달 */
+        #llm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 50%;
+            color: #ef4444;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: scale(1.1);
+        }
+
+        .llm-container {
+            margin-top: 20px;
+        }
+
+        /* 태블릿 이상 */
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .section {
+                padding: 40px 35px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .user-item {
+                padding: 20px;
+            }
+
+            .user-avatar {
+                width: 70px;
+                height: 70px;
+            }
+
+            .username {
+                font-size: 1.2rem;
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+        }
+
+        /* 스크롤바 커스터마이징 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #764ba2, #667eea);
+        }
+
+        /* Safe Area 대응 */
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        /* body 스크롤 막기 */
+        body.sidebar-open {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 
-    
 <header>
     {% if not user.is_authenticated %}
         {% include "common/app/notLoginHeader.html" %}
@@ -49,186 +652,251 @@
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- 햄버거 메뉴 버튼 -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- 메뉴 버튼 -->
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
     </button>
 
     <!-- 사이드바 오버레이 -->
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    {% include "common/sidebar.html" %}
+    <!-- 사이드바 -->
+    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
 
-<div class="main-content">
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
 
-   <!-- 팔로워 섹션 -->
-    <div class="section">
-        <h2 class="section-title">
-            {% trans "팔로워 목록" %}
-            <span class="count-badge">{{ follower_list|length }}</span>
-        </h2>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
 
-        {% if follower_list %}
-            {% for follow in follower_list %}
-                {% with target_user=follow.follower %}
-                <div class="user-item" onclick="openUserModal({{ target_user.id }})" style="cursor: pointer;">
-                    <div class="user-avatar">
-                        {% if target_user.user_image %}
-                            <img src="{{ target_user.user_image.url }}" alt="{{ target_user.username }}">
-                        {% else %}
-                            <img src="{% static 'images/default_user.png' %}" alt="{{ target_user.username }}">
-                        {% endif %}
-                    </div>
-                    <div class="user-info">
-                        <h3 class="username">{{ target_user.nickname }}</h3>
-                    </div>
-
-                </div>
-                {% endwith %}
-                
-            {% endfor %}
-        {% else %}
-            <div class="empty-state">
-                <div class="empty-state-icon">👥</div>
-                <div class="empty-state-text">{% trans "아직 팔로워가 없습니다" %}</div>
-                <div class="empty-state-subtext">{% trans "다른 사용자들과 소통해보세요!" %}</div>
-            </div>
-        {% endif %}
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
     </div>
 
-    <!-- 팔로잉 섹션 -->
-    <div class="section">
-        <h2 class="section-title">
-            {% trans "팔로잉 목록" %}
-            <span class="count-badge">{{ following_list|length }}</span>
-        </h2>
+    <div class="main-content">
+        <!-- 팔로워 섹션 -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                {% trans "팔로워 목록" %}
+                <span class="count-badge">{{ follower_list|length }}</span>
+            </h2>
 
-        {% if following_list %}
-            {% for follow in following_list %}
-                {% with target_user=follow.following %}
-                <div class="user-item" onclick="openUserModal({{ target_user.id }})" style="cursor: pointer;">
-                    <div class="user-avatar" >
-                        {% if target_user.user_image %}
-                            <img src="{{ target_user.user_image.url }}" alt="{{ target_user.username }}">
-                        {% else %}
-                            <img src="{% static 'images/default_user.png' %}" alt="{{ target_user.username }}">
-                        {% endif %}
+            {% if follower_list %}
+                {% for follow in follower_list %}
+                    {% with target_user=follow.follower %}
+                    <div class="user-item" onclick="openUserModal({{ target_user.id }})" style="animation-delay: {{ forloop.counter0|add:0.1 }}s;">
+                        <div class="user-avatar">
+                            {% if target_user.user_image %}
+                                <img src="{{ target_user.user_image.url }}" alt="{{ target_user.username }}">
+                            {% else %}
+                                <div style="width: 100%; height: 100%; background: rgba(139, 92, 246, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #8b5cf6;">
+                                    {{ target_user.nickname|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="user-info">
+                            <h3 class="username">{{ target_user.nickname }}</h3>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: rgba(139, 92, 246, 0.5); font-size: 1.2rem;"></i>
                     </div>
-                    <div class="user-info">
-                        <h3 class="username">{{ target_user.nickname }}</h3>
-                    </div>
-
+                    {% endwith %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">👥</div>
+                    <div class="empty-state-text">{% trans "아직 팔로워가 없습니다" %}</div>
+                    <div class="empty-state-subtext">{% trans "다른 사용자들과 소통해보세요!" %}</div>
                 </div>
-                {% endwith %}
-            {% endfor %}
-        {% else %}
-            <div class="empty-state">
-                <div class="empty-state-icon">➕</div>
-                <div class="empty-state-text">{% trans "아직 팔로우한 사용자가 없습니다" %}</div>
-                <div class="empty-state-subtext">{% trans "관심있는 사용자를 팔로우해보세요!" %}</div>
-            </div>
-        {% endif %}
-    </div>
-</div>
+            {% endif %}
+        </div>
 
-<script src="{% static 'js/sidebar.js' %}"></script>
-<script>
-    // CSRF 토큰 가져오기
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let cookie of cookies) {
-                cookie = cookie.trim();
-                if (cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+        <!-- 팔로잉 섹션 -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-user-plus"></i>
+                {% trans "팔로잉 목록" %}
+                <span class="count-badge">{{ following_list|length }}</span>
+            </h2>
+
+            {% if following_list %}
+                {% for follow in following_list %}
+                    {% with target_user=follow.following %}
+                    <div class="user-item" onclick="openUserModal({{ target_user.id }})" style="animation-delay: {{ forloop.counter0|add:0.1 }}s;">
+                        <div class="user-avatar">
+                            {% if target_user.user_image %}
+                                <img src="{{ target_user.user_image.url }}" alt="{{ target_user.username }}">
+                            {% else %}
+                                <div style="width: 100%; height: 100%; background: rgba(139, 92, 246, 0.3); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: #8b5cf6;">
+                                    {{ target_user.nickname|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="user-info">
+                            <h3 class="username">{{ target_user.nickname }}</h3>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: rgba(139, 92, 246, 0.5); font-size: 1.2rem;"></i>
+                    </div>
+                    {% endwith %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">➕</div>
+                    <div class="empty-state-text">{% trans "아직 팔로우한 사용자가 없습니다" %}</div>
+                    <div class="empty-state-subtext">{% trans "관심있는 사용자를 팔로우해보세요!" %}</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // 사이드바 토글
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
+
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // ESC 키로 사이드바 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+
+        // CSRF 토큰 가져오기
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
 
-    // 팔로우 토글
-    document.addEventListener('click', (e) => {
-        const followBtn = e.target.closest('.glt2-follow-btn');
-        if (!followBtn) return;
+        // 팔로우 토글
+        document.addEventListener('click', (e) => {
+            const followBtn = e.target.closest('.glt2-follow-btn');
+            if (!followBtn) return;
 
-        const userId = followBtn.dataset.id;
-        if (!userId) return;
+            const userId = followBtn.dataset.id;
+            if (!userId) return;
 
-        fetch("{% url 'home:toggle_follow' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": getCookie('csrftoken'),
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `user_id=${encodeURIComponent(userId)}`
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'follow') {
-                followBtn.textContent = '{% trans "Following" %}';
-                followBtn.classList.add('following');
-            } else if (data.status === 'unfollow') {
-                followBtn.textContent = '{% trans "Follow" %}';
-                followBtn.classList.remove('following');
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
-    });
-
-    // 유저 모달 열기
-    function openUserModal(user_id) {
-        const modalHTML = `
-            <div id="llm-modal">
-                <div class="modal-overlay" onclick="closeModal()"></div>
-                <div class="modal-content">
-                    <button class="close-btn" onclick="closeModal()">X</button>
-                    <div id="llm-container" class="llm-container"></div>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        document.body.style.overflow = "hidden";
-        document.documentElement.style.overflow = "hidden";
-
-        // 안전하게 URL 생성 (STATIC과 LANGUAGE_CODE 영향을 받지 않음)
-        fetch(`/user_intro/${user_id}/`)
-            .then(res => {
-                if (!res.ok) throw new Error('{% trans "사용자 정보를 불러올 수 없습니다" %}');
-                return res.text();
+            fetch("{% url 'home:toggle_follow' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie('csrftoken'),
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `user_id=${encodeURIComponent(userId)}`
             })
-            .then(html => {
-                document.getElementById('llm-container').innerHTML = html;
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'follow') {
+                    followBtn.textContent = '{% trans "Following" %}';
+                    followBtn.classList.add('following');
+                } else if (data.status === 'unfollow') {
+                    followBtn.textContent = '{% trans "Follow" %}';
+                    followBtn.classList.remove('following');
+                } else {
+                    alert(data.message);
+                }
             })
-            .catch(err => {
-                console.error(err);
-                alert('{% trans "사용자 정보를 불러오는 데 실패했습니다." %}');
-                closeModal();
-            });
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('llm-modal');
-        if (modal) modal.remove();
-        document.body.style.overflow = "auto";
-        document.documentElement.style.overflow = "auto";
-    }
-
-    // 페이지 로드 후 애니메이션 적용
-    document.addEventListener('DOMContentLoaded', function() {
-        const userItems = document.querySelectorAll('.user-item');
-        userItems.forEach((item, index) => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(30px)';
-            item.style.animationDelay = `${index * 0.1}s`;
+            .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
         });
-    });
-</script>
+
+        // 유저 모달 열기
+        function openUserModal(user_id) {
+            const modalHTML = `
+                <div id="llm-modal">
+                    <div class="modal-overlay" onclick="closeModal()"></div>
+                    <div class="modal-content">
+                        <button class="close-btn" onclick="closeModal()">✕</button>
+                        <div id="llm-container" class="llm-container"></div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.body.style.overflow = "hidden";
+            document.documentElement.style.overflow = "hidden";
+
+            // 안전하게 URL 생성
+            fetch(`/user_intro/${user_id}/`)
+                .then(res => {
+                    if (!res.ok) throw new Error('{% trans "사용자 정보를 불러올 수 없습니다" %}');
+                    return res.text();
+                })
+                .then(html => {
+                    document.getElementById('llm-container').innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('{% trans "사용자 정보를 불러오는 데 실패했습니다." %}');
+                    closeModal();
+                });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('llm-modal');
+            if (modal) modal.remove();
+            document.body.style.overflow = "auto";
+            document.documentElement.style.overflow = "auto";
+        }
+    </script>
 </body>
 </html>

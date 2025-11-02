@@ -1,560 +1,598 @@
 {% load static %}
 {% load i18n %}
-
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" style="background-color: #3b0d69;">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% trans "마이페이지 - GALATEA" %}</title>
-    <link rel="stylesheet" href="{% static 'css/mypage/mypageUpdate.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-        <!-- Open Graph (SNS 공유용) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <title>{% trans "토큰 차감 내역" %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
+    <meta name="description" content="GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다." />
 
-    <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "GALATEA AI",
-  "url": "https://www.galatea.website",
-  "logo": "https://www.galatea.website/static/img/logo.png"
-}
-</script>
+        html {
+            scroll-behavior: smooth;
+        }
 
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .token-history-container {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 30px 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .history-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .history-count {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .token-item {
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .token-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.4);
+            background: rgba(139, 92, 246, 0.08);
+        }
+
+        .token-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .token-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .token-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .token-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .token-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .token-amount {
+            color: #f87171;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .token-date {
+            color: #06b6d4;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #94a3b8;
+        }
+
+        .empty-description {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto;
+            color: #64748b;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a, .pagination span {
+            padding: 8px 14px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:active {
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(0.95);
+        }
+
+        .pagination .current {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-color: #8b5cf6;
+        }
+
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .token-history-container {
+                padding: 40px 35px;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .token-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .token-content {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+    </style>
 </head>
-<style>
-/* 마이페이지 CSS - 자연스러운 GALATEA 스타일 */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-    min-height: 100vh;
-    color: #e2e8f0;
-    overflow-x: hidden;
-    position: relative;
-}
-
-/* 배경 원형 효과 */
-.circle-bg {
-    position: fixed;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06));
-    backdrop-filter: blur(1px);
-    z-index: -1;
-    animation: float 8s ease-in-out infinite;
-}
-
-.circle-1 {
-    width: 180px;
-    height: 180px;
-    top: 8%;
-    left: 3%;
-    animation-delay: 0s;
-}
-
-.circle-2 {
-    width: 120px;
-    height: 120px;
-    top: 25%;
-    right: 8%;
-    animation-delay: 1.5s;
-}
-
-.circle-3 {
-    width: 220px;
-    height: 220px;
-    bottom: 25%;
-    left: 8%;
-    animation-delay: 3s;
-}
-
-.circle-4 {
-    width: 90px;
-    height: 90px;
-    top: 55%;
-    right: 25%;
-    animation-delay: 4.5s;
-}
-
-.circle-5 {
-    width: 160px;
-    height: 160px;
-    bottom: 8%;
-    right: 3%;
-    animation-delay: 6s;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0px) rotate(0deg);
-        opacity: 0.3;
-    }
-    50% {
-        transform: translateY(-15px) rotate(90deg);
-        opacity: 0.6;
-    }
-}
-
-/* 메인 콘텐츠 */
-.main-content {
-    margin-left: 0;
-    padding: 60px 30px 40px;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-    max-width: 1000px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-}
-
-/* 페이지 헤더 */
-.page-header {
-    margin-bottom: 50px;
-    text-align: center;
-}
-
-.page-title {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.5px;
-}
-
-.page-subtitle {
-    font-size: 1rem;
-    color: #94a3b8;
-    margin-bottom: 20px;
-    font-weight: 400;
-}
-
-/* 토큰 사용 히스토리 컨테이너 */
-.token-history-container {
-    background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(6,182,212,0.04));
-    border: 1px solid rgba(139,92,246,0.15);
-    border-radius: 16px;
-    padding: 28px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(139,92,246,0.15);
-}
-
-/* 히스토리 헤더 */
-.history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(139,92,246,0.15);
-}
-
-.history-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #e2e8f0;
-}
-
-.history-count {
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    color: white;
-    padding: 6px 14px;
-    border-radius: 16px;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-/* 토큰 히스토리 아이템 */
-.token-item {
-    background: linear-gradient(135deg, rgba(139,92,246,0.05), rgba(6,182,212,0.03));
-    border: 1px solid rgba(139,92,246,0.12);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 12px;
-    transition: all 0.25s ease;
-    backdrop-filter: blur(10px);
-    position: relative;
-}
-
-.token-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(139,92,246,0.2);
-    border-color: rgba(139,92,246,0.25);
-    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.05));
-}
-
-.token-item:last-child {
-    margin-bottom: 0;
-}
-
-/* 토큰 아이템 내용 - 2열로 수정 */
-.token-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: center;
-}
-
-.token-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.token-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 4px;
-}
-
-.token-value {
-    font-size: 15px;
-    font-weight: 600;
-    color: #e2e8f0;
-}
-
-.token-amount {
-    color: #f87171;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.token-date {
-    color: #06b6d4;
-    font-weight: 500;
-}
-
-/* 빈 상태 */
-.empty-state {
-    text-align: center;
-    padding: 50px 30px;
-    color: #64748b;
-}
-
-.empty-icon {
-    font-size: 3.5rem;
-    margin-bottom: 20px;
-    opacity: 0.6;
-}
-
-.empty-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #94a3b8;
-}
-
-.empty-description {
-    font-size: 0.95rem;
-    line-height: 1.5;
-    max-width: 350px;
-    margin: 0 auto;
-    color: #64748b;
-}
-
-/* 통계 요약 카드 (선택사항) */
-.stats-summary {
-    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.06));
-    border: 1px solid rgba(139,92,246,0.15);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.total-tokens {
-    font-size: 2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 6px;
-}
-
-.stats-label {
-    font-size: 13px;
-    color: #94a3b8;
-    font-weight: 500;
-}
-
-/* 반응형 디자인 */
-
-/* 태블릿 */
-@media (max-width: 1024px) {
-    .main-content {
-        padding: 50px 25px 30px;
-        max-width: 900px;
-    }
-    
-    .page-title {
-        font-size: 2rem;
-    }
-    
-    .token-history-container {
-        padding: 24px;
-    }
-    
-    .token-content {
-        grid-template-columns: 1fr;
-        gap: 14px;
-        text-align: left;
-    }
-}
-
-/* 모바일 */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 40px 20px 20px;
-    }
-    
-    .page-title {
-        font-size: 1.8rem;
-    }
-    
-    .page-subtitle {
-        font-size: 0.95rem;
-    }
-    
-    .token-history-container {
-        padding: 20px;
-        border-radius: 12px;
-    }
-    
-    .history-header {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
-    }
-    
-    .history-title {
-        font-size: 1.3rem;
-    }
-    
-    .token-item {
-        padding: 16px;
-        margin-bottom: 10px;
-    }
-    
-    .token-content {
-        gap: 12px;
-    }
-    
-    .token-value {
-        font-size: 14px;
-    }
-    
-    .token-amount {
-        font-size: 15px;
-    }
-    
-    .empty-state {
-        padding: 40px 20px;
-    }
-    
-    .empty-icon {
-        font-size: 3rem;
-    }
-    
-    .empty-title {
-        font-size: 1.2rem;
-    }
-    
-    .stats-summary {
-        padding: 16px;
-    }
-    
-    .total-tokens {
-        font-size: 1.6rem;
-    }
-}
-
-/* 소형 모바일 */
-@media (max-width: 480px) {
-    .main-content {
-        padding: 30px 16px 16px;
-    }
-    
-    .page-title {
-        font-size: 1.6rem;
-    }
-    
-    .token-history-container {
-        padding: 16px;
-    }
-    
-    .history-title {
-        font-size: 1.2rem;
-    }
-    
-    .token-item {
-        padding: 14px;
-    }
-    
-    .token-label {
-        font-size: 10px;
-    }
-    
-    .token-value {
-        font-size: 13px;
-    }
-    
-    .token-amount {
-        font-size: 14px;
-    }
-    
-    .empty-description {
-        font-size: 0.9rem;
-    }
-    
-    .stats-summary {
-        padding: 14px;
-    }
-    
-    .total-tokens {
-        font-size: 1.4rem;
-    }
-    
-    .stats-label {
-        font-size: 12px;
-    }
-}
-
-/* 초소형 모바일 */
-@media (max-width: 360px) {
-    .main-content {
-        padding: 25px 12px 12px;
-    }
-    
-    .page-title {
-        font-size: 1.5rem;
-    }
-    
-    .token-history-container {
-        padding: 14px;
-    }
-    
-    .history-title {
-        font-size: 1.1rem;
-    }
-    
-    .token-item {
-        padding: 12px;
-    }
-    
-    .token-content {
-        gap: 10px;
-    }
-    
-    .history-count {
-        font-size: 12px;
-        padding: 4px 10px;
-    }
-}
-
-/* 부드러운 애니메이션 */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.token-item {
-    animation: slideIn 0.4s ease-out;
-}
-
-.token-item:nth-child(1) { animation-delay: 0.05s; }
-.token-item:nth-child(2) { animation-delay: 0.1s; }
-.token-item:nth-child(3) { animation-delay: 0.15s; }
-.token-item:nth-child(4) { animation-delay: 0.2s; }
-.token-item:nth-child(5) { animation-delay: 0.25s; }
-
-/* 페이지 전체 페이드인 */
-.main-content {
-    animation: slideIn 0.6s ease-out;
-}
-
-/* 포커스 상태 개선 */
-.token-item:focus-within {
-    outline: 2px solid rgba(139,92,246,0.5);
-    outline-offset: 2px;
-}
-
-/* 다크모드 호환성 */
-@media (prefers-color-scheme: light) {
-    body {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
-        color: #1e293b;
-    }
-    
-    .page-title,
-    .token-value,
-    .history-title {
-        color: #1e293b;
-    }
-    
-    .page-subtitle,
-    .token-label {
-        color: #64748b;
-    }
-    
-    .empty-description {
-        color: #475569;
-    }
-}
-<.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.pagination a {
-    padding: 8px 14px;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 14px;
-    transition: background 0.2s ease;
-}
-
-.pagination a:hover {
-    background: linear-gradient(135deg, #7c3aed, #0891b2);
-}
-
-.pagination span {
-    padding: 8px 14px;
-    color: #e2e8f0;
-    font-size: 14px;
-    font-weight: 600;
-}
-</style>
 <body>
+
 <header>
     {% if not user.is_authenticated %}
         {% include "common/app/notLoginHeader.html" %}
@@ -562,50 +600,90 @@ body {
         {% include "common/app/loginHeader.html" %}
     {% endif %}
 </header>
-   <!-- 배경 원형 효과 -->
+
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- 햄버거 메뉴 버튼 (모바일용) -->
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
     </button>
 
-    <!-- 사이드바 오버레이 (모바일용) -->
-    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
-    {% include "common/sidebar.html" %}
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
+    </div>
 
     <div class="main-content">
         <div class="page-header">
-            <h1 class="page-title">{% trans "마이페이지" %}</h1>
+            <h1 class="page-title"><i class="fas fa-history"></i> {% trans "토큰 차감 내역" %}</h1>
             <p class="page-subtitle">{% trans "토큰 사용 내역을 확인하세요" %}</p>
         </div>
 
         <div class="token-history-container">
             <div class="history-header">
-                <h2 class="history-title">{% trans "토큰 사용 히스토리" %}</h2>
-                <span class="history-count">{{ consume_history.paginator.count }}{% trans "개 항목" %}</span>
+                <h2 class="history-title">{% trans "사용 히스토리" %}</h2>
+                <span class="history-count">{{ consume_history.paginator.count }} {% trans "개" %}</span>
             </div>
 
             {% for token in consume_history %}
             <div class="token-item">
                 <div class="token-content">
                     <div class="token-info">
-                        <span class="token-label">{% trans "소모량" %}</span>
-                        <span class="token-value token-amount">{{ token.amount }} 토큰</span>
+                        <span class="token-label"><i class="fas fa-coins"></i> {% trans "소모량" %}</span>
+                        <span class="token-value token-amount">-{{ token.amount }} 토큰</span>
                     </div>
                     <div class="token-info">
-                        <span class="token-label">{% trans "날짜" %}</span>
+                        <span class="token-label"><i class="fas fa-calendar-alt"></i> {% trans "날짜" %}</span>
                         <span class="token-value token-date">{{ token.created_at|date:"Y-m-d H:i" }}</span>
                     </div>
                     {% if token.llm %}
                     <div class="token-info">
-                        <span class="token-label">{% trans "AI 이름" %}</span>
+                        <span class="token-label"><i class="fas fa-robot"></i> {% trans "AI 이름" %}</span>
                         <span class="token-value">{{ token.llm.name }}</span>
                     </div>
                     {% endif %}
@@ -619,24 +697,54 @@ body {
             </div>
             {% endfor %}
 
-            <!-- ✅ 페이지네이션 -->
             {% if consume_history.has_other_pages %}
             <div class="pagination">
                 {% if consume_history.has_previous %}
-                    <a href="?page={{ consume_history.previous_page_number }}">« 이전</a>
+                    <a href="?page={{ consume_history.previous_page_number }}">
+                        <i class="fas fa-chevron-left"></i> {% trans "이전" %}
+                    </a>
                 {% endif %}
 
-                <span>{{ consume_history.number }} / {{ consume_history.paginator.num_pages }}</span>
+                <span class="current">{{ consume_history.number }} / {{ consume_history.paginator.num_pages }}</span>
 
                 {% if consume_history.has_next %}
-                    <a href="?page={{ consume_history.next_page_number }}">다음 »</a>
+                    <a href="?page={{ consume_history.next_page_number }}">
+                        {% trans "다음" %} <i class="fas fa-chevron-right"></i>
+                    </a>
                 {% endif %}
             </div>
             {% endif %}
         </div>
     </div>
 
-    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
 
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+    </script>
 </body>
 </html>

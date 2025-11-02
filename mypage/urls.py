@@ -37,6 +37,13 @@ urlpatterns = [
     path('my_voice_app/', views.my_voice_app, name='my_voice_app'),
     path('my_voice_delete_app/', views.my_voice_delete_app, name='my_voice_delete_app'),
     path('my_ai_models_update_app/<int:llm_id>/', views.my_ai_models_update_app, name='my_ai_models_update_app'),
+    path('follow_list_app/', views.follow_list_app, name='follow_list_app'),
+    path('my_coupon_app/', views.my_coupon_app, name='my_coupon_app'),
+    path('token_less_app/', views.token_less_app, name='token_less_app'),
+    path('personal_profile_app/', views.personal_profile_app, name='personal_profile_app'),
+    path('my_request_app/', views.my_request_app, name='my_request_app'),
+    path('llm_like_app/', views.llm_like_app, name='llm_like_app'),
+    path('token_app/', views.token_app, name='token_app'),
 
 
 ]
