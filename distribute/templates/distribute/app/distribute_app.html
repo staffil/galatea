@@ -1,0 +1,1004 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <title>{% trans "AI 공유하기" %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+    <meta name="description" content="GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다." />
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-attachment: fixed;
+            color: #ffffff;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .circle-bg {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .circle-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-2 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 20%;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .circle-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .circle-4 {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        .circle-5 {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 80px;
+            right: 15px;
+            z-index: 1001;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-btn:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 15, 35, 0.98);
+            border-left: 1px solid rgba(139, 92, 246, 0.3);
+            z-index: 1003;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-close {
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-close:active {
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
+        }
+
+        .sidebar-profile-section {
+            padding: 25px 20px;
+            text-align: center;
+            background: rgba(139, 92, 246, 0.05);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #8b5cf6;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .sidebar-profile-section h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu li:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 14px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .sidebar-menu a:active::before {
+            left: 100%;
+        }
+
+        .sidebar-menu a:active {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+            transform: scale(0.98);
+        }
+
+        .sidebar-menu a::after {
+            content: '→';
+            margin-left: auto;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* 메시지 컨테이너 */
+        .message-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .alert {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-left: 4px solid #8b5cf6;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(20px);
+            font-weight: 500;
+            color: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert.success {
+            border-left-color: #10b981;
+            color: #6ee7b7;
+        }
+
+        .alert.error {
+            border-left-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        /* AI 공유 폼 */
+        .ai-share-form {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header::before {
+            content: '🤖';
+            display: block;
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .form-subtitle {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* AI 이미지 섹션 */
+        .ai-image-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .ai-image-wrapper {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            background: rgba(139, 92, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ai-image-placeholder {
+            color: #8b5cf6;
+            font-size: 4rem;
+        }
+
+        /* 폼 그룹 */
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .form-group label i {
+            margin-right: 8px;
+            color: #8b5cf6;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #64748b;
+        }
+
+        .form-input[readonly],
+        .form-textarea[readonly] {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+        }
+
+        /* 장르 태그 */
+        .genre-section {
+            margin-bottom: 30px;
+        }
+
+        .genre-info {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .genre-tags-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 4px;
+        }
+
+        .genre-tag {
+            position: relative;
+        }
+
+        .genre-tag input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .genre-tag-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 3px;
+            border-radius: 10px;
+            font-size: 0.5rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .genre-tag input[type="checkbox"]:checked + .genre-tag-label {
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        .genre-tag-label::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 0.4rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .genre-tag input[type="checkbox"]:checked + .genre-tag-label::after {
+            opacity: 1;
+        }
+
+        /* 버튼 그룹 */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            color: #8b5cf6;
+        }
+
+        .btn-secondary:active {
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(0.98);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .btn-danger:active {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(0.98);
+        }
+
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .ai-share-form {
+                padding: 50px;
+            }
+
+            .form-title {
+                font-size: 2.5rem;
+            }
+
+            .message-container {
+                top: 100px;
+                right: 30px;
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+
+            .genre-tags-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            .button-group {
+                flex-wrap: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ai-share-form {
+                padding: 30px 20px;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+
+            .message-container {
+                left: 15px;
+                right: 15px;
+                max-width: none;
+            }
+
+            .ai-image-wrapper {
+                width: 150px;
+                height: 150px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 15, 35, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+            border-radius: 4px;
+        }
+
+        @supports (padding: max(0px)) {
+            .main-content {
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+                padding-bottom: max(60px, env(safe-area-inset-bottom));
+            }
+
+            .menu-btn {
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
+                right: max(15px, env(safe-area-inset-right));
+            }
+        }
+
+        body.sidebar-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/app/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/app/loginHeader.html" %}
+    {% endif %}
+</header>
+
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <button class="menu-btn" id="menuBtn">
+        <i class="fas fa-bars"></i> MENU
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
+        <div class="sidebar-header">
+            <h2>{% trans '마이페이지' %}</h2>
+            <button class="sidebar-close" id="sidebarClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-profile-section">
+            {% if user.user_image %}
+                <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
+            {% else %}
+                <div class="no-image">{{ user.nickname|first|default:"U" }}</div>
+            {% endif %}
+            <h3>{{ user.nickname }}</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
+            
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
+            {% endif %}
+            
+            <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
+        </ul>
+    </div>
+
+    <!-- 메시지 표시 -->
+    {% if messages %}
+    <div class="message-container">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="main-content">
+        <form method="POST" action="{% url 'distribute:distribute_app' llm.id %}" enctype="multipart/form-data" class="ai-share-form">
+            {% csrf_token %}
+
+            <div class="form-header">
+                <h1 class="form-title">{% trans "AI 공유하기" %}</h1>
+                <p class="form-subtitle">
+                    {% trans "당신의 AI를 다른 사람들과 공유해보세요!" %}
+                </p>
+            </div>
+
+            <!-- AI 이미지 -->
+            <div class="ai-image-section">
+                <div class="ai-image-wrapper">
+                    {% if llm.llm_image %}
+                        <img src="{{ llm.llm_image.url }}" alt="AI 이미지" />
+                    {% else %}
+                        <i class="fas fa-robot ai-image-placeholder"></i>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 제목 -->
+            <div class="form-group">
+                <label for="title">
+                    <i class="fas fa-heading"></i> {% trans "제목" %}
+                </label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    id="title"
+                    class="form-input"
+                    value="{{ llm.title }}" 
+                    placeholder="{% trans '제목은 50자 이내입니다.' %}"
+                    maxlength="50"
+                    required
+                >
+            </div>
+
+            <!-- 프롬프트 (읽기 전용) -->
+            <div class="form-group">
+                <label for="prompt">
+                    <i class="fas fa-code"></i> {% trans "프롬프트" %}
+                </label>
+                <textarea 
+                    id="prompt" 
+                    class="form-textarea" 
+                    readonly
+                    style="min-height: 150px;"
+                >{{ llm.prompt }}</textarea>
+            </div>
+
+            <!-- 설명 -->
+            <div class="form-group">
+                <label for="distribute">
+                    <i class="fas fa-align-left"></i> {% trans "AI 모델 설명" %}
+                </label>
+                <textarea 
+                    name="distribute" 
+                    id="distribute" 
+                    class="form-textarea"
+                    placeholder="{% trans '이 AI는 어떤 특징을 가지고 있나요? 예: 친근하고 유머러스한 대화 상대, 전문적인 조언을 제공하는 컨설턴트 등...' %}"
+                    style="min-height: 150px;"
+                >{{ llm.description }}</textarea>
+            </div>
+
+            <!-- 장르 태그 -->
+            <div class="genre-section">
+                <label style="display: block; color: #94a3b8; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
+                    <i class="fas fa-tags" style="margin-right: 8px; color: #8b5cf6;"></i> {% trans "장르 선택" %}
+                </label>
+                <p class="genre-info">
+                    <i class="fas fa-info-circle"></i> {% trans "장르는 최대 5개까지 선택 가능합니다." %}
+                </p>
+                <div class="genre-tags-grid">
+                    {% for genre in genre_list %}
+                        <div class="genre-tag">
+                            <input 
+                                type="checkbox" 
+                                name="genre" 
+                                value="{{ genre.id }}" 
+                                id="genre_{{ genre.id }}"
+                                {% if genre.id|stringformat:"s" in selected_genres %}checked{% endif %}
+                            />
+                            <label for="genre_{{ genre.id }}" class="genre-tag-label" style="background-color: {{ genre.color }}; color: white;">
+                                {{ genre.name }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="button-group">
+                {% if llm.is_public %}
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('{% trans '해당 AI를 정말 공유하시겠습니까?' %}')">
+                        <i class="fas fa-sync-alt"></i>
+                        {% trans '수정한 내용 공유하기' %}
+                    </button>
+                {% else %}
+                    <button type="submit" class="btn btn-primary" onclick="return confirm('{% trans '해당 AI를 정말 공유하시겠습니까?' %}')">
+                        <i class="fas fa-share-alt"></i>
+                        {% trans '다른 사람들과 공유하기' %}
+                    </button>
+                {% endif %}
+
+                <a href="{% url 'mypage:my_ai_models_app' llm.id %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    {% trans '돌아가기' %}
+                </a>
+
+                {% if llm.is_public %}
+                    <a href="{% url 'distribute:unpublish_llm_app' llm.id %}" class="btn btn-danger" onclick="return confirm('{% trans '공유를 취소하시겠습니까?' %}')">
+                        <i class="fas fa-ban"></i>
+                        {% trans '공유취소하기' %}
+                    </a>
+                {% endif %}
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const body = document.body;
+
+        function openSidebar() {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            body.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            body.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+
+        // 메시지 자동 사라짐
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    alert.remove();
+                }, 300);
+            });
+        }, 4000);
+
+        // 장르 선택 제한 (최대 5개)
+        const genreCheckboxes = document.querySelectorAll('input[name="genre"]');
+        const maxGenres = 5;
+
+        genreCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checkedCount = document.querySelectorAll('input[name="genre"]:checked').length;
+                
+                if (checkedCount > maxGenres) {
+                    this.checked = false;
+                    alert('{% trans "장르는 최대 5개까지만 선택할 수 있습니다." %}');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

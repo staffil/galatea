@@ -791,3 +791,7 @@ def voice_all_app(request):
 
     }
     return render(request, "home/app/voice_all_app.html", context)
+
+
+
+

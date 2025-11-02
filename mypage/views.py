@@ -935,3 +935,24 @@ def token_app(request):
     }
 
     return render(request, 'mypage/app/token_app.html', context)
+
+
+@login_required
+def unpublish_llm_app(request, llm_id):
+    llm = get_object_or_404(LLM, id=llm_id, user=request.user)
+    llm.is_public = False
+    llm.save()
+    return redirect('mypage:personal_profile_app', llm.id)
+
+
+@login_required
+def my_ai_models_delete_app(request, llm_id):
+    user = request.user
+    try:
+        llm = LLM.objects.get(id=llm_id, user=user)
+        llm.delete()
+        messages.success(request, _("AI가 삭제되었습니다."))
+    except LLM.DoesNotExist:
+        messages.error(request, _("해당 AI가 없습니다."))
+
+    return redirect("mypage:mypage_app")

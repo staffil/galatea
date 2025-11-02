@@ -32,7 +32,7 @@ urlpatterns = [
     path("mypage_app/", views.mypage_app, name="mypage_app"),
     path('sidebar_app/', views.sidebar_app, name='sidebar_app'),
     path('mypage_update_app/', views.mypage_update_app, name='mypage_update_app'),
-    path('my_ai_models_app/<int:llm_id>', views.my_ai_models_app, name='my_ai_models_app'),
+    path('my_ai_models_app/<int:llm_id>/', views.my_ai_models_app, name='my_ai_models_app'),
     path('my_ai_conversation_app/<int:llm_id>', views.my_ai_conversation_app, name='my_ai_conversation_app'),
     path('my_voice_app/', views.my_voice_app, name='my_voice_app'),
     path('my_voice_delete_app/', views.my_voice_delete_app, name='my_voice_delete_app'),
@@ -44,6 +44,8 @@ urlpatterns = [
     path('my_request_app/', views.my_request_app, name='my_request_app'),
     path('llm_like_app/', views.llm_like_app, name='llm_like_app'),
     path('token_app/', views.token_app, name='token_app'),
+    path('unpublish_llm_app/<int:llm_id>/', views.unpublish_llm_app, name='unpublish_llm_app'),
+    path('my_ai_models/delete_app/<int:llm_id>', views.my_ai_models_delete_app, name='my_ai_models_delete_app'),
 
 
 ]

@@ -1,0 +1,117 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <link rel="stylesheet" href="{% static 'css/helpdesk/notice_detail.css'%}">
+    <script src="{% static 'js/home/main.js' %}"></script>
+
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+
+<style>
+
+</style>
+<body>
+
+    <!-- 배경 원들 -->
+    <div class="circle-bg circle-1"></div>
+
+    <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/app/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/app/loginHeader.html" %}
+        {% endif %}
+    </header>
+<div class="notice-detail-container">
+    <!-- 브레드크럼 -->
+    <nav class="notice-breadcrumb">
+        <a href="{% url 'helpdesk:notice_app' %}">{% trans "공지사항" %}</a>
+        <span class="notice-breadcrumb-separator">></span>
+        <span>{{ notice.title|truncatechars:30 }}</span>
+    </nav>
+
+    <!-- 페이지 제목 -->
+    <h1 class="notice-page-title">{% trans "공지사항" %}</h1>
+    
+    <div class="notice-detail-card">
+        <!-- 헤더 -->
+        <header class="notice-detail-header">
+            <div class="notice-detail-badge">Notice</div>
+            <h1 class="notice-detail-title">{{ notice.title }}</h1>
+            <div class="notice-detail-meta">
+                <div class="notice-meta-item notice-meta-date">
+                    {{ notice.created_at|date:"Y.m.d H:i" }}
+                </div>
+
+                {% if notice.views %}
+                <div class="notice-meta-item notice-meta-views">
+                    {{ notice.views }}
+                </div>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- 내용 -->
+<div class="notice-detail-content">
+    {{ notice.content }}
+</div>
+
+        <!-- 액션 버튼 -->
+        <div class="notice-detail-actions">
+            <a href="{% url 'helpdesk:notice_app' %}" class="notice-back-button">
+                {% trans "목록으로 돌아가기" %}
+            </a>
+            
+            <div class="notice-share-actions">
+                <a href="#" class="notice-share-button" onclick="copyToClipboard()" title="링크 복사">
+                    🔗
+                </a>
+                <a href="#" class="notice-share-button" onclick="printPage()" title="인쇄">
+                    🖨️
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/helpdesk/notice_detail.js' %}">
+
+</script>
+
+
+
+
+    
+</body>
+</html>

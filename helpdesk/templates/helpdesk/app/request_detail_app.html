@@ -1,0 +1,85 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "요청 상세 - GALATEA" %}</title>
+    <link rel="stylesheet" href="{% static 'css/helpdesk/request.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+<body>
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/app/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/app/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <main class="detail-container">
+        <div class="detail-card">
+            <h1 class="detail-title">
+                {{ request_list.title }}
+                {% if request_list.is_secret %}
+                    <span style="color:red; font-size:0.9rem;">[비밀글]</span>
+                {% endif %}
+            </h1>
+            <div class="detail-meta">
+                {{ request_list.created_at|date:"Y-m-d H:i" }}
+                {% if request_list.is_secret %}
+                    | 작성자 전용
+                {% endif %}
+            </div>
+            <div class="detail-content">
+                {{ request_list.content }}
+            </div>
+        </div>
+
+
+{% if request.user == request_list.user or request.user.is_superuser %}
+    <a href="{% url 'helpdesk:request_delete_app' request_list.id %}">삭제</a>
+{% endif %}
+
+{% if request.user.is_superuser %}
+<div class="response-form-container">
+    <h2>관리자 응답 작성</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ response_form.as_p }}
+        <button type="submit" class="submit-btn">{% trans "응답 저장" %}</button>
+    </form>
+</div>
+{% elif request_list.response %}
+<div class="detail-card" style="margin-top:20px;">
+    <h3>관리자 응답</h3>
+    <div class="detail-content">
+        {{ request_list.response }}
+    </div>
+</div>
+{% endif %}
+
+    </main>
+</body>
+</html>

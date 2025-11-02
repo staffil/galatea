@@ -1,0 +1,399 @@
+{% load static %} 
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        background-attachment: fixed;
+        color: #ffffff;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .circle-bg {
+        position: fixed;
+        border-radius: 50%;
+        opacity: 0.08;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .circle-1 {
+        width: 350px;
+        height: 350px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        top: -180px;
+        left: -180px;
+        animation: float 20s ease-in-out infinite;
+    }
+
+    .circle-2 {
+        width: 250px;
+        height: 250px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        top: 20%;
+        right: -120px;
+        animation: float 15s ease-in-out infinite reverse;
+    }
+
+    .circle-3 {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        bottom: 15%;
+        left: -150px;
+        animation: float 18s ease-in-out infinite;
+    }
+
+    .circle-4 {
+        width: 220px;
+        height: 220px;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        bottom: 25%;
+        right: 15%;
+        animation: float 12s ease-in-out infinite reverse;
+    }
+
+    .circle-5 {
+        width: 280px;
+        height: 280px;
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        top: 45%;
+        left: -140px;
+        animation: float 16s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+
+    .notice-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 140px 15px 60px;
+        max-width: 1000px;
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    .notice-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 50px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .notice-title::before {
+        content: '📢';
+        display: block;
+        font-size: 4rem;
+        margin-bottom: 15px;
+        background: none;
+        -webkit-text-fill-color: initial;
+    }
+
+    .notice-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .notice-list > a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .notice-list > a:nth-child(1) { animation-delay: 0.1s; }
+    .notice-list > a:nth-child(2) { animation-delay: 0.15s; }
+    .notice-list > a:nth-child(3) { animation-delay: 0.2s; }
+    .notice-list > a:nth-child(4) { animation-delay: 0.25s; }
+    .notice-list > a:nth-child(5) { animation-delay: 0.3s; }
+    .notice-list > a:nth-child(6) { animation-delay: 0.35s; }
+
+    .notice-item {
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .notice-item:hover {
+        border-color: #8b5cf6;
+        box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2);
+        transform: translateY(-3px);
+    }
+
+    .notice-item:active {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .notice-item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .notice-badge {
+        display: inline-flex;
+        padding: 6px 14px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+    }
+
+    .notice-date {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .notice-item-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .notice-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .notice-author {
+        font-size: 0.85rem;
+        color: #8b5cf6;
+        font-weight: 600;
+    }
+
+    .notice-author::before {
+        content: '✍️ ';
+        margin-right: 4px;
+    }
+
+    /* 빈 상태 */
+    .notice-empty {
+        text-align: center;
+        padding: 80px 20px;
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 24px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .notice-empty-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+    }
+
+    .notice-empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 10px;
+    }
+
+    .notice-empty-text {
+        font-size: 1rem;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .notice-container {
+            padding: 160px 30px 80px;
+        }
+
+        .notice-title {
+            font-size: 3rem;
+        }
+
+        .notice-item {
+            padding: 30px;
+        }
+
+        .notice-item-title {
+            font-size: 1.3rem;
+        }
+
+        .notice-badge {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .notice-title {
+            font-size: 2rem;
+        }
+
+        .notice-item {
+            padding: 20px;
+        }
+
+        .notice-item-title {
+            font-size: 1rem;
+        }
+
+        .notice-item-header {
+            flex-wrap: wrap;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 15, 35, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+        border-radius: 4px;
+    }
+
+    @supports (padding: max(0px)) {
+        .notice-container {
+            padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+            padding-left: max(15px, env(safe-area-inset-left));
+            padding-right: max(15px, env(safe-area-inset-right));
+            padding-bottom: max(60px, env(safe-area-inset-bottom));
+        }
+    }
+</style>
+
+<body>
+
+    <!-- 배경 원들 -->
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
+    <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/app/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/app/loginHeader.html" %}
+        {% endif %}
+    </header>
+<div class="notice-container">
+    <h1 class="notice-title">{% trans "공지사항" %}</h1>
+    <div class="notice-list">
+        {% for notice in notice_list %}
+        <a href="{% url 'helpdesk:notice_detail_app' notice.id %}">
+        <div class="notice-item">
+            <div class="notice-item-header">
+                <span class="notice-badge">Notice</span>
+                <span class="notice-date">{{ notice.created_at|date:"Y.m.d" }}</span>
+            </div>
+            <h3 class="notice-item-title">{{ notice.title }}</h3>
+
+            <div class="notice-meta">
+                <span class="notice-author">{{ notice.author }}</span>
+            </div>
+        </div>
+        </a>
+        {% empty %}
+        <div class="notice-empty">
+            <div class="notice-empty-icon">📢</div>
+            <h3 class="notice-empty-title">{% trans "등록된 공지사항이 없습니다" %}</h3>
+            <p class="notice-empty-text">{% trans "새로운 공지사항을 기다려 주세요." %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

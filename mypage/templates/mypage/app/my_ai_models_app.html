@@ -814,11 +814,11 @@
             <div class="bottom-section">
                 <a href="{% url 'customer_ai:custom_app' llm.id %}" class="action-button">{% trans '대화하기' %}</a>
                 <a href="{% url 'mypage:my_ai_models_update_app' llm.id %}" class="action-button">{% trans '수정하기' %}</a>
-                <a href="{% url 'mypage:my_ai_models_delete' llm.id %}" class="action-button delete-button" onclick="return confirm('{% trans "해당 AI를 삭제하시겠습니까?" %}')">{% trans '삭제하기' %}</a>
+                <a href="{% url 'mypage:my_ai_models_delete_app' llm.id %}" class="action-button delete-button" onclick="return confirm('{% trans "해당 AI를 삭제하시겠습니까?" %}')">{% trans '삭제하기' %}</a>
                 {% if llm.is_public %}
-                    <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">{% trans '공유한 AI 수정하기' %}</a>
+                    <a href="{% url 'distribute:distribute_app' llm.id %}" class="action-button">{% trans '공유한 AI 수정하기' %}</a>
                 {% else %}
-                    <a href="{% url 'distribute:distribute' llm.id %}" class="action-button">{% trans '공유하기' %}</a>
+                    <a href="{% url 'distribute:distribute_app' llm.id %}" class="action-button">{% trans '공유하기' %}</a>
                 {% endif %}
             </div>
 
@@ -937,7 +937,7 @@
             // URL 업데이트
             const selectedLlmId = selectedOption.value;
             const currentPath = window.location.pathname;
-            const newUrl = currentPath.replace(/\/my_ai_models\/(\d+)\/?$/, `/my_ai_models/${selectedLlmId}/`);
+            const newUrl = currentPath.replace(/\/my_ai_models_app\/(\d+)\/?$/, `/my_ai_models_app/${selectedLlmId}/`);
             if (window.location.pathname !== newUrl) window.location.href = newUrl;
 
             // 프롬프트/Voice 업데이트
