@@ -1006,7 +1006,7 @@ def ai_name_app(request):
 
 
 @csrf_exempt
-@login_required
+@login_required(login_url='/register/login_app/')
 def make_ai_app(request):
     if request.method == "POST":
         ai_name = request.session.get('llm_name')
@@ -1105,7 +1105,7 @@ def make_ai_app(request):
 
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def custom_app(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
@@ -1125,7 +1125,7 @@ def custom_app(request, llm_id):
         "llm": llm
     })
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def vision_app(request,llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
@@ -1141,7 +1141,7 @@ def vision_app(request,llm_id):
 logger = logging.getLogger(__name__)
 
 
-@login_required
+@login_required(login_url='/register/login_app/')
 def novel_app(request, llm_id):
     try:
         llm = LLM.objects.get(id=llm_id)
