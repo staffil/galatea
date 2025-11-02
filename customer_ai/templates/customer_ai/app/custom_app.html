@@ -184,8 +184,58 @@
             padding-top: 65px;
         }
 
+        /* Sidebar - 외부 컨테이너 */
+        .sidebar,
+        aside.sidebar,
+        #sidebar {
+            position: fixed !important;
+            top: 65px !important;
+            left: 0 !important;
+            width: 280px !important;
+  height: calc(var(--vh, 1vh) * 100 - 65px);
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 0 !important;
+            transition: left 0.3s ease !important;
+            z-index: 999 !important;
+            overflow: hidden !important;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+            margin: 0 !important;
+        }
 
-        
+        .sidebar.active,
+        aside.sidebar.active,
+        #sidebar.active {
+            left: 0 !important;
+        }
+
+        /* Sidebar - 내부 스크롤 컨테이너 */
+        .sidebar-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            padding: 20px 25px 30px !important;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+
+        .sidebar h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: sticky;
+            top: 0;
+            background-color: rgba(26, 26, 46, 0.95);
+            padding: 10px 0;
+            z-index: 10;
+        }
 
         /* Mode Options */
         .mode-options {
@@ -591,8 +641,23 @@
                 left: 15px !important;
             }
 
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                width: 250px !important;
+                left: -250px !important;
+                height: calc(100vh - 65px) !important;
+                top: 65px !important;
+            }
 
+            .sidebar-wrapper {
+                padding: 15px 20px 25px !important;
+            }
 
+            .sidebar h3 {
+                font-size: 1.2rem;
+                margin-bottom: 15px;
+            }
 
             .mode-option {
                 padding: 12px;
@@ -646,9 +711,24 @@
                 padding-top: 60px;
             }
 
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                width: 220px !important;
+                left: -220px !important;
+                height: calc(100vh - 60px) !important;
+                top: 60px !important;
+            }
 
+            .sidebar-wrapper {
+                padding: 12px 15px 20px !important;
+            }
 
-
+            .sidebar h3 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+                padding: 8px 0;
+            }
 
             .mode-options {
                 gap: 10px;
@@ -756,7 +836,22 @@
                 top: 50px !important;
             }
 
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                height: calc(100vh - 50px) !important;
+                top: 50px !important;
+            }
 
+            .sidebar-wrapper {
+                padding: 10px 15px 15px !important;
+            }
+
+            .sidebar h3 {
+                font-size: 1rem;
+                margin-bottom: 10px;
+                padding: 5px 0;
+            }
 
             .mode-options {
                 gap: 8px;
@@ -808,21 +903,52 @@
                 padding-bottom: max(20px, env(safe-area-inset-bottom));
             }
 
+            .sidebar,
+            aside.sidebar,
+            #sidebar {
+                height: calc(100vh - 65px - env(safe-area-inset-bottom)) !important;
+            }
 
+            .sidebar-wrapper {
+                padding-top: max(20px, env(safe-area-inset-top)) !important;
+                padding-bottom: max(30px, env(safe-area-inset-bottom)) !important;
+            }
 
+            @media (max-width: 768px) {
+                .sidebar,
+                aside.sidebar,
+                #sidebar {
+                    height: calc(100vh - 65px - env(safe-area-inset-bottom)) !important;
+                }
+
+                .sidebar-wrapper {
+                    padding-top: max(15px, env(safe-area-inset-top)) !important;
+                    padding-bottom: max(25px, env(safe-area-inset-bottom)) !important;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .sidebar,
+                aside.sidebar,
+                #sidebar {
+                    height: calc(100vh - 60px - env(safe-area-inset-bottom)) !important;
+                }
+
+                .sidebar-wrapper {
+                    padding-top: max(12px, env(safe-area-inset-top)) !important;
+                    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+                }
+            }
         }
     </style>
 </head>
-
 <body>
-    <!-- 배경 원들 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- Header -->
     <header>
         {% if not user.is_authenticated %}
             {% include "common/app/notLoginHeader.html" %}
@@ -831,7 +957,6 @@
         {% endif %}
     </header>
 
-    <!-- Hamburger Menu -->
     <div class="hamburger" onclick="toggleSidebar()">
         <span></span>
         <span></span>
@@ -839,51 +964,27 @@
     </div>
 
     <div class="app-container">
-
-
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- AI Showcase -->
             <div class="ai-showcase">
                 {% if llm.llm_image %}
                     <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
                 {% endif %}
             </div>
 
-            <!-- Chat Messages -->
             <div class="chat-messages" id="message-area">
                 <div class="message ai">
                     <div class="message-avatar">🤖</div>
-                    <div class="message-content">
-                        {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
-                    </div>
+                    <div class="message-content">{% trans '안녕하세요! 무엇을 도와드릴까요?' %}</div>
                 </div>
             </div>
 
-            <!-- Input Section -->
             <div class="input-section">
                 <div class="input-row">
-                    <input type="text" class="text-input" id="text-input" 
-                           placeholder="{% trans '메시지를 입력하세요...' %}" 
-                           onkeydown="if(event.key === 'Enter'){ sendText(); }">
-                    <button class="send-btn" onclick="sendText()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+                    <input type="text" class="text-input" id="text-input" placeholder="{% trans '메시지를 입력하세요...' %}" onkeydown="if(event.key === 'Enter'){ sendText(); }">
+                    <button class="send-btn" onclick="sendText()"><i class="fas fa-paper-plane"></i></button>
                 </div>
-                
-                <!-- <div class="controls-row">
-                    <button class="record-btn" id="record-btn" onclick="toggleRecording()">
-                        <i class="fas fa-microphone" id="record-icon"></i>
-                    </button>
-                    <div class="record-status" id="record-status">
-                        {% trans '녹음을 시작하려면 버튼을 누르세요' %}
-                    </div>
-                </div> -->
-                
                 <div class="recognized-text" id="recognized-text"></div>
-                
-                <!-- Audio Player -->
-                <div class="audio-player" id="audio-container" style="display: none;">
+                <div class="audio-player" id="audio-container" style="display:none;">
                     <audio id="tts-audio" controls></audio>
                 </div>
             </div>
@@ -896,56 +997,60 @@
   const LLM_ID = {{ llm_id }}; 
   const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
 
-  // ✅ 1. Viewport Height Fix
   function setViewportHeight() {
-    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight*0.01}px`);
   }
   window.addEventListener('resize', setViewportHeight);
-  window.addEventListener('orientationchange', () => setTimeout(setViewportHeight, 100));
+  window.addEventListener('orientationchange', ()=>setTimeout(setViewportHeight,100));
   window.addEventListener('load', setViewportHeight);
   document.addEventListener('DOMContentLoaded', setViewportHeight);
 
-  // ✅ 2. Sidebar Toggle
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('active');
+    if(sidebar) sidebar.classList.toggle('active');
   }
 
-  // ✅ 3. 채팅 높이 자동 조정
   function adjustChatHeight() {
     const chatMessages = document.querySelector('.chat-messages');
     const aiShowcase = document.querySelector('.ai-showcase');
     const inputSection = document.querySelector('.input-section');
-    
-    if (chatMessages && aiShowcase && inputSection) {
-      const viewportHeight = window.innerHeight;
-      const headerHeight = 65;
-      const showcaseHeight = aiShowcase.offsetHeight;
-      const inputHeight = inputSection.offsetHeight;
-      const padding = 60;
-      
-      const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
-      chatMessages.style.maxHeight = `${Math.max(availableHeight, 120)}px`;
-      chatMessages.style.minHeight = `${Math.min(availableHeight, 120)}px`;
+    const headerHeight = 65;
+    if(chatMessages && aiShowcase && inputSection) {
+        const viewportHeight = window.innerHeight;
+        const showcaseHeight = aiShowcase.offsetHeight;
+        const inputHeight = inputSection.offsetHeight;
+        const padding = 60;
+        const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
+        chatMessages.style.maxHeight = `${Math.max(availableHeight,120)}px`;
+        chatMessages.style.minHeight = `${Math.min(availableHeight,120)}px`;
     }
   }
 
-  // ✅ 4. 초기 실행
   document.addEventListener('DOMContentLoaded', function() {
     setViewportHeight();
     adjustChatHeight();
-
-    // 외부 클릭 시 사이드바 닫기
     document.addEventListener('click', function(event) {
-      const sidebar = document.getElementById('sidebar');
-      const hamburger = document.querySelector('.hamburger');
-      if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
-        sidebar.classList.remove('active');
-      }
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.querySelector('.hamburger');
+        if(sidebar && !sidebar.contains(event.target) && !hamburger.contains(event.target)){
+            sidebar.classList.remove('active');
+        }
     });
   });
 
   console.log('✅ Chat page fully loaded with viewport fix');
+
+  function sendText() {
+      const input = document.getElementById('text-input');
+      if(!input.value) return;
+      const chat = document.getElementById('message-area');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message user';
+      msgDiv.innerHTML = `<div class="message-avatar">🙋</div><div class="message-content">${input.value}</div>`;
+      chat.appendChild(msgDiv);
+      input.value='';
+      chat.scrollTop = chat.scrollHeight;
+  }
 </script>
 
 <script src="{% static 'js/customer_ai/custom.js' %}"></script>
