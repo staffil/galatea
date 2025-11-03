@@ -4,11 +4,10 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Voice Chat UI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Voice Chat - GALATEA AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
     
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="{{ llm.name }}" />
@@ -18,163 +17,227 @@
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
 
-    <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "GALATEA AI",
-      "url": "https://www.galatea.website",
-      "logo": "https://www.galatea.website/static/img/logo.png"
-    }
-    </script>
-
     <style>
-        /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
+        /* WebView Optimized Chat UI - Full Screen Mobile App Style */
         
-        html {
-            height: 100%;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            background-color: #0f0f23 !important;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            background-attachment: scroll;
-            background-color: #0f0f23 !important;
-            color: #ffffff;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            position: relative;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body::before {
-            content: '';
+        :root {
+            --primary: #8b5cf6;
+            --primary-light: #a78bfa;
+            --primary-dark: #7c3aed;
+            --secondary: #06b6d4;
+            --accent: #f093fb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-dark: #0f0f23;
+            --bg-card: rgba(26, 26, 46, 0.95);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border: rgba(139, 92, 246, 0.2);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: fixed;
+            overscroll-behavior: none;
+        }
+
+        /* 배경 효과 */
+        .bg-gradient {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            z-index: -1;
+            z-index: -2;
         }
 
-        /* 배경 원들 */
-        .circle-bg {
-            position: fixed;
-            border-radius: 50%;
-            opacity: 0.1;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .circle-1 {
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            top: -150px;
-            left: -150px;
-            animation: chatFloat 20s ease-in-out infinite;
-        }
-
-        .circle-2 {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            top: 20%;
-            right: -100px;
-            animation: chatFloat 15s ease-in-out infinite reverse;
-        }
-
-        .circle-3 {
-            width: 250px;
-            height: 250px;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            bottom: 10%;
-            left: 10%;
-            animation: chatFloat 18s ease-in-out infinite;
-        }
-
-        .circle-4 {
-            width: 180px;
-            height: 180px;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            bottom: -90px;
-            right: 20%;
-            animation: chatFloat 12s ease-in-out infinite reverse;
-        }
-
-        .circle-5 {
-            width: 220px;
-            height: 220px;
-            background: linear-gradient(135deg, #fa709a, #fee140);
-            top: 50%;
-            left: -110px;
-            animation: chatFloat 16s ease-in-out infinite;
-        }
-
-        @keyframes chatFloat {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(30px, -30px) scale(1.1);
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-        }
-
-        /* Header */
-        .header {
+        .bg-circles {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .circle-1 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            top: 10%;
+            left: -50px;
+            animation-delay: 0s;
+        }
+
+        .circle-2 {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            top: 40%;
+            right: -30px;
+            animation-delay: 2s;
+        }
+
+        .circle-3 {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            33% {
+                transform: translate(30px, -30px);
+            }
+            66% {
+                transform: translate(-20px, 20px);
+            }
+        }
+
+        /* 앱 컨테이너 */
+        .app-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 상단 헤더 */
+        .chat-header {
+            flex-shrink: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: env(safe-area-inset-top, 0) 16px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .header-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .header-status {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: rgba(139, 92, 246, 0.15);
+            border-radius: 50%;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .header-btn:active {
+            transform: scale(0.95);
+            background: rgba(139, 92, 246, 0.25);
         }
 
         /* 탭 네비게이션 */
-        .tab-navigation {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            z-index: 999;
-            background: rgba(26, 26, 46, 0.98);
+        .tab-nav {
+            flex-shrink: 0;
+            background: var(--bg-card);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-            padding: 12px;
-        }
-
-        .tab-container {
+            border-bottom: 1px solid var(--border);
+            padding: 8px 12px;
             display: flex;
             gap: 8px;
-            max-width: 1200px;
-            margin: 0 auto;
         }
 
         .tab-item {
             flex: 1;
-            padding: 12px 16px;
+            padding: 10px;
             background: rgba(139, 92, 246, 0.1);
-            border: 2px solid rgba(139, 92, 246, 0.2);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            color: #94a3b8;
+            color: var(--text-secondary);
             font-size: 0.85rem;
-            font-weight: 700;
+            font-weight: 600;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -187,125 +250,77 @@
         }
 
         .tab-item.active {
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-color: transparent;
-            color: #ffffff;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            color: var(--text-primary);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
         }
 
-        .tab-item i {
-            font-size: 1rem;
-        }
-
-        /* 공유 버튼 */
-        .share-button {
-            position: fixed;
-            top: 130px;
-            right: 15px;
-            z-index: 998;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
-        }
-
-        .share-button:active {
-            transform: scale(0.95);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .share-button i {
-            font-size: 1.2rem;
-        }
-
-        /* App Container */
-        .app-container {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            min-height: 100vh;
-            padding-top: 125px;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            min-height: calc(100vh - 125px);
-        }
-
-        /* AI Showcase */
-        .ai-showcase {
-            text-align: center;
-            margin-bottom: 25px;
-            animation: chatFadeIn 0.6s ease-out;
-            flex-shrink: 0;
-        }
-
-        @keyframes chatFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .ai-image {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid rgba(139, 92, 246, 0.5);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .ai-image:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
-        }
-
-        /* Chat Messages */
+        /* 채팅 메시지 영역 */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background: rgba(26, 26, 46, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-            min-height: 200px;
-            max-height: calc(100vh - 510px);
+            padding: 16px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Message */
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 2px;
+        }
+
+        /* 날짜 구분선 */
+        .date-divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .date-divider::before,
+        .date-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .date-divider::before {
+            left: 0;
+        }
+
+        .date-divider::after {
+            right: 0;
+        }
+
+        .date-text {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* 메시지 */
         .message {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            animation: chatMessageSlide 0.3s ease-out;
+            gap: 8px;
+            margin-bottom: 16px;
+            animation: messageIn 0.3s ease-out;
         }
 
-        @keyframes chatMessageSlide {
+        @keyframes messageIn {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -321,201 +336,219 @@
         }
 
         .message-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
         }
 
         .message.user .message-avatar {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, var(--success), #059669);
         }
 
-        .message-content {
-            max-width: 70%;
-            padding: 14px 18px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 16px;
-            color: #ffffff;
+        .message-content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .message.user .message-content-wrapper {
+            align-items: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            color: var(--text-primary);
             font-size: 0.95rem;
             line-height: 1.5;
             word-wrap: break-word;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .message.user .message-content {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.2);
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.15));
+            border-color: rgba(139, 92, 246, 0.3);
         }
 
-        /* Typing Bubbles */
-        .typing-bubbles {
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            padding: 0 4px;
+        }
+
+        /* 타이핑 인디케이터 */
+        .typing-indicator {
             display: flex;
             gap: 4px;
-            align-items: center;
-            padding: 14px 18px;
+            padding: 12px 16px;
         }
 
-        .typing-bubbles span {
+        .typing-dot {
             width: 8px;
             height: 8px;
-            background: #8b5cf6;
+            background: var(--primary);
             border-radius: 50%;
-            display: block;
-            animation: bounce 1s infinite ease-in-out;
+            animation: typing 1.4s infinite;
         }
 
-        .typing-bubbles span:nth-child(2) { 
-            animation-delay: 0.2s; 
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
         }
 
-        .typing-bubbles span:nth-child(3) { 
-            animation-delay: 0.4s; 
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
         }
 
-        @keyframes bounce {
-            0%, 80%, 100% { 
-                transform: scale(0); 
-                opacity: 0.5;
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
             }
-            40% { 
-                transform: scale(1); 
+            30% {
+                transform: scale(1.2);
                 opacity: 1;
             }
         }
 
-        /* Input Section */
-        .input-section {
-            background: rgba(26, 26, 46, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 20px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        /* 입력 영역 */
+        .input-container {
             flex-shrink: 0;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            padding: 12px 16px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
         }
 
-        .input-row {
+        .input-wrapper {
             display: flex;
-            gap: 12px;
-            margin-bottom: 0;
+            align-items: flex-end;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
         .text-input {
             flex: 1;
-            padding: 14px 18px;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 12px 16px;
             background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(139, 92, 246, 0.3);
-            border-radius: 16px;
-            color: #ffffff;
+            border: 2px solid var(--border);
+            border-radius: 22px;
+            color: var(--text-primary);
             font-size: 0.95rem;
             font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
+            resize: none;
+            overflow-y: auto;
+            transition: all 0.2s;
         }
 
         .text-input:focus {
             outline: none;
-            border-color: #8b5cf6;
+            border-color: var(--primary);
             background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
 
         .text-input::placeholder {
-            color: #b8c5d1;
+            color: var(--text-secondary);
             opacity: 0.6;
         }
 
-        .send-btn {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .input-btn {
+            width: 44px;
+            height: 44px;
             border: none;
             border-radius: 50%;
-            color: white;
-            font-size: 1.2rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.2s;
             flex-shrink: 0;
-            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
         }
 
         .send-btn:active {
             transform: scale(0.95);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
 
-        /* Controls Row */
-        .controls-row {
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 음성 컨트롤 */
+        .voice-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: rgba(139, 92, 246, 0.05);
-            border-radius: 12px;
-            margin-bottom: 15px;
+            gap: 12px;
         }
 
         .record-btn {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent), #f5576c);
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 1.2rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
         }
 
         .record-btn:active {
             transform: scale(0.95);
-            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.5);
         }
 
         .record-btn.recording {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            animation: pulse 1.5s infinite;
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            animation: pulse-record 1.5s infinite;
         }
 
-        @keyframes pulse {
+        @keyframes pulse-record {
             0%, 100% {
-                box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
             }
             50% {
-                box-shadow: 0 4px 25px rgba(239, 68, 68, 0.8);
+                box-shadow: 0 4px 20px rgba(239, 68, 68, 0.8), 0 0 0 8px rgba(239, 68, 68, 0.2);
             }
         }
 
         .record-status {
             flex: 1;
-            font-size: 0.9rem;
-            color: #b8c5d1;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
-        /* Recognized Text */
+        /* 인식된 텍스트 */
         .recognized-text {
+            margin-top: 8px;
             padding: 12px;
             background: rgba(139, 92, 246, 0.1);
             border-radius: 12px;
-            color: #8b5cf6;
+            color: var(--primary-light);
             font-size: 0.85rem;
-            min-height: 40px;
             display: none;
         }
 
@@ -523,288 +556,161 @@
             display: block;
         }
 
-        /* Audio Player */
+        /* 오디오 플레이어 */
         .audio-player {
-            margin-top: 15px;
-            padding: 15px;
+            margin-top: 8px;
+            padding: 12px;
             background: rgba(139, 92, 246, 0.1);
             border-radius: 12px;
+            display: none;
+        }
+
+        .audio-player.active {
+            display: block;
         }
 
         .audio-player audio {
             width: 100%;
+            height: 40px;
             border-radius: 8px;
             outline: none;
         }
 
-        /* 스크롤바 커스터마이징 */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        /* 빈 채팅 상태 */
+        .empty-chat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 40px 20px;
+            text-align: center;
         }
 
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 15, 35, 0.5);
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #8b5cf6, #06b6d4);
-            border-radius: 4px;
+        .empty-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #764ba2, #667eea);
+        .empty-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
 
-        /* 반응형 */
-        @media (min-width: 768px) {
+        /* 로딩 스피너 */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 반응형 - 가로 모드 */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .chat-header {
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+
+            .header-avatar {
+                width: 32px;
+                height: 32px;
+            }
+
+            .tab-nav {
+                padding: 6px 12px;
+            }
+
             .tab-item {
-                font-size: 0.95rem;
-                padding: 14px 20px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .app-container {
-                padding-top: 120px;
-            }
-
-            .tab-navigation {
-                top: 55px;
-                padding: 10px;
-            }
-
-            .tab-container {
-                gap: 6px;
-            }
-
-            .tab-item {
-                font-size: 0.8rem;
-                padding: 10px 12px;
-                gap: 5px;
-            }
-
-            .tab-item i {
-                font-size: 0.95rem;
-            }
-
-            .share-button {
-                top: 120px;
-                right: 12px;
-                width: 45px;
-                height: 45px;
-            }
-
-            .share-button i {
-                font-size: 1.1rem;
-            }
-
-            .main-content {
-                padding: 15px;
-            }
-
-            .ai-image {
-                width: 180px;
-                height: 180px;
-            }
-
-            .ai-showcase {
-                margin-bottom: 15px;
-            }
-
-            .chat-messages {
-                min-height: 150px;
-                max-height: calc(100vh - 460px);
-                padding: 15px;
-            }
-
-            .message-content {
-                max-width: 80%;
-                font-size: 0.9rem;
-            }
-
-            .input-section {
-                padding: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .app-container {
-                padding-top: 115px;
-            }
-
-            .tab-navigation {
-                top: 50px;
                 padding: 8px;
+                font-size: 0.8rem;
             }
 
-            .tab-container {
-                gap: 5px;
-            }
-
-            .tab-item {
-                font-size: 0.7rem;
-                padding: 8px 8px;
-                gap: 4px;
-            }
-
-            .tab-item i {
-                font-size: 0.85rem;
-            }
-
-            .share-button {
-                top: 110px;
-                right: 10px;
-                width: 40px;
-                height: 40px;
-            }
-
-            .share-button i {
-                font-size: 1rem;
-            }
-
-            .main-content {
-                padding: 10px;
-            }
-
-            .ai-image {
-                width: 120px;
-                height: 120px;
-            }
-
-            .ai-showcase {
-                margin-bottom: 10px;
-            }
-
-            .chat-messages {
-                min-height: 120px;
-                max-height: calc(100vh - 420px);
-                padding: 12px;
-                margin-bottom: 15px;
-            }
-
-            .message-avatar {
-                width: 35px;
-                height: 35px;
-                font-size: 1.2rem;
-            }
-
-            .message-content {
-                max-width: 85%;
-                font-size: 0.85rem;
-                padding: 12px 14px;
-            }
-
-            .input-section {
-                padding: 12px;
-            }
-
-            .text-input {
-                padding: 12px 16px;
+            .message-bubble {
                 font-size: 0.9rem;
-            }
-
-            .send-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
-            }
-
-            .record-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
+                padding: 10px 14px;
             }
         }
 
-        /* 작은 화면 추가 대응 */
-        @media (max-height: 700px) {
-            .chat-messages {
-                min-height: 100px !important;
-                max-height: calc(100vh - 400px) !important;
-            }
-
-            .ai-image {
-                width: 100px !important;
-                height: 100px !important;
-            }
-
-            .ai-showcase {
-                margin-bottom: 8px !important;
+        /* 다크 모드 강제 */
+        @media (prefers-color-scheme: dark) {
+            html, body {
+                color-scheme: dark;
             }
         }
 
-        @media (max-height: 600px) {
-            .app-container {
-                padding-top: 110px;
-            }
-
-            .tab-navigation {
-                padding: 6px;
-            }
-
-            .tab-item {
-                padding: 6px 8px;
-                font-size: 0.65rem;
-            }
-
-            .share-button {
-                width: 38px;
-                height: 38px;
-                top: 105px;
-            }
-
-            .chat-messages {
-                min-height: 80px !important;
-                max-height: calc(100vh - 370px) !important;
-            }
-
-            .ai-image {
-                width: 80px !important;
-                height: 80px !important;
-            }
-        }
-
-        /* iOS 스타일 탭 하이라이트 제거 */
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        button, .tab-item {
-            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
-        }
-
-        /* Safe Area 대응 */
+        /* iOS Safe Area 대응 */
         @supports (padding: max(0px)) {
-            .app-container {
-                padding-left: max(0px, env(safe-area-inset-left));
-                padding-right: max(0px, env(safe-area-inset-right));
+            .chat-header {
+                padding-top: max(12px, env(safe-area-inset-top));
             }
-            
-            .main-content {
-                padding-bottom: max(20px, env(safe-area-inset-bottom));
+
+            .input-container {
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* 접근성 */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>
 </head>
 <body>
-    <div class="circle-bg circle-1"></div>
-    <div class="circle-bg circle-2"></div>
-    <div class="circle-bg circle-3"></div>
-    <div class="circle-bg circle-4"></div>
-    <div class="circle-bg circle-5"></div>
+    <!-- 배경 -->
+    <div class="bg-gradient"></div>
+    <div class="bg-circles">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
 
-    <header>
-        {% if not user.is_authenticated %}
-            {% include "common/app/notLoginHeader.html" %}
-        {% else %}
-            {% include "common/app/loginHeader.html" %}
-        {% endif %}
-    </header>
+    <!-- 앱 컨테이너 -->
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="chat-header">
+            {% if llm.llm_image %}
+                <img src="{{ llm.llm_image.url }}" alt="AI Avatar" class="header-avatar" />
+            {% else %}
+                <div class="header-avatar">🤖</div>
+            {% endif %}
+            <div class="header-info">
+                <div class="header-name">{{ llm.name|default:"AI Assistant" }}</div>
+                <div class="header-status">
+                    <span class="status-dot"></span>
+                    <span>{% trans "온라인" %}</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="shareLink()" data-link="{{ request.build_absolute_uri }}">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
+        </header>
 
-    <!-- 탭 네비게이션 -->
-    <nav class="tab-navigation">
-        <div class="tab-container">
+        <!-- 탭 네비게이션 -->
+        <nav class="tab-nav">
             <a href="/customer_ai/custom_app/{{llm_id}}/" class="tab-item active">
                 <i class="fas fa-comment"></i>
                 <span>TEXT</span>
@@ -817,40 +723,50 @@
                 <i class="fas fa-book"></i>
                 <span>NOVEL</span>
             </a>
+        </nav>
+
+        <!-- 채팅 메시지 -->
+        <div class="chat-messages" id="message-area">
+            <div class="date-divider">
+                <span class="date-text">{% trans "오늘" %}</span>
+            </div>
+
+            <div class="message ai">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content-wrapper">
+                    <div class="message-bubble">
+                        {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
+                    </div>
+                    <div class="message-time">{% now "H:i" %}</div>
+                </div>
+            </div>
         </div>
-    </nav>
 
-    <!-- 공유 버튼 -->
-    <button class="share-button" onclick="shareLink()" data-link="{{ request.build_absolute_uri }}">
-        <i class="fas fa-share-alt"></i>
-    </button>
-
-    <div class="app-container">
-        <main class="main-content">
-            <div class="ai-showcase">
-                {% if llm.llm_image %}
-                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
-                {% endif %}
+        <!-- 입력 영역 -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <button class="input-btn record-btn" id="record-btn" onclick="toggleRecording()">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <textarea 
+                    class="text-input" 
+                    id="text-input" 
+                    placeholder="{% trans '메시지를 입력하세요...' %}"
+                    rows="1"
+                    onkeydown="handleKeyDown(event)"
+                    oninput="autoResize(this)"
+                ></textarea>
+                <button class="input-btn send-btn" id="send-btn" onclick="sendText()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
-
-            <div class="chat-messages" id="message-area">
-                <div class="message ai">
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content">{% trans '안녕하세요! 무엇을 도와드릴까요?' %}</div>
-                </div>
+            
+            <div class="recognized-text" id="recognized-text"></div>
+            
+            <div class="audio-player" id="audio-player">
+                <audio id="tts-audio" controls></audio>
             </div>
-
-            <div class="input-section">
-                <div class="input-row">
-                    <input type="text" class="text-input" id="text-input" placeholder="{% trans '메시지를 입력하세요...' %}" onkeydown="if(event.key === 'Enter'){ sendText(); }">
-                    <button class="send-btn" onclick="sendText()"><i class="fas fa-paper-plane"></i></button>
-                </div>
-                <div class="recognized-text" id="recognized-text"></div>
-                <div class="audio-player" id="audio-container" style="display:none;">
-                    <audio id="tts-audio" controls></audio>
-                </div>
-            </div>
-        </main>
+        </div>
     </div>
 
 <script>
@@ -859,7 +775,7 @@
   const LLM_ID = {{ llm_id }}; 
   const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
 
-  // Django 번역 문자열을 JS에서 사용할 객체
+  // 번역 문자열
   const messages = {
       recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
       recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
@@ -867,64 +783,170 @@
       recognizedText: "{% trans '인식된 텍스트: ' %}",
       audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
       errorOccurred: "{% trans '오류 발생: ' %}",
-      shareCopied: "{% trans '링크가 복사되었습니다!' %}"
+      shareCopied: "{% trans '링크가 복사되었습니다!' %}",
+      today: "{% trans '오늘' %}",
+      yesterday: "{% trans '어제' %}"
   };
 
-  function setViewportHeight() {
-    document.documentElement.style.setProperty('--vh', `${window.innerHeight*0.01}px`);
-  }
-  window.addEventListener('resize', setViewportHeight);
-  window.addEventListener('orientationchange', ()=>setTimeout(setViewportHeight,100));
-  window.addEventListener('load', setViewportHeight);
-  document.addEventListener('DOMContentLoaded', setViewportHeight);
+  let isRecording = false;
+  let mediaRecorder = null;
 
-  function adjustChatHeight() {
-    const chatMessages = document.querySelector('.chat-messages');
-    const aiShowcase = document.querySelector('.ai-showcase');
-    const inputSection = document.querySelector('.input-section');
-    const headerHeight = 125;
-    if(chatMessages && aiShowcase && inputSection) {
-        const viewportHeight = window.innerHeight;
-        const showcaseHeight = aiShowcase.offsetHeight;
-        const inputHeight = inputSection.offsetHeight;
-        const padding = 60;
-        const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
-        chatMessages.style.maxHeight = `${Math.max(availableHeight,120)}px`;
-        chatMessages.style.minHeight = `${Math.min(availableHeight,120)}px`;
-    }
+  // 텍스트 입력 자동 크기 조절
+  function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
   }
 
-  // 공유하기 함수
+  // 엔터 키 처리
+  function handleKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          sendText();
+      }
+  }
+
+  // 메시지 전송
+  function sendText() {
+      const input = document.getElementById('text-input');
+      const text = input.value.trim();
+      
+      if (!text) return;
+      
+      const chat = document.getElementById('message-area');
+      const now = new Date();
+      const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+      
+      // 사용자 메시지 추가
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message user';
+      msgDiv.innerHTML = `
+          <div class="message-avatar">👤</div>
+          <div class="message-content-wrapper">
+              <div class="message-bubble">${text}</div>
+              <div class="message-time">${time}</div>
+          </div>
+      `;
+      chat.appendChild(msgDiv);
+      
+      // 입력창 초기화
+      input.value = '';
+      input.style.height = 'auto';
+      
+      // 스크롤 하단으로
+      chat.scrollTop = chat.scrollHeight;
+      
+      // 타이핑 인디케이터 표시
+      showTypingIndicator();
+      
+      // 여기에 실제 API 호출 로직 추가
+  }
+
+  // 타이핑 인디케이터 표시
+  function showTypingIndicator() {
+      const chat = document.getElementById('message-area');
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message ai typing-message';
+      typingDiv.innerHTML = `
+          <div class="message-avatar">🤖</div>
+          <div class="message-content-wrapper">
+              <div class="message-bubble typing-indicator">
+                  <div class="typing-dot"></div>
+                  <div class="typing-dot"></div>
+                  <div class="typing-dot"></div>
+              </div>
+          </div>
+      `;
+      chat.appendChild(typingDiv);
+      chat.scrollTop = chat.scrollHeight;
+      
+      // 3초 후 제거 (테스트용)
+      setTimeout(() => {
+          typingDiv.remove();
+      }, 3000);
+  }
+
+  // 녹음 토글
+  function toggleRecording() {
+      const btn = document.getElementById('record-btn');
+      
+      if (!isRecording) {
+          startRecording();
+          btn.classList.add('recording');
+          btn.innerHTML = '<i class="fas fa-stop"></i>';
+      } else {
+          stopRecording();
+          btn.classList.remove('recording');
+          btn.innerHTML = '<i class="fas fa-microphone"></i>';
+      }
+  }
+
+  // 녹음 시작
+  async function startRecording() {
+      try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          
+          const audioChunks = [];
+          
+          mediaRecorder.ondataavailable = (event) => {
+              audioChunks.push(event.data);
+          };
+          
+          mediaRecorder.onstop = () => {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+              processAudio(audioBlob);
+              stream.getTracks().forEach(track => track.stop());
+          };
+          
+          mediaRecorder.start();
+          isRecording = true;
+      } catch (error) {
+          console.error('마이크 권한 오류:', error);
+          alert(messages.micPermission);
+      }
+  }
+
+  // 녹음 중지
+  function stopRecording() {
+      if (mediaRecorder && isRecording) {
+          mediaRecorder.stop();
+          isRecording = false;
+      }
+  }
+
+  // 오디오 처리
+  function processAudio(audioBlob) {
+      // 여기에 음성 인식 및 TTS API 호출 로직 추가
+      console.log('오디오 처리:', audioBlob);
+  }
+
+  // 공유하기
   function shareLink() {
-      const shareBtn = document.querySelector('.share-button');
+      const shareBtn = document.querySelector('[data-link]');
       const link = shareBtn.getAttribute('data-link');
       
-      // Web Share API 지원 확인
       if (navigator.share) {
           navigator.share({
               title: 'GALATEA AI Chat',
               text: '{% trans "이 AI와 대화해보세요!" %}',
               url: link
           }).catch(err => {
-              // 공유 취소 시 무시
               if (err.name !== 'AbortError') {
                   copyToClipboard(link);
               }
           });
       } else {
-          // Web Share API 미지원 시 클립보드에 복사
           copyToClipboard(link);
       }
   }
 
-  // 클립보드 복사 함수
+  // 클립보드 복사
   function copyToClipboard(text) {
       if (navigator.clipboard) {
           navigator.clipboard.writeText(text).then(() => {
               alert(messages.shareCopied);
           });
       } else {
-          // 구형 브라우저 대응
           const textarea = document.createElement('textarea');
           textarea.value = text;
           document.body.appendChild(textarea);
@@ -935,24 +957,24 @@
       }
   }
 
+  // 페이지 로드 시
   document.addEventListener('DOMContentLoaded', function() {
-    setViewportHeight();
-    adjustChatHeight();
+      // 메시지 영역을 맨 아래로 스크롤
+      const chat = document.getElementById('message-area');
+      chat.scrollTop = chat.scrollHeight;
+      
+      // iOS 키보드 대응
+      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+          const input = document.getElementById('text-input');
+          input.addEventListener('focus', function() {
+              setTimeout(() => {
+                  chat.scrollTop = chat.scrollHeight;
+              }, 300);
+          });
+      }
   });
 
-  console.log('✅ Chat page fully loaded with tab navigation');
-
-  function sendText() {
-      const input = document.getElementById('text-input');
-      if(!input.value) return;
-      const chat = document.getElementById('message-area');
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'message user';
-      msgDiv.innerHTML = `<div class="message-avatar">🙋</div><div class="message-content">${input.value}</div>`;
-      chat.appendChild(msgDiv);
-      input.value='';
-      chat.scrollTop = chat.scrollHeight;
-  }
+  console.log('✅ WebView optimized chat page loaded');
 </script>
 
 <script src="{% static 'js/customer_ai/custom.js' %}"></script>
