@@ -1494,7 +1494,7 @@ button, a {
             <div class="genre-container">
                 <h2 class="section-title">{% trans "장르" %}</h2>
                 <div class="genre-tags-container">
-                    {% for genre in genre_list|slice:":8" %}
+                    {% for genre in genre_list|slice:":4" %}
                     <a href="{% url 'home:genres_detail_app' genre.id %}">
                         <div class="genre-tag-box">
                             {% if genre.genre_image %}
