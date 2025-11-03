@@ -7,8 +7,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% trans "요청 상세 - GALATEA" %}</title>
-    <link rel="stylesheet" href="{% static 'css/helpdesk/request.css' %}">
-        <!-- Open Graph (SNS 공유용) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -29,7 +30,332 @@
 </script>
 
 </head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        background-attachment: fixed;
+        color: #ffffff;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .circle-bg {
+        position: fixed;
+        border-radius: 50%;
+        opacity: 0.08;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .circle-1 {
+        width: 350px;
+        height: 350px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        top: -180px;
+        left: -180px;
+        animation: float 20s ease-in-out infinite;
+    }
+
+    .circle-2 {
+        width: 250px;
+        height: 250px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        top: 20%;
+        right: -120px;
+        animation: float 15s ease-in-out infinite reverse;
+    }
+
+    .circle-3 {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        bottom: 15%;
+        left: -150px;
+        animation: float 18s ease-in-out infinite;
+    }
+
+    .circle-4 {
+        width: 220px;
+        height: 220px;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        bottom: 25%;
+        right: 15%;
+        animation: float 12s ease-in-out infinite reverse;
+    }
+
+    .circle-5 {
+        width: 280px;
+        height: 280px;
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        top: 45%;
+        left: -140px;
+        animation: float 16s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+
+    .detail-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 140px 15px 60px;
+        max-width: 900px;
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    .detail-card {
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 0.6s ease-out;
+        margin-bottom: 20px;
+    }
+
+    .detail-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 20px;
+        line-height: 1.3;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .detail-title span {
+        font-size: 0.9rem;
+        color: #fca5a5;
+    }
+
+    .detail-meta {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .detail-meta::before {
+        content: '📅 ';
+        font-size: 1rem;
+    }
+
+    .detail-content {
+        color: #cbd5e1;
+        font-size: 1rem;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .detail-container > a {
+        display: inline-block;
+        padding: 12px 24px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px;
+        color: #fca5a5;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-bottom: 20px;
+        animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    }
+
+    .detail-container > a:active {
+        background: rgba(239, 68, 68, 0.2);
+        transform: scale(0.98);
+    }
+
+    .response-form-container {
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 0.6s ease-out 0.3s backwards;
+    }
+
+    .response-form-container h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #6ee7b7;
+        margin-bottom: 25px;
+    }
+
+    .response-form-container h2::before {
+        content: '💬 ';
+        font-size: 1.5rem;
+    }
+
+    .response-form-container form p {
+        margin-bottom: 20px;
+    }
+
+    .response-form-container form p label {
+        display: block;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    .response-form-container form p textarea {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 2px solid rgba(16, 185, 129, 0.2);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    .response-form-container form p textarea:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        background: rgba(16, 185, 129, 0.15);
+    }
+
+    .submit-btn {
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .submit-btn:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .detail-card h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #6ee7b7;
+        margin-bottom: 20px;
+    }
+
+    .detail-card h3::before {
+        content: '✅ ';
+        font-size: 1.3rem;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .detail-container {
+            padding: 160px 30px 80px;
+        }
+
+        .detail-card,
+        .response-form-container {
+            padding: 50px;
+        }
+
+        .detail-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .detail-card,
+        .response-form-container {
+            padding: 25px;
+        }
+
+        .detail-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 15, 35, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+        border-radius: 4px;
+    }
+
+    @supports (padding: max(0px)) {
+        .detail-container {
+            padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+            padding-left: max(15px, env(safe-area-inset-left));
+            padding-right: max(15px, env(safe-area-inset-right));
+            padding-bottom: max(60px, env(safe-area-inset-bottom));
+        }
+    }
+</style>
+
 <body>
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
+
     <header>
         {% if not user.is_authenticated %}
             {% include "common/app/notLoginHeader.html" %}
@@ -43,7 +369,7 @@
             <h1 class="detail-title">
                 {{ request_list.title }}
                 {% if request_list.is_secret %}
-                    <span style="color:red; font-size:0.9rem;">[비밀글]</span>
+                    <span>[비밀글]</span>
                 {% endif %}
             </h1>
             <div class="detail-meta">
@@ -57,29 +383,27 @@
             </div>
         </div>
 
+        {% if request.user == request_list.user or request.user.is_superuser %}
+        <a href="{% url 'helpdesk:request_delete_app' request_list.id %}" onclick="return confirm('정말 삭제하시겠습니까?')">🗑️ 삭제</a>
+        {% endif %}
 
-{% if request.user == request_list.user or request.user.is_superuser %}
-    <a href="{% url 'helpdesk:request_delete_app' request_list.id %}">삭제</a>
-{% endif %}
-
-{% if request.user.is_superuser %}
-<div class="response-form-container">
-    <h2>관리자 응답 작성</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ response_form.as_p }}
-        <button type="submit" class="submit-btn">{% trans "응답 저장" %}</button>
-    </form>
-</div>
-{% elif request_list.response %}
-<div class="detail-card" style="margin-top:20px;">
-    <h3>관리자 응답</h3>
-    <div class="detail-content">
-        {{ request_list.response }}
-    </div>
-</div>
-{% endif %}
-
+        {% if request.user.is_superuser %}
+        <div class="response-form-container">
+            <h2>관리자 응답 작성</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ response_form.as_p }}
+                <button type="submit" class="submit-btn">{% trans "응답 저장" %}</button>
+            </form>
+        </div>
+        {% elif request_list.response %}
+        <div class="detail-card" style="margin-top:20px;">
+            <h3>관리자 응답</h3>
+            <div class="detail-content">
+                {{ request_list.response }}
+            </div>
+        </div>
+        {% endif %}
     </main>
 </body>
 </html>

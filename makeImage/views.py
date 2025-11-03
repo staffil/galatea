@@ -96,3 +96,10 @@ def proxy_image(request):
     
     content_type = resp.headers.get('Content-Type', 'image/png')
     return HttpResponse(resp.content, content_type=content_type)
+
+
+
+#ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+# 앱 전용
+def image_app(request):
+    return render(request, "makeImage/app/image_app.html")

@@ -795,3 +795,13 @@ def voice_all_app(request):
 
 
 
+def search_result_app(request):
+    query = request.GET.get('q', '')
+    result = []
+
+    if query:
+        result = LLM.objects.filter(title__icontains = query, is_public=True)
+    return render(request, 'common/app/search_result_app.html', {
+        'query': query,
+        'results': result
+    })
