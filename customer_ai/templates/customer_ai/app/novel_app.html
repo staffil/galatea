@@ -827,6 +827,83 @@
                     padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
                 }
             }
+              @media (max-width: 480px) {
+            .app-container {
+                padding-top: 115px;
+            }
+
+            .tab-navigation {
+                top: 50px;
+                padding: 8px;
+            }
+
+            .tab-container {
+                gap: 5px;
+            }
+
+            .tab-item {
+                font-size: 0.7rem;
+                padding: 8px 8px;
+                gap: 4px;
+            }
+
+            .tab-item i {
+                font-size: 0.85rem;
+            }
+
+            .share-button {
+                top: 110px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .share-button i {
+                font-size: 1rem;
+            }
+
+            .main-content {
+                padding: 10px;
+                gap: 12px;
+            }
+
+            .ai-image, .no-image {
+                width: 120px;
+                height: 120px;
+            }
+
+            .page-subtitle {
+                font-size: 0.85rem;
+            }
+
+            #webcam {
+                height: 200px;
+            }
+
+            .video-section, .control-section, .result-card {
+                padding: 12px;
+            }
+
+            .section-title, .result-title {
+                font-size: 0.9rem;
+            }
+
+            .vision-toggle {
+                padding: 10px 14px;
+                font-size: 0.8rem;
+            }
+
+            .record-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+
+            .result-content {
+                font-size: 0.85rem;
+                min-height: 80px;
+            }
+        }
         }
     </style>
 </head>
@@ -848,40 +925,23 @@
         {% endif %}
     </header>
 
-    <!-- Hamburger Menu -->
-    <div class="hamburger" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-wrapper">
-                <h3>🎯 {% trans '모드 선택' %}</h3>
-                <div class="mode-options">
-                    <div class="mode-option">
-                        <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';">
-                        <label><i class="fas fa-comment"></i> {% trans 'TEXT MODE' %}</label>
-                    </div>
-
-                    <div class="mode-option">
-                        <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
-                        <label><i class="fas fa-eye"></i> {% trans 'VISION MODE' %}</label>
-                    </div>
-
-                    <div class="mode-option active">
-                        <input type="radio" name="mode" checked onclick="location.href='/customer_ai/novel/{{llm_id}}';">
-                        <label><i class="fas fa-book"></i> {% trans 'NOVEL MODE' %}</label>
-                    </div>
-                </div>
-                
-                <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-                    {% trans '공유하기' %}
-                </button>
-            </div>
-        </aside>
+    <!-- 탭 네비게이션 -->
+    <nav class="tab-navigation">
+        <div class="tab-container">
+            <a href="/customer_ai/custom_app/{{llm_id}}/" class="tab-item">
+                <i class="fas fa-comment"></i>
+                <span>TEXT</span>
+            </a>
+            <a href="/customer_ai/vision_app/{{llm_id}}/" class="tab-item active">
+                <i class="fas fa-eye"></i>
+                <span>VISION</span>
+            </a>
+            <a href="/customer_ai/novel_app/{{llm_id}}/" class="tab-item">
+                <i class="fas fa-book"></i>
+                <span>NOVEL</span>
+            </a>
+        </div>
+    </nav>
 
         <!-- Main Content -->
         <main class="main-content">
