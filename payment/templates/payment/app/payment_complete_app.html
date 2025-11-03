@@ -1,0 +1,500 @@
+{% load humanize %}
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+    <title>GALATEA {% trans "결제 완료" %}</title>
+    <style>
+        /* 전체 초기화 */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        .brand-name{
+            margin:-10px;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            position: relative;
+            padding: 0;
+        }
+
+        /* 배경 장식 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(139,92,246,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(6,182,212,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 120px 20px 60px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        /* 결제 상태 카드 */
+        .status-card {
+            background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(6,182,212,0.08));
+            border: 1px solid rgba(139,92,246,0.25);
+            border-radius: 24px;
+            padding: 50px 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 20px 60px rgba(139,92,246,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        /* 성공 상태 */
+        .status-card.success::before {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+        }
+
+        .status-card.success {
+            border-color: rgba(34,197,94,0.3);
+        }
+
+        /* 실패 상태 */
+        .status-card.failed::before {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .status-card.failed {
+            border-color: rgba(239,68,68,0.3);
+        }
+
+        /* 상태 아이콘 */
+        .status-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .status-icon.success {
+            color: #22c55e;
+        }
+
+        .status-icon.failed {
+            color: #ef4444;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* 상태 메시지 */
+        .status-message {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .status-message.success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-message.failed {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 부제목 */
+        .status-subtitle {
+            font-size: 16px;
+            color: rgba(226,232,240,0.8);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* 링크 컨테이너 */
+        .link-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* 기본 링크 스타일 */
+        .action-link {
+            display: inline-block;
+            padding: 18px 32px;
+            border: 2px solid;
+            border-radius: 16px;
+            color: white;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        /* 메인으로 가기 - 초록색 */
+        .action-link.primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-color: #22c55e;
+        }
+
+        .action-link.primary:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(34,197,94,0.4);
+        }
+
+        .action-link.primary::before {
+            content: '🏠';
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        /* 결제 칸으로 가기 - 주황색 */
+        .action-link.secondary {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-color: #f59e0b;
+        }
+
+        .action-link.secondary:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(245,158,11,0.4);
+        }
+
+        .action-link.secondary::before {
+            content: '💳';
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        /* 토큰 내역 창으로 가기 - 보라색 */
+        .action-link.tertiary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border-color: #8b5cf6;
+        }
+
+        .action-link.tertiary:hover {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139,92,246,0.4);
+        }
+
+        .action-link.tertiary::before {
+            content: '🪙';
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        /* 활성화 효과 */
+        .action-link:active {
+            transform: translateY(-1px);
+        }
+
+        /* 빛나는 효과 */
+        .action-link::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-link:hover::after {
+            left: 100%;
+        }
+
+        /* 포커스 효과 */
+        .action-link:focus-visible {
+            outline: 3px solid rgba(255,255,255,0.5);
+            outline-offset: 3px;
+        }
+
+        /* 반응형 디자인 - 태블릿 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 100px 15px 40px;
+            }
+            
+            .status-card {
+                padding: 40px 30px;
+                border-radius: 20px;
+            }
+            
+            .status-icon {
+                font-size: 60px;
+                margin-bottom: 15px;
+            }
+            
+            .status-message {
+                font-size: 24px;
+            }
+            
+            .status-subtitle {
+                font-size: 15px;
+                margin-bottom: 25px;
+            }
+            
+            .link-container {
+                gap: 18px;
+            }
+            
+            .action-link {
+                padding: 16px 28px;
+                font-size: 15px;
+                border-radius: 14px;
+            }
+        }
+
+        /* 반응형 디자인 - 모바일 */
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 90px 12px 35px;
+            }
+            
+            .status-card {
+                padding: 30px 25px;
+                border-radius: 18px;
+            }
+            
+            .status-icon {
+                font-size: 50px;
+                margin-bottom: 12px;
+            }
+            
+            .status-message {
+                font-size: 20px;
+            }
+            
+            .status-subtitle {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+            
+            .link-container {
+                gap: 15px;
+            }
+            
+            .action-link {
+                padding: 14px 24px;
+                font-size: 14px;
+                border-radius: 12px;
+            }
+            
+            .action-link::before {
+                font-size: 18px;
+                margin-right: 8px;
+            }
+        }
+
+        /* 접근성 개선 */
+        @media (prefers-reduced-motion: reduce) {
+            .status-icon {
+                animation: none;
+            }
+            
+            .action-link {
+                transition: none;
+            }
+            
+            .action-link::after {
+                display: none;
+            }
+        }
+
+        /* 성공 애니메이션 */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(odd) {
+            background: #8b5cf6;
+            animation-delay: -0.5s;
+        }
+
+        .confetti:nth-child(3n) {
+            background: #06b6d4;
+            animation-delay: -1s;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/loginHeader.html" %}
+        {% endif %}
+    </header>
+
+    <div class="main-container">
+        {% if status == "paid" %}
+        <div class="status-card success">
+            <div class="status-icon success">🎉</div>
+            <h2 class="status-message success">
+                {% trans "결제가 완료되었습니다!" %}
+            </h2>
+            <p class="status-subtitle">
+                {% trans "토큰이 성공적으로 지급되었습니다. 이제 다양한 서비스를 이용하실 수 있습니다. 결제 내역 확인을 원하시면 '토큰 내역 확인하기' 버튼을 누르세요" %}
+            </p>
+                <p class="payment-amount">
+        {% trans "결제 금액" %}: {{ payment.amount|intcomma }} 원
+    </p>
+    <p class="token-info">
+        {% trans "상태" %}: {{ status|intcomma }}
+    </p>
+
+        </div>
+
+        <!-- 성공 시 축하 애니메이션 -->
+        <div class="celebration" id="celebration">
+            <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="confetti" style="left: 20%; animation-delay: -0.2s;"></div>
+            <div class="confetti" style="left: 30%; animation-delay: -0.4s;"></div>
+            <div class="confetti" style="left: 40%; animation-delay: -0.6s;"></div>
+            <div class="confetti" style="left: 50%; animation-delay: -0.8s;"></div>
+            <div class="confetti" style="left: 60%; animation-delay: -1s;"></div>
+            <div class="confetti" style="left: 70%; animation-delay: -1.2s;"></div>
+            <div class="confetti" style="left: 80%; animation-delay: -1.4s;"></div>
+            <div class="confetti" style="left: 90%; animation-delay: -1.6s;"></div>
+        </div>
+        {% else %}
+        <div class="status-card failed">
+            <div class="status-icon failed">😢</div>
+            <h2 class="status-message failed">
+                {% trans "결제에 실패했습니다" %}
+            </h2>
+            <p class="status-subtitle">
+                {% trans "결제가 실패했거나 취소되었습니다. 다시 시도해 주세요." %}
+            </p>
+        </div>
+        {% endif %}
+
+        <div class="link-container">
+            <a href="{% url 'home:main_app' %}" class="action-link primary">
+                {% trans "메인으로 가기" %}
+            </a>
+            <a href="{% url 'payment:payment_choice_app' %}" class="action-link secondary">
+                {% trans "결제 페이지로 가기" %}
+            </a>
+            <a href="{% url 'mypage:token_app' %}" class="action-link tertiary">
+                {% trans "토큰 내역 확인하기" %}
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 성공 시 축하 애니메이션 자동 제거
+        {% if status == "paid" %}
+        setTimeout(() => {
+            const celebration = document.getElementById('celebration');
+            if (celebration) {
+                celebration.style.opacity = '0';
+                setTimeout(() => {
+                    celebration.remove();
+                }, 1000);
+            }
+        }, 5000);
+        {% endif %}
+    </script>
+</body>
+</html>
