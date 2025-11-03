@@ -165,6 +165,60 @@
             background: rgba(139, 92, 246, 0.2);
         }
 
+           /* 탭 네비게이션 */
+        .tab-navigation {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(26, 26, 46, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 12px;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 8px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-item {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .tab-item:active {
+            transform: scale(0.98);
+        }
+
+        .tab-item.active {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-color: transparent;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .tab-item i {
+            font-size: 1rem;
+        }
+
         .hamburger span {
             display: block;
             width: 25px;
