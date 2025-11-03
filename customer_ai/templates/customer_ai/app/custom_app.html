@@ -115,139 +115,95 @@
         border-bottom: 1px solid rgba(139, 92, 246, 0.2);
     }
 
-    /* 햄버거 메뉴 */
-    .hamburger {
-        position: fixed;
-        top: 70px;
-        left: 15px;
-        z-index: 1001;
-        width: 40px;
-        height: 40px;
-        background: rgba(139, 92, 246, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        cursor: pointer;
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .hamburger:active {
-        transform: scale(0.95);
-        background: rgba(139, 92, 246, 0.3);
-    }
-
-    .hamburger span {
-        width: 20px;
-        height: 2px;
-        background: #8b5cf6;
-        border-radius: 2px;
-        transition: all 0.3s ease;
-    }
-
     /* 앱 컨테이너 */
     .app-container {
         position: relative;
         height: 100vh;
         display: flex;
+        flex-direction: column;
         padding-top: 60px;
     }
 
-    /* 사이드바 */
-    .sidebar {
+    /* 탭 네비게이션 */
+    .tab-navigation {
         position: fixed;
-        left: -300px;
         top: 60px;
-        bottom: 0;
-        width: 280px;
+        left: 0;
+        right: 0;
+        z-index: 999;
         background: rgba(26, 26, 46, 0.98);
         backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(139, 92, 246, 0.2);
-        padding: 20px;
-        z-index: 999;
-        transition: left 0.3s ease;
-        overflow-y: auto;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        padding: 12px;
     }
 
-    .sidebar.active {
-        left: 0;
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .sidebar h3 {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #8b5cf6;
-        margin-bottom: 20px;
-    }
-
-    .mode-options {
+    .tab-container {
         display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 20px;
+        gap: 8px;
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
-    .mode-option {
+    .tab-item {
+        flex: 1;
+        padding: 12px 16px;
         background: rgba(139, 92, 246, 0.1);
         border: 2px solid rgba(139, 92, 246, 0.2);
         border-radius: 12px;
-        padding: 12px 15px;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
-        gap: 10px;
+        justify-content: center;
+        gap: 6px;
+        text-decoration: none;
     }
 
-    .mode-option:active {
+    .tab-item:active {
         transform: scale(0.98);
     }
 
-    .mode-option.active {
-        background: rgba(139, 92, 246, 0.2);
-        border-color: #8b5cf6;
-    }
-
-    .mode-option input[type="radio"] {
-        accent-color: #8b5cf6;
-        width: 18px;
-        height: 18px;
-    }
-
-    .mode-option label {
-        color: #e2e8f0;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-    }
-
-    .mode-option label i {
-        color: #8b5cf6;
-    }
-
-    .share-btn {
-        width: 100%;
-        padding: 12px;
+    .tab-item.active {
         background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-        border: none;
-        border-radius: 12px;
-        color: white;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        border-color: transparent;
+        color: #ffffff;
         box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
     }
 
-    .share-btn:active {
-        transform: scale(0.98);
+    .tab-item i {
+        font-size: 1rem;
+    }
+
+    /* 공유 버튼 */
+    .share-button {
+        position: fixed;
+        top: 120px;
+        right: 15px;
+        z-index: 998;
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .share-button:active {
+        transform: scale(0.95);
+    }
+
+    .share-button i {
+        font-size: 1rem;
     }
 
     /* 메인 컨텐츠 */
@@ -255,7 +211,8 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 60px);
+        margin-top: 65px;
+        height: calc(100vh - 125px);
         position: relative;
         z-index: 1;
     }
@@ -508,19 +465,6 @@
         border-radius: 3px;
     }
 
-    .sidebar::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .sidebar::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-        background: rgba(139, 92, 246, 0.3);
-        border-radius: 3px;
-    }
-
     /* 애니메이션 */
     @keyframes fadeInUp {
         from {
@@ -535,14 +479,9 @@
 
     /* 반응형 */
     @media (min-width: 768px) {
-        .sidebar {
-            left: 0;
-            position: relative;
-            width: 300px;
-        }
-
-        .hamburger {
-            display: none;
+        .tab-item {
+            font-size: 0.95rem;
+            padding: 14px 20px;
         }
 
         .ai-image {
@@ -556,6 +495,23 @@
     }
 
     @media (max-width: 480px) {
+        .tab-item {
+            font-size: 0.75rem;
+            padding: 10px 8px;
+            gap: 4px;
+        }
+
+        .tab-item i {
+            font-size: 0.9rem;
+        }
+
+        .share-button {
+            top: 115px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+        }
+
         .ai-showcase {
             padding: 15px;
         }
@@ -611,39 +567,30 @@
         {% endif %}
     </header>
 
-    <!-- 햄버거 메뉴 -->
-    <div class="hamburger" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+    <!-- 탭 네비게이션 -->
+    <nav class="tab-navigation">
+        <div class="tab-container">
+            <a href="/customer_ai/chat/{{llm_id}}/" class="tab-item active">
+                <i class="fas fa-comment"></i>
+                <span>TEXT</span>
+            </a>
+            <a href="/customer_ai/vision/{{llm_id}}/" class="tab-item">
+                <i class="fas fa-eye"></i>
+                <span>VISION</span>
+            </a>
+            <a href="/customer_ai/novel/{{llm_id}}/" class="tab-item">
+                <i class="fas fa-book"></i>
+                <span>NOVEL</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 공유 버튼 -->
+    <button class="share-button" onclick="shareLink()" data-link="{{ request.build_absolute_uri }}">
+        <i class="fas fa-share-alt"></i>
+    </button>
 
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <h3>🎯 {% trans '모드 선택' %}</h3>
-            <div class="mode-options">
-                <div class="mode-option active">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
-                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
-                </div>
-
-                <div class="mode-option">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
-                    <label><i class="fas fa-eye"></i> VISION MODE</label>
-                </div>
-
-                <div class="mode-option">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
-                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
-                </div>
-            </div>
-
-            <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-                {% trans '공유하기' %}
-            </button>
-        </aside>
-
         <!-- Main Content -->
         <main class="main-content">
             <!-- AI Showcase -->
@@ -710,24 +657,46 @@
         shareCopied: "{% trans '링크가 복사되었습니다!' %}"
     };
 
-    // 사이드바 토글
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('active');
+    // 공유하기 함수
+    function shareLink() {
+        const shareBtn = document.querySelector('.share-button');
+        const link = shareBtn.getAttribute('data-link');
+        
+        // Web Share API 지원 확인
+        if (navigator.share) {
+            navigator.share({
+                title: 'GALATEA AI Chat',
+                text: '{% trans "이 AI와 대화해보세요!" %}',
+                url: link
+            }).catch(err => {
+                // 공유 취소 시 무시
+                if (err.name !== 'AbortError') {
+                    copyToClipboard(link);
+                }
+            });
+        } else {
+            // Web Share API 미지원 시 클립보드에 복사
+            copyToClipboard(link);
+        }
     }
 
-    // 사이드바 외부 클릭 시 닫기
-    document.addEventListener('click', function(e) {
-        const sidebar = document.getElementById('sidebar');
-        const hamburger = document.querySelector('.hamburger');
-        
-        if (window.innerWidth < 768 && 
-            sidebar.classList.contains('active') && 
-            !sidebar.contains(e.target) && 
-            !hamburger.contains(e.target)) {
-            sidebar.classList.remove('active');
+    // 클립보드 복사 함수
+    function copyToClipboard(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(messages.shareCopied);
+            });
+        } else {
+            // 구형 브라우저 대응
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert(messages.shareCopied);
         }
-    });
+    }
 </script>
 <script src="{% static 'js/customer_ai/custom.js' %}"></script>
 
