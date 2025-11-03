@@ -1233,25 +1233,7 @@ button, a {
     </div>
 
     <main>
-        {% if user.is_authenticated %}
-        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}">
-            <a href="/payment/payment_choice_app/" class="nav-button">
-                <i class="fas fa-credit-card"></i> {% trans "결제하기" %}
-            </a>
-            <a href="/voice_all_app/" class="nav-button">
-                <i class="fas fa-microphone"></i> {% trans "보이스 선택하기" %}
-            </a>
-            <a href="/image/image_app/" class="nav-button">
-                <i class="fas fa-image"></i> {% trans "이미지 만들기" %}
-            </a>
-            <a href="/invite_app/" class="nav-button">
-                <i class="fas fa-user-plus"></i> {% trans "친구초대하기" %}
-            </a>
-            <a href="/customer_ai/ai_name_app" class="nav-button special">
-                <i class="fas fa-plus-circle"></i> {% trans "AI 만들기" %}
-            </a>
-        </nav>
-        {% endif %}
+
 
         <!-- 뉴스 섹션 -->
         <div class="news-section">
@@ -1292,7 +1274,25 @@ button, a {
                 {% endif %}
             </div>
         </div>
-
+        {% if user.is_authenticated %}
+        <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}">
+            <a href="/payment/payment_choice_app/" class="nav-button">
+                <i class="fas fa-credit-card"></i> {% trans "결제하기" %}
+            </a>
+            <a href="/voice_all_app/" class="nav-button">
+                <i class="fas fa-microphone"></i> {% trans "보이스 선택하기" %}
+            </a>
+            <a href="/image/image_app/" class="nav-button">
+                <i class="fas fa-image"></i> {% trans "이미지 만들기" %}
+            </a>
+            <a href="/invite_app/" class="nav-button">
+                <i class="fas fa-user-plus"></i> {% trans "친구초대하기" %}
+            </a>
+            <a href="/customer_ai/ai_name_app" class="nav-button special">
+                <i class="fas fa-plus-circle"></i> {% trans "AI 만들기" %}
+            </a>
+        </nav>
+        {% endif %}
         <!-- LLM 추천 -->
         <div class="main-content">
             <div class="llm-container2">
