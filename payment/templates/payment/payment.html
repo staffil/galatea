@@ -207,64 +207,6 @@
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-
-        .payment-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  width: 400px;
-  height: 110px;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-}
-
-/* hover 효과 */
-.payment-btn:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-}
-
-/* 반투명 오버레이 */
-.payment-btn .overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  transition: background 0.3s ease;
-  border-radius: inherit;
-}
-
-.payment-btn:hover .overlay {
-  background: rgba(0, 0, 0, 0.45);
-}
-
-/* 텍스트 내용 */
-.payment-content {
-  position: relative;
-  z-index: 2;
-  color: white;
-  text-align: center;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.payment-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  display: block;
-}
-
-.payment-price {
-  font-size: 1rem;
-  opacity: 0.9;
-}
-
     </style>
 </head>
 <body>
@@ -296,8 +238,7 @@
         data-buyer-name="{{ request.user.get_full_name|default:request.user.username }}"
         data-buyer-tel="{{ request.user.phonenumber }}"
         onclick="requestPay('{{ pg.name }}', this)"
-  style="background-image: url('{{ pg.payment_image.url }}');"
->
+        style="background-image: url('{{ pg.payment_image.url }}'); width: 400px; border-radius: 50px; height: 100px;  background-size: 80%;  ">
 </button>
                 <div class="payment-label">
                     {{ pg|title }}
