@@ -1247,7 +1247,7 @@ button, a {
                                     <p class="news-description">{{ news.news_description }}</p>
                                 {% endif %}
                                 {% if news.link %}
-                                    <a href="{{ main_app/ }}" class="news-link" target="_blank">
+                                    <a href= "{% url 'home:logout_app' %}?next=/main_app/" class="news-link" target="_blank">
                                         <i class="fas fa-arrow-right"></i>
                                         <span>{% trans "자세히 보기" %}</span>
                                     </a>
