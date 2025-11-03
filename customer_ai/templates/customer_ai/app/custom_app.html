@@ -740,7 +740,10 @@
             </div>
 
             <div class="message ai">
-                <div class="message-avatar">🤖</div>
+                <div class="message-avatar">
+                                    <img src="{{ llm.llm_image.url }}" alt="AI Avatar" class="header-avatar" />
+
+                </div>
                 <div class="message-content-wrapper">
                     <div class="message-bubble">
                         {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
