@@ -783,7 +783,7 @@
   const LLM_ID = {{ llm_id }}; 
   const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
 
-  // 번역 문자열
+  // Django 번역 문자열을 JS에서 사용할 객체
   const messages = {
       recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
       recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
@@ -791,133 +791,64 @@
       recognizedText: "{% trans '인식된 텍스트: ' %}",
       audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
       errorOccurred: "{% trans '오류 발생: ' %}",
-      shareCopied: "{% trans '링크가 복사되었습니다!' %}",
-      today: "{% trans '오늘' %}",
-      yesterday: "{% trans '어제' %}"
+      shareCopied: "{% trans '링크가 복사되었습니다!' %}"
   };
 
-  let isRecording = false;
+  function setViewportHeight() {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight*0.01}px`);
+  }
+  window.addEventListener('resize', setViewportHeight);
+  window.addEventListener('orientationchange', ()=>setTimeout(setViewportHeight,100));
+  window.addEventListener('load', setViewportHeight);
+  document.addEventListener('DOMContentLoaded', setViewportHeight);
 
-
-  // 텍스트 입력 자동 크기 조절
-  function autoResize(textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  function adjustChatHeight() {
+    const chatMessages = document.querySelector('.chat-messages');
+    const aiShowcase = document.querySelector('.ai-showcase');
+    const inputSection = document.querySelector('.input-section');
+    const headerHeight = 125;
+    if(chatMessages && aiShowcase && inputSection) {
+        const viewportHeight = window.innerHeight;
+        const showcaseHeight = aiShowcase.offsetHeight;
+        const inputHeight = inputSection.offsetHeight;
+        const padding = 60;
+        const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
+        chatMessages.style.maxHeight = `${Math.max(availableHeight,120)}px`;
+        chatMessages.style.minHeight = `${Math.min(availableHeight,120)}px`;
+    }
   }
 
-  // 엔터 키 처리
-  function handleKeyDown(event) {
-      if (event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault();
-          sendText();
-      }
-  }
-
-  // 메시지 전송
-  function sendText() {
-      const input = document.getElementById('text-input');
-      const text = input.value.trim();
-      
-      if (!text) return;
-      
-      const chat = document.getElementById('message-area');
-      const now = new Date();
-      const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-      
-      // 사용자 메시지 추가
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'message user';
-      msgDiv.innerHTML = `
-          <div class="message-avatar">👤</div>
-          <div class="message-content-wrapper">
-              <div class="message-bubble">${text}</div>
-              <div class="message-time">${time}</div>
-          </div>
-      `;
-      chat.appendChild(msgDiv);
-      
-      // 입력창 초기화
-      input.value = '';
-      input.style.height = 'auto';
-      
-      // 스크롤 하단으로
-      chat.scrollTop = chat.scrollHeight;
-      
-      // 타이핑 인디케이터 표시
-      showTypingIndicator();
-      
-      // 여기에 실제 API 호출 로직 추가
-  }
-
-  // 타이핑 인디케이터 표시
-  function showTypingIndicator() {
-      const chat = document.getElementById('message-area');
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'message ai typing-message';
-      typingDiv.innerHTML = `
-          <div class="message-avatar">🤖</div>
-          <div class="message-content-wrapper">
-              <div class="message-bubble typing-indicator">
-                  <div class="typing-dot"></div>
-                  <div class="typing-dot"></div>
-                  <div class="typing-dot"></div>
-              </div>
-          </div>
-      `;
-      chat.appendChild(typingDiv);
-      chat.scrollTop = chat.scrollHeight;
-      
-      // 3초 후 제거 (테스트용)
-      setTimeout(() => {
-          typingDiv.remove();
-      }, 3000);
-  }
-
-  // 녹음 토글
-  function toggleRecording() {
-      const btn = document.getElementById('record-btn');
-      
-      if (!isRecording) {
-          startRecording();
-          btn.classList.add('recording');
-          btn.innerHTML = '<i class="fas fa-stop"></i>';
-      } else {
-          stopRecording();
-          btn.classList.remove('recording');
-          btn.innerHTML = '<i class="fas fa-microphone"></i>';
-      }
-  }
-
-
-
-
-  // 공유하기
+  // 공유하기 함수
   function shareLink() {
-      const shareBtn = document.querySelector('[data-link]');
+      const shareBtn = document.querySelector('.share-button');
       const link = shareBtn.getAttribute('data-link');
       
+      // Web Share API 지원 확인
       if (navigator.share) {
           navigator.share({
               title: 'GALATEA AI Chat',
               text: '{% trans "이 AI와 대화해보세요!" %}',
               url: link
           }).catch(err => {
+              // 공유 취소 시 무시
               if (err.name !== 'AbortError') {
                   copyToClipboard(link);
               }
           });
       } else {
+          // Web Share API 미지원 시 클립보드에 복사
           copyToClipboard(link);
       }
   }
 
-  // 클립보드 복사
+  // 클립보드 복사 함수
   function copyToClipboard(text) {
       if (navigator.clipboard) {
           navigator.clipboard.writeText(text).then(() => {
               alert(messages.shareCopied);
           });
       } else {
+          // 구형 브라우저 대응
           const textarea = document.createElement('textarea');
           textarea.value = text;
           document.body.appendChild(textarea);
@@ -928,24 +859,24 @@
       }
   }
 
-  // 페이지 로드 시
   document.addEventListener('DOMContentLoaded', function() {
-      // 메시지 영역을 맨 아래로 스크롤
-      const chat = document.getElementById('message-area');
-      chat.scrollTop = chat.scrollHeight;
-      
-      // iOS 키보드 대응
-      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-          const input = document.getElementById('text-input');
-          input.addEventListener('focus', function() {
-              setTimeout(() => {
-                  chat.scrollTop = chat.scrollHeight;
-              }, 300);
-          });
-      }
+    setViewportHeight();
+    adjustChatHeight();
   });
 
-  console.log('✅ WebView optimized chat page loaded');
+  console.log('✅ Chat page fully loaded with tab navigation');
+
+  function sendText() {
+      const input = document.getElementById('text-input');
+      if(!input.value) return;
+      const chat = document.getElementById('message-area');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message user';
+      msgDiv.innerHTML = `<div class="message-avatar">🙋</div><div class="message-content">${input.value}</div>`;
+      chat.appendChild(msgDiv);
+      input.value='';
+      chat.scrollTop = chat.scrollHeight;
+  }
 </script>
 
 <script src="{% static 'js/customer_ai/custom.js' %}"></script>
