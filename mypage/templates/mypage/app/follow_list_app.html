@@ -9,13 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
-
     <meta name="description" content="GALATEA AI 팔로우 목록">
 
     <script type="application/ld+json">
@@ -29,46 +27,29 @@
     </script>
 
     <style>
-        /* Follow List - Modern App Design */
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html {
-            height: 100%;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            background-color: #0f0f23 !important;
             scroll-behavior: smooth;
         }
 
         body {
-            min-height: 100vh;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
             background-attachment: fixed;
-            background-color: #0f0f23 !important;
             color: #ffffff;
-            overflow-x: hidden;
+            min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             position: relative;
+            overflow-x: hidden;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            z-index: -1;
-        }
-
-        /* 배경 원들 */
         .circle-bg {
             position: fixed;
             border-radius: 50%;
@@ -78,51 +59,51 @@
         }
 
         .circle-1 {
-            width: 300px;
-            height: 300px;
+            width: 350px;
+            height: 350px;
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            top: -150px;
-            left: -150px;
-            animation: followFloat 20s ease-in-out infinite;
+            top: -180px;
+            left: -180px;
+            animation: float 20s ease-in-out infinite;
         }
 
         .circle-2 {
-            width: 200px;
-            height: 200px;
+            width: 250px;
+            height: 250px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             top: 20%;
-            right: -100px;
-            animation: followFloat 15s ease-in-out infinite reverse;
+            right: -120px;
+            animation: float 15s ease-in-out infinite reverse;
         }
 
         .circle-3 {
-            width: 250px;
-            height: 250px;
+            width: 300px;
+            height: 300px;
             background: linear-gradient(135deg, #f093fb, #f5576c);
-            bottom: 10%;
-            left: 10%;
-            animation: followFloat 18s ease-in-out infinite;
+            bottom: 15%;
+            left: -150px;
+            animation: float 18s ease-in-out infinite;
         }
 
         .circle-4 {
-            width: 180px;
-            height: 180px;
+            width: 220px;
+            height: 220px;
             background: linear-gradient(135deg, #4facfe, #00f2fe);
-            bottom: -90px;
-            right: 20%;
-            animation: followFloat 12s ease-in-out infinite reverse;
+            bottom: 25%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
         }
 
         .circle-5 {
-            width: 220px;
-            height: 220px;
+            width: 280px;
+            height: 280px;
             background: linear-gradient(135deg, #fa709a, #fee140);
-            top: 50%;
-            left: -110px;
-            animation: followFloat 16s ease-in-out infinite;
+            top: 45%;
+            left: -140px;
+            animation: float 16s ease-in-out infinite;
         }
 
-        @keyframes followFloat {
+        @keyframes float {
             0%, 100% {
                 transform: translate(0, 0) scale(1);
             }
@@ -134,51 +115,41 @@
             }
         }
 
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        /* Menu Button */
         .menu-btn {
             position: fixed;
-            top: 70px;
+            top: 80px;
             right: 15px;
-            z-index: 999;
+            z-index: 1001;
             padding: 10px 20px;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            border: none;
-            border-radius: 25px;
-            color: white;
-            font-weight: 700;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
             font-size: 0.85rem;
-            cursor: pointer;
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
             display: flex;
             align-items: center;
             gap: 8px;
-            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            border: none;
+            cursor: pointer;
         }
 
-        .menu-btn:hover,
         .menu-btn:active {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
         }
 
-        /* Sidebar Overlay */
         .sidebar-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 1002;
             opacity: 0;
             visibility: hidden;
@@ -191,7 +162,6 @@
             visibility: visible;
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -199,13 +169,12 @@
             width: 85%;
             max-width: 400px;
             height: 100%;
-            background: rgba(26, 26, 46, 0.98);
+            background: rgba(15, 15, 35, 0.98);
             border-left: 1px solid rgba(139, 92, 246, 0.3);
             z-index: 1003;
             overflow-y: auto;
             transition: right 0.3s ease;
             box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(20px);
         }
 
         .sidebar.active {
@@ -226,34 +195,32 @@
         }
 
         .sidebar-header h2 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .sidebar-close {
-            width: 40px;
-            height: 40px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            width: 35px;
+            height: 35px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 50%;
-            color: #ef4444;
+            color: #ffffff;
             font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            -webkit-tap-highlight-color: rgba(239, 68, 68, 0.2);
         }
 
-        .sidebar-close:hover,
         .sidebar-close:active {
-            background: rgba(239, 68, 68, 0.3);
-            transform: rotate(90deg);
+            background: rgba(139, 92, 246, 0.3);
+            transform: scale(0.95);
         }
 
         .sidebar-profile-section {
@@ -263,31 +230,36 @@
             border-bottom: 1px solid rgba(139, 92, 246, 0.2);
         }
 
-        .sidebar-profile-section img,
-        .sidebar-profile-section .no-image {
-            width: 90px;
-            height: 90px;
+        .sidebar-profile-section img {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid rgba(139, 92, 246, 0.5);
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-            margin: 0 auto 15px;
+            margin-bottom: 15px;
         }
 
         .sidebar-profile-section .no-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
             background: rgba(139, 92, 246, 0.1);
+            border: 3px solid rgba(139, 92, 246, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 auto 15px;
             color: #8b5cf6;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 700;
         }
 
         .sidebar-profile-section h3 {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: #ffffff;
+            margin: 0;
         }
 
         .sidebar-menu {
@@ -303,7 +275,6 @@
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            gap: 12px;
             padding: 14px 18px;
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid rgba(139, 92, 246, 0.2);
@@ -313,31 +284,50 @@
             font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.3s ease;
-            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
         }
 
-        .sidebar-menu a:hover,
         .sidebar-menu a:active {
             background: rgba(139, 92, 246, 0.2);
             border-color: #8b5cf6;
-            transform: translateX(5px);
+            transform: scale(0.98);
         }
 
-        .sidebar-menu a i {
-            width: 20px;
-            text-align: center;
+        .sidebar-menu li:first-child a {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
         }
 
-        /* Main Content */
+        .sidebar-menu li:nth-child(2) a {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
         .main-content {
             position: relative;
             z-index: 1;
-            max-width: 1000px;
+            width: 100%;
+            padding: 140px 15px 60px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 130px 20px 60px;
+            min-height: 100vh;
         }
 
-        /* Page Title */
+        /* 페이지 헤더 */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .page-header::before {
+            content: '👥';
+            display: block;
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
         .page-title {
             font-size: 2rem;
             font-weight: 800;
@@ -345,15 +335,258 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 30px;
-            text-align: center;
-            animation: fadeIn 0.6s ease-out;
+            margin-bottom: 10px;
         }
 
-        @keyframes fadeIn {
+        .page-subtitle {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* 탭 네비게이션 */
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+            animation: fadeInUp 0.6s ease-out 0.1s backwards;
+        }
+
+        .tab-btn {
+            padding: 12px 28px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:active {
+            transform: scale(0.98);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .tab-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* 사용자 그리드 */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            animation: fadeInUp 0.6s ease-out 0.2s backwards;
+        }
+
+        .user-card {
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4, #10b981);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+
+        .user-card:hover::before {
+            opacity: 1;
+        }
+
+        .user-card-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .user-avatar-placeholder {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            border: 3px solid rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #8b5cf6;
+            font-weight: 700;
+            margin: 0 auto 15px;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .user-stat {
+            text-align: center;
+        }
+
+        .user-stat-value {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 3px;
+        }
+
+        .user-stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #ffffff;
+        }
+
+        .btn-secondary:active {
+            background: rgba(139, 92, 246, 0.2);
+            transform: scale(0.98);
+        }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .empty-state::before {
+            content: '👥';
+            display: block;
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state.following::before {
+            content: '➕';
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        .empty-state .btn {
+            display: inline-flex;
+            max-width: 300px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -361,151 +594,64 @@
             }
         }
 
-        /* Section */
-        .section {
-            background: rgba(26, 26, 46, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 24px;
-            padding: 30px 20px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
-            animation: fadeIn 0.6s ease-out 0.2s both;
+        @media (min-width: 768px) {
+            .menu-btn {
+                top: 85px;
+                right: 20px;
+                padding: 12px 24px;
+                font-size: 0.9rem;
+            }
+
+            .main-content {
+                padding: 160px 30px 80px;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .sidebar {
+                max-width: 450px;
+            }
+
+            .user-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 25px;
+            }
         }
 
-        .section-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .tab-nav {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .tab-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .user-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-avatar,
+            .user-avatar-placeholder {
+                width: 80px;
+                height: 80px;
+            }
+
+            .user-avatar-placeholder {
+                font-size: 2rem;
+            }
         }
 
-        .section-title i {
-            font-size: 1.4rem;
-        }
-
-        .count-badge {
-            padding: 6px 14px;
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 50px;
-            font-size: 0.9rem;
-            color: #8b5cf6;
-            font-weight: 700;
-            margin-left: auto;
-        }
-
-        /* User Item */
-        .user-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 18px;
-            background: rgba(139, 92, 246, 0.05);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
-        }
-
-        .user-item:hover,
-        .user-item:active {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: rgba(139, 92, 246, 0.4);
-            transform: translateX(5px);
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
-        }
-
-        .user-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid rgba(139, 92, 246, 0.3);
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .user-avatar-placeholder {
-            width: 100%;
-            height: 100%;
-            background: rgba(139, 92, 246, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #8b5cf6;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .username {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin: 0;
-        }
-
-        .user-item i.fa-chevron-right {
-            color: rgba(139, 92, 246, 0.5);
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .user-item:hover i.fa-chevron-right {
-            color: #8b5cf6;
-            transform: translateX(5px);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .empty-state-text {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #b8c5d1;
-            margin-bottom: 8px;
-        }
-
-        .empty-state-subtext {
-            font-size: 0.95rem;
-            color: #6b7280;
-        }
-
-        /* 스크롤바 커스터마이징 */
         ::-webkit-scrollbar {
             width: 8px;
-            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
@@ -517,197 +663,48 @@
             border-radius: 4px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #764ba2, #667eea);
-        }
-
-        /* iOS 스타일 탭 하이라이트 제거 */
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        button, a, .user-item {
-            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
-        }
-
-        /* body 스크롤 막기 */
-        body.sidebar-open {
-            overflow: hidden;
-        }
-
-        /* 반응형 - 태블릿 */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 120px 15px 50px;
-            }
-
-            .page-title {
-                font-size: 1.8rem;
-            }
-
-            .section {
-                padding: 25px 18px;
-            }
-
-            .section-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .main-content {
-                padding: 110px 12px 40px;
-            }
-
-            .page-title {
-                font-size: 1.6rem;
-                margin-bottom: 25px;
-            }
-
-            .section {
-                padding: 22px 16px;
-                border-radius: 20px;
-            }
-
-            .section-title {
-                font-size: 1.3rem;
-            }
-
-            .user-item {
-                padding: 16px;
-                gap: 12px;
-            }
-
-            .user-avatar {
-                width: 55px;
-                height: 55px;
-            }
-
-            .username {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .menu-btn {
-                top: 65px;
-                padding: 9px 18px;
-                font-size: 0.8rem;
-            }
-
-            .main-content {
-                padding: 105px 10px 35px;
-            }
-
-            .page-title {
-                font-size: 1.4rem;
-            }
-
-            .section {
-                padding: 20px 14px;
-            }
-
-            .section-title {
-                font-size: 1.2rem;
-                gap: 10px;
-            }
-
-            .section-title i {
-                font-size: 1.2rem;
-            }
-
-            .count-badge {
-                padding: 5px 12px;
-                font-size: 0.85rem;
-            }
-
-            .user-item {
-                padding: 14px;
-                gap: 10px;
-            }
-
-            .user-avatar {
-                width: 50px;
-                height: 50px;
-                border: 2px solid rgba(139, 92, 246, 0.3);
-            }
-
-            .user-avatar-placeholder {
-                font-size: 1.3rem;
-            }
-
-            .username {
-                font-size: 0.95rem;
-            }
-
-            .empty-state {
-                padding: 50px 15px;
-            }
-
-            .empty-state-icon {
-                font-size: 3rem;
-            }
-
-            .empty-state-text {
-                font-size: 1.1rem;
-            }
-
-            .empty-state-subtext {
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Safe Area 대응 */
         @supports (padding: max(0px)) {
             .main-content {
-                padding-left: max(20px, env(safe-area-inset-left));
-                padding-right: max(20px, env(safe-area-inset-right));
+                padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
                 padding-bottom: max(60px, env(safe-area-inset-bottom));
             }
 
             .menu-btn {
-                top: max(70px, calc(70px + env(safe-area-inset-top)));
+                top: max(80px, calc(80px + env(safe-area-inset-top)));
                 right: max(15px, env(safe-area-inset-right));
             }
         }
 
-        /* 접근성 개선 */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
+        body.sidebar-open {
+            overflow: hidden;
         }
     </style>
 </head>
 <body>
-    <!-- 배경 원들 -->
+
+<header>
+    {% if not user.is_authenticated %}
+        {% include "common/app/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/app/loginHeader.html" %}
+    {% endif %}
+</header>
+
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- Header -->
-    <header>
-        {% if not user.is_authenticated %}
-            {% include "common/app/notLoginHeader.html" %}
-        {% else %}
-            {% include "common/app/loginHeader.html" %}
-        {% endif %}
-    </header>
-
-    <!-- Menu Button -->
     <button class="menu-btn" id="menuBtn">
         <i class="fas fa-bars"></i> MENU
     </button>
 
-    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar" style="margin-top: 30px;">
         <div class="sidebar-header">
             <h2>{% trans '마이페이지' %}</h2>
             <button class="sidebar-close" id="sidebarClose">
@@ -725,115 +722,159 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li><a href="{% url 'home:main_app' %}"><i class="fas fa-home"></i> {% trans 'Main으로' %}</a></li>
-            <li><a href="{% url 'mypage:mypage_app' %}"><i class="fas fa-user"></i> {% trans '프로필' %}</a></li>
+            <li><a href="{% url 'home:logout_app' %}?next=/main_app/">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
+            <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
             
             {% if llm %}
-                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}"><i class="fas fa-robot"></i> {% trans '내 AI 모델들' %}</a></li>
-                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}"><i class="fas fa-comments"></i> {% trans 'AI 대화목록' %}</a></li>
+                <li><a href="{% url 'mypage:my_ai_models_app' llm.id %}">{% trans '내 AI 모델들' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans '내 AI 모델들' %}</a></li>
+            {% endif %}
+
+            {% if llm %}
+                <li><a href="{% url 'mypage:my_ai_conversation_app' llm.id %}">{% trans 'AI 대화목록' %}</a></li>
+            {% else %}
+                <li><a href="#" onclick="alert('{% trans '현재 커스터한 AI 가 없습니다.' %}'); return false;">{% trans 'AI 대화목록' %}</a></li>
             {% endif %}
             
-            <li><a href="{% url 'mypage:my_voice_app' %}"><i class="fas fa-microphone"></i> {% trans 'Voice ID 목록' %}</a></li>
-            <li><a href="{% url 'mypage:llm_like_app' %}"><i class="fas fa-heart"></i> {% trans '좋아하는 AI' %}</a></li>
-            <li><a href="{% url 'mypage:follow_list_app' %}"><i class="fas fa-users"></i> {% trans '팔로우 목록' %}</a></li>
-            <li><a href="{% url 'mypage:token_app' %}"><i class="fas fa-coins"></i> {% trans '토큰 내역' %}</a></li>
-            <li><a href="{% url 'mypage:my_coupon_app' %}"><i class="fas fa-gift"></i> {% trans '친구 초대 코드' %}</a></li>
-            <li><a href="{% url 'home:logout_app' %}?next=/main_app/"><i class="fas fa-sign-out-alt"></i> {% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'mypage:my_voice_app' %}">{% trans 'Voice ID 목록' %}</a></li>
+            <li><a href="{% url 'mypage:personal_profile_app' %}">{% trans '당신의 프로필 내역' %}</a></li>
+            <li><a href="{% url 'mypage:llm_like_app' %}">{% trans '좋아하는 AI' %}</a></li>
+            <li><a href="{% url 'mypage:follow_list_app' %}">{% trans '팔로우 목록' %}</a></li>
+            <li><a href="{% url 'mypage:token_app' %}">{% trans '토큰 내역' %}</a></li>
+            <li><a href="{% url 'mypage:token_less_app' %}">{% trans '토큰 차감 내역' %}</a></li>
+            <li><a href="{% url 'mypage:my_request_app' %}">{% trans '요청 글 목록' %}</a></li>
+            <li><a href="{% url 'mypage:my_coupon_app' %}">{% trans '친구 초대 코드받기' %}</a></li>
         </ul>
     </div>
 
     <div class="main-content">
-        <h1 class="page-title">
-            <i class="fas fa-users"></i>
-            {% trans "팔로우 관리" %}
-        </h1>
+        <div class="page-header">
+            <h1 class="page-title">{% trans "팔로우 관리" %}</h1>
+            <p class="page-subtitle">
+                {% trans "나의 팔로워와 팔로잉을 확인하세요!" %}
+            </p>
+        </div>
 
-        <!-- 팔로워 섹션 -->
-        <div class="section">
-            <h2 class="section-title">
+        <!-- 탭 네비게이션 -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="followers">
                 <i class="fas fa-user-friends"></i>
-                {% trans "팔로워 목록" %}
-                <span class="count-badge">{{ follower_list|length }}</span>
-            </h2>
+                {% trans "팔로워" %}
+                <span class="tab-count">{{ follower_list|length }}</span>
+            </button>
+            <button class="tab-btn" data-tab="following">
+                <i class="fas fa-user-plus"></i>
+                {% trans "팔로잉" %}
+                <span class="tab-count">{{ following_list|length }}</span>
+            </button>
+        </div>
 
+        <!-- 팔로워 탭 -->
+        <div id="followers-tab" class="tab-content active">
             {% if follower_list %}
+            <div class="user-grid">
                 {% for follow in follower_list %}
                     {% with target_user=follow.follower %}
-                    <div class="user-item" onclick="window.location.href='{% url 'home:user_intro_app' target_user.id %}'">
-                        <div class="user-avatar">
+                    <div class="user-card" onclick="window.location.href='{% url 'home:user_intro_app' target_user.id %}'">
+                        <div class="user-card-header">
                             {% if target_user.user_image %}
-                                <img src="{{ target_user.user_image.url }}" alt="{{ target_user.username }}">
+                                <img src="{{ target_user.user_image.url }}" alt="{{ target_user.nickname }}" class="user-avatar">
                             {% else %}
                                 <div class="user-avatar-placeholder">
                                     {{ target_user.nickname|first|upper }}
                                 </div>
                             {% endif %}
+                            <div class="user-name">{{ target_user.nickname }}</div>
                         </div>
-                        <div class="user-info">
-                            <h3 class="username">{{ target_user.nickname }}</h3>
+
+                        <div class="user-stats">
+                            <div class="user-stat">
+                                <span class="user-stat-value">{{ target_user.follower_count|default:"0" }}</span>
+                                <span class="user-stat-label">{% trans "팔로워" %}</span>
+                            </div>
+                            <div class="user-stat">
+                                <span class="user-stat-value">{{ target_user.ai_count|default:"0" }}</span>
+                                <span class="user-stat-label">{% trans "AI" %}</span>
+                            </div>
                         </div>
-                        <i class="fas fa-chevron-right"></i>
+
+                        <div class="user-actions">
+                            <button class="btn btn-primary" onclick="event.stopPropagation(); window.location.href='{% url 'home:user_intro_app' target_user.id %}'">
+                                <i class="fas fa-user"></i>
+                                {% trans "프로필" %}
+                            </button>
+                        </div>
                     </div>
                     {% endwith %}
                 {% endfor %}
+            </div>
             {% else %}
-                <div class="empty-state">
-                    <div class="empty-state-icon">👥</div>
-                    <div class="empty-state-text">{% trans "아직 팔로워가 없습니다" %}</div>
-                    <div class="empty-state-subtext">{% trans "다른 사용자들과 소통해보세요!" %}</div>
-                </div>
+            <div class="empty-state">
+                <h3>{% trans "아직 팔로워가 없습니다" %}</h3>
+                <p>{% trans "다른 사용자들과 소통하면 팔로워가 생깁니다!" %}</p>
+                <a href="{% url 'home:main_app' %}" class="btn btn-primary">
+                    <i class="fas fa-home"></i>
+                    {% trans "메인으로" %}
+                </a>
+            </div>
             {% endif %}
         </div>
 
-        <!-- 팔로잉 섹션 -->
-        <div class="section">
-            <h2 class="section-title">
-                <i class="fas fa-user-plus"></i>
-                {% trans "팔로잉 목록" %}
-                <span class="count-badge">{{ following_list|length }}</span>
-            </h2>
-
+        <!-- 팔로잉 탭 -->
+        <div id="following-tab" class="tab-content">
             {% if following_list %}
+            <div class="user-grid">
                 {% for follow in following_list %}
                     {% with target_user=follow.following %}
-                    <div class="user-item" onclick="window.location.href='{% url 'home:user_intro_app' target_user.id %}'">
-                        <div class="user-avatar">
+                    <div class="user-card" onclick="window.location.href='{% url 'home:user_intro_app' target_user.id %}'">
+                        <div class="user-card-header">
                             {% if target_user.user_image %}
-                                <img src="{{ target_user.user_image.url }}" alt="{{ target_user.username }}">
+                                <img src="{{ target_user.user_image.url }}" alt="{{ target_user.nickname }}" class="user-avatar">
                             {% else %}
                                 <div class="user-avatar-placeholder">
                                     {{ target_user.nickname|first|upper }}
                                 </div>
                             {% endif %}
+                            <div class="user-name">{{ target_user.nickname }}</div>
                         </div>
-                        <div class="user-info">
-                            <h3 class="username">{{ target_user.nickname }}</h3>
+
+                        <div class="user-stats">
+                            <div class="user-stat">
+                                <span class="user-stat-value">{{ target_user.follower_count|default:"0" }}</span>
+                                <span class="user-stat-label">{% trans "팔로워" %}</span>
+                            </div>
+                            <div class="user-stat">
+                                <span class="user-stat-value">{{ target_user.ai_count|default:"0" }}</span>
+                                <span class="user-stat-label">{% trans "AI" %}</span>
+                            </div>
                         </div>
-                        <i class="fas fa-chevron-right"></i>
+
+                        <div class="user-actions">
+                            <button class="btn btn-primary" onclick="event.stopPropagation(); window.location.href='{% url 'home:user_intro_app' target_user.id %}'">
+                                <i class="fas fa-user"></i>
+                                {% trans "프로필" %}
+                            </button>
+                        </div>
                     </div>
                     {% endwith %}
                 {% endfor %}
+            </div>
             {% else %}
-                <div class="empty-state">
-                    <div class="empty-state-icon">➕</div>
-                    <div class="empty-state-text">{% trans "아직 팔로우한 사용자가 없습니다" %}</div>
-                    <div class="empty-state-subtext">{% trans "관심있는 사용자를 팔로우해보세요!" %}</div>
-                </div>
+            <div class="empty-state following">
+                <h3>{% trans "아직 팔로우한 사용자가 없습니다" %}</h3>
+                <p>{% trans "관심있는 사용자를 팔로우해보세요!" %}</p>
+                <a href="{% url 'home:main_app' %}" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    {% trans "사용자 찾기" %}
+                </a>
+            </div>
             {% endif %}
         </div>
     </div>
 
     <script>
-        // 뷰포트 높이 설정
-        function setViewportHeight() {
-            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-        }
-        
-        setViewportHeight();
-        window.addEventListener('resize', setViewportHeight);
-        window.addEventListener('orientationchange', () => setTimeout(setViewportHeight, 100));
-
-        // 사이드바 토글
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -856,30 +897,29 @@
         sidebarClose.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // ESC 키로 사이드바 닫기
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && sidebar.classList.contains('active')) {
                 closeSidebar();
             }
         });
 
-        // CSRF 토큰 가져오기
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    cookie = cookie.trim();
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
+        // 탭 전환 기능
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-        console.log('✅ Follow list page loaded with modern app design');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+                
+                // 모든 탭 버튼과 콘텐츠 비활성화
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // 선택한 탭 활성화
+                button.classList.add('active');
+                document.getElementById(targetTab + '-tab').classList.add('active');
+            });
+        });
     </script>
 </body>
 </html>
