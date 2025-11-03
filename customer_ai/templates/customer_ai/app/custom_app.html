@@ -751,31 +751,31 @@
         </div>
 
         <!-- 입력 영역 -->
-        <div class="input-container">
-            <div class="input-wrapper">
-                <button class="input-btn record-btn" id="record-btn" onclick="toggleRecording()">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <textarea 
-                    class="text-input" 
-                    id="text-input" 
-                    placeholder="{% trans '메시지를 입력하세요...' %}"
-                    rows="1"
-                    onkeydown="handleKeyDown(event)"
-                    oninput="autoResize(this)"
-                ></textarea>
-                <button class="input-btn send-btn" id="send-btn" onclick="sendText()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-            
-            <div class="recognized-text" id="recognized-text"></div>
-            
-            <div class="audio-player" id="audio-player">
-                <audio id="tts-audio" controls></audio>
-            </div>
-        </div>
+ <div class="input-container">
+    <div class="input-wrapper">
+        <button class="input-btn record-btn" id="record-btn" onclick="toggleRecording()">
+            <i class="fas fa-microphone" id="record-icon"></i> <!-- record-icon 추가 -->
+        </button>
+        <textarea 
+            class="text-input" 
+            id="text-input" 
+            placeholder="메시지를 입력하세요..."
+            rows="1"
+            onkeydown="handleKeyDown(event)"
+            oninput="autoResize(this)"
+        ></textarea>
+        <button class="input-btn send-btn" id="send-btn" onclick="sendText()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
     </div>
+    
+    <div class="recognized-text" id="recognized-text"></div>
+    
+    <!-- 오디오 플레이어 컨테이너 추가 -->
+    <div class="audio-player" id="audio-container"> 
+        <audio id="tts-audio" controls></audio>
+    </div>
+</div>
 
 <script>
   const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
