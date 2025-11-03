@@ -1,13 +1,12 @@
-{% load static %}
+{% load static %} 
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% trans "FAQ - GALATEA" %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans '이미지 생성하기' %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     
     <!-- Open Graph (SNS 공유용) -->
@@ -29,8 +28,6 @@
   "logo": "https://www.galatea.website/static/img/logo.png"
 }
 </script>
-
-</head>
 
 <style>
     * {
@@ -121,66 +118,81 @@
         }
     }
 
-    .faq-page {
+    .container-flex {
         position: relative;
         z-index: 1;
         width: 100%;
         padding: 140px 15px 60px;
-        max-width: 900px;
+        max-width: 1400px;
         margin: 0 auto;
         min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
     }
 
-    .faq-page > h1 {
-        text-align: center;
-        font-size: 2.5rem;
+    .left-panel,
+    .right-panel {
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 30px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .left-panel {
+        animation-delay: 0.1s;
+    }
+
+    .right-panel {
+        animation-delay: 0.2s;
+    }
+
+    .left-panel h2,
+    .right-panel h2 {
+        font-size: 1.5rem;
         font-weight: 800;
         background: linear-gradient(135deg, #8b5cf6, #06b6d4);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        margin-bottom: 40px;
-        animation: fadeInUp 0.6s ease-out;
+        margin-bottom: 10px;
     }
 
-    .faq-page > h1::before {
-        content: '✏️';
-        display: block;
-        font-size: 3.5rem;
-        margin-bottom: 15px;
+    .left-panel h2::before {
+        content: '✍️ ';
         background: none;
         -webkit-text-fill-color: initial;
     }
 
-    form {
-        background: rgba(26, 26, 46, 0.95);
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        border-radius: 20px;
-        padding: 40px;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    .right-panel h2::before {
+        content: '🖼️ ';
+        background: none;
+        -webkit-text-fill-color: initial;
     }
 
-    form p {
-        margin-bottom: 25px;
-    }
-
-    form p label {
-        display: block;
+    .left-panel p {
         color: #94a3b8;
         font-size: 0.9rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
 
-    form p input[type="text"],
-    form p textarea,
-    form p select {
+    .left-panel p::before {
+        content: '💰 ';
+    }
+
+    #generateForm {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #imagePrompt {
         width: 100%;
-        padding: 14px 18px;
+        min-height: 200px;
+        padding: 16px 20px;
         background: rgba(139, 92, 246, 0.1);
         border: 2px solid rgba(139, 92, 246, 0.2);
         border-radius: 12px;
@@ -189,46 +201,28 @@
         font-weight: 500;
         font-family: 'Inter', sans-serif;
         transition: all 0.3s ease;
-    }
-
-    form p textarea {
-        min-height: 200px;
         resize: vertical;
     }
 
-    form p input:focus,
-    form p textarea:focus,
-    form p select:focus {
+    #imagePrompt:focus {
         outline: none;
         border-color: #8b5cf6;
         box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
         background: rgba(139, 92, 246, 0.15);
     }
 
-    form p select {
-        cursor: pointer;
-    }
-
-    form p input::placeholder,
-    form p textarea::placeholder {
+    #imagePrompt::placeholder {
         color: #64748b;
     }
 
-    .form-actions {
-        display: flex;
-        gap: 12px;
-        margin-top: 30px;
-        flex-wrap: wrap;
-    }
-
-    button[type="submit"] {
-        flex: 1;
-        padding: 14px 28px;
+    .generate-btn {
+        width: 100%;
+        padding: 16px 32px;
         background: linear-gradient(135deg, #8b5cf6, #06b6d4);
         border: none;
         border-radius: 12px;
         color: #ffffff;
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -236,30 +230,115 @@
         font-family: 'Inter', sans-serif;
     }
 
-    button[type="submit"]:active {
+    .generate-btn:active {
         transform: scale(0.98);
         box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
     }
 
-    form a {
-        flex: 1;
-        padding: 14px 28px;
-        background: rgba(139, 92, 246, 0.1);
-        border: 2px solid rgba(139, 92, 246, 0.3);
-        border-radius: 12px;
+    .generate-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .loading {
+        display: none;
+        text-align: center;
         color: #8b5cf6;
+        font-weight: 600;
+        padding: 15px;
+        background: rgba(139, 92, 246, 0.1);
+        border-radius: 12px;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .loading::before {
+        content: '⏳ ';
+        font-size: 1.2rem;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .image-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .image-container {
+        width: 100%;
+        min-height: 400px;
+        background: rgba(139, 92, 246, 0.05);
+        border: 2px dashed rgba(139, 92, 246, 0.3);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #generatedImage {
+        max-width: 100%;
+        max-height: 600px;
+        width: auto;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .image-placeholder {
+        color: #64748b;
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .image-placeholder::before {
+        content: '🎨';
+        display: block;
+        font-size: 4rem;
+        margin-bottom: 15px;
+    }
+
+    #downloadBtn {
+        text-decoration: none;
+    }
+
+    .download-btn {
+        width: 100%;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
         font-size: 0.95rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s ease;
-        text-decoration: none;
-        text-align: center;
-        display: inline-block;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
 
-    form a:active {
-        background: rgba(139, 92, 246, 0.2);
+    .download-btn::before {
+        content: '⬇️';
+        font-size: 1.2rem;
+    }
+
+    .download-btn:active {
         transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
     }
 
     @keyframes fadeInUp {
@@ -274,35 +353,60 @@
     }
 
     @media (min-width: 768px) {
-        .faq-page {
+        .container-flex {
             padding: 160px 30px 80px;
+            flex-direction: row;
+            gap: 30px;
         }
 
-        .faq-page > h1 {
-            font-size: 3rem;
+        .left-panel,
+        .right-panel {
+            flex: 1;
+            padding: 40px;
         }
 
-        form {
+        .left-panel h2,
+        .right-panel h2 {
+            font-size: 1.8rem;
+        }
+
+        #imagePrompt {
+            min-height: 300px;
+        }
+
+        .image-container {
+            min-height: 500px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .container-flex {
+            gap: 40px;
+        }
+
+        .left-panel,
+        .right-panel {
             padding: 50px;
         }
     }
 
     @media (max-width: 480px) {
-        .faq-page > h1 {
-            font-size: 2rem;
+        .left-panel,
+        .right-panel {
+            padding: 20px;
         }
 
-        form {
-            padding: 25px;
+        .left-panel h2,
+        .right-panel h2 {
+            font-size: 1.3rem;
         }
 
-        .form-actions {
-            flex-direction: column;
+        #imagePrompt {
+            min-height: 150px;
         }
 
-        button[type="submit"],
-        form a {
-            width: 100%;
+        .image-container {
+            min-height: 300px;
         }
     }
 
@@ -320,7 +424,7 @@
     }
 
     @supports (padding: max(0px)) {
-        .faq-page {
+        .container-flex {
             padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
             padding-left: max(15px, env(safe-area-inset-left));
             padding-right: max(15px, env(safe-area-inset-right));
@@ -329,6 +433,7 @@
     }
 </style>
 
+</head>
 <body>
 
     <div class="circle-bg circle-1"></div>
@@ -339,28 +444,40 @@
 
     <header>
         {% if not user.is_authenticated %}
-            {% include "common/app/notLoginHeader.html" %}
+            {% include "common/notLoginHeader.html" %}
         {% else %}
-            {% include "common/app/loginHeader.html" %}
+            {% include "common/loginHeader.html" %}
         {% endif %}
     </header>
 
-<main class="faq-page">
-        <h1>{% trans "프롬프트 수정" %}</h1>
+    <div class="container-flex">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <h2>{% trans '프롬프트' %}</h2>
+            <p>{% trans '이미지 생성지 10토큰 차감됩니다.' %}</p>
+            <form id="generateForm">
+                <textarea name="prompt" id="imagePrompt" placeholder="{% trans '이미지를 생성할 프롬프트를 넣어주세요. 되도록 자세한 프롬프트를 넣어주세요' %}"></textarea>
+                <button type="button" class="generate-btn generate_image">{% trans '생성하기' %}</button>
+                <div class="loading" id="loadingText">{% trans '이미지를 생성하고 있습니다...' %}</div>
+            </form>
+        </div>
 
-        <form method="POST">
-            {% csrf_token %}
-            
-            <!-- 폼 렌더링 -->
-            {{ form.as_p }}
-            
-            <div class="form-actions">
-                <button type="submit">{% trans "저장" %}</button>
-                <a href="{% url 'helpdesk:prompt_share_detail_app' prompt.id %}">{% trans "취소" %}</a>
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <h2>{% trans '생성된 이미지' %}</h2>
+            <div class="image-preview">
+                <div class="image-container">
+                    <img id="generatedImage" name="image_url" src="" alt="Generated Image" style="display: none;">
+                    <div class="image-placeholder" id="imagePlaceholder">{% trans '생성된 이미지가 여기에 표시됩니다' %}</div>
+                </div>
+                <a id="downloadBtn" href="#" download="generated_image.png" style="display: none;">
+                    <button type="button" class="download-btn">{% trans '다운로드' %}</button>
+                </a>
             </div>
-        </form>
+        </div>
+    </div>
 
-</main>
+    <script src="{% static 'js/makeImage/image.js' %}"></script>
 
 </body>
 </html>

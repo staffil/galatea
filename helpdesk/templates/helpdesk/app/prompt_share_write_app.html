@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "FAQ - GALATEA" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/faq.css' %}">
-    <link rel="stylesheet" href="{% static 'css/helpdesk/prompt_share_write.css' %}">
-        <!-- Open Graph (SNS 공유용) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -32,7 +32,302 @@
 
 </head>
 
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        background-attachment: fixed;
+        color: #ffffff;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .circle-bg {
+        position: fixed;
+        border-radius: 50%;
+        opacity: 0.08;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .circle-1 {
+        width: 350px;
+        height: 350px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        top: -180px;
+        left: -180px;
+        animation: float 20s ease-in-out infinite;
+    }
+
+    .circle-2 {
+        width: 250px;
+        height: 250px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        top: 20%;
+        right: -120px;
+        animation: float 15s ease-in-out infinite reverse;
+    }
+
+    .circle-3 {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        bottom: 15%;
+        left: -150px;
+        animation: float 18s ease-in-out infinite;
+    }
+
+    .circle-4 {
+        width: 220px;
+        height: 220px;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        bottom: 25%;
+        right: 15%;
+        animation: float 12s ease-in-out infinite reverse;
+    }
+
+    .circle-5 {
+        width: 280px;
+        height: 280px;
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        top: 45%;
+        left: -140px;
+        animation: float 16s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+
+    .faq-page {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 140px 15px 60px;
+        max-width: 900px;
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    .faq-page::before {
+        content: '✨';
+        display: block;
+        text-align: center;
+        font-size: 4rem;
+        margin-bottom: 15px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    form {
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    }
+
+    form::before {
+        content: '프롬프트 작성';
+        display: block;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 30px;
+    }
+
+    form p {
+        margin-bottom: 25px;
+    }
+
+    form p label {
+        display: block;
+        color: #94a3b8;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    form p input[type="text"],
+    form p textarea,
+    form p select {
+        width: 100%;
+        padding: 14px 18px;
+        background: rgba(139, 92, 246, 0.1);
+        border: 2px solid rgba(139, 92, 246, 0.2);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    form p textarea {
+        min-height: 200px;
+        resize: vertical;
+    }
+
+    form p input:focus,
+    form p textarea:focus,
+    form p select:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        background: rgba(139, 92, 246, 0.15);
+    }
+
+    form p select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b5cf6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px;
+    }
+
+    form p input::placeholder,
+    form p textarea::placeholder {
+        color: #64748b;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        font-family: 'Inter', sans-serif;
+        margin-top: 10px;
+    }
+
+    button[type="submit"]:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+    }
+
+    /* 에러 메시지 스타일링 */
+    form .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0 0;
+    }
+
+    form .errorlist li {
+        color: #fca5a5;
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        background: rgba(239, 68, 68, 0.1);
+        border-left: 3px solid #ef4444;
+        border-radius: 6px;
+        margin-bottom: 5px;
+    }
+
+    /* 헬프 텍스트 스타일링 */
+    form .helptext {
+        display: block;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        margin-top: 8px;
+        font-style: italic;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .faq-page {
+            padding: 160px 30px 80px;
+        }
+
+        form {
+            padding: 50px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        form {
+            padding: 25px;
+        }
+
+        form::before {
+            font-size: 1.5rem;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 15, 35, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+        border-radius: 4px;
+    }
+
+    @supports (padding: max(0px)) {
+        .faq-page {
+            padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+            padding-left: max(15px, env(safe-area-inset-left));
+            padding-right: max(15px, env(safe-area-inset-right));
+            padding-bottom: max(60px, env(safe-area-inset-bottom));
+        }
+    }
+</style>
+
 <body>
+
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
 
     <header>
         {% if not user.is_authenticated %}
@@ -49,12 +344,7 @@
     <button type="submit">저장</button>
 </form>
 
-
 </main>
-
-<script src="{% static 'js/helpdesk/prompt_share_write.js' %}">
-
-</script>
 
 </body>
 </html>

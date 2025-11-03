@@ -8,8 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "프롬프트 공유하기" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/helpdesk/prompt_share.css' %}">
-        <!-- Open Graph (SNS 공유용) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -31,7 +32,400 @@
 
 </head>
 
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        background-attachment: fixed;
+        color: #ffffff;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .circle-bg {
+        position: fixed;
+        border-radius: 50%;
+        opacity: 0.08;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .circle-1 {
+        width: 350px;
+        height: 350px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        top: -180px;
+        left: -180px;
+        animation: float 20s ease-in-out infinite;
+    }
+
+    .circle-2 {
+        width: 250px;
+        height: 250px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        top: 20%;
+        right: -120px;
+        animation: float 15s ease-in-out infinite reverse;
+    }
+
+    .circle-3 {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        bottom: 15%;
+        left: -150px;
+        animation: float 18s ease-in-out infinite;
+    }
+
+    .circle-4 {
+        width: 220px;
+        height: 220px;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        bottom: 25%;
+        right: 15%;
+        animation: float 12s ease-in-out infinite reverse;
+    }
+
+    .circle-5 {
+        width: 280px;
+        height: 280px;
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        top: 45%;
+        left: -140px;
+        animation: float 16s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+
+    .prompt-share-page {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 140px 15px 60px;
+        max-width: 1200px;
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    /* 페이지 헤더 */
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .page-title::before {
+        content: '✨';
+        display: block;
+        font-size: 4rem;
+        margin-bottom: 15px;
+        background: none;
+        -webkit-text-fill-color: initial;
+    }
+
+    .page-description {
+        font-size: 0.95rem;
+        color: #94a3b8;
+        line-height: 1.5;
+    }
+
+    /* 쓰기 버튼 섹션 */
+    .prompt-write-section {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 30px;
+        animation: fadeInUp 0.6s ease-out 0.1s backwards;
+    }
+
+    .prompt-write-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        text-decoration: none;
+    }
+
+    .prompt-write-button:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+    }
+
+    .write-button-icon {
+        font-size: 1.2rem;
+    }
+
+    /* 프롬프트 그리드 */
+    .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    }
+
+    .prompt-grid > a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .prompt-card {
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .prompt-card:hover {
+        border-color: #8b5cf6;
+        box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .prompt-card:active {
+        transform: translateY(-2px);
+    }
+
+    /* 프롬프트 헤더 */
+    .prompt-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .prompt-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .author-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .author-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .author-name {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .author-role {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+
+    .prompt-type-badge {
+        padding: 6px 12px;
+        background: rgba(139, 92, 246, 0.2);
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #8b5cf6;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* 프롬프트 내용 */
+    .prompt-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .prompt-preview {
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex: 1;
+    }
+
+    /* 빈 상태 */
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 80px 20px;
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 24px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 10px;
+    }
+
+    .empty-description {
+        font-size: 1rem;
+        color: #94a3b8;
+        line-height: 1.6;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .prompt-share-page {
+            padding: 160px 30px 80px;
+        }
+
+        .page-title {
+            font-size: 3rem;
+        }
+
+        .prompt-grid {
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 25px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .prompt-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .prompt-write-section {
+            justify-content: center;
+        }
+
+        .prompt-write-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 15, 35, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+        border-radius: 4px;
+    }
+
+    @supports (padding: max(0px)) {
+        .prompt-share-page {
+            padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+            padding-left: max(15px, env(safe-area-inset-left));
+            padding-right: max(15px, env(safe-area-inset-right));
+            padding-bottom: max(60px, env(safe-area-inset-bottom));
+        }
+    }
+</style>
+
 <body>
+
+    <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
 
     <header>
         {% if not user.is_authenticated %}
@@ -78,20 +472,16 @@
                 {{ prompt.prompt_content|default:_("이 프롬프트에 대한 미리보기가 제공되지 않습니다. 클릭해서 전체 내용을 확인해보세요!")|truncatechars:120 }}
             </p>
         </div>
+        </a>
         {% empty %}
         <div class="empty-state">
             <div class="empty-icon">💡</div>
             <h2 class="empty-title">{% trans "아직 공유된 프롬프트가 없습니다" %}</h2>
             <p class="empty-description">{% trans "첫 번째 프롬프트를 공유해보세요!" %}</p>
         </div>
-        </a>
         {% endfor %}
     </div>
 </main>
-
-<script src="{% static 'js/helpdesk/prompt_share.js' %}">
-
-</script>
 
 </body>
 </html>

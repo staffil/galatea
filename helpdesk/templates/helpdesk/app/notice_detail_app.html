@@ -9,13 +9,8 @@
     <title>{% trans "GALATEA - Chat with Celebrities" %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
 
-    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
-    <link rel="stylesheet" href="{% static 'css/helpdesk/notice_detail.css'%}">
-    <script src="{% static 'js/home/main.js' %}"></script>
-
-        <!-- Open Graph (SNS 공유용) -->
+    <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
     <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
@@ -38,12 +33,428 @@
 </head>
 
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
 
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        background-attachment: fixed;
+        color: #ffffff;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .circle-bg {
+        position: fixed;
+        border-radius: 50%;
+        opacity: 0.08;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .circle-1 {
+        width: 350px;
+        height: 350px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        top: -180px;
+        left: -180px;
+        animation: float 20s ease-in-out infinite;
+    }
+
+    .circle-2 {
+        width: 250px;
+        height: 250px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        top: 20%;
+        right: -120px;
+        animation: float 15s ease-in-out infinite reverse;
+    }
+
+    .circle-3 {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        bottom: 15%;
+        left: -150px;
+        animation: float 18s ease-in-out infinite;
+    }
+
+    .circle-4 {
+        width: 220px;
+        height: 220px;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        bottom: 25%;
+        right: 15%;
+        animation: float 12s ease-in-out infinite reverse;
+    }
+
+    .circle-5 {
+        width: 280px;
+        height: 280px;
+        background: linear-gradient(135deg, #fa709a, #fee140);
+        top: 45%;
+        left: -140px;
+        animation: float 16s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+
+    .notice-detail-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        padding: 140px 15px 60px;
+        max-width: 900px;
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    /* 브레드크럼 */
+    .notice-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        font-size: 0.85rem;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .notice-breadcrumb a {
+        color: #8b5cf6;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .notice-breadcrumb a:hover {
+        color: #06b6d4;
+    }
+
+    .notice-breadcrumb-separator {
+        color: #64748b;
+    }
+
+    .notice-breadcrumb span:last-child {
+        color: #cbd5e1;
+    }
+
+    /* 페이지 제목 */
+    .notice-page-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.6s ease-out 0.1s backwards;
+    }
+
+    .notice-page-title::before {
+        content: '📢';
+        display: block;
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+        background: none;
+        -webkit-text-fill-color: initial;
+    }
+
+    /* 상세 카드 */
+    .notice-detail-card {
+        background: rgba(26, 26, 46, 0.95);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: fadeInUp 0.6s ease-out 0.2s backwards;
+    }
+
+    /* 헤더 */
+    .notice-detail-header {
+        padding-bottom: 30px;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        margin-bottom: 30px;
+    }
+
+    .notice-detail-badge {
+        display: inline-flex;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #ffffff;
+        box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
+        margin-bottom: 20px;
+    }
+
+    .notice-detail-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1.4;
+        margin-bottom: 20px;
+    }
+
+    .notice-detail-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .notice-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #94a3b8;
+    }
+
+    .notice-meta-date::before {
+        content: '📅';
+        font-size: 1rem;
+    }
+
+    .notice-meta-views::before {
+        content: '👁️';
+        font-size: 1rem;
+    }
+
+    /* 내용 */
+    .notice-detail-content {
+        color: #cbd5e1;
+        font-size: 1rem;
+        line-height: 1.8;
+        margin-bottom: 40px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    .notice-detail-content p {
+        margin-bottom: 15px;
+    }
+
+    .notice-detail-content p:last-child {
+        margin-bottom: 0;
+    }
+
+    .notice-detail-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        margin: 20px 0;
+        border: 2px solid rgba(139, 92, 246, 0.3);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 액션 버튼 */
+    .notice-detail-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding-top: 30px;
+        border-top: 1px solid rgba(139, 92, 246, 0.2);
+        flex-wrap: wrap;
+    }
+
+    .notice-back-button {
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+        border: none;
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .notice-back-button::before {
+        content: '←';
+        font-size: 1.2rem;
+    }
+
+    .notice-back-button:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+    }
+
+    .notice-share-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .notice-share-button {
+        width: 44px;
+        height: 44px;
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .notice-share-button:hover {
+        background: rgba(139, 92, 246, 0.2);
+        border-color: #8b5cf6;
+        transform: translateY(-2px);
+    }
+
+    .notice-share-button:active {
+        transform: translateY(0);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .notice-detail-container {
+            padding: 160px 30px 80px;
+        }
+
+        .notice-page-title {
+            font-size: 3rem;
+        }
+
+        .notice-detail-card {
+            padding: 50px;
+        }
+
+        .notice-detail-title {
+            font-size: 2.2rem;
+        }
+
+        .notice-detail-content {
+            font-size: 1.05rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .notice-page-title {
+            font-size: 2rem;
+        }
+
+        .notice-detail-card {
+            padding: 25px;
+        }
+
+        .notice-detail-title {
+            font-size: 1.4rem;
+        }
+
+        .notice-detail-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .notice-back-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .notice-share-actions {
+            justify-content: center;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(15, 15, 35, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+        border-radius: 4px;
+    }
+
+    @supports (padding: max(0px)) {
+        .notice-detail-container {
+            padding-top: max(140px, calc(140px + env(safe-area-inset-top)));
+            padding-left: max(15px, env(safe-area-inset-left));
+            padding-right: max(15px, env(safe-area-inset-right));
+            padding-bottom: max(60px, env(safe-area-inset-bottom));
+        }
+    }
+
+    /* 토스트 알림 */
+    .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(139, 92, 246, 0.95);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        font-weight: 600;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .toast.show {
+        opacity: 1;
+    }
 </style>
+
 <body>
 
     <!-- 배경 원들 -->
     <div class="circle-bg circle-1"></div>
+    <div class="circle-bg circle-2"></div>
+    <div class="circle-bg circle-3"></div>
+    <div class="circle-bg circle-4"></div>
+    <div class="circle-bg circle-5"></div>
 
     <!-- 헤더 -->
     <header>
@@ -53,6 +464,7 @@
             {% include "common/app/loginHeader.html" %}
         {% endif %}
     </header>
+
 <div class="notice-detail-container">
     <!-- 브레드크럼 -->
     <nav class="notice-breadcrumb">
@@ -83,9 +495,9 @@
         </header>
 
         <!-- 내용 -->
-<div class="notice-detail-content">
-    {{ notice.content }}
-</div>
+        <div class="notice-detail-content">
+            {{ notice.content }}
+        </div>
 
         <!-- 액션 버튼 -->
         <div class="notice-detail-actions">
@@ -94,10 +506,10 @@
             </a>
             
             <div class="notice-share-actions">
-                <a href="#" class="notice-share-button" onclick="copyToClipboard()" title="링크 복사">
+                <a href="#" class="notice-share-button" onclick="copyToClipboard(); return false;" title="링크 복사">
                     🔗
                 </a>
-                <a href="#" class="notice-share-button" onclick="printPage()" title="인쇄">
+                <a href="#" class="notice-share-button" onclick="printPage(); return false;" title="인쇄">
                     🖨️
                 </a>
             </div>
@@ -105,13 +517,77 @@
     </div>
 </div>
 
-<script src="{% static 'js/helpdesk/notice_detail.js' %}">
+<script>
+// 링크 복사 기능
+function copyToClipboard() {
+    const url = window.location.href;
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('링크가 복사되었습니다!');
+        }).catch(err => {
+            console.error('복사 실패:', err);
+            fallbackCopyToClipboard(url);
+        });
+    } else {
+        fallbackCopyToClipboard(url);
+    }
+}
 
+// 구형 브라우저용 복사 방법
+function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showToast('링크가 복사되었습니다!');
+    } catch (err) {
+        console.error('복사 실패:', err);
+        showToast('복사에 실패했습니다.');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// 인쇄 기능
+function printPage() {
+    window.print();
+}
+
+// 토스트 메시지 표시
+function showToast(message) {
+    // 기존 토스트 제거
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    // 새 토스트 생성
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // 애니메이션
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    // 3초 후 제거
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
 </script>
 
-
-
-
-    
 </body>
 </html>

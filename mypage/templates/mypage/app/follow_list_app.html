@@ -679,7 +679,7 @@
         </div>
 
         <ul class="sidebar-menu">
-            <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
+            <li><a href="{% url 'home:logout_app' %}?next=/main_app/">{% trans '로그아웃' %}</a></li>
             <li><a href="{% url 'home:main_app' %}">{% trans 'Main 으로' %}</a></li>
             <li><a href="{% url 'mypage:mypage_app' %}">{% trans '프로필' %}</a></li>
             
