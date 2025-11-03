@@ -685,9 +685,17 @@
         <div class="circle circle-2"></div>
         <div class="circle circle-3"></div>
     </div>
-
+    <header>
+        {% if not user.is_authenticated %}
+            {% include "common/app/notLoginHeader.html" %}
+        {% else %}
+            {% include "common/app/loginHeader.html" %}
+        {% endif %}
+    </header>
     <!-- 앱 컨테이너 -->
     <div class="app-container">
+
+        
         <!-- 헤더 -->
         <header class="chat-header">
             {% if llm.llm_image %}
@@ -880,45 +888,8 @@
       }
   }
 
-  // 녹음 시작
-  async function startRecording() {
-      try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
-          
-          const audioChunks = [];
-          
-          mediaRecorder.ondataavailable = (event) => {
-              audioChunks.push(event.data);
-          };
-          
-          mediaRecorder.onstop = () => {
-              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-              processAudio(audioBlob);
-              stream.getTracks().forEach(track => track.stop());
-          };
-          
-          mediaRecorder.start();
-          isRecording = true;
-      } catch (error) {
-          console.error('마이크 권한 오류:', error);
-          alert(messages.micPermission);
-      }
-  }
 
-  // 녹음 중지
-  function stopRecording() {
-      if (mediaRecorder && isRecording) {
-          mediaRecorder.stop();
-          isRecording = false;
-      }
-  }
 
-  // 오디오 처리
-  function processAudio(audioBlob) {
-      // 여기에 음성 인식 및 TTS API 호출 로직 추가
-      console.log('오디오 처리:', audioBlob);
-  }
 
   // 공유하기
   function shareLink() {
