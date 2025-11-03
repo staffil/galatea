@@ -1011,6 +1011,7 @@ button, a {
     .genre-tag-box {
         flex: 0 0 240px;
         height: 140px;
+
     }
 
     /* 뉴스 섹션 - 모바일 */
@@ -1122,7 +1123,8 @@ button, a {
 
     .genre-tag-box {
         flex: 0 0 220px;
-        height: 130px;
+        height: 160px;
+        width: 90px;
     }
 
     /* 뉴스 섹션 - 작은 모바일 */
@@ -1494,7 +1496,7 @@ button, a {
             <div class="genre-container">
                 <h2 class="section-title">{% trans "장르" %}</h2>
                 <div class="genre-tags-container">
-                    {% for genre in genre_list|slice:":4" %}
+                    {% for genre in genre_list|slice:":8" %}
                     <a href="{% url 'home:genres_detail_app' genre.id %}">
                         <div class="genre-tag-box">
                             {% if genre.genre_image %}
