@@ -143,7 +143,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            z-index: 100;
+
         }
 
         .header-avatar {
@@ -697,7 +697,7 @@
 
         
         <!-- 헤더 -->
-        <header class="chat-header">
+        <div class="chat-header">
             {% if llm.llm_image %}
                 <img src="{{ llm.llm_image.url }}" alt="AI Avatar" class="header-avatar" />
             {% else %}
@@ -715,7 +715,7 @@
                     <i class="fas fa-share-alt"></i>
                 </button>
             </div>
-        </header>
+        </div>
 
         <!-- 탭 네비게이션 -->
         <nav class="tab-nav">
