@@ -1,0 +1,154 @@
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ user.nickname }}의 {% trans "프로필" %} - GALATEA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home/user_intro.css' %}">
+        <!-- Open Graph (SNS 공유용) -->
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
+    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Description (검색 결과용) -->
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "GALATEA AI",
+  "url": "https://www.galatea.website",
+  "logo": "https://www.galatea.website/static/img/logo.png"
+}
+</script>
+
+
+</head>
+
+<body>
+    <!-- 메인 컨테이너 -->
+    <div class="main-container">
+        
+{% for item in user_list %}
+<div class="user-header">
+    <div class="user-info">
+        <h1>{{ item.user.nickname }}</h1>
+        <div class="user-stats">
+            {% for follow in total_follow_count %}
+                {% if follow.id == item.user.id %}
+                    <span class="follower-count">{{ follow.follower_count }} {% trans "팔로워" %}</span>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- 팔로우 버튼 -->
+        <div style="margin-top: 10px;">
+{% if item.user.id != request.user.id %}
+    {% if item.is_following %}
+        <button class="glt2-follow-btn following" data-id="{{ item.user.id }}">{% trans "Following" %}</button>
+    {% else %}
+        <button class="glt2-follow-btn" data-id="{{ item.user.id }}">{% trans "Follow" %}</button>
+    {% endif %}
+{% endif %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+
+        <!-- AI 추천 섹션 (가로스크롤) -->
+        <div class="section">
+            <div class="ai-section">
+                <div class="section-header">
+                    <h2 class="section-title">{% trans '팔로워가 만든 AI' %}</h2>
+                </div>
+                <div class="ai-container">
+                    <div class="ai-scroll">
+                        {% for item in llm_list %}
+                            <div class="ai-card">
+                            <!-- <div class="ai-card"  onclick="openModal({{ item.id }})"> -->
+                                {% if item.llm_image %}
+                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" class="ai-image" loading="lazy">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/280x150/4facfe/ffffff?text=AI" alt="{% trans '기본 이미지' %}" class="ai-image" loading="lazy">
+                                {% endif %}
+                                <div class="ai-content">
+                                    <h3 class="ai-title">{{ item.title }}</h3>
+                                    <div class="genre-tags">
+                                        {% for genre in item.genres.all %}
+                                            <div class="genre-tag" style="background-color: {{ genre.color }};">
+                                                {{ genre.name }}
+                                            </div>
+                                        {% empty %}
+                                            <div class="genre-tag" style="background-color: #4facfe;">
+                                                {% trans "일반" %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+      <div class="ai-button-container">
+            <button class="glt2-chat-btn" onclick="window.location.href='/customer_ai/chat/{{ item.id }}/'">{% trans "대화하기" %}</button>
+        </div>
+                                    </div>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">
+                                <div class="empty-icon">🤖</div>
+                                <p>{% trans "등록된 AI가 없습니다." %}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 프롬프트 섹션 (가로스크롤) -->
+        <div class="section">
+            <div class="prompt-section">
+                <div class="section-header">
+                    <h2 class="section-title">{% trans "작성한 프롬프트" %}</h2>
+                </div>
+                <div class="prompt-container">
+                    <div class="prompt-scroll">
+                        {% for prompt in prompt_list %}
+                            <div class="prompt-card">
+                                <h3 class="prompt-title">{{ prompt.prompt_title }}</h3>
+                                <div class="prompt-content">{{ prompt.prompt_description|default:"프롬프트 설명이 없습니다." }}</div>
+                            </div>
+                        {% empty %}
+                            <div class="empty-state">
+                                <div class="empty-icon">📝</div>
+                                <p>{% trans "작성된 프롬프트가 없습니다." %}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 모달 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-content" id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE }}"
+    const LLM_id = "{{ item.id }}"
+</script>
+    <script src="{% static 'js/home/user_intro.js' %}"></script>
+    <script src="{% static 'js/home/main.js' %}"></script>
+    <script src="{% static 'js/home/llm_section.js' %}"></script>
+</body>
+</html>
