@@ -130,6 +130,5 @@ def unpublish_llm_app(request, llm_id):
     llm.is_public = False
     llm.save()
 
-    return redirect('mypage:my_ai_models_app', llm_id=llm.id)
-
+    return redirect('mypage:my_ai_models_app', llm.id)
 

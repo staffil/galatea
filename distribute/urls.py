@@ -11,7 +11,7 @@ urlpatterns =[
 
     path('distribute_app/<int:llm_id>/', views.distribute_app, name= 'distribute_app'),
 
-    path('<int:llm_id>/unpublish_llm_app/', views.unpublish_llm, name= 'unpublish_llm_app'),
+    path('<int:llm_id>/unpublish_llm_app/', views.unpublish_llm_app, name= 'unpublish_llm_app'),
 
 
 ]
