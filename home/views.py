@@ -805,3 +805,37 @@ def search_result_app(request):
         'query': query,
         'results': result
     })
+
+
+
+
+def user_intro_app(request, user_id):
+    # 프로필 주인 유저
+    profile_user = get_object_or_404(User, id=user_id)
+
+    # 해당 사용자의 팔로워 수
+    total_follow_count = User.objects.filter(id=user_id) \
+        .annotate(follower_count=Count('follower_set', distinct=True)) \
+        .order_by('-follower_count')[:12]
+
+    # 공개된 LLM / 프롬프트 리스트
+    llm_list = LLM.objects.filter(user_id=user_id, is_public=True)
+    prompt_list = Prompt.objects.filter(user_id=user_id)
+
+    # 로그인한 유저가 이 유저를 팔로우 중인지 여부
+    if request.user.is_authenticated:
+        is_following = Follow.objects.filter(
+            follower=request.user,
+            following=profile_user
+        ).exists()
+    else:
+        is_following = False
+
+    context = {
+        "profile_user": profile_user,
+        "is_following": is_following,
+        "total_follow_count": total_follow_count,
+        "llm_list": llm_list,
+        "prompt_list": prompt_list,
+    }
+    return render(request, "home/app/user_intro_app.html", context)

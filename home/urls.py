@@ -40,6 +40,7 @@ urlpatterns = [
     path('logout_app/', views.logout_app, name='logout_app'),
     path('voice_all_app/', views.voice_all_app, name='voice_all_app'),
     path('search_result_app/', views.search_result_app, name='search_result_app'),
+    path('user_intro_app/<int:user_id>/', views.user_intro_app, name='user_intro_app'),
 
 ]
 
