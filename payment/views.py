@@ -408,3 +408,76 @@ def verify_payment_v2(request):
             'status': 'error', 
             'message': str(e)
         })
+    
+
+#ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+# 앱 전용 
+
+
+
+@login_required
+def payment_choice_app(request):
+    payment_rank = PaymentRank.objects.all()
+
+    context = {
+        "plans": payment_rank
+    }
+    return render(request, "payment/app/payment_choice_app.html", context)
+
+
+@login_required
+def payment_complete_app(request):
+    imp_uid = request.GET.get("imp_uid")
+    merchant_uid = request.GET.get("merchant_uid")
+    rank_id = request.GET.get("rank_id")
+
+    status = "unknown"
+
+    # 모바일에서 imp_uid가 넘어오면 서버에서 검증
+    if imp_uid and merchant_uid and rank_id:
+        result = verify_payment_server(imp_uid, merchant_uid, int(rank_id), request.user)
+        status = result.get("status", "failed")
+
+    latest_payment = Payment.objects.filter(user=request.user).order_by('-paid_at').first()
+    
+    context = {
+        "status": status if imp_uid else (latest_payment.status if latest_payment else "unknown"),
+        "payment": latest_payment,
+        "amount": latest_payment.amount if latest_payment else 0,
+        "charged_token": latest_payment.amount if latest_payment else 0,
+        "transactions": TokenHistory.objects.filter(user=request.user).order_by('-created_at')[:5]
+    }
+
+    return render(request, "payment/app/payment_complete_app.html", context)
+
+
+
+
+
+
+def payment_detail_app(request):
+
+    return render(request, "payment/app/payment_detail_app.html")
+
+
+
+
+from payment.models import PaymentMethod
+@login_required
+def payment_charge_app(request):
+    if request.method == "POST":
+        rank_id = int(request.POST.get("rank_id"))
+        plan = PaymentRank.objects.get(id=rank_id)
+        payment_method = PaymentMethod.objects.all()
+
+        # 모든 PG사 허용
+        available_pgs = payment_method.filter(is_active=True)
+        context = {
+            "plan": plan,
+            "available_pgs": available_pgs,
+            "PORTONE_STORE_ID": settings.PORTONE_STORE_ID,
+        }
+
+        return render(request, "payment/app/payment_app.html", context)
+    else:
+        return redirect('payment:payment_choice_app')

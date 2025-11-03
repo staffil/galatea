@@ -238,7 +238,7 @@
         data-buyer-name="{{ request.user.get_full_name|default:request.user.username }}"
         data-buyer-tel="{{ request.user.phonenumber }}"
         onclick="requestPay('{{ pg.name }}', this)"
-        style="background-image: url('{{ pg.payment_image.url }}'); width: 400px; border-radius: 50px; height: 100px;">
+        style="background-image: url('{{ pg.payment_image.url }}');">
 </button>
                 <div class="payment-label">
                     {{ pg|title }}
