@@ -145,24 +145,25 @@
 
         /* Menu Button */
         .menu-btn {
-            position: fixed;
-            top: 70px;
+           position: fixed;
+            top: 80px;
             right: 15px;
-            z-index: 999;
+            z-index: 1001;
             padding: 10px 20px;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            border: none;
-            border-radius: 25px;
-            color: white;
-            font-weight: 700;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            border-radius: 50px;
+            color: #ffffff;
+            font-weight: 600;
             font-size: 0.85rem;
-            cursor: pointer;
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
             display: flex;
             align-items: center;
             gap: 8px;
-            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            border: none;
+            cursor: pointer;
         }
 
         .menu-btn:hover,
