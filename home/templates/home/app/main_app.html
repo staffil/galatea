@@ -305,8 +305,7 @@ main {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-        border-radius: 30px;
-
+    border-radius: 30px;
 }
 
 .news-slide::before {
@@ -316,7 +315,7 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-        border-radius: 30px;
+    border-radius: 30px;
     background: linear-gradient(
         to bottom,
         rgba(0, 0, 0, 0.3) 0%,
@@ -631,22 +630,30 @@ main {
     box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
 }
 
-/* Genre Container */
+/* Genre Container - 가로 스크롤 */
 .genre-container {
     padding: 0 15px 30px;
     animation: fadeIn 0.6s ease-out 0.5s both;
 }
 
 .genre-tags-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 15px;
+    overflow-x: auto;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
     margin-bottom: 25px;
+}
+
+.genre-tags-container::-webkit-scrollbar {
+    display: none;
 }
 
 .genre-tag-box {
     position: relative;
-    height: 140px;
+    flex: 0 0 280px;
+    height: 160px;
     border-radius: 16px;
     overflow: hidden;
     cursor: pointer;
@@ -932,21 +939,32 @@ button, a {
         flex: 0 0 140px;
     }
 
-    /* 뉴스 섹션 - 태블릿 */
-    .news-slide {
-        padding: 25px;
+    .genre-tag-box {
+        flex: 0 0 260px;
+        height: 150px;
     }
 
-    .news-slide img {
-        height: 200px;
+    /* 뉴스 섹션 - 태블릿 */
+    .news-slide {
+        height: 250px;
+    }
+
+    .news-content {
+        padding: 20px;
     }
 
     .news-title {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .news-description {
-        font-size: 0.95rem;
+        font-size: 0.8rem;
+        margin-bottom: 12px;
+    }
+
+    .news-link {
+        padding: 7px 18px;
+        font-size: 0.75rem;
     }
 
     .nav-btn {
@@ -990,12 +1008,9 @@ button, a {
         flex: 0 0 130px;
     }
 
-    .genre-tags-container {
-        grid-template-columns: 1fr;
-    }
-
     .genre-tag-box {
-        height: 120px;
+        flex: 0 0 240px;
+        height: 140px;
     }
 
     /* 뉴스 섹션 - 모바일 */
@@ -1103,6 +1118,11 @@ button, a {
     .view-all-btn {
         padding: 12px 30px;
         font-size: 0.9rem;
+    }
+
+    .genre-tag-box {
+        flex: 0 0 220px;
+        height: 130px;
     }
 
     /* 뉴스 섹션 - 작은 모바일 */
@@ -1233,8 +1253,6 @@ button, a {
     </div>
 
     <main>
-
-
         <!-- 뉴스 섹션 -->
         <div class="news-section">
             <div class="news-container">
@@ -1247,7 +1265,7 @@ button, a {
                                     <p class="news-description">{{ news.news_description }}</p>
                                 {% endif %}
                                 {% if news.link %}
-                                    <a href= "{% url 'home:logout_app' %}?next=/main_app/" class="news-link" target="_blank">
+                                    <a href="{{ news.link }}" class="news-link" target="_blank">
                                         <i class="fas fa-arrow-right"></i>
                                         <span>{% trans "자세히 보기" %}</span>
                                     </a>
@@ -1274,6 +1292,7 @@ button, a {
                 {% endif %}
             </div>
         </div>
+
         {% if user.is_authenticated %}
         <nav class="main-nav" role="navigation" aria-label="{% trans '주요 메뉴' %}">
             <a href="/payment/payment_choice_app/" class="nav-button">
@@ -1293,6 +1312,7 @@ button, a {
             </a>
         </nav>
         {% endif %}
+
         <!-- LLM 추천 -->
         <div class="main-content">
             <div class="llm-container2">
@@ -1469,7 +1489,7 @@ button, a {
             </div>
         </div>
 
-        <!-- 장르 섹션 -->
+        <!-- 장르 섹션 - 가로 스크롤 -->
         <div class="main-content">
             <div class="genre-container">
                 <h2 class="section-title">{% trans "장르" %}</h2>
