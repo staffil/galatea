@@ -1,29 +1,25 @@
 {% load static %} 
 {% load i18n %}
-
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>{% trans '비전 모드' %}</title>
+    <title>Voice Chat UI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
     
-    <!-- Open Graph (SNS 공유용) -->
-    <meta property="og:title" content="GALATEA AI - 비전 모드" />
-    <meta property="og:description" content="카메라로 실시간 대화하는 AI 비전 모드" />
+    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="{{ llm.name }}" />
     {% if llm.llm_image %}
-        <meta property="og:image" content="{{ llm.llm_image.url }}">
-    {% else %}
-        <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
+      <meta property="og:image" content="{{ llm.llm_image.url }}">
     {% endif %}
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
 
     <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="GALATEA AI 비전 모드 - 카메라를 통해 실시간으로 AI와 대화하고 이미지를 분석합니다. 음성 인식과 비전 AI가 결합된 혁신적인 경험을 제공합니다.">
+    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
 
     <script type="application/ld+json">
     {
@@ -36,7 +32,7 @@
     </script>
 
     <style>
-        /* Vision App - Modern Design */
+        /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
         
         html {
             height: 100%;
@@ -87,7 +83,7 @@
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             top: -150px;
             left: -150px;
-            animation: visionFloat 20s ease-in-out infinite;
+            animation: chatFloat 20s ease-in-out infinite;
         }
 
         .circle-2 {
@@ -96,7 +92,7 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             top: 20%;
             right: -100px;
-            animation: visionFloat 15s ease-in-out infinite reverse;
+            animation: chatFloat 15s ease-in-out infinite reverse;
         }
 
         .circle-3 {
@@ -105,7 +101,7 @@
             background: linear-gradient(135deg, #f093fb, #f5576c);
             bottom: 10%;
             left: 10%;
-            animation: visionFloat 18s ease-in-out infinite;
+            animation: chatFloat 18s ease-in-out infinite;
         }
 
         .circle-4 {
@@ -114,7 +110,7 @@
             background: linear-gradient(135deg, #4facfe, #00f2fe);
             bottom: -90px;
             right: 20%;
-            animation: visionFloat 12s ease-in-out infinite reverse;
+            animation: chatFloat 12s ease-in-out infinite reverse;
         }
 
         .circle-5 {
@@ -123,10 +119,10 @@
             background: linear-gradient(135deg, #fa709a, #fee140);
             top: 50%;
             left: -110px;
-            animation: visionFloat 16s ease-in-out infinite;
+            animation: chatFloat 16s ease-in-out infinite;
         }
 
-        @keyframes visionFloat {
+        @keyframes chatFloat {
             0%, 100% {
                 transform: translate(0, 0) scale(1);
             }
@@ -235,27 +231,32 @@
         .app-container {
             position: relative;
             z-index: 1;
+            display: flex;
             min-height: 100vh;
             padding-top: 125px;
         }
 
         /* Main Content */
         .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            min-height: calc(100vh - 125px);
         }
 
         /* AI Showcase */
         .ai-showcase {
             text-align: center;
-            animation: fadeIn 0.6s ease-out;
+            margin-bottom: 25px;
+            animation: chatFadeIn 0.6s ease-out;
+            flex-shrink: 0;
         }
 
-        @keyframes fadeIn {
+        @keyframes chatFadeIn {
             from {
                 opacity: 0;
                 transform: translateY(20px);
@@ -267,8 +268,8 @@
         }
 
         .ai-image {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid rgba(139, 92, 246, 0.5);
@@ -281,177 +282,187 @@
             box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
         }
 
-        .no-image {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-            border-radius: 50%;
-            background: rgba(139, 92, 246, 0.1);
-            border: 4px solid rgba(139, 92, 246, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #8b5cf6;
-            font-size: 0.9rem;
-        }
-
-        .page-subtitle {
-            text-align: center;
-            color: #b8c5d1;
-            font-size: 1rem;
-            margin-top: 10px;
-            margin-bottom: 0;
-        }
-
-        /* Video Container */
-        .video-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
+            min-height: 200px;
+            max-height: calc(100vh - 510px);
         }
 
-        .video-section {
-            background: rgba(26, 26, 46, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 20px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .section-title {
+        /* Message */
+        .message {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #8b5cf6;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: chatMessageSlide 0.3s ease-out;
         }
 
-        .section-title i {
-            font-size: 1.2rem;
+        @keyframes chatMessageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        #webcam {
-            width: 100%;
-            height: 300px;
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.5);
-            object-fit: cover;
+        .message.user {
+            flex-direction: row-reverse;
         }
 
-        #webcam.active {
-            border: 2px solid rgba(139, 92, 246, 0.5);
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-        }
-
-        .ai-character-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 12px;
-        }
-
-        .no-ai-image {
-            width: 100%;
-            height: 300px;
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            color: #8b5cf6;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        /* Control Section */
-        .control-section {
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 14px 18px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .message.user .message-content {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        /* Typing Bubbles */
+        .typing-bubbles {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 14px 18px;
+        }
+
+        .typing-bubbles span {
+            width: 8px;
+            height: 8px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            display: block;
+            animation: bounce 1s infinite ease-in-out;
+        }
+
+        .typing-bubbles span:nth-child(2) { 
+            animation-delay: 0.2s; 
+        }
+
+        .typing-bubbles span:nth-child(3) { 
+            animation-delay: 0.4s; 
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { 
+                transform: scale(0); 
+                opacity: 0.5;
+            }
+            40% { 
+                transform: scale(1); 
+                opacity: 1;
+            }
+        }
+
+        /* Input Section */
+        .input-section {
             background: rgba(26, 26, 46, 0.6);
             border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 20px;
             padding: 20px;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
         }
 
-        .control-row {
+        .input-row {
             display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .control-row:last-child {
+            gap: 12px;
             margin-bottom: 0;
         }
 
-        /* Vision Toggle Button */
-        .vision-toggle {
-            padding: 14px 24px;
+        .text-input {
+            flex: 1;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .text-input::placeholder {
+            color: #b8c5d1;
+            opacity: 0.6;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
-            border-radius: 12px;
+            border-radius: 50%;
             color: white;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            white-space: nowrap;
+            justify-content: center;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
         }
 
-        .vision-toggle:active {
-            transform: scale(0.98);
+        .send-btn:active {
+            transform: scale(0.95);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
 
-        .vision-toggle.active {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .vision-toggle i {
-            font-size: 1.1rem;
-        }
-
-        /* Vision Status */
-        .vision-status {
-            flex: 1;
-            padding: 12px 18px;
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 12px;
-            color: #b8c5d1;
-            font-size: 0.9rem;
-        }
-
-        .vision-status.active {
-            color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .vision-status.processing {
-            color: #f59e0b;
-            background: rgba(245, 158, 11, 0.1);
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        /* Audio Controls */
-        .audio-controls {
+        /* Controls Row */
+        .controls-row {
             display: flex;
             align-items: center;
             gap: 15px;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
             margin-bottom: 15px;
         }
 
@@ -479,10 +490,10 @@
 
         .record-btn.recording {
             background: linear-gradient(135deg, #ef4444, #dc2626);
-            animation: recordPulse 1.5s infinite;
+            animation: pulse 1.5s infinite;
         }
 
-        @keyframes recordPulse {
+        @keyframes pulse {
             0%, 100% {
                 box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
             }
@@ -497,17 +508,19 @@
             color: #b8c5d1;
         }
 
-        /* Recognized Text Display */
+        /* Recognized Text */
         .recognized-text {
-            padding: 12px 18px;
+            padding: 12px;
             background: rgba(139, 92, 246, 0.1);
             border-radius: 12px;
             color: #8b5cf6;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            min-height: 45px;
-            display: flex;
-            align-items: center;
+            font-size: 0.85rem;
+            min-height: 40px;
+            display: none;
+        }
+
+        .recognized-text:not(:empty) {
+            display: block;
         }
 
         /* Audio Player */
@@ -522,46 +535,6 @@
             width: 100%;
             border-radius: 8px;
             outline: none;
-        }
-
-        /* Results Section */
-        .results-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .result-card {
-            background: rgba(26, 26, 46, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 20px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .result-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #8b5cf6;
-            margin-bottom: 12px;
-        }
-
-        .result-title i {
-            font-size: 1.1rem;
-        }
-
-        .result-content {
-            padding: 14px;
-            background: rgba(139, 92, 246, 0.05);
-            border-radius: 12px;
-            color: #e2e8f0;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            min-height: 100px;
         }
 
         /* 스크롤바 커스터마이징 */
@@ -583,27 +556,14 @@
             background: linear-gradient(180deg, #764ba2, #667eea);
         }
 
-        /* iOS 스타일 탭 하이라이트 제거 */
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        button, .tab-item {
-            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
-        }
-
-        /* 반응형 - 태블릿 */
-        @media (max-width: 1024px) {
-            .video-container {
-                grid-template-columns: 1fr;
-            }
-
-            .results-section {
-                grid-template-columns: 1fr;
+        /* 반응형 */
+        @media (min-width: 768px) {
+            .tab-item {
+                font-size: 0.95rem;
+                padding: 14px 20px;
             }
         }
 
-        /* 반응형 - 모바일 */
         @media (max-width: 768px) {
             .app-container {
                 padding-top: 120px;
@@ -641,29 +601,30 @@
 
             .main-content {
                 padding: 15px;
-                gap: 15px;
             }
 
-            .ai-image, .no-image {
-                width: 150px;
-                height: 150px;
+            .ai-image {
+                width: 180px;
+                height: 180px;
             }
 
-            .page-subtitle {
-                font-size: 0.9rem;
+            .ai-showcase {
+                margin-bottom: 15px;
             }
 
-            #webcam {
-                height: 250px;
-            }
-
-            .video-section, .control-section, .result-card {
+            .chat-messages {
+                min-height: 150px;
+                max-height: calc(100vh - 460px);
                 padding: 15px;
             }
 
-            .vision-toggle {
-                padding: 12px 18px;
-                font-size: 0.85rem;
+            .message-content {
+                max-width: 80%;
+                font-size: 0.9rem;
+            }
+
+            .input-section {
+                padding: 15px;
             }
         }
 
@@ -704,33 +665,49 @@
 
             .main-content {
                 padding: 10px;
-                gap: 12px;
             }
 
-            .ai-image, .no-image {
+            .ai-image {
                 width: 120px;
                 height: 120px;
             }
 
-            .page-subtitle {
+            .ai-showcase {
+                margin-bottom: 10px;
+            }
+
+            .chat-messages {
+                min-height: 120px;
+                max-height: calc(100vh - 420px);
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+
+            .message-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+
+            .message-content {
+                max-width: 85%;
                 font-size: 0.85rem;
+                padding: 12px 14px;
             }
 
-            #webcam {
-                height: 200px;
-            }
-
-            .video-section, .control-section, .result-card {
+            .input-section {
                 padding: 12px;
             }
 
-            .section-title, .result-title {
+            .text-input {
+                padding: 12px 16px;
                 font-size: 0.9rem;
             }
 
-            .vision-toggle {
-                padding: 10px 14px;
-                font-size: 0.8rem;
+            .send-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
             }
 
             .record-btn {
@@ -738,11 +715,63 @@
                 height: 45px;
                 font-size: 1.1rem;
             }
+        }
 
-            .result-content {
-                font-size: 0.85rem;
-                min-height: 80px;
+        /* 작은 화면 추가 대응 */
+        @media (max-height: 700px) {
+            .chat-messages {
+                min-height: 100px !important;
+                max-height: calc(100vh - 400px) !important;
             }
+
+            .ai-image {
+                width: 100px !important;
+                height: 100px !important;
+            }
+
+            .ai-showcase {
+                margin-bottom: 8px !important;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .app-container {
+                padding-top: 110px;
+            }
+
+            .tab-navigation {
+                padding: 6px;
+            }
+
+            .tab-item {
+                padding: 6px 8px;
+                font-size: 0.65rem;
+            }
+
+            .share-button {
+                width: 38px;
+                height: 38px;
+                top: 105px;
+            }
+
+            .chat-messages {
+                min-height: 80px !important;
+                max-height: calc(100vh - 370px) !important;
+            }
+
+            .ai-image {
+                width: 80px !important;
+                height: 80px !important;
+            }
+        }
+
+        /* iOS 스타일 탭 하이라이트 제거 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button, .tab-item {
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
         }
 
         /* Safe Area 대응 */
@@ -758,17 +787,14 @@
         }
     </style>
 </head>
-
 <body>
-    <!-- 배경 원들 -->
     <div class="circle-bg circle-1"></div>
     <div class="circle-bg circle-2"></div>
     <div class="circle-bg circle-3"></div>
     <div class="circle-bg circle-4"></div>
     <div class="circle-bg circle-5"></div>
 
-    <!-- Header -->
-    <header class="header">
+    <header>
         {% if not user.is_authenticated %}
             {% include "common/app/notLoginHeader.html" %}
         {% else %}
@@ -779,11 +805,11 @@
     <!-- 탭 네비게이션 -->
     <nav class="tab-navigation">
         <div class="tab-container">
-            <a href="/customer_ai/custom_app/{{llm_id}}/" class="tab-item">
+            <a href="/customer_ai/custom_app/{{llm_id}}/" class="tab-item active">
                 <i class="fas fa-comment"></i>
                 <span>TEXT</span>
             </a>
-            <a href="/customer_ai/vision_app/{{llm_id}}/" class="tab-item active">
+            <a href="/customer_ai/vision_app/{{llm_id}}/" class="tab-item">
                 <i class="fas fa-eye"></i>
                 <span>VISION</span>
             </a>
@@ -800,485 +826,136 @@
     </button>
 
     <div class="app-container">
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- AI Showcase -->
             <div class="ai-showcase">
                 {% if llm.llm_image %}
-                    <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image" />
-                {% else %}
-                    <div class="no-image">{% trans '생성된 이미지가 없습니다' %}</div>
+                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
                 {% endif %}
-                <p class="page-subtitle">{% trans '카메라로 실시간 대화해보세요' %}</p>
             </div>
 
-            <!-- Video Container -->
-            <div class="video-container">
-                <!-- AI Character Section -->
-                <div class="video-section">
-                    <div class="section-title">
-                        <i class="fas fa-robot"></i>
-                        {% trans 'AI 캐릭터' %}
-                    </div>
-                    {% if llm.llm_image %}
-                        <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-character-image" />
-                    {% else %}
-                        <div class="no-ai-image">
-                            {% trans '생성된 이미지가 없습니다' %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <!-- Webcam Section -->
-                <div class="video-section">
-                    <div class="section-title">
-                        <i class="fas fa-video"></i>
-                        {% trans '실시간 카메라' %}
-                    </div>
-                    <video id="webcam" autoplay playsinline></video>
+            <div class="chat-messages" id="message-area">
+                <div class="message ai">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">{% trans '안녕하세요! 무엇을 도와드릴까요?' %}</div>
                 </div>
             </div>
 
-            <!-- Control Section -->
-            <div class="control-section">
-                <div class="control-row">
-                    <button class="vision-toggle" id="toggle-vision-btn">
-                        <i class="fas fa-play"></i>
-                        {% trans '비전 모드 시작' %}
-                    </button>
-                    <div class="vision-status" id="vision-result">
-                        {% trans '비전 모드 준비 중...' %}
-                    </div>
+            <div class="input-section">
+                <div class="input-row">
+                    <input type="text" class="text-input" id="text-input" placeholder="{% trans '메시지를 입력하세요...' %}" onkeydown="if(event.key === 'Enter'){ sendText(); }">
+                    <button class="send-btn" onclick="sendText()"><i class="fas fa-paper-plane"></i></button>
                 </div>
-
-                <!-- Audio Controls -->
-                <div class="audio-controls">
-                    <button class="record-btn" id="record-btn" onclick="toggleRecording()">
-                        <i class="fas fa-microphone" id="record-icon"></i>
-                    </button>
-                    <div class="record-status" id="record-status">
-                        {% trans '녹음을 시작하려면 버튼을 누르세요' %}
-                    </div>
-                </div>
-
-                <div class="recognized-text" id="recognized-text-display"></div>
-
-                <!-- Audio Player -->
-                <div class="audio-player" id="audio-container" style="display: none;">
+                <div class="recognized-text" id="recognized-text"></div>
+                <div class="audio-player" id="audio-container" style="display:none;">
                     <audio id="tts-audio" controls></audio>
-                </div>
-            </div>
-
-            <!-- Results Section -->
-            <div class="results-section">
-                <div class="result-card">
-                    <div class="result-title">
-                        <i class="fas fa-microphone"></i>
-                        {% trans '음성 인식 결과' %}
-                    </div>
-                    <div class="result-content" id="recognized-text">
-                        {% trans '음성 인식 대기 중...' %}
-                    </div>
-                </div>
-                
-                <div class="result-card">
-                    <div class="result-title">
-                        <i class="fas fa-robot"></i>
-                        {% trans 'AI 응답' %}
-                    </div>
-                    <div class="result-content" id="response">
-                        {% trans 'AI 응답 대기 중...' %}
-                    </div>
                 </div>
             </div>
         </main>
     </div>
 
 <script>
-const baseUrl = window.location.pathname.replace(/\/(chat|vision|vision_app|custom_app|novel_app)\/\d+\/?$/, '');
+  const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+  const CSRF_TOKEN = "{{ csrf_token }}";
+  const LLM_ID = {{ llm_id }}; 
+  const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
 
-const video = document.getElementById('webcam');
-const canvas = document.createElement('canvas');
-const toggleBtn = document.getElementById('toggle-vision-btn');
-const visionResult = document.getElementById('vision-result');
-const ttsAudio = document.getElementById('tts-audio');
-const responseDiv = document.getElementById('response');
-const recognizedText = document.getElementById('recognized-text');
-const recognizedTextDisplay = document.getElementById('recognized-text-display');
+  // Django 번역 문자열을 JS에서 사용할 객체
+  const messages = {
+      recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+      recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+      micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+      recognizedText: "{% trans '인식된 텍스트: ' %}",
+      audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+      errorOccurred: "{% trans '오류 발생: ' %}",
+      shareCopied: "{% trans '링크가 복사되었습니다!' %}"
+  };
 
-let streaming = false;
-let intervalId = null;
-let isVisionRunning = false;
-let latestVisionResult = '';
+  function setViewportHeight() {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight*0.01}px`);
+  }
+  window.addEventListener('resize', setViewportHeight);
+  window.addEventListener('orientationchange', ()=>setTimeout(setViewportHeight,100));
+  window.addEventListener('load', setViewportHeight);
+  document.addEventListener('DOMContentLoaded', setViewportHeight);
 
-let isProcessingVision = false;
-let isPlayingAudio = false;
-
-// 오디오 폴링을 위한 전역 변수들
-let audioCheckIntervals = new Map();
-
-// 공유하기 함수
-function shareLink() {
-    const shareBtn = document.querySelector('.share-button');
-    const link = shareBtn.getAttribute('data-link');
-    
-    // Web Share API 지원 확인
-    if (navigator.share) {
-        navigator.share({
-            title: 'GALATEA AI Vision',
-            text: '{% trans "비전 모드로 AI와 대화해보세요!" %}',
-            url: link
-        }).catch(err => {
-            // 공유 취소 시 무시
-            if (err.name !== 'AbortError') {
-                copyToClipboard(link);
-            }
-        });
-    } else {
-        // Web Share API 미지원 시 클립보드에 복사
-        copyToClipboard(link);
+  function adjustChatHeight() {
+    const chatMessages = document.querySelector('.chat-messages');
+    const aiShowcase = document.querySelector('.ai-showcase');
+    const inputSection = document.querySelector('.input-section');
+    const headerHeight = 125;
+    if(chatMessages && aiShowcase && inputSection) {
+        const viewportHeight = window.innerHeight;
+        const showcaseHeight = aiShowcase.offsetHeight;
+        const inputHeight = inputSection.offsetHeight;
+        const padding = 60;
+        const availableHeight = viewportHeight - headerHeight - showcaseHeight - inputHeight - padding;
+        chatMessages.style.maxHeight = `${Math.max(availableHeight,120)}px`;
+        chatMessages.style.minHeight = `${Math.min(availableHeight,120)}px`;
     }
-}
+  }
 
-// 클립보드 복사 함수
-function copyToClipboard(text) {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('{% trans "링크가 복사되었습니다!" %}');
-        });
-    } else {
-        // 구형 브라우저 대응
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        alert('{% trans "링크가 복사되었습니다!" %}');
-    }
-}
+  // 공유하기 함수
+  function shareLink() {
+      const shareBtn = document.querySelector('.share-button');
+      const link = shareBtn.getAttribute('data-link');
+      
+      // Web Share API 지원 확인
+      if (navigator.share) {
+          navigator.share({
+              title: 'GALATEA AI Chat',
+              text: '{% trans "이 AI와 대화해보세요!" %}',
+              url: link
+          }).catch(err => {
+              // 공유 취소 시 무시
+              if (err.name !== 'AbortError') {
+                  copyToClipboard(link);
+              }
+          });
+      } else {
+          // Web Share API 미지원 시 클립보드에 복사
+          copyToClipboard(link);
+      }
+  }
 
-// 오디오 상태 확인 함수
-function checkAudioStatus(conversationId, maxAttempts = 40) {
-    let attempts = 0;
-    
-    // 상태 표시
-    responseDiv.innerHTML = responseDiv.textContent + '<br><small style="color: #666; font-style: italic;">🎵 음성 생성 중...</small>';
+  // 클립보드 복사 함수
+  function copyToClipboard(text) {
+      if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+              alert(messages.shareCopied);
+          });
+      } else {
+          // 구형 브라우저 대응
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          alert(messages.shareCopied);
+      }
+  }
 
-    const checkInterval = setInterval(() => {
-        attempts++;
-        
-        fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.ready && data.audio_url) {
-                    // 오디오 준비 완료
-                    clearInterval(checkInterval);
-                    audioCheckIntervals.delete(conversationId);
-                    
-                    // 상태 업데이트
-                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '🔊 음성 재생');
-                    
-                    // 오디오 재생
-                    playVisionAudio(data.audio_url);
-                    
-                } else if (attempts >= maxAttempts) {
-                    // 최대 시도 횟수 초과
-                    clearInterval(checkInterval);
-                    audioCheckIntervals.delete(conversationId);
-                    
-                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '⚠️ 음성 생성 시간 초과');
-                }
-            })
-            .catch(error => {
-                console.error('오디오 상태 확인 오류:', error);
-                
-                if (attempts >= maxAttempts) {
-                    clearInterval(checkInterval);
-                    audioCheckIntervals.delete(conversationId);
-                    
-                    responseDiv.innerHTML = responseDiv.innerHTML.replace('🎵 음성 생성 중...', '⚠️ 음성 생성 실패');
-                }
-            });
-    }, 500);
-    
-    audioCheckIntervals.set(conversationId, checkInterval);
-}
+  document.addEventListener('DOMContentLoaded', function() {
+    setViewportHeight();
+    adjustChatHeight();
+  });
 
-// 오디오 재생 함수
-function playVisionAudio(audioUrl) {
-    ttsAudio.src = audioUrl + '?t=' + new Date().getTime();
-    document.getElementById('audio-container').style.display = 'block';
-    
-    ttsAudio.onplay = () => {
-        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '▶️ 재생 중...');
-    };
-    
-    ttsAudio.onended = () => {
-        isPlayingAudio = false;
-        responseDiv.innerHTML = responseDiv.innerHTML.replace('▶️ 재생 중...', '<small style="color: #95a5a6;">✓ 재생 완료</small>');
-        // 3초 후 상태 메시지 제거
-        setTimeout(() => {
-            responseDiv.innerHTML = responseDiv.innerHTML.replace('<small style="color: #95a5a6;">✓ 재생 완료</small>', '');
-        }, 3000);
-    };
-    
-    ttsAudio.onerror = () => {
-        isPlayingAudio = false;
-        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '<small style="color: #e74c3c;">⚠️ 재생 실패</small>');
-    };
-    
-    ttsAudio.play().catch(error => {
-        console.error('오디오 재생 실패:', error);
-        isPlayingAudio = false;
-        responseDiv.innerHTML = responseDiv.innerHTML.replace('🔊 음성 재생', '<small style="color: #e74c3c;">⚠️ 재생 실패</small>');
-    });
-}
+  console.log('✅ Chat page fully loaded with tab navigation');
 
-// 웹캠 시작
-async function startWebcam() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        video.srcObject = stream;
-        video.classList.add('active');
-        streaming = true;
-        visionResult.textContent = "{% trans '웹캠이 시작되었습니다' %}";
-        visionResult.className = "vision-status active";
-    } catch (err) {
-        alert("{% trans '웹캠 접근 실패: ' %}" + err);
-        visionResult.textContent = "{% trans '웹캠 접근 실패' %}";
-        visionResult.className = "vision-status";
-    }
-}
-
-// 웹캠 중지
-function stopWebcam() {
-    if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
-    }
-    video.classList.remove('active');
-    streaming = false;
-}
-
-// 이미지 분석 서버 전송 함수
-async function sendFrameToServer() {
-    if (!streaming) return;
-    if (isProcessingVision) return;
-    if (isPlayingAudio) return;
-
-    isProcessingVision = true;
-    visionResult.className = "vision-status processing";
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-
-    canvas.toBlob(async (blob) => {
-        if (!blob) {
-            isProcessingVision = false;
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('image', blob, 'frame.jpg');
-
-        try {
-            const response = await fetch(`${baseUrl}/vision_process/`, {
-                method: 'POST',
-                body: formData
-            });
-            if (!response.ok) throw new Error("{% trans '서버 응답 오류' %}");
-            const data = await response.json();
-            visionResult.textContent = data.result;
-            visionResult.className = "vision-status active";
-            latestVisionResult = data.result;
-        } catch (err) {
-            console.error('Vision error:', err);
-            visionResult.textContent = "{% trans '분석 오류 발생' %}";
-            visionResult.className = "vision-status";
-        } finally {
-            isProcessingVision = false;
-        }
-    }, 'image/jpeg');
-}
-
-// GPT 응답 요청
-async function sendText(text) {
-    if (!text || !text.trim()) return;
-    const currentLlmId = "{{ llm_id }}";
-    
-    isPlayingAudio = true;
-    responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
-
-    const formData = new FormData();
-    formData.append('text', text);
-    formData.append('vision', latestVisionResult);
-    formData.append('llm_id', currentLlmId);
-
-    try {
-        const res = await fetch(`${baseUrl}/generate_response/`, {
-            method: 'POST',
-            body: formData,
-        });
-        if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || '응답 실패');
-        }
-        
-        const data = await res.json();
-        console.log('서버 응답:', data);
-
-        // 텍스트 즉시 표시
-        responseDiv.textContent = data.ai_text;
-        
-        // 백그라운드에서 오디오 상태 확인 시작
-        if (data.conversation_id) {
-            setTimeout(() => {
-                checkAudioStatus(data.conversation_id);
-            }, 1000);
-        } else {
-            // conversation_id가 없으면 기존 방식으로 폴백
-            if (data.audio_url) {
-                setTimeout(() => {
-                    playVisionAudio(data.audio_url);
-                }, 300);
-            } else {
-                isPlayingAudio = false;
-            }
-        }
-        
-    } catch (err) {
-        responseDiv.textContent = '응답 중 오류 발생: ' + err.message;
-        console.error(err);
-        isPlayingAudio = false;
-    }
-}
-
-// 비전 모드 토글
-toggleBtn.addEventListener('click', () => {
-    if (!isVisionRunning) {
-        startVisionMode();
-    } else {
-        stopVisionMode();
-    }
-});
-
-// 비전 모드 시작
-async function startVisionMode() {
-    if (!streaming) await startWebcam();
-    
-    isVisionRunning = true;
-    intervalId = setInterval(sendFrameToServer, 1500);
-    
-    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> {% trans "비전 모드 중지" %}';
-    toggleBtn.classList.add('active');
-    
-    visionResult.textContent = "{% trans '비전 모드 실행 중...' %}";
-    visionResult.className = "vision-status processing";
-}
-
-// 비전 모드 중지
-function stopVisionMode() {
-    clearInterval(intervalId);
-    stopWebcam();
-    isVisionRunning = false;
-    
-    toggleBtn.innerHTML = '<i class="fas fa-play"></i> {% trans "비전 모드 시작" %}';
-    toggleBtn.classList.remove('active');
-    
-    visionResult.textContent = "{% trans '비전 모드 중지됨' %}";
-    visionResult.className = "vision-status";
-}
-
-// 녹음 관련
-let mediaRecorder;
-let audioChunks = [];
-let isRecording = false;
-let stream;
-
-function toggleRecording() {
-    const recordBtn = document.getElementById("record-btn");
-    const recordIcon = document.getElementById("record-icon");
-    const recordStatus = document.getElementById("record-status");
-
-    if (!isRecording) {
-        navigator.mediaDevices
-            .getUserMedia({ audio: true })
-            .then((s) => {
-                stream = s;
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                mediaRecorder.start();
-                isRecording = true;
-
-                recordIcon.className = "fas fa-stop";
-                recordBtn.classList.add("recording");
-                recordStatus.textContent = "{% trans '녹음 중... 다시 누르면 종료됩니다' %}";
-
-                mediaRecorder.addEventListener("dataavailable", (event) => {
-                    audioChunks.push(event.data);
-                });
-
-                mediaRecorder.addEventListener("stop", () => {
-                    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-                    const formData = new FormData();
-                    formData.append("audio", audioBlob, "recorded.wav");
-
-                    fetch(`${baseUrl}/upload_audio/`, {
-                        method: "POST",
-                        body: formData,
-                    })
-                    .then((res) => res.json())
-                    .then((data) => {
-                        recognizedText.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
-                        recognizedTextDisplay.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
-                        recognizedTextDisplay.style.display = "block";
-                        
-                        setTimeout(() => {
-                            recognizedTextDisplay.style.display = "none";
-                        }, 3000);
-                        
-                        sendText(data.text);
-                    })
-                    .catch((error) => {
-                        alert("{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}" + error.message);
-                    });
-                });
-            })
-            .catch((err) => {
-                alert("{% trans '마이크 권한을 허용해주세요.' %}");
-                console.error(err);
-            });
-    } else {
-        mediaRecorder.stop();
-        isRecording = false;
-        recordIcon.className = "fas fa-microphone";
-        recordBtn.classList.remove("recording");
-        recordStatus.textContent = "{% trans '녹음을 시작하려면 버튼을 누르세요' %}";
-        
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-        }
-    }
-}
-
-// 페이지 언로드 시 모든 오디오 확인 인터벌 정리
-window.addEventListener('beforeunload', () => {
-    audioCheckIntervals.forEach((interval, conversationId) => {
-        clearInterval(interval);
-    });
-    audioCheckIntervals.clear();
-});
-
-// 페이지 로드 시 초기화
-document.addEventListener('DOMContentLoaded', () => {
-    visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
-    recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
-    responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
-    
-    console.log('✅ Vision mode initialized with modern design');
-});
+  function sendText() {
+      const input = document.getElementById('text-input');
+      if(!input.value) return;
+      const chat = document.getElementById('message-area');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message user';
+      msgDiv.innerHTML = `<div class="message-avatar">🙋</div><div class="message-content">${input.value}</div>`;
+      chat.appendChild(msgDiv);
+      input.value='';
+      chat.scrollTop = chat.scrollHeight;
+  }
 </script>
+
+<script src="{% static 'js/customer_ai/custom.js' %}"></script>
+
 </body>
 </html>
