@@ -875,7 +875,8 @@
       const chat = document.getElementById('message-area');
       const msgDiv = document.createElement('div');
       msgDiv.className = 'message user';
-      msgDiv.innerHTML = `<div class="message-avatar">🙋</div><div class="message-content">${input.value}</div>`;
+      msgDiv.innerHTML = `<div class="message-avatar"> <img src="{{ user.user_image.url }}">
+        </div><div class="message-content">${input.value}</div>`;
       chat.appendChild(msgDiv);
       input.value='';
       chat.scrollTop = chat.scrollHeight;
