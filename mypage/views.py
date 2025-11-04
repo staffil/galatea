@@ -737,15 +737,21 @@ def follow_list_app(request):
     following_ids = set(user.following_set.values_list('following_id', flat=True))
     follower_ids = set(user.follower_set.values_list('follower_id', flat=True))  
 
+    follow_count= Follow.objects.filter(following=user).count()
+
     llm = LLM.objects.filter(user=user).first()
 
+    llm_count = LLM.objects.filter(llm = user).count()
 
     context = {
         "following_list":following_list,
         "follower_list":follower_list,
         "following_ids":following_ids,
         "follower_ids":follower_ids,
-        "llm":llm
+        "llm":llm,
+        "follow_count":follow_count,
+        "llm_count":llm_count
+
 
     }
     return render(request, "mypage/app/follow_list_app.html", context)
