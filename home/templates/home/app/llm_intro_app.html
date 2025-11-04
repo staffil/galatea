@@ -322,7 +322,14 @@
         .glt2-genre-tag:active {
             transform: scale(0.95);
         }
-
+.nickname {
+    display: inline-block;      /* 또는 block, inline-block */
+    max-width: 150px;           /* 원하는 최대 너비 */
+    white-space: nowrap;        /* 한 줄로 유지 */
+    overflow: hidden;           /* 넘치는 텍스트 숨기기 */
+    text-overflow: ellipsis;    /* ... 처리 */
+    vertical-align: middle;     /* 필요시 */
+}
         /* 모달 */
         .glt2-modal-overlay {
             display: none;
@@ -548,7 +555,7 @@
                     {% else %}
                     <img src="{% static 'images/default_user.png' %}" alt="" loading="lazy">
                     {% endif %}
-                    <span style="color:#fff;">{{ item.user.nickname }}</span>
+                    <span style="color:#fff;" class="nickname">{{ item.user.nickname }}</span>
                     {% if user.is_authenticated and user != item.user %}
   {% for llm in llm_list %}
 
