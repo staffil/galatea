@@ -737,11 +737,18 @@ def follow_list_app(request):
     following_ids = set(user.following_set.values_list('following_id', flat=True))
     follower_ids = set(user.follower_set.values_list('follower_id', flat=True))  
 
-    follow_count= Follow.objects.filter(following=user).count()
+    follower_list = user.follower_set.all() 
+
+
+    # 내가 팔로우한 사람 수
+    following_count = Follow.objects.filter(follower=user).count()
+
+    # 나를 팔로우한 사람 수
+    follower_count = Follow.objects.filter(following=user).count()
 
     llm = LLM.objects.filter(user=user).first()
 
-    llm_count = LLM.objects.filter(llm = user).count()
+    llm_count = LLM.objects.filter(user = user).count()
 
     context = {
         "following_list":following_list,
@@ -749,7 +756,8 @@ def follow_list_app(request):
         "following_ids":following_ids,
         "follower_ids":follower_ids,
         "llm":llm,
-        "follow_count":follow_count,
+        "following_count":following_count,
+        "follower_count":follower_count,
         "llm_count":llm_count
 
 
