@@ -821,71 +821,8 @@ background-image: url('{{ user.user_image.url }}');
     }
   }
 
-  // 공유하기 함수
-  function shareLink() {
-      const shareBtn = document.querySelector('.share-button');
-      const link = shareBtn.getAttribute('data-link');
-      
-      // Web Share API 지원 확인
-      if (navigator.share) {
-          navigator.share({
-              title: 'GALATEA AI Chat',
-              text: '{% trans "이 AI와 대화해보세요!" %}',
-              url: link
-          }).catch(err => {
-              // 공유 취소 시 무시
-              if (err.name !== 'AbortError') {
-                  copyToClipboard(link);
-              }
-          });
-      } else {
-          // Web Share API 미지원 시 클립보드에 복사
-          copyToClipboard(link);
-      }
-  }
+ 
 
-  // 클립보드 복사 함수
-  function copyToClipboard(text) {
-      if (navigator.clipboard) {
-          navigator.clipboard.writeText(text).then(() => {
-              alert(messages.shareCopied);
-          });
-      } else {
-          // 구형 브라우저 대응
-          const textarea = document.createElement('textarea');
-          textarea.value = text;
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
-          alert(messages.shareCopied);
-      }
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    setViewportHeight();
-    adjustChatHeight();
-  });
-
-  console.log('✅ Chat page fully loaded with tab navigation');
-
-  function sendText() {
-      const input = document.getElementById('text-input');
-      if(!input.value) return;
-      const chat = document.getElementById('message-area');
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'message user';
-      msgDiv.innerHTML = `<div class="message-avatar">
-    {% if user.user_image %}
-        <img src="{{ user.user_image.url }}" alt="User Avatar" class="avatar-img">
-    {% else %}
-        🙋
-    {% endif %}
-</div><div class="message-content">${input.value}</div>`;
-      chat.appendChild(msgDiv);
-      input.value='';
-      chat.scrollTop = chat.scrollHeight;
-  }
 </script>
 
 <script src="{% static 'js/customer_ai/custom.js' %}"></script>
