@@ -842,11 +842,11 @@
 
                         <div class="user-stats">
                             <div class="user-stat">
-                                <span class="user-stat-value">{{ target_user.following_count }}</span>
+                                <span class="user-stat-value">{{ target_user.following_set.all|length  }}</span>
                                 <span class="user-stat-label">{% trans "팔로워" %}</span>
                             </div>
                             <div class="user-stat">
-                                <span class="user-stat-value">{{ target_user.ai_count|default:"0" }}</span>
+<span class="user-stat-value">{{ target_user.llm_set.all|length }}</span>
                                 <span class="user-stat-label">{% trans "AI" %}</span>
                             </div>
                         </div>
