@@ -269,8 +269,9 @@
         }
 
         .glt2-follow-btn.following {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-color: transparent;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+                color: #fff !important;
+    border-color: transparent !important;
         }
 
         /* 채팅 버튼 */
@@ -387,6 +388,7 @@
             touch-action: manipulation;
             line-height: 1;
         }
+        
 
         .glt2-modal-close:active {
             background: rgba(255, 255, 255, 0.2);
@@ -529,6 +531,16 @@
                 <div class="glt2-stats">
                     ❤️ {% trans "좋아요" %}: {{ item.llm_like_count }}
                     👤 {% trans "팔로우" %}: {{ item.user.follow_count }}
+{% if user.is_authenticated and user != item.user %}
+    <button class="glt2-like-btn" data-id="{{ item.id }}">
+        {% if item.is_liked %}
+            <span class="heart-filled"></span>
+        {% else %}
+            <span class="heart-empty"></span>
+        {% endif %}
+    </button>
+{% endif %}
+
                 </div>
                 <div class="glt2-user-info">
                     {% if item.user.user_image %}
@@ -538,9 +550,19 @@
                     {% endif %}
                     <span style="color:#fff;">{{ item.user.nickname }}</span>
                     {% if user.is_authenticated and user != item.user %}
-                    <button class="glt2-follow-btn {% if item.user_is_following_user %}following{% endif %}" data-id="{{ item.user.id }}">
-                        {% if item.user_is_following_user %}{% trans "Following" %}{% else %}{% trans "Follow" %}{% endif %}
-                    </button>
+  {% for llm in llm_list %}
+
+
+    <button class="glt2-follow-btn {% if is_following %}following{% endif %}"
+            data-id="{{ llm.user.id }}">
+        {% if is_following %}
+            Following
+        {% else %}
+            Follow
+        {% endif %}
+    </button>
+
+{% endfor %}
                     {% endif %}
                 </div>
                 <button class="glt2-chat-btn" data-chat-id="{{ item.id }}">{% trans "대화하기" %}</button>
@@ -564,22 +586,26 @@
         </div>
     </div>
 
+
     <script>
         // Cookie 가져오기
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // 쿠키 이름 확인
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
-            return cookieValue;
         }
+    }
+    return cookieValue;
+}
+
+
 
         // 높이 강제 설정
         function fixHeight() {
@@ -592,92 +618,44 @@
         window.addEventListener('resize', fixHeight);
         window.addEventListener('orientationchange', fixHeight);
 
-        // ==========================================
-        // 채팅 버튼 클릭 이벤트
-        // ==========================================
-        document.addEventListener('click', function(e) {
-            const chatBtn = e.target.closest('.glt2-chat-btn');
-            if (!chatBtn) return;
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const chatId = chatBtn.dataset.chatId;
-            if (chatId) {
-                window.location.href = `/customer_ai/custom_app/${chatId}/`;
+
+
+    // 팔로우 토글
+    document.addEventListener('click', (e) => {
+        const followBtn = e.target.closest('.glt2-follow-btn');
+        console.log("버튼 엘리먼트:", followBtn);
+
+        if (!followBtn) return;
+
+        const userId = followBtn.dataset.id;
+        if (!userId) return;
+
+        fetch("{% url 'home:toggle_follow' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken'),
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `user_id=${encodeURIComponent(userId)}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'follow') {
+                        console.log("팔로우 됨");
+                followBtn.innerHTML  = '{% trans "Following" %}';
+                followBtn.classList.add('following');
+            } else if (data.status === 'unfollow') {
+                        console.log("언팔로우 됨");
+                followBtn.innerHTML  = '{% trans "Follow" %}';
+                followBtn.classList.remove('following');
+            } else {
+                alert(data.message);
             }
-        });
+        })
+        .catch(err => console.error('{% trans "팔로우 토글 오류:" %}', err));
+    });
 
-        // ==========================================
-        // 좋아요 버튼 클릭 이벤트
-        // ==========================================
-        document.addEventListener('click', function(e) {
-            const likeBtn = e.target.closest('.glt2-like-btn');
-            if (!likeBtn) return;
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const llmId = likeBtn.dataset.id;
-            if (!llmId) return;
-
-            fetch("{% url 'home:like_toggle' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCookie('csrftoken'),
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `llm_id=${llmId}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'like') {
-                    likeBtn.innerHTML = '<span class="heart-filled"></span>';
-                } else if (data.status === 'unlike') {
-                    likeBtn.innerHTML = '<span class="heart-empty"></span>';
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(err => console.error('좋아요 토글 오류:', err));
-        });
-
-        // ==========================================
-        // 팔로우 버튼 클릭 이벤트
-        // ==========================================
-        document.addEventListener('click', function(e) {
-            const followBtn = e.target.closest('.glt2-follow-btn');
-            if (!followBtn) return;
-            
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const userId = followBtn.dataset.id;
-            if (!userId) return;
-
-            fetch("{% url 'home:toggle_follow' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCookie('csrftoken'),
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `user_id=${encodeURIComponent(userId)}`
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'follow') {
-                    followBtn.textContent = '{% trans "Following" %}';
-                    followBtn.classList.add('following');
-                } else if (data.status === 'unfollow') {
-                    followBtn.textContent = '{% trans "Follow" %}';
-                    followBtn.classList.remove('following');
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(err => console.error('팔로우 토글 오류:', err));
-        });
-
+   
         // ==========================================
         // 모달 관련
         // ==========================================
@@ -685,23 +663,45 @@
         const modalClose = document.getElementById('glt2ModalClose');
         const modalContent = document.getElementById('glt2ModalContent');
 
-        // 모달 닫기
-        function closeModal() {
-            modalOverlay.classList.remove('active');
-            modalContent.innerHTML = '';
+
+        
+// like btn
+document.addEventListener('click', (e)=>{
+    const likeBtn = e.target.closest('.glt2-like-btn');
+    if (!likeBtn) return;
+
+    const userId = likeBtn.dataset.id;
+
+    fetch("{% url 'home:like_toggle' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `llm_id=${userId}`
+    })
+    .then(response => response.json())
+    .then(data=>{
+        if (data.status === 'like'){
+            console.log("됨")
+            likeBtn.innerHTML  = '<span class="heart-filled"></span>';
+        } else if(data.status === 'unlike'){
+            console.log("안됨")
+            likeBtn.innerHTML  = '<span class="heart-empty"></span>';
+        } else{
+            alert(data.message)
         }
+ 
 
-        modalClose.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', function(e) {
-            if (e.target === modalOverlay) closeModal();
-        });
+            
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeModal();
-        });
 
-        console.log('Page loaded');
-        console.log('Total cards:', document.querySelectorAll('.glt2-card').length);
+    })
+    .catch(err => console.error('{% trans "좋아요 토글 오류:" %}', err))
+})
+
     </script>
+
+
 </body>
 </html>

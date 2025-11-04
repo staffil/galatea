@@ -212,7 +212,16 @@ window.sendText = function(text) {
     userMessage.className = "message user";
     userMessage.innerHTML = `
         <div class="message-avatar">👤</div>
-        <div class="message-content">${userText}</div>
+        <div class="message-content" style="            max-width: 75%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">${userText}</div>
     `;
     messageArea.appendChild(userMessage);
 
@@ -261,7 +270,17 @@ window.sendText = function(text) {
         aiMessage.innerHTML = `
             <div class="message-avatar">${avatarImg}</div>
             <div class="message-content" id="${messageId}">
-                <div class="message-text"></div>
+                <div class="message-text" style="
+                            max-width: 75%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);"></div>
             </div>
         `;
         messageArea.appendChild(aiMessage);
