@@ -17,25 +17,6 @@
 
     <meta property="og:url" content="https://galatea.website" />
     <meta property="og:type" content="website" />
-    <!-- Open Graph (SNS 공유용) -->
-    <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
-    <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
-    <meta property="og:image" content="https://galatea.website/static/img/intro2.png">
-    <meta property="og:url" content="https://galatea.website" />
-    <meta property="og:type" content="website" />
-
-    <!-- Meta Description (검색 결과용) -->
-    <meta name="description" content="문자만 입력하는 챗봇은 이제 그만! GALATEA AI는 음성 기반 대화형 AI로, 실제 사람처럼 대화 경험을 제공합니다. GALATEA AI는 단순한 챗봇이 아닙니다. 음성으로 사람처럼 대화하며, 자연스러운 상담·안내를 제공합니다. 지금 무료 체험으로 직접 경험해보세요. ">
-
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "GALATEA AI",
-  "url": "https://www.galatea.website",
-  "logo": "https://www.galatea.website/static/img/logo.png"
-}
-</script>
 
 </head>
 
@@ -104,7 +85,10 @@
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
                     <label><i class="fas fa-book"></i> NOVEL MODE</label>
                 </div>
-
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <label><i class="fas fa-padcast"></i> PADCAST MODE</label>
+                </div>
             </div>
 
     <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
@@ -120,6 +104,11 @@
                     <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
                 {% endif %}
                 
+                <div class="chat-header">
+                    <div class="ai-avatar">🤖</div>
+                    <h1 class="chat-title">{{ llm.name }}</h1>
+                </div>
+                <p class="chat-subtitle">{% trans '하고 싶은 말을 입력하세요' %}</p>
             </div>
 
             <!-- Chat Messages -->
@@ -143,14 +132,14 @@
                     </button>
                 </div>
                 
-                <!-- <div class="controls-row">
+                <div class="controls-row">
                     <button class="record-btn" id="record-btn" onclick="toggleRecording()">
                         <i class="fas fa-microphone" id="record-icon"></i>
                     </button>
                     <div class="record-status" id="record-status">
                         {% trans '녹음을 시작하려면 버튼을 누르세요' %}
                     </div>
-                </div> -->
+                </div>
                 
                 <div class="recognized-text" id="recognized-text"></div>
                 
