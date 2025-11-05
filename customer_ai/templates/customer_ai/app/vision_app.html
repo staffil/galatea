@@ -1,589 +1,255 @@
-{% load static %}
-{% load i18n %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" 
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="format-detection" content="telephone=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<title>{% trans '비전 모드' %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Vision & Voice 통합 결과</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-<style>
-
-            :root {
-            --primary: #8b5cf6;
-            --primary-light: #a78bfa;
-            --primary-dark: #7c3aed;
-            --secondary: #06b6d4;
-            --accent: #f093fb;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg-dark: #0f0f23;
-            --bg-card: rgba(26, 26, 46, 0.95);
-            --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --border: rgba(139, 92, 246, 0.2);
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #0f0f23;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    background: #0f0f23;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    overflow: hidden;
-    touch-action: manipulation;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* 전체 레이아웃 */
-.video-background {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    z-index: 0;
-}
-
-.ai-video {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-        z-index: 0;
-}
-
-/* 웹캠 프리뷰 */
-#webcam {
-    position: absolute;
-    top: env(safe-area-inset-top, 100px);
-    left: env(safe-area-inset-left, 10px);
-    width: 28vw;
-    height: 30vw;
-    max-width: 180px;
-    max-height: 130px;
-    border-radius: 10px;
-    border: 2px solid rgba(139, 92, 246, 0.6);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    z-index: 2;
-    object-fit: cover;
-}
-
-/* 컨트롤 패널 */
-.control-panel {
-    position: absolute;
-    bottom: env(safe-area-inset-bottom, 0);
-    width: 100%;
-    background: rgba(15,15,35,0.9);
-    backdrop-filter: blur(8px);
-    border-top: 1px solid rgba(139, 92, 246, 0.3);
-    display: flex;
-    flex-direction: column;
-    z-index: 3;
-    padding-top: 20px;
-}
-
-/* 버튼 섹션 */
-.control-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.vision-toggle, .record-btn {
-    border: none;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-.vision-toggle {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 10px 18px;
-}
-.vision-toggle.active {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-}
-
-.record-btn {
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-    color: white;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-}
-.record-btn.recording {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0%,100% { box-shadow: 0 0 8px rgba(239,68,68,0.5); }
-    50% { box-shadow: 0 0 20px rgba(239,68,68,0.8); }
-}
-
-/* 상태 텍스트 */
-.status-display {
-    text-align: center;
-    color: #b8c5d1;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    background: rgba(26,26,46,0.6);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 10px;
-    padding: 8px;
-    margin: 10px;
-}
-
-.vision-status {
-    text-align: center;
-    color: #b8c5d1;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    background: rgba(26,26,46,0.6);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 10px;
-    padding: 8px;
-    margin: 10px;
-}
-
-/* 결과 영역 */
-.results-section {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    background: rgba(26,26,46,0.6);
-    border-radius: 12px;
-    padding: 10px;
-    max-height: 25vh;
-    overflow-y: auto;
-}
-
-.result-card {
-    background: rgba(26,26,46,0.6);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 10px;
-    padding: 8px;
-    font-size: 0.8rem;
-    color: #e2e8f0;
-}
-
-.result-title {
-    font-weight: 600;
-    color: #8b5cf6;
-    margin-bottom: 4px;
-    font-size: 0.85rem;
-}
-.chat-header,
-.tab-nav {
-    position: relative;
-  z-index: 100;
-}
-       /* 상단 헤더 */
-        .chat-header {
-            flex-shrink: 0;
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: env(safe-area-inset-top, 0) 16px 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-
+        /* 영상 백그라운드 */
+        .video-background {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .header-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+        .ai-video {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border: 2px solid var(--primary);
-            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
         }
 
-        .header-info {
-            flex: 1;
-        }
-
-        .header-name {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .header-status {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse-dot 2s infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .header-btn {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: rgba(139, 92, 246, 0.15);
-            border-radius: 50%;
-            color: var(--primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .header-btn:active {
-            transform: scale(0.95);
-            background: rgba(139, 92, 246, 0.25);
-        }
-
-        /* 탭 네비게이션 */
-        .tab-nav {
-            flex-shrink: 0;
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 8px 12px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .tab-item {
-            flex: 1;
-            padding: 10px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid var(--border);
+        #webcam {
+            position: absolute;
+            top: 15px; left: 15px;
+            width: 160px;
+            height: 120px;
             border-radius: 12px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
+            border: 2px solid rgba(139, 92, 246, 0.6);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            z-index: 2;
+            object-fit: cover;
+        }
+
+        /* 컨트롤 패널 */
+        .control-panel {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(15,15,35,0.9);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 3;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .vision-toggle, .record-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 0.95rem;
             font-weight: 600;
-            text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            gap: 8px;
+        }
+
+        .vision-toggle {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .vision-toggle.active {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .record-btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             justify-content: center;
-            gap: 6px;
-            text-decoration: none;
+        }
+        .record-btn.recording {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: pulse 1.5s infinite;
         }
 
-        .tab-item:active {
-            transform: scale(0.98);
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 0 10px rgba(239,68,68,0.5); }
+            50% { box-shadow: 0 0 25px rgba(239,68,68,0.8); }
         }
 
-        .tab-item.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-color: transparent;
-            color: var(--text-primary);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        .results-section {
+            display: flex;
+            justify-content: center;
+            background: rgba(26,26,46,0.6);
+            border-radius: 15px;
+            padding: 12px;
         }
 
-/* 모바일 */
-@media (min-width: 768px) {
-    .results-section {
-        grid-template-columns: 1fr 1fr;
-        max-height: none;
-    }
-}
+        .result-card {
+            background: rgba(26,26,46,0.6);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            min-height: 60px;
+            width: 100%;
+            max-width: 480px;
+        }
 
+        .result-title {
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
 
-</style>
+        #combined-result div {
+            margin: 4px 0;
+        }
+
+        #combined-result b {
+            color: #93c5fd;
+        }
+
+        @media (max-width: 768px) {
+            #webcam { width: 120px; height: 90px; }
+            .result-card { font-size: 0.8rem; }
+        }
+    </style>
 </head>
-
 <body>
-
-
-      <header>
-        {% if not user.is_authenticated %}
-            {% include "common/app/notLoginHeader.html" %}
-        {% else %}
-            {% include "common/app/loginHeader.html" %}
-        {% endif %}
-    </header>
-    <!-- 앱 컨테이너 -->
-    <div class="app-container">
-
-        
-        <!-- 헤더 -->
-        <div class="chat-header">
-            {% if llm.llm_image %}
-                <img src="{{ llm.llm_image.url }}" alt="AI Avatar" class="header-avatar" />
-            {% else %}
-                <div class="header-avatar">🤖</div>
-            {% endif %}
-            <div class="header-info">
-                <div class="header-name">{{ llm.name|default:"AI Assistant" }}</div>
-                <div class="header-status">
-                    <span class="status-dot"></span>
-                    <span>{% trans "온라인" %}</span>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button class="header-btn" onclick="shareLink()" data-link="{{ request.build_absolute_uri }}">
-                    <i class="fas fa-share-alt"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- 탭 네비게이션 -->
-        <nav class="tab-nav">
-            <a href="/customer_ai/custom_app/{{llm_id}}/" class="tab-item active">
-                <i class="fas fa-comment"></i>
-                <span>TEXT</span>
-            </a>
-            <a href="/customer_ai/vision_app/{{llm_id}}/" class="tab-item">
-                <i class="fas fa-eye"></i>
-                <span>VISION</span>
-            </a>
-            <a href="/customer_ai/novel_app/{{llm_id}}/" class="tab-item">
-                <i class="fas fa-book"></i>
-                <span>NOVEL</span>
-            </a>
-            <video id="webcam" autoplay playsinline></video>
-        </nav>
-<div class="video-background">
-    {% if llm.llm_image %}
-        <img src="{{ llm.llm_image.url }}" class="ai-video" alt="AI Character">
-    {% else %}
-        <div class="ai-video" style="background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center;">
-            AI 이미지 없음
-        </div>
-    {% endif %}
-    
+    <div class="video-background">
+        <video id="aiVideo" class="ai-video" autoplay muted loop>
+            <source src="background.mp4" type="video/mp4">
+        </video>
+        <video id="webcam" autoplay playsinline muted></video>
+    </div>
 
     <div class="control-panel">
-        <div class="control-buttons">
-            <button class="vision-toggle" id="toggle-vision-btn">
-                <i class="fas fa-play"></i> {% trans '비전 모드 시작' %}
-            </button>
-            <button class="record-btn" id="record-btn" onclick="toggleRecording()">
-                <i class="fas fa-microphone" id="record-icon"></i>
-            </button>
-        </div>
-
-        <!-- 녹음 상태 표시 -->
-        <div id="record-status" class="status-display">{% trans '녹음을 시작하려면 버튼을 누르세요' %}</div>
-
-        <div class="status-display" id="vision-result">{% trans '비전 모드 준비 중...' %}</div>
-
-        <!-- 음성 인식 + 응답 -->
-        <div id="recognized-text-display" style="display:none; text-align:center; color:#8b5cf6; font-size:0.9rem;"></div>
-
         <div class="results-section">
             <div class="result-card">
-                <div class="result-title"><i class="fas fa-microphone"></i> {% trans '음성 인식 결과' %}</div>
-                <div id="recognized-text">{% trans '음성 인식 대기 중...' %}</div>
-            </div>
-            <div class="result-card">
-                <div class="result-title"><i class="fas fa-robot"></i> {% trans 'AI 응답' %}</div>
-                <div id="response">{% trans 'AI 응답 대기 중...' %}</div>
+                <div class="result-title"><i class="fas fa-brain"></i> 통합 결과</div>
+                <div id="combined-result">
+                    <div><b>🧠 비전:</b> 준비 중...</div>
+                    <div><b>🎤 음성:</b> 대기 중...</div>
+                    <div><b>🤖 응답:</b> 대기 중...</div>
+                </div>
             </div>
         </div>
 
-        <div id="audio-container" style="display:none;">
-            <audio id="tts-audio" controls></audio>
+        <div class="control-buttons">
+            <button class="vision-toggle" id="visionToggle">비전 모드</button>
+            <button class="record-btn" id="recordBtn">🎤</button>
         </div>
     </div>
-</div>
 
-<script>
-const baseUrl = window.location.pathname.replace(/\/(chat|vision|vision_app|custom_app|novel_app)\/\d+\/?$/, '');
-const video = document.getElementById('webcam');
-const canvas = document.createElement('canvas');
-const toggleBtn = document.getElementById('toggle-vision-btn');
-const visionResult = document.getElementById('vision-result');
-const ttsAudio = document.getElementById('tts-audio');
-const responseDiv = document.getElementById('response');
-const recognizedText = document.getElementById('recognized-text');
-const recognizedTextDisplay = document.getElementById('recognized-text-display');
-const recordStatus = document.getElementById('record-status');
+    <script>
+        const webcam = document.getElementById('webcam');
+        const visionToggle = document.getElementById('visionToggle');
+        const recordBtn = document.getElementById('recordBtn');
+        let mediaRecorder, chunks = [];
+        let latestVision = "준비 중...";
+        let latestVoice = "대기 중...";
+        let latestAI = "대기 중...";
+        let visionActive = false;
 
-let streaming = false;
-let intervalId = null;
-let isVisionRunning = false;
-let latestVisionResult = '';
-let isProcessingVision = false;
-let isPlayingAudio = false;
-let mediaRecorder;
-let audioChunks = [];
-let isRecording = false;
-let stream;
-
-async function startWebcam() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        video.srcObject = stream;
-        streaming = true;
-        visionResult.textContent = "{% trans '웹캠이 시작되었습니다' %}";
-    } catch (err) {
-        alert("{% trans '웹캠 접근 실패: ' %}" + err);
-    }
-}
-
-function stopWebcam() {
-    if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
-    streaming = false;
-}
-
-toggleBtn.addEventListener('click', () => {
-    if (!isVisionRunning) startVisionMode();
-    else stopVisionMode();
-});
-
-async function startVisionMode() {
-    if (!streaming) await startWebcam();
-    isVisionRunning = true;
-    intervalId = setInterval(sendFrameToServer, 1500);
-    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> {% trans "비전 모드 중지" %}';
-}
-
-function stopVisionMode() {
-    clearInterval(intervalId);
-    stopWebcam();
-    isVisionRunning = false;
-    toggleBtn.innerHTML = '<i class="fas fa-play"></i> {% trans "비전 모드 시작" %}';
-}
-
-async function sendFrameToServer() {
-    if (!streaming || isProcessingVision) return;
-    isProcessingVision = true;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-    canvas.toBlob(async blob => {
-        const formData = new FormData();
-        formData.append('image', blob, 'frame.jpg');
-        try {
-            const res = await fetch(`${baseUrl}/vision_process/`, { method: 'POST', body: formData });
-            const data = await res.json();
-            visionResult.textContent = data.result || "{% trans '분석 실패' %}";
-            latestVisionResult = data.result || '';
-        } catch (err) {
-            visionResult.textContent = "{% trans '분석 오류 발생' %}";
-        } finally {
-            isProcessingVision = false;
+        function updateCombinedResult() {
+            document.getElementById('combined-result').innerHTML = `
+                <div><b>🧠 비전:</b> ${latestVision}</div>
+                <div><b>🎤 음성:</b> ${latestVoice}</div>
+                <div><b>🤖 응답:</b> ${latestAI}</div>
+            `;
         }
-    }, 'image/jpeg');
-}
 
-function toggleRecording() {
-    const recordBtn = document.getElementById("record-btn");
-    const recordIcon = document.getElementById("record-icon");
+        // 웹캠 실행
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(stream => webcam.srcObject = stream)
+            .catch(err => console.error("웹캠 오류:", err));
 
-    if (!isRecording) {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(s => {
-                stream = s;
-                const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/wav";
-                mediaRecorder = new MediaRecorder(stream, { mimeType });
-                audioChunks = [];
-                mediaRecorder.start();
-                isRecording = true;
-                recordIcon.className = "fas fa-stop";
-                recordBtn.classList.add("recording");
-                recordStatus.textContent = "{% trans '녹음 중... 다시 누르면 종료됩니다' %}";
+        // 비전 모드 토글
+        visionToggle.addEventListener('click', () => {
+            visionActive = !visionActive;
+            visionToggle.classList.toggle('active', visionActive);
+            visionToggle.textContent = visionActive ? '비전 종료' : '비전 모드';
+            if (visionActive) sendFrameLoop();
+        });
 
-                mediaRecorder.addEventListener("dataavailable", e => audioChunks.push(e.data));
-                mediaRecorder.addEventListener("stop", handleRecordingStop);
-            })
-            .catch(err => alert("{% trans '마이크 권한을 허용해주세요.' %}"));
-    } else {
-        mediaRecorder.stop();
-        isRecording = false;
-        recordIcon.className = "fas fa-microphone";
-        recordBtn.classList.remove("recording");
-        recordStatus.textContent = "{% trans '녹음을 시작하려면 버튼을 누르세요' %}";
-        if (stream) stream.getTracks().forEach(t => t.stop());
-    }
-}
+        // 비전 프레임 전송 (예시)
+        async function sendFrameLoop() {
+            if (!visionActive) return;
+            latestVision = "인식 중...";
+            updateCombinedResult();
 
-function handleRecordingStop() {
-    const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/wav";
-    const audioBlob = new Blob(audioChunks, { type: mimeType });
-    const formData = new FormData();
-    formData.append("audio", audioBlob, "recorded." + (mimeType.includes("webm") ? "webm" : "wav"));
-    fetch(`${baseUrl}/upload_audio/`, { method: "POST", body: formData })
-        .then(res => res.json())
-        .then(data => {
-            if (data.text) {
-                recognizedText.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
-                recognizedTextDisplay.textContent = data.text;
-                recognizedTextDisplay.style.display = "block";
-                setTimeout(() => recognizedTextDisplay.style.display = "none", 3000);
-                sendText(data.text);
-            } else {
-                recognizedText.textContent = "{% trans '인식 실패' %}";
+            // 실제 구현 시: 캡처한 프레임 서버 전송
+            setTimeout(() => {
+                latestVision = "고양이로 인식됨 🐱";
+                updateCombinedResult();
+                if (visionActive) setTimeout(sendFrameLoop, 2000);
+            }, 1500);
+        }
+
+        // 음성 녹음 시작
+        recordBtn.addEventListener('click', async () => {
+            if (recordBtn.classList.contains('recording')) {
+                mediaRecorder.stop();
+                recordBtn.classList.remove('recording');
+                return;
             }
-        })
-        .catch(err => alert("{% trans '오디오 업로드 중 오류 발생: ' %}" + err.message));
-}
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                chunks = [];
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    latestVoice = "인식 중...";
+                    updateCombinedResult();
 
-async function sendText(text) {
-    if (!text) return;
-    const formData = new FormData();
-    formData.append('text', text);
-    formData.append('vision', latestVisionResult);
-    formData.append('llm_id', "{{ llm_id }}");
-    responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
-    try {
-        const res = await fetch(`${baseUrl}/generate_response/`, { method: 'POST', body: formData });
-        const data = await res.json();
-        responseDiv.textContent = data.ai_text || "{% trans '응답 오류' %}";
-        if (data.audio_url) {
-            ttsAudio.src = data.audio_url;
-            document.getElementById('audio-container').style.display = 'block';
-            ttsAudio.play().catch(e => console.warn("재생 오류:", e));
-        }
-    } catch (err) {
-        responseDiv.textContent = "{% trans '응답 중 오류 발생' %}";
-    }
-}
-</script>
+                    // 실제 구현 시: 서버로 전송
+                    setTimeout(() => {
+                        latestVoice = "오늘 날씨 어때?";
+                        latestAI = "오늘은 맑고 따뜻합니다 ☀️";
+                        updateCombinedResult();
+                    }, 2000);
+                };
+                mediaRecorder.start();
+                recordBtn.classList.add('recording');
+            } catch (err) {
+                console.error("음성 녹음 실패:", err);
+            }
+        });
+    </script>
 </body>
 </html>
