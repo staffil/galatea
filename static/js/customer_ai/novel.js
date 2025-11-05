@@ -62,13 +62,6 @@ fetch(NOVEL_PROCESS_URL, {
             document.getElementById("text-input").value = "";
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const hamburger = document.querySelector('.hamburger');
-            
-            sidebar.classList.toggle('active');
-            hamburger.classList.toggle('active');
-        }
 
         // 링크 복사하기
         document.addEventListener("click", function(e) {
@@ -79,3 +72,30 @@ fetch(NOVEL_PROCESS_URL, {
                 });
             }
         });
+window.toggleSidebar = function() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    sidebar.classList.toggle('active');
+    hamburger.classList.toggle('active');
+};
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+
+    if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+        if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+            sidebar.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+    }
+});
+
+window.addEventListener('resize', () => {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+
+    if (window.innerWidth > 1024) {
+        sidebar.classList.remove('active');
+        hamburger.classList.remove('active');
+    }
+});
