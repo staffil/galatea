@@ -36,12 +36,12 @@
             <h3>🎯 {% trans '모드 선택' %}</h3>
             <div class="mode-options">
                 <div class="mode-option active">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" >
                     <label><i class="fas fa-comment"></i> TEXT MODE</label>
                 </div>
 
                 <div class="mode-option">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';" checked>
                     <label><i class="fas fa-eye"></i> VISION MODE</label>
                 </div>
 
