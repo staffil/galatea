@@ -24,33 +24,37 @@
 
 
 </header>
-    <div class="hamburger" style="margin-top: 30px;" onclick="toggleSidebar()">
+    <div class="hamburger" style="margin-top: 50px;" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
     </div>
-
 
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <h3>🎯 {% trans '모드 선택' %}</h3>
             <div class="mode-options">
-                <div class="mode-option">
-                    <input type="radio" name="mode"  onclick="location.href='/customer_ai/chat/{{llm_id}}';">
-                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
-                </div>
-
                 <div class="mode-option active">
-                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/vision/{{llm_id}}';">
-                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
+                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
                 </div>
 
                 <div class="mode-option">
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
                     <label><i class="fas fa-book"></i> NOVEL MODE</label>
                 </div>
+
             </div>
+
+    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+        {% trans '공유하기' %}
+    </button>
         </aside>
 
         <!-- Main Content -->
@@ -143,9 +147,10 @@
 
         </main>
     </div>
+    <script src="{% static 'js/customer_ai/custom.js' }"></script>
 
 <script>
-const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
+        const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
 
 const video = document.getElementById('webcam');
 const canvas = document.createElement('canvas');
@@ -164,13 +169,6 @@ let latestVisionResult = '';
 let isProcessingVision = false;
 let isPlayingAudio = false;
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const hamburger = document.querySelector('.hamburger');
-    
-    sidebar.classList.toggle('active');
-    hamburger.classList.toggle('active');
-}
 
 // 웹캠 시작
 async function startWebcam() {
@@ -387,11 +385,27 @@ function toggleRecording() {
     }
 }
 
-// 모바일에서 사이드바 외부 클릭 시 닫기
+// 페이지 로드 시 초기화
+document.addEventListener('DOMContentLoaded', () => {
+    // 초기 상태 설정
+    visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
+    recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
+    responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
+});
+
+// Sidebar toggle function
+window.toggleSidebar = function() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    sidebar.classList.toggle('active');
+    hamburger.classList.toggle('active');
+};
+
+// Sidebar outside click close
 document.addEventListener('click', (e) => {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
-    
+
     if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
         if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
             sidebar.classList.remove('active');
@@ -400,24 +414,17 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// 화면 크기 변경 시 사이드바 상태 리셋
+// Resize event to reset sidebar
 window.addEventListener('resize', () => {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
-    
+
     if (window.innerWidth > 1024) {
         sidebar.classList.remove('active');
         hamburger.classList.remove('active');
     }
 });
 
-// 페이지 로드 시 초기화
-document.addEventListener('DOMContentLoaded', () => {
-    // 초기 상태 설정
-    visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
-    recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
-    responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
-});
 </script>
 </body>
 </html>
