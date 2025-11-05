@@ -121,7 +121,7 @@ from django.contrib.auth.models import User
 class Token(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     payment = models.ForeignKey('Payment', on_delete=models.CASCADE, null=True)
-    total_token = models.DecimalField(max_digits=10, decimal_places=2, default=10000)
+    total_token = models.DecimalField(max_digits=10, decimal_places=2, default=3000)
     token_usage = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
