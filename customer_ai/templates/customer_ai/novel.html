@@ -119,6 +119,8 @@
 
                 <div class="novel-output" id="novel-container">
                     <p class="gray-text">{% trans 'AI가 소설체로 답변할 예정입니다...' %}</p>
+                        <div id="page-number">1</div>
+
                 </div>
             </div>
 
@@ -142,13 +144,20 @@
     </div>
 
     <script>
-        const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
-        const CSRF_TOKEN = "{{ csrf_token }}";
-        const LLM_ID = {{ llm_id }}; 
-        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
-        const NOVEL_PROCESS_URL = "{% url 'novel_process' %}";
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+    const LLM_ID = {{ llm_id }}; 
+        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";  // 문자열
+            const NOVEL_PROCESS_URL = "{% url 'novel_process' %}";
+
+
     </script>
-    
-    <script src="{% static 'js/customer_ai/novel.js' }"></script>
+        <script src="{% static 'js/customer_ai/novel.js' %}">
+  
+    </script>
+
+        <script src="{% static 'js/customer_ai/custom.js' %}">
+  
+    </script>
 </body>
 </html>
