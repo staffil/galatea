@@ -9,12 +9,6 @@
     <title>{% trans '비전 모드' %}</title>
     <link rel="stylesheet" href="{% static 'css/customer_ai/vision.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-        <meta property="og:title" content="{% trans 'GALATEA AI' %}" />
-    <meta property="og:description" content="{{ llm.name }}" />
-    <meta property="og:image" content="https://galatea.website/static/img/intro.png">
-    <meta property="og:url" content="https://galatea.website" />
-    <meta property="og:type" content="website" />
-    <meta name="description" content="{% trans 'GALATEA AI - AI 대화형 쳇봇 서비스' %}">
 </head>
 
 
@@ -30,7 +24,7 @@
 
 
 </header>
-    <div class="hamburger" style="margin-top: 50px; " onclick="toggleSidebar()">
+    <div class="hamburger" style="margin-top: 30px;" onclick="toggleSidebar()">
         <span></span>
         <span></span>
         <span></span>
@@ -48,19 +42,15 @@
                 </div>
 
                 <div class="mode-option active">
-                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/vision/{{llm_id}}';" checked>
+                    <input type="radio" name="mode" checked onclick="location.href='/customer_ai/vision/{{llm_id}}';">
                     <label><i class="fas fa-eye"></i> VISION MODE</label>
                 </div>
 
                 <div class="mode-option">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
                     <label><i class="fas fa-book"></i> NOVEL MODE</label>
                 </div>
             </div>
-
-    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-        {% trans '공유하기' %}
-    </button>
         </aside>
 
         <!-- Main Content -->
@@ -427,16 +417,6 @@ document.addEventListener('DOMContentLoaded', () => {
     visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
     recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
     responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
-});
-
-// 링크 복사하기
-document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("share-btn")) {
-        const link = e.target.getAttribute("data-link");
-        navigator.clipboard.writeText(link).then(() => {
-            alert("링크가 복사되었습니다!");
-        });
-    }
 });
 </script>
 </body>
