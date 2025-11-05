@@ -17,9 +17,8 @@ const currentLlmId = LLM_ID;
             // 사용자 메시지 추가
             const userMessage = document.createElement('p');
             userMessage.className = 'user-message';
-            userMessage.innerHTML = `<strong>독자의 요청:</strong> "${userText}"`;
+            userMessage.innerHTML = ` ${userText}`;
             novelContainer.insertBefore(userMessage, pageNumberElement);
-            
 
             const formData = new FormData();
             formData.append("text", userText);
@@ -35,21 +34,17 @@ fetch(NOVEL_PROCESS_URL, {
                     // AI 메시지 추가 (소설 내용)
                     const aiMessage = document.createElement('p');
                     aiMessage.className = 'ai-message';
-
-                    // 큰따옴표 제외하고 나머지 회색 처리
-                    const formattedText = data.novel_text.replace(/([^"]+)/g, '<span class="gray-text">$1</span>');
-
-                    aiMessage.innerHTML = `<strong>AI:</strong> ${formattedText}`;
+                    aiMessage.innerHTML = ` ${data.novel_text}`;
                     novelContainer.insertBefore(aiMessage, pageNumberElement);
+                    const formattedText = data.novel_text.replace(/([^"]+)/g, '<span class="gray-text">$1</span>');
 
                     // 페이지 번호 업데이트
                     pageNumber++;
                     pageNumberElement.textContent = pageNumber;
-
+                    
                     // 스크롤을 맨 아래로
                     novelContainer.scrollTop = novelContainer.scrollHeight;
                 }
-
                 if(data.tts_audio_url){
                     const audioElem = document.getElementById("tts-audio");
                     audioElem.src = data.tts_audio_url;
@@ -62,6 +57,13 @@ fetch(NOVEL_PROCESS_URL, {
             document.getElementById("text-input").value = "";
         }
 
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            
+            sidebar.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
 
         // 링크 복사하기
         document.addEventListener("click", function(e) {
@@ -72,30 +74,3 @@ fetch(NOVEL_PROCESS_URL, {
                 });
             }
         });
-window.toggleSidebar = function() {
-    const sidebar = document.getElementById('sidebar');
-    const hamburger = document.querySelector('.hamburger');
-    sidebar.classList.toggle('active');
-    hamburger.classList.toggle('active');
-};
-document.addEventListener('click', (e) => {
-    const sidebar = document.getElementById('sidebar');
-    const hamburger = document.querySelector('.hamburger');
-
-    if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
-        if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-            sidebar.classList.remove('active');
-            hamburger.classList.remove('active');
-        }
-    }
-});
-
-window.addEventListener('resize', () => {
-    const sidebar = document.getElementById('sidebar');
-    const hamburger = document.querySelector('.hamburger');
-
-    if (window.innerWidth > 1024) {
-        sidebar.classList.remove('active');
-        hamburger.classList.remove('active');
-    }
-});
