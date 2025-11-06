@@ -425,9 +425,9 @@ html, body {
             </div>
         </div>
 
-        <div id="audio-container">
-            <audio id="tts-audio" controls></audio>
-        </div>
+                <div class="audio-player" id="audio-container" style="display: none;">
+                    <audio id="tts-audio" controls></audio>
+                </div>
     </div>
 </div>
 
@@ -571,19 +571,58 @@ async function sendText(text) {
     formData.append('vision', latestVisionResult);
     formData.append('llm_id', "{{ llm_id }}");
     responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
+    
     try {
         const res = await fetch(`${baseUrl}/generate_response/`, { method: 'POST', body: formData });
         const data = await res.json();
+        
         responseDiv.textContent = data.ai_text || "{% trans '응답 오류' %}";
-        if (data.audio_url) {
-            ttsAudio.src = data.audio_url;
-            document.getElementById('audio-container').style.display = 'block';
-            ttsAudio.play().catch(e => console.warn("재생 오류:", e));
+        
+        // 🔥 오디오 폴링 시작
+        if (data.conversation_id) {
+            checkAudioStatus(data.conversation_id);
         }
     } catch (err) {
         responseDiv.textContent = "{% trans '응답 중 오류 발생' %}";
     }
 }
+
+// 🆕 오디오 상태 확인 함수
+async function checkAudioStatus(conversationId) {
+    const maxAttempts = 20; // 최대 20번 시도 (20초)
+    let attempts = 0;
+    
+    const interval = setInterval(async () => {
+        attempts++;
+        
+        try {
+            const res = await fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`);
+            const data = await res.json();
+            
+            console.log(`오디오 확인 시도 ${attempts}:`, data);
+            
+            if (data.ready && data.audio_url) {
+                clearInterval(interval);
+                
+                // 오디오 재생
+                ttsAudio.src = data.audio_url;
+                document.getElementById('audio-container').style.display = 'block';
+                ttsAudio.play().catch(e => console.warn("재생 오류:", e));
+                
+                console.log('오디오 재생 시작:', data.audio_url);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                console.warn('오디오 생성 타임아웃');
+            }
+        } catch (err) {
+            console.error('오디오 상태 확인 오류:', err);
+        }
+    }, 1000); // 1초마다 확인
+}
+
+
 </script>
+
+    <script src="{% static 'js/customer_ai/custom.js' }"></script>
 </body>
 </html>

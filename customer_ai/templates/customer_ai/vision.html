@@ -40,7 +40,7 @@
                     <label><i class="fas fa-comment"></i> TEXT MODE</label>
                 </div>
 
-                <div class="mode-option active">
+                <div class="mode-option ">
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';" checked>
                     <label><i class="fas fa-eye"></i> VISION MODE</label>
                 </div>
@@ -238,38 +238,60 @@ async function sendFrameToServer() {
         }
     }, 'image/jpeg');
 }
-
-// GPT 응답 요청
 async function sendText(text) {
-    if (!text || !text.trim()) return;
-    const currentLlmId = "{{ llm_id }}";
-    
-    isPlayingAudio = true;
-    responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
-
+    if (!text) return;
     const formData = new FormData();
     formData.append('text', text);
     formData.append('vision', latestVisionResult);
-    formData.append('llm_id', currentLlmId);
-
+    formData.append('llm_id', "{{ llm_id }}");
+    responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
+    
     try {
-        const res = await fetch(`${baseUrl}/generate_response/`, {
-            method: 'POST',
-            body: formData,
-        });
-        if (!res.ok) throw new Error('응답 실패');
+        const res = await fetch(`${baseUrl}/generate_response/`, { method: 'POST', body: formData });
         const data = await res.json();
-
-        responseDiv.textContent = data.ai_text;
-        if (data.audio_url) {
-            ttsAudio.src = data.audio_url + '?t=' + new Date().getTime();
-            document.getElementById('audio-container').style.display = 'block';
-            await ttsAudio.play();
+        
+        responseDiv.textContent = data.ai_text || "{% trans '응답 오류' %}";
+        
+        // 🔥 오디오 폴링 시작
+        if (data.conversation_id) {
+            checkAudioStatus(data.conversation_id);
         }
     } catch (err) {
-        responseDiv.textContent = '응답 중 오류 발생: ' + err.message;
-        console.error(err);
+        responseDiv.textContent = "{% trans '응답 중 오류 발생' %}";
     }
+}
+
+// 🆕 오디오 상태 확인 함수
+async function checkAudioStatus(conversationId) {
+    const maxAttempts = 20; // 최대 20번 시도 (20초)
+    let attempts = 0;
+    
+    const interval = setInterval(async () => {
+        attempts++;
+        
+        try {
+            const res = await fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`);
+            const data = await res.json();
+            
+            console.log(`오디오 확인 시도 ${attempts}:`, data);
+            
+            if (data.ready && data.audio_url) {
+                clearInterval(interval);
+                
+                // 오디오 재생
+                ttsAudio.src = data.audio_url;
+                document.getElementById('audio-container').style.display = 'block';
+                ttsAudio.play().catch(e => console.warn("재생 오류:", e));
+                
+                console.log('오디오 재생 시작:', data.audio_url);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                console.warn('오디오 생성 타임아웃');
+            }
+        } catch (err) {
+            console.error('오디오 상태 확인 오류:', err);
+        }
+    }, 1000); // 1초마다 확인
 }
 
 // 오디오 재생 종료 시점 플래그 해제
