@@ -83,16 +83,7 @@ body {
     filter: blur(1px);
 }
 
-/* 상단 헤더 */
-.top-header {
-    position: relative;
-    z-index: 10;
-    padding: 16px 20px;
-    background: linear-gradient(180deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0) 100%);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+
 
 .ai-avatar {
     width: 48px;
@@ -135,63 +126,90 @@ body {
     50% { opacity: 0.5; transform: scale(0.9); }
 }
 
-.header-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(139, 92, 246, 0.2);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary);
-    cursor: pointer;
-    transition: all 0.2s;
-}
+       /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
 
-.header-icon:active {
-    transform: scale(0.9);
-    background: rgba(139, 92, 246, 0.3);
-}
+        /* Hamburger Menu */
+        .hamburger {
+            position: fixed !important;
+            top: 70px !important;
+            left: 20px !important;
+            z-index: 1001 !important;
+            cursor: pointer;
+            padding: 10px;
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            margin: 0 !important;
+        }
 
-/* 탭 네비게이션 */
-.tab-navigation {
-    position: relative;
-    z-index: 10;
-    padding: 0 20px 12px;
-    display: flex;
-    gap: 10px;
-}
+        .hamburger:active {
+            transform: scale(0.95);
+            background: rgba(139, 92, 246, 0.2);
+        }
 
-.tab-btn {
-    flex: 1;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-decoration: none;
-}
+           /* 탭 네비게이션 */
+        .tab-navigation {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: rgba(26, 26, 46, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 12px;
+        }
 
-.tab-btn.active {
+        .tab-container {
+            display: flex;
+            gap: 8px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-item {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .tab-item:active {
+            transform: scale(0.98);
+        }
+
+        .tab-item.active {
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             border-color: transparent;
             color: #ffffff;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-}
+        }
 
-.tab-btn:active {
-    transform: scale(0.97);
-}
+        .tab-item i {
+            font-size: 1rem;
+        }
 
 /* 웹캠 프리뷰 */
 .webcam-preview {
@@ -437,6 +455,26 @@ body {
             {% endif %}
         </div>
 
+        <!-- 상단 헤더 -->
+        <div class="top-header">
+            {% if llm.llm_image %}
+                <img src="{{ llm.llm_image.url }}" alt="AI Avatar" class="ai-avatar" />
+            {% else %}
+                <div class="ai-avatar" style="display: flex; align-items: center; justify-content: center; background: var(--primary);">
+                    🤖
+                </div>
+            {% endif %}
+            <div class="ai-info">
+                <div class="ai-name">{{ llm.name|default:"AI Assistant" }}</div>
+                <div class="ai-status">
+                    <span class="status-indicator"></span>
+                    <span>{% trans "VISION MODE" %}</span>
+                </div>
+            </div>
+            <div class="header-icon" onclick="shareLink()" data-link="{{ request.build_absolute_uri }}">
+                <i class="fas fa-share-alt"></i>
+            </div>
+        </div>
 
         <!-- 탭 네비게이션 -->
         <div class="tab-navigation">
