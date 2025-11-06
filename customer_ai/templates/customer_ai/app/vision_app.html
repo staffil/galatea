@@ -33,28 +33,19 @@
     --text-secondary: #a0a0b0;
 }
 
-html, body {
+body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background: var(--bg-dark);
     color: var(--text-primary);
     overflow: hidden;
     height: 100vh;
     width: 100vw;
-    margin: 0;
-    padding: 0;
-}
-
-/* 🔥 사이드바 완전 제거 */
-body > header {
-    display: none !important;
 }
 
 /* 전체 레이아웃 */
 .vision-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
+    position: relative;
+    width: 100%;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -96,11 +87,12 @@ body > header {
 .top-header {
     position: relative;
     z-index: 10;
-    padding: max(16px, env(safe-area-inset-top)) 20px 16px;
+    padding: 16px 20px;
     background: linear-gradient(180deg, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0) 100%);
     display: flex;
     align-items: center;
     gap: 12px;
+    margin-top: 10px;
 }
 
 .ai-avatar {
@@ -192,10 +184,10 @@ body > header {
 }
 
 .tab-btn.active {
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-    border-color: transparent;
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border-color: transparent;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 }
 
 .tab-btn:active {
@@ -418,8 +410,8 @@ body > header {
         grid-template-columns: 1fr 1fr;
         max-height: none;
     }
-    .webcam-preview {
-        width: 200px;
+.webcam-preview{
+        width:200px ;
         height: 280px;
     }
 }
@@ -427,7 +419,8 @@ body > header {
 </head>
 
 <body>
-    <!-- Header (웹뷰에서는 CSS로 숨겨짐) -->
+
+        <!-- Header -->
     <header>
         {% if not user.is_authenticated %}
             {% include "common/app/notLoginHeader.html" %}
@@ -435,16 +428,9 @@ body > header {
             {% include "common/app/loginHeader.html" %}
         {% endif %}
     </header>
-
     <div class="vision-container">
         <!-- AI 배경 -->
-        <div class="ai-background">
-            {% if llm.llm_image %}
-                <img src="{{ llm.llm_image.url }}" alt="AI Character">
-            {% else %}
-                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2);"></div>
-            {% endif %}
-        </div>
+
 
         <!-- 상단 헤더 -->
         <div class="top-header">
