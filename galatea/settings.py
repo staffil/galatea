@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -150,7 +149,6 @@ LOGOUT_REDIRECT_URL = "/main"
 
 # allauth 설정
 SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
-SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_SIGNUP_FORM_CLASS = None
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -172,7 +170,7 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 # 세션 / 캐시
-SESSION_COOKIE_AGE = 1209600  
+SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 CACHES = {

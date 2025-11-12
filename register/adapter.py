@@ -22,6 +22,8 @@ class MySocialAccountAdapter(DefaultSocialAccountAdapter):
         """
         return True
     def pre_social_login(self, request, sociallogin):
+        print("=== pre_social_login triggered ===")
+
 
         if sociallogin.is_existing:
             return
