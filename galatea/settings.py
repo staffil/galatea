@@ -147,8 +147,16 @@ LOGIN_URL = "/register/login/"
 LOGIN_REDIRECT_URL = "/main"
 LOGOUT_REDIRECT_URL = "/main"
 
-# allauth 설정
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # 이메일 인증 비활성화
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+
 SOCIALACCOUNT_ADAPTER = 'register.adapter.MySocialAccountAdapter'
+SOCIALACCOUNT_AUTO_SIGNUP = True 
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_SIGNUP_FORM_CLASS = None
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -169,47 +177,3 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     },
 }
-# 세션 / 캐시
-SESSION_COOKIE_AGE = 3600
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-    }
-}
-
-# 이메일 (개발용: 콘솔 출력)
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-# 정적/미디어 파일
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
-
-# 기본 키
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# 로깅
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "file": {
-            "level": "ERROR",
-            "class": "logging.FileHandler",
-            "filename": "/home/ubuntu/galatea/logs/django.log",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["file"],
-            "level": "ERROR",
-            "propagate": True,
-        },
-    },
-}
-SOCIALACCOUNT_AUTO_SIGNUP = False
