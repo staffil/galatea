@@ -1,5 +1,5 @@
         /* 전체 초기화 */
-        @import url("{% static 'css/distribute/distribute.css' %}");
+        @import url("/static/css/distribute/distribute.css");
 
         * { 
             margin: 0; 
