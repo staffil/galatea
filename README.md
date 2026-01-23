@@ -6,6 +6,9 @@ GALATEA 는 다른 AI 기반 챗봇 사이트와 다르게 음성 대화를 기�
 ## 개발기간🗓️
 - 2025.07.16 ~ 2025.09.10
 
+## 사이트 링크
+- https://galatea.website/
+
 ## 기술 스택
 #### Backend
 - Django
