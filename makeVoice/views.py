@@ -251,8 +251,8 @@ def sync_voices_with_type():
         print(f"총 {len(all_voices)}개 보이스 가져옴")
 
         for v in all_voices:
-            voice_id = getattr(v, "voice_id", None)
-            if not voice_id:
+            celebrity_voice_id = getattr(v, "voice_id", None)
+            if not celebrity_voice_id:
                 print(f"⚠️ voice_id 없음, 스킵: {getattr(v, 'name', 'unknown')}")
                 continue
 
@@ -261,7 +261,7 @@ def sync_voices_with_type():
 
             # DB에 저장 (user=None으로 시스템 보이스)
             voice, created = CelebrityVoice.objects.update_or_create(
-                voice_id=voice_id,
+                celebrity_voice_id=celebrity_voice_id,
                 defaults={
                     "name": getattr(v, "name", "Unknown"),
                     "sample_url": preview_url,
