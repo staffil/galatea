@@ -11,6 +11,7 @@ GALATEA 는 다른 AI 기반 챗봇 사이트와 다르게 음성 대화를 기�
 - Django
 - Django REST Framework
 - Python
+- FAST API
 #### Frontend
 - HTML5
 - CSS3
