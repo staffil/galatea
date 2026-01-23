@@ -231,6 +231,8 @@ def auto_generate_prompt(request):
 
     return JsonResponse({"status": "error", "error": "POST 요청만 허용됩니다."})
 
+
+import requests
 from django.utils import timezone
 from makeVoice.models import VoiceList
 from celebrity.models import CelebrityVoice
@@ -256,20 +258,27 @@ def sync_voices_with_type():
                 print(f"⚠️ voice_id 없음, 스킵: {getattr(v, 'name', 'unknown')}")
                 continue
 
-            # preview_url 가져오기
-            preview_url = getattr(v, "preview_url", None)
 
             # DB에 저장 (user=None으로 시스템 보이스)
             voice, created = CelebrityVoice.objects.update_or_create(
                 celebrity_voice_id=celebrity_voice_id,
                 defaults={
                     "name": getattr(v, "name", "Unknown"),
-                    "sample_url": preview_url,
                     "created_at": timezone.now(),
                 }
             )
+            # preview_url 가져오기
+            preview_url = getattr(v, "preview_url", None)
+            if preview_url:
+                try:
+                    r = requests.get(preview_url, timeout=10)
+                    if r.status_code == 200:
+                        filename = f"{voice.name}_{voice.celebrity_voice_id}.mp3".replace(" ", "_")
+                        voice.sample_url.save(filename, ContentFile(r.content), save=True)
+                except Exception as e:
+                    print(f"⚠️ 샘플 오디오 다운로드 실패: {voice.name}, {e}")
 
-            print(f"{'생성' if created else '업데이트'}: {voice.voice_name}")
+            print(f"{'생성' if created else '업데이트'}: {voice.name}")
 
         print("✅ Voice sync 저장 완료")
 

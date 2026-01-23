@@ -17,7 +17,8 @@ from django.conf import settings
 # celebirty voice 테이블
 class CelebrityVoice(models.Model):
     name = models.CharField(max_length=200, verbose_name='보이스 이름')
-    sample_url = models.FileField(max_length=2000,upload_to='voices/',  verbose_name='보이스 목소리 url', blank=True, null=True)
+    sample_url = models.FileField(upload_to='voices/',  verbose_name='보이스 목소리 url', blank=True, null=True)
+
     celebrity_voice_id = models.CharField(max_length=200)
     celebrity_voice_image = models.ImageField(upload_to='uploads/celebrity_voice_image/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
