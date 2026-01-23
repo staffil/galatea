@@ -271,7 +271,7 @@ def sync_voices_with_type():
 
             print(f"{'생성' if created else '업데이트'}: {voice.voice_name}")
 
-        print("✅ Voice sync 완료")
+        print("✅ Voice sync 저장 완료")
 
     except Exception as e:
         print("❌ Voice sync 실패:", e)
