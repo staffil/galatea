@@ -231,3 +231,49 @@ def auto_generate_prompt(request):
 
     return JsonResponse({"status": "error", "error": "POST 요청만 허용됩니다."})
 
+from django.utils import timezone
+from makeVoice.models import VoiceList
+
+# sync 일레븐 랩스
+def sync_voices_with_type():
+    """
+    ElevenLabs의 모든 보이스를 DB에 동기화
+    (user=None으로 저장하여 시스템 보이스로 관리)
+    """
+    ELEVEN_API_KEY = os.getenv('ELEVEN_API_KEY')
+    eleven_client = ElevenLabs(api_key=ELEVEN_API_KEY)
+
+    try:
+        print("ElevenLabs 클라이언트 초기화 완료:", eleven_client)
+
+        # 모든 보이스 가져오기
+        all_voices = eleven_client.voices.get_all().voices
+        print(f"총 {len(all_voices)}개 보이스 가져옴")
+
+        for v in all_voices:
+            voice_id = getattr(v, "voice_id", None)
+            if not voice_id:
+                print(f"⚠️ voice_id 없음, 스킵: {getattr(v, 'name', 'unknown')}")
+                continue
+
+            # preview_url 가져오기
+            preview_url = getattr(v, "preview_url", None)
+
+            # DB에 저장 (user=None으로 시스템 보이스)
+            voice, created = VoiceList.objects.update_or_create(
+                voice_id=voice_id,
+                defaults={
+                    "voice_name": getattr(v, "name", "Unknown"),
+                    "sample_url": preview_url,
+                    "is_public": True,
+                    "created_at": timezone.now(),
+                }
+            )
+
+            print(f"{'생성' if created else '업데이트'}: {voice.voice_name}")
+
+        print("✅ Voice sync 완료")
+
+    except Exception as e:
+        print("❌ Voice sync 실패:", e)
+

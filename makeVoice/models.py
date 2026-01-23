@@ -9,12 +9,12 @@ from celebrity.models import CelebrityVoice
 
 class VoiceList(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     llm = models.ForeignKey('customer_ai.LLM', on_delete=models.CASCADE, null=True, blank=True, default=None)
     sample_url = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     voice_name = models.CharField(max_length=100)
-    voice_image = models.ImageField(upload_to='uploads/voice_images/HOME v.png/', null=True, blank=True, default="uploads/voice_images/HOMEv.png/") 
+    voice_image = models.ImageField(upload_to='uploads/voice_images/HOME v.png/', null=True, blank=True, default="uploads/voice_images/HOMEv.png/")
     is_public = models.BooleanField(default=False, null=True, blank=True)
     voice_id = models.CharField(max_length=200)
     voice_like_count = models.IntegerField(default=0, verbose_name='보이스가 받은 좋아요 갯수')
