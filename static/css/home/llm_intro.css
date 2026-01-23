@@ -1,5 +1,5 @@
-@import url("{% static 'css/distribute/distribute.css' %}");
-@import url("{% static 'css/sidebar.css' %}");
+@import url("/static/css/distribute/distribute.css");
+@import url("/static/css/sidebar.css");
 
 body {
     position: relative;
