@@ -42,7 +42,6 @@ from django.db import models
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.utils import timezone
-from django.contrib.postgres.fields import JSONField  # PostgreSQL 기준
 # MySQL 사용 시 JSONField는 django.db.models.JSONField 사용 가능 (Django 3.1 이상)
 
 class SocialApp(models.Model):
