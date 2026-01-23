@@ -9,3 +9,12 @@ elevenlabs
 google-auth==2.23.0
 google-auth-oauthlib==1.0.0
 google-auth-httplib2==0.1.1
+django-allauth
+django-modeltranslation
+djangorestframework
+mysqlclient
+Pillow
+requests
+langchain
+langchain-openai
+langchain-community
