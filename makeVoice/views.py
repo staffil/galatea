@@ -233,7 +233,7 @@ def auto_generate_prompt(request):
 
 from django.utils import timezone
 from makeVoice.models import VoiceList
-
+from celebrity.models import CelebrityVoice
 # sync 일레븐 랩스
 def sync_voices_with_type():
     """
@@ -260,12 +260,11 @@ def sync_voices_with_type():
             preview_url = getattr(v, "preview_url", None)
 
             # DB에 저장 (user=None으로 시스템 보이스)
-            voice, created = VoiceList.objects.update_or_create(
+            voice, created = CelebrityVoice.objects.update_or_create(
                 voice_id=voice_id,
                 defaults={
-                    "voice_name": getattr(v, "name", "Unknown"),
+                    "name": getattr(v, "name", "Unknown"),
                     "sample_url": preview_url,
-                    "is_public": True,
                     "created_at": timezone.now(),
                 }
             )
