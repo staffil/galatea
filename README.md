@@ -6,9 +6,6 @@ GALATEA 는 다른 AI 기반 챗봇 사이트와 다르게 음성 대화를 기�
 ## 개발기간🗓️
 - 2025.07.16 ~ 2025.09.10
 
-## 사이트 링크
-link: https://www.galatea.website/
-
 ## 기술 스택
 #### Backend
 - Django
@@ -39,14 +36,14 @@ link: https://www.galatea.website/
 
 
 ## AI 사용방법
-- 영어버전
-[![설명 텍스트](https://img.youtube.com/vi/UeCPVia2tM8/0.jpg)](https://youtu.be/UeCPVia2tM8)
-- 한국어 버전
-[![설명 텍스트](https://img.youtube.com/vi/UeCPVia2tM8/0.jpg)](https://youtu.be/ZxI37zHv0hg)
+- AI와 대화하기
+[![설명 텍스트](https://img.youtube.com/vi/UeCPVia2tM8/0.jpg)](https://youtu.be/Dv33IhKSUAc)
 
+- Vision 모드로 대화하기
+[![설명 텍스트](https://img.youtube.com/vi/UeCPVia2tM8/0.jpg)](https://youtu.be/-XgNVJxTRA0)
 
-## AI 만드는 방법 설명 영상
-(https://www.youtube.com/watch?v=HeEgE7nJH7Q)
+- AI 만드는 방법 설명 영상
+(https://youtu.be/wwNypm6bx3g)
 
 #### DB 구조 ERD
 ![스크린샷](database.png)

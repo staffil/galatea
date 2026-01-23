@@ -33,21 +33,45 @@ def mypage_update(request):
         nickname = request.POST.get("nickname")
         email = request.POST.get('email')
         phonenumber = request.POST.get('phonenumber')
+        current_password = request.POST.get('current_password')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         user_image = request.FILES.get('user_image')
 
-        if password1 != password2:
-            messages.error(request, _("비밀번호가 일치하지 않습니다."))
-            return redirect('mypage:mypage_update')
+        # 비밀번호 변경 시 검증
+        if password1 or password2:
+            # OAuth 사용자는 비밀번호 변경 불가
+            if user.oauth_provider:
+                messages.error(request, _("소셜 로그인 사용자는 비밀번호를 변경할 수 없습니다."))
+                return redirect('mypage:mypage_update')
+
+            # 현재 비밀번호 확인
+            if not current_password:
+                messages.error(request, _("현재 비밀번호를 입력해주세요."))
+                return redirect('mypage:mypage_update')
+
+            from django.contrib.auth.hashers import check_password
+            if not check_password(current_password, user.password):
+                messages.error(request, _("현재 비밀번호가 일치하지 않습니다."))
+                return redirect('mypage:mypage_update')
+
+            # 새 비밀번호 일치 확인
+            if password1 != password2:
+                messages.error(request, _("새 비밀번호가 일치하지 않습니다."))
+                return redirect('mypage:mypage_update')
+
+            # 비밀번호 강도 검증
+            if len(password1) < 8:
+                messages.error(request, _("비밀번호는 최소 8자 이상이어야 합니다."))
+                return redirect('mypage:mypage_update')
+
+            user.password = make_password(password1)
 
         user.email = email
         user.phonenumber = phonenumber
         user.nickname = nickname
         if user_image:
             user.user_image = user_image
-        if password1:
-            user.password = make_password(password1)
 
         user.save()
         messages.success(request, _("프로필이 성공적으로 수정되었습니다."))
@@ -571,25 +595,49 @@ def mypage_update_app(request):
         nickname = request.POST.get("nickname")
         email = request.POST.get('email')
         phonenumber = request.POST.get('phonenumber')
+        current_password = request.POST.get('current_password')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         user_image = request.FILES.get('user_image')
 
-        if password1 != password2:
-            messages.error(request, _("비밀번호가 일치하지 않습니다."))
-            return redirect('mypage:mypage_update_app')
+        # 비밀번호 변경 시 검증
+        if password1 or password2:
+            # OAuth 사용자는 비밀번호 변경 불가
+            if user.oauth_provider:
+                messages.error(request, _("소셜 로그인 사용자는 비밀번호를 변경할 수 없습니다."))
+                return redirect('mypage:mypage_update_app')
+
+            # 현재 비밀번호 확인
+            if not current_password:
+                messages.error(request, _("현재 비밀번호를 입력해주세요."))
+                return redirect('mypage:mypage_update_app')
+
+            from django.contrib.auth.hashers import check_password
+            if not check_password(current_password, user.password):
+                messages.error(request, _("현재 비밀번호가 일치하지 않습니다."))
+                return redirect('mypage:mypage_update_app')
+
+            # 새 비밀번호 일치 확인
+            if password1 != password2:
+                messages.error(request, _("새 비밀번호가 일치하지 않습니다."))
+                return redirect('mypage:mypage_update_app')
+
+            # 비밀번호 강도 검증
+            if len(password1) < 8:
+                messages.error(request, _("비밀번호는 최소 8자 이상이어야 합니다."))
+                return redirect('mypage:mypage_update_app')
+
+            user.password = make_password(password1)
 
         user.email = email
         user.phonenumber = phonenumber
         user.nickname = nickname
         if user_image:
             user.user_image = user_image
-        if password1:
-            user.password = make_password(password1)
 
         user.save()
         messages.success(request, _("프로필이 성공적으로 수정되었습니다."))
-        return redirect('mypage:mypage')
+        return redirect('mypage:mypage_app')
 
     context = {
         'user': user
