@@ -42,6 +42,16 @@
     {% endif %}
 </header>
 
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" onclick="this.style.display='none'">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <h1>✨ {% trans '당신의 AI 이름과 사진을 입력하세요'%} ✨</h1>
 
 {% if error %}

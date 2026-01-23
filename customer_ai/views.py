@@ -3,6 +3,7 @@ import time
 import base64
 from django.shortcuts import render, redirect,get_object_or_404
 from django.http import JsonResponse,HttpResponse, HttpResponseForbidden
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from openai import OpenAI
@@ -53,7 +54,8 @@ def make_ai(request):
     if request.method == "POST":
         ai_name = request.session.get('llm_name')
         if not ai_name:
-            return JsonResponse({"error": _("AI 이름이 세션에 없습니다.")}, status=400)
+            messages.error(request, _("AI 이름이 세션에 없습니다."))
+            return redirect("customer_ai:input_ai_name")
 
         style_prompt = request.POST.get("prompt")
         temperature = float(request.POST.get("temperature", 1))
@@ -76,15 +78,18 @@ def make_ai(request):
         request.session['custom_voice_id'] = voice_id
         request.session['custom_model'] = model_name
         request.session['chat_history'] = []
-        
+
         if not voice_id:
-            return JsonResponse({"error": _("voice_id 값이 없습니다.")}, status=400)
-        
+            messages.error(request, _("voice_id 값이 없습니다."))
+            return redirect("customer_ai:make_ai")
+
         if not style_prompt:
-            return JsonResponse({"error": _("prompt 값이 없습니다.")}, status=400)
-        
+            messages.error(request, _("prompt 값이 없습니다."))
+            return redirect("customer_ai:make_ai")
+
         if len(style_prompt) > 700:
-            return JsonResponse({"error": _("현재 프롬프트 값이 1000자가 넘었습니다.")}, status=400)
+            messages.error(request, _("현재 프롬프트 값이 1000자가 넘었습니다."))
+            return redirect("customer_ai:make_ai")
 
         voice, created = VoiceList.objects.get_or_create(user=request.user, voice_id=voice_id)
 
@@ -92,6 +97,10 @@ def make_ai(request):
         # 세션에서 이미지 데이터 가져오기
         image_content = request.session.get('user_image_content')
         image_name = request.session.get('llm_image')
+
+        if not image_content or not image_name:
+            messages.error(request, _("이미지가 없습니다."))
+            return redirect("customer_ai:input_ai_name")
 
         # LLM 객체 생성
         llm = LLM.objects.create(
@@ -103,28 +112,24 @@ def make_ai(request):
             language=language,
             speed=speed,
             name=ai_name,
-            model=model_type, 
+            model=model_type,
             prompt=style_prompt,
         )
 
         # 이미지가 세션에 있으면 저장 (base64 디코딩 후 저장)
-        if image_content and image_name:
-            decoded_img = base64.b64decode(image_content)
-            # BytesIO로 열기
-            img_io = io.BytesIO(decoded_img)
-            img = Image.open(img_io).convert("RGB")  # WebP는 RGB 필요
-            webp_io = io.BytesIO()
-            
-            # WebP로 저장
-            img.save(webp_io, format='WEBP', quality=85)
-            
-            # 파일명 확장자도 .webp로 변경
-            webp_name = image_name.rsplit('.', 1)[0] + '.webp'
-            llm.llm_image.save(webp_name, ContentFile(webp_io.getvalue()))
-            llm.save()
-        else :
-            return JsonResponse({"error": _("이미지가 없습니다.")}, status=400)
+        decoded_img = base64.b64decode(image_content)
+        # BytesIO로 열기
+        img_io = io.BytesIO(decoded_img)
+        img = Image.open(img_io).convert("RGB")  # WebP는 RGB 필요
+        webp_io = io.BytesIO()
 
+        # WebP로 저장
+        img.save(webp_io, format='WEBP', quality=85)
+
+        # 파일명 확장자도 .webp로 변경
+        webp_name = image_name.rsplit('.', 1)[0] + '.webp'
+        llm.llm_image.save(webp_name, ContentFile(webp_io.getvalue()))
+        llm.save()
 
         for key in ['custom_prompt']:
             if key in request.session:

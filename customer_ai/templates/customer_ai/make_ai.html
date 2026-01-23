@@ -40,6 +40,17 @@
         {% include "common/loginHeader.html" %}
     {% endif %}
 </header>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" onclick="this.style.display='none'">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Voice List Section -->
     <div class="voice-list-container">
     <h2>{% trans '저장된 음성 목록'%}</h2>
