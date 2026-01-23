@@ -94,8 +94,7 @@ SESSION_COOKIE_AGE = 1200
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True   
   
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = ["galatea.website", "www.galatea.website", "18.210.70.13", "*"]
 # Application definition
 
   
