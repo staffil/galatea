@@ -1,6 +1,6 @@
 # GALATEA AI : AI 음성 대화 쳇봇 사이트 🤖
 
-[GALATEALOGO](galatea/static/img/logo3.jpg)
+[GALATEALOGO](static/img/logo3.jpg)
 
 ## 프로젝트 소개🎙️
 GALATEA 는 다른 AI 기반 챗봇 사이트와 다르게 음성 대화를 기반으로 한 사이트 입니다. 180개가 넘는 목소리를 선택한 이후 자신이 원하는 프롬프트, 목소리, AI 모델등을 선택하여 대화할 수 있습니다. 또한 더욱 사실적인 대화를 위해 음성모드, 비전모드를 만들어 원활하게 소통할 수 있도록 만들었습니다. 
