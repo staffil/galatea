@@ -284,43 +284,9 @@ def upload_audio(request):
         logger.error(f"Error saving WebM file: {e}")
         return JsonResponse({'error': _('업로드된 오디오를 저장하지 못했습니다.')}, status=500)
 
-    # 2) webm → wav 변환 (ffmpeg)
-    wav_filename = webm_filename.replace('.webm', '.wav')
-    wav_path = os.path.join(audio_dir, wav_filename)
-
+    # 2) Whisper API 호출 (webm 파일 직접 사용 - Whisper는 webm 지원)
     try:
-        subprocess.run(
-            ['ffmpeg', '-y', '-i', webm_path, wav_path],
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        logger.info(f"Converted WebM to WAV: {wav_path}")
-    except subprocess.CalledProcessError as e:
-        error_msg = e.stderr.decode() if e.stderr else str(e)
-        logger.error(f"FFmpeg conversion failed: {error_msg}")
-        return JsonResponse({'error': _('오디오 형식 변환에 실패했습니다.')}, status=500)
-
-    # 3) wav → mp3 변환 (ffmpeg)
-    mp3_filename = wav_filename.replace('.wav', '.mp3')
-    mp3_path = os.path.join(audio_dir, mp3_filename)
-
-    try:
-        subprocess.run(
-            ['ffmpeg', '-y', '-i', wav_path, mp3_path],
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        logger.info(f"Converted WAV to MP3: {mp3_path}")
-    except subprocess.CalledProcessError as e:
-        error_msg = e.stderr.decode() if e.stderr else str(e)
-        logger.error(f"FFmpeg MP3 conversion failed: {error_msg}")
-        return JsonResponse({'error': _('MP3 변환에 실패했습니다.')}, status=500)
-
-    # 4) Whisper API 호출 (wav 파일로)
-    try:
-        with open(wav_path, 'rb') as f:
+        with open(webm_path, 'rb') as f:
             transcription = openai_client.audio.transcriptions.create(
                 file=f,
                 model="whisper-1"
@@ -329,6 +295,23 @@ def upload_audio(request):
     except Exception as e:
         logger.error(f"Whisper API error: {e}")
         return JsonResponse({'error': _('음성 인식에 실패했습니다.')}, status=500)
+
+    # 3) webm → mp3 변환 (ffmpeg) - 재생용
+    mp3_filename = webm_filename.replace('.webm', '.mp3')
+    mp3_path = os.path.join(audio_dir, mp3_filename)
+
+    try:
+        subprocess.run(
+            ['ffmpeg', '-y', '-i', webm_path, mp3_path],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        logger.info(f"Converted WebM to MP3: {mp3_path}")
+    except subprocess.CalledProcessError as e:
+        error_msg = e.stderr.decode() if e.stderr else str(e)
+        logger.error(f"FFmpeg MP3 conversion failed: {error_msg}")
+        return JsonResponse({'error': _('MP3 변환에 실패했습니다.')}, status=500)
 
     mp3_url = os.path.join(settings.MEDIA_URL, 'audio', mp3_filename)
 

@@ -349,10 +349,6 @@
             font-size: 0.8rem;
         }
 
-        .message-text {
-            line-height: 1.6;
-            word-wrap: break-word;
-        }
 
         /* 빈 상태 */
         .empty-state {
