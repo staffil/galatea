@@ -286,11 +286,22 @@ def upload_audio(request):
 
     # 2) Whisper API 호출 (webm 파일 직접 사용 - Whisper는 webm 지원)
     try:
-        with open(webm_path, 'rb') as f:
-            transcription = openai_client.audio.transcriptions.create(
-                file=f,
-                model="whisper-1"
+        with open(webm_path, "rb") as f:
+            transcription = requests.post(
+                "https://api.elevenlabs.io/v1/speech-to-text",
+                headers={
+                    "xi-api-key": ELEVEN_API_KEY,
+                },
+                files={
+                    "file": ("audio.webm", f, "audio/webm"),
+                },
+                data={
+                    "model_id": "scribe_v1",  
+                },
+                timeout=60,
             )
+            transcription = transcription.json()
+            
         logger.info("Whisper transcription successful")
     except Exception as e:
         logger.error(f"Whisper API error: {e}")
@@ -319,7 +330,8 @@ def upload_audio(request):
 
     # 5) 결과에 mp3 파일 경로도 포함해서 반환
     return JsonResponse({
-        'text': transcription.text,
+        'text': transcription.get("text", ""),
+
         'mp3_file': mp3_url
     })
 
