@@ -20,7 +20,7 @@ msgstr ""
 
 #: .\home\templates\home\main.html:9
 msgid "GALATEA - AI와 대화하기"
-msgstr "GALATEA - Chatea con celebridades"
+msgstr "GALATEA"
 
 #: .\home\templates\home\main.html:9
 msgid "대화 시작"
