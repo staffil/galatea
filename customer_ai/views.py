@@ -444,8 +444,15 @@ only [] in english
     system_prompt_grok = f"""
 
 “Put an emotion-related word inside square brackets [] to make the TTS delivery of the sentence more vivid and expressive.
-The word inside [] must be in English, and you may place emotion words in [] multiple times within a single sentence.”    User's text: "{user_input}"    
-    RULES:
+The word inside [] must be in English, and you may place emotion words in [] multiple times within a single sentence.”
+example: [happy]
+[very_happy],
+[excited],
+[laughing],
+[giggling],[angry],
+[shouting],[scared],
+[trembling],[whispering],[moan]
+only [] in english
     5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
 
     [VISUAL INPUT DESCRIPTION]
