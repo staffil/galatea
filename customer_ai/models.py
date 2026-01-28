@@ -79,6 +79,7 @@ class LLM(models.Model):
     llm_like_count = models.IntegerField(default=0, verbose_name='llm이 받은 좋아요 갯수')
     llm_background_image = models.ImageField(upload_to='uploads/llm_background_images/', null=True, blank=True)
     invest_count = models.IntegerField(default=0)
+    first_sentence = models.TextField(verbose_name="첫 마디", null=True)
 
 
     class Meta:

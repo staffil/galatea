@@ -1,0 +1,173 @@
+{% load static %} 
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!-- Favicon 설정 -->
+<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Chat UI</title>
+    <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="naver-site-verification" content="a99a4b575097b8023bccc2d6c50f4d70ed0e834c" />
+        <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
+    <meta property="og:description" content="{{ llm.name }}" />
+{% if llm.llm_image %}
+  <meta property="og:image" content="{{ llm.llm_image.url }}">
+{% endif %}
+
+    <meta property="og:url" content="https://galatea.website" />
+    <meta property="og:type" content="website" />
+
+</head>
+
+<style>
+/* typing-bubbles 스타일 */
+.typing-bubbles {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 20px; /* 필요에 따라 조절 */
+}
+
+.typing-bubbles span {
+  width: 6px;
+  height: 6px;
+  background: #555;
+  border-radius: 50%;
+  display: block;
+  animation: bounce 1s infinite ease-in-out;
+}
+
+.typing-bubbles span:nth-child(2) { animation-delay: 0.2s; }
+.typing-bubbles span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+</style>
+
+<body>
+    <!-- Header -->
+
+<header class="header">
+    {% if not user.is_authenticated %}
+        {% include "common/notLoginHeader.html" %}
+    {% else %}
+        {% include "common/loginHeader.html" %}
+    {% endif %}
+
+
+</header>
+    <!-- <div class="hamburger" style="margin-top: 50px;" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div> -->
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <!-- <aside class="sidebar" id="sidebar">
+            <h3>🎯 {% trans '모드 선택' %}</h3>
+            <div class="mode-options">
+                <div class="mode-option active">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" checked>
+                    <label><i class="fas fa-comment"></i> TEXT MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';">
+                    <label><i class="fas fa-eye"></i> VISION MODE</label>
+                </div>
+
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
+                    <label><i class="fas fa-book"></i> NOVEL MODE</label>
+                </div>
+
+            </div>
+
+    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+        {% trans '공유하기' %}
+    </button>
+        </aside> -->
+
+        <!-- Main Content -->
+        <main class="main-content kakao-style">
+            <!-- Chat Messages -->
+            <div class="chat-messages kakao-chat" id="message-area" >
+                <div class="message ai">
+                    <div class="message-avatar">
+                        {% if llm.llm_image %}
+                            <img src="{{ llm.llm_image.url }}" alt="{{ llm.name }}" />
+                        {% else %}
+                            🤖
+                        {% endif %}
+                    </div>
+                    <div class="message-wrapper">
+                        <!-- <span class="message-name">{{ llm.name }}</span> -->
+                        <div class="message-content">
+                            {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-row">
+                    <input type="text" class="text-input" id="text-input" 
+                           placeholder="{% trans '메시지를 입력하세요...' %}" 
+                           onkeydown="if(event.key === 'Enter'){ sendText(); }">
+                    <button class="send-btn" onclick="sendText()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+
+                    <button class="record-btn" id="record-btn" onclick="toggleRecording()">
+                        <i class="fas fa-microphone" id="record-icon"></i>
+                    </button>
+                    <div class="record-status" id="record-status" style="display: none;">
+                        {% trans '녹음을 시작하려면 버튼을 누르세요' %}
+                    </div>
+                </div>
+                
+                <div class="recognized-text" id="recognized-text"></div>
+                
+                <!-- Audio Player -->
+                <div class="audio-player" id="audio-container" style="display: none;">
+                    <audio id="tts-audio" controls style="display: none;"></audio>
+                </div>
+            </div>
+        </main>
+    </div>
+<script>
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+    const LLM_ID = {{ llm_id }}; 
+        const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";  // 문자열
+
+</script>
+
+<script>
+    // Django 번역 문자열을 JS에서 사용할 객체
+    const messages = {
+        recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+        recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+        micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+        recognizedText: "{% trans '인식된 텍스트: ' %}",
+        audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+        errorOccurred: "{% trans '오류 발생: ' %}",
+        shareCopied: "{% trans '링크가 복사되었습니다!' %}"
+    };
+</script>
+<script src="{% static 'js/customer_ai/custom.js' %}">
+   
+</script>
+
+</body>
+</html>

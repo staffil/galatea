@@ -98,6 +98,11 @@
                     <label style="color: black;">{% trans 'AI 모델에 대한 간단한 설명을 작성해주세요' %}</label>
                     <textarea name="distribute" id="distributeDisplay" class="description-textarea" placeholder="{% trans '이 AI는 어떤 특징을 가지고 있나요? 예: 친근하고 유머러스한 대화 상대, 전문적인 조언을 제공하는 컨설턴트 등...' %}">{{ llm.description }}</textarea>
                 </div>
+
+                <div class="description-section">
+                    <label style="color: black;">{% trans '모델의 첫 마디를 적어주세요' %}</label>
+                    <textarea name="first_sentence" id="distributeDisplay" class="description-textarea" placeholder="{% trans '해당 AI 의 첫 마디를 적어주세요.' %}">{{ llm.first_sentence }}</textarea>
+                </div>
             </div>
 
             <!-- 장르 태그 선택 -->

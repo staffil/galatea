@@ -21,6 +21,7 @@ def distribute(request, llm_id):
         title = request.POST.get('title')
         distribute_text = request.POST.get('distribute')
         selected_genres = request.POST.getlist('genre')
+        first_sentence = request.POST.get("first_sentence")
 
         from django.contrib import messages
 
@@ -36,6 +37,7 @@ def distribute(request, llm_id):
 
         llm.title = title
         llm.description = distribute_text
+        llm.first_sentence = first_sentence
         llm.is_public = True
 
         # 장르 ManyToMany 필드 업데이트

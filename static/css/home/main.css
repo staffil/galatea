@@ -5,7 +5,7 @@
     right: 20px;
     width: 45px;
     height: 45px;
-    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    background: linear-gradient(135deg, rgba(15,15,35,0.95), rgba(26,26,46,0.95));
     border: none;
     border-radius: 50%;
     color: white;
@@ -1247,6 +1247,7 @@ body {
 /* 각 줄 독립적으로 horizontal 스크롤 */
 .llm-row {
     margin-bottom: 8px;
+    
 }
 
 .llm-cards-horizontal {

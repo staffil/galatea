@@ -22,7 +22,7 @@ body {
     width: 700px;
     background-color: #222;
     border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    background: linear-gradient(135deg, rgba(15,15,35,0.95), rgba(26,26,46,0.95));
     transition: transform 0.2s;
     display: flex;
     flex-direction: column;
@@ -50,6 +50,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
+        background: linear-gradient(135deg, rgba(15,15,35,0.95), rgba(26,26,46,0.95));
+
 }
 
 /* 헤더 이미지 */
