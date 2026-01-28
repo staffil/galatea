@@ -418,6 +418,15 @@ def generate_response(request):
     You are an AI assistant that replies clearly and concisely to the user's input.
 “Put an emotion-related word inside square brackets [] to make the TTS delivery of the sentence more vivid and expressive.
 The word inside [] must be in English, and you may place emotion words in [] multiple times within a single sentence.”
+example: [happy]
+[very_happy],
+[excited],
+[laughing],
+[giggling],[angry],
+[shouting],[scared],
+[trembling],[whispering],[moan]
+only [] in english
+
     User's text: "{user_input}"
 
     [VISUAL INPUT DESCRIPTION]
