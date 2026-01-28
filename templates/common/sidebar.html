@@ -14,119 +14,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* 페이지 전용 스타일 - 헤더와 충돌 방지 */
-        
-        html {
-            height: 100%;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            background-color: #0f0f23 !important;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            background-attachment: scroll;
-            background-color: #0f0f23 !important;
-            color: #ffffff;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            position: relative;
-            margin: 0;
-            padding: 0;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            z-index: -1;
-        }
-
-        /* 배경 원들 */
-        .mypage-circle-bg {
-            position: fixed;
-            border-radius: 50%;
-            opacity: 0.1;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .mypage-circle-1 {
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            top: -150px;
-            left: -150px;
-            animation: mypageFloat 20s ease-in-out infinite;
-        }
-
-        .mypage-circle-2 {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            top: 20%;
-            right: -100px;
-            animation: mypageFloat 15s ease-in-out infinite reverse;
-        }
-
-        .mypage-circle-3 {
-            width: 250px;
-            height: 250px;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            bottom: 10%;
-            left: 10%;
-            animation: mypageFloat 18s ease-in-out infinite;
-        }
-
-        .mypage-circle-4 {
-            width: 180px;
-            height: 180px;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            bottom: -90px;
-            right: 20%;
-            animation: mypageFloat 12s ease-in-out infinite reverse;
-        }
-
-        .mypage-circle-5 {
-            width: 220px;
-            height: 220px;
-            background: linear-gradient(135deg, #fa709a, #fee140);
-            top: 50%;
-            left: -110px;
-            animation: mypageFloat 16s ease-in-out infinite;
-        }
-
-        @keyframes mypageFloat {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(30px, -30px) scale(1.1);
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-        }
-
-        /* 페이지 컨테이너 */
 
 
-        /* Sidebar */
+
         #sidebar {
             max-width: 300px;
             width: 100%;
-            background: rgba(26, 26, 46, 0.8);
+            background: rgba(48, 47, 47, 0.8);
             border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 24px;
-            padding: 40px 30px;
             backdrop-filter: blur(20px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             animation: mypageFadeIn 0.6s ease-out;
@@ -159,10 +54,8 @@
         .sidebar-profile {
             text-align: center;
             margin-bottom: 35px;
-            padding: 25px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 20px;
+
+
         }
 
         .sidebar-profile img {
@@ -212,15 +105,7 @@
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            padding: 16px 20px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 16px;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
+
             -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
             position: relative;
             overflow: hidden;
@@ -248,9 +133,6 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
-        .sidebar-menu a:active {
-            transform: scale(0.98) translateX(5px);
-        }
 
         /* 아이콘 추가 */
         .sidebar-menu a::after {
@@ -265,28 +147,7 @@
             transform: translateX(5px);
         }
 
-        /* 특정 메뉴 아이템 강조 */
-        .sidebar-menu li:first-child a {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
-            border-color: rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-        }
 
-        .sidebar-menu li:first-child a:hover {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
-            border-color: #ef4444;
-        }
-
-        .sidebar-menu li:nth-child(2) a {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-            border-color: rgba(16, 185, 129, 0.3);
-            color: #6ee7b7;
-        }
-
-        .sidebar-menu li:nth-child(2) a:hover {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
-            border-color: #10b981;
-        }
 
         /* 반응형 */
         @media (max-width: 768px) {
@@ -294,9 +155,7 @@
                 padding: 70px 15px 30px;
             }
 
-            #sidebar {
-                padding: 30px 20px;
-            }
+      
 
             #sidebar h1 {
                 font-size: 1.7rem;
@@ -327,11 +186,12 @@
             .mypage-container {
                 padding: 65px 10px 20px;
             }
+            #sidebar{
+                            margin-top: 130px;
 
-            #sidebar {
-                padding: 25px 15px;
-                border-radius: 20px;
             }
+
+
 
             #sidebar h1 {
                 font-size: 1.5rem;
@@ -410,17 +270,7 @@
 
     <div class="mypage-container">
         <div class="sidebar" id="sidebar">
-            <h1>{% trans '마이페이지' %}</h1>
-            
-            <div class="sidebar-profile">
-                {% if user.user_image %}
-                    <img src="{{ user.user_image.url }}" alt="프로필 이미지" />
-                {% else %}
-                    <p>{% trans '프로필 이미지 없음' %}</p>
-                {% endif %}
-                <h3>{{ user.nickname }}</h3>
-            </div>
-            
+
             <ul class="sidebar-menu">
                 <li><a href="{% url 'logout' %}">{% trans '로그아웃' %}</a></li>
                 <li><a href="{% url 'home:main' %}">{% trans 'Main 으로' %}</a></li>
