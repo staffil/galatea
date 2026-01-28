@@ -415,8 +415,6 @@ def generate_response(request):
             chat_history_grok.append({"role": "assistant", "content": convo.llm_response})
     chat_history_grok.append({"role": "user", "content": user_input})
     system_prompt = f"""
-    You are an AI assistant that replies clearly and concisely to the user's input.
-
     User's text: "{user_input}"
 
     [VISUAL INPUT DESCRIPTION]
@@ -436,8 +434,6 @@ def generate_response(request):
 
 
     User's text: "{user_input}"    
-    RULES:
-    5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
 
     [VISUAL INPUT DESCRIPTION]
     "{vision_result}"
