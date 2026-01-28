@@ -430,6 +430,7 @@
         {% endif %}
 
 <!-- 뉴스 섹션 HTML (Django 템플릿) -->
+ <div class="main-content">
 <div class="news-section">
     
     <!-- 메인 뉴스 슬라이더 -->
@@ -467,7 +468,7 @@
                 </div>
             {% endfor %}
         </div>
-        
+<!--         
         {% if news_list|length > 1 %}
             <button class="nav-btn prev" onclick="slideNews(-1)">‹</button>
             <button class="nav-btn next" onclick="slideNews(1)">›</button>
@@ -478,7 +479,7 @@
                          onclick="goToSlide({{ forloop.counter0 }})"></div>
                 {% endfor %}
             </div>
-        {% endif %}
+        {% endif %} -->
     </div>
 </div>
 
@@ -486,7 +487,6 @@
 
 
 <!-- HTML 구조 변경 -->
-<div class="main-content">
     <div class="llm-container2">
         <h2 class="section-title">{% trans '추천' %}</h2>
         
@@ -600,7 +600,6 @@
         
         <a href="{% url 'home:llm_section' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
     </div>
-</div>
 
 
 
@@ -703,7 +702,6 @@
 
 
         <!-- 장르 섹션 -->
-        <div class="main-content">
             <div class="genre-container" style="padding: 10px;">
                 <h2 class="section-title">{% trans "장르" %}</h2>
                 <div class="genre-tags-container">
@@ -723,9 +721,8 @@
                 </div>
                 <a href="{% url 'home:genre_all' %}" class="view-all-btn">{% trans '전체 보기' %}</a>
             </div>
-        </div>
 
-
+</div>
    <!-- ✅ 광고 위치 -->
     <div class="ad-section" style="margin: 15px auto; text-align:center;">
 
