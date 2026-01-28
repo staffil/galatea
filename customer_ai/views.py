@@ -416,7 +416,7 @@ def generate_response(request):
     chat_history_grok.append({"role": "user", "content": user_input})
     system_prompt = f"""
     You are an AI assistant that replies clearly and concisely to the user's input.
-
+“Put an emotion-related word inside the square brackets [] to make the TTS delivery of the sentence more vivid and expressive.”
     User's text: "{user_input}"
 
     [VISUAL INPUT DESCRIPTION]
@@ -434,7 +434,7 @@ def generate_response(request):
 
     system_prompt_grok = f"""
 
-
+“Put an emotion-related word inside the square brackets [] to make the TTS delivery of the sentence more vivid and expressive.”
     User's text: "{user_input}"    
     RULES:
     5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
