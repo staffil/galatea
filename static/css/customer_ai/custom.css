@@ -813,7 +813,7 @@ body::before {
 
     .text-input {
         padding: 11px 16px;
-        font-size: 0.4rem;
+        font-size: 0.7rem;
         border-radius: 18px;
     }
 
@@ -867,7 +867,7 @@ body::before {
 @media (max-width: 375px) {
     .text-input {
         padding: 10px 14px;
-        font-size: 0.4rem;
+        font-size: 0.7rem;
     }
     
     .send-btn, .record-btn, .vision-toggle-btn {
