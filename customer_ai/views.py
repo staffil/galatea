@@ -426,7 +426,7 @@ example: [happy]
 [shouting],[scared],
 [trembling],[whispering],[moan]
 only [] in english
-
+“No other words are permitted inside square brackets [] besides those listed above.”
     User's text: "{user_input}"
 
     [VISUAL INPUT DESCRIPTION]
@@ -453,6 +453,7 @@ example: [happy]
 [shouting],[scared],
 [trembling],[whispering],[moan]
 only [] in english
+“No other words are permitted inside square brackets [] besides those listed above.”
     5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
 
     [VISUAL INPUT DESCRIPTION]
