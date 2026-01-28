@@ -350,7 +350,6 @@ body::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    margin-top: 60px;
 }
 
 .chat-messages::-webkit-scrollbar {
@@ -742,7 +741,6 @@ body::before {
 
 
     .chat-messages {
-        max-height: 450px;
         border-radius: 16px;
         margin-bottom: 20px;
     }
@@ -798,7 +796,6 @@ body::before {
 
 
     .chat-messages {
-        max-height: 400px;
         border-radius: 14px;
     }
 .record-status {
