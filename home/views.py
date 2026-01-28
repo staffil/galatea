@@ -27,7 +27,8 @@ User = get_user_model()
 
 # 기본 뷰 함수들
 def home(request):
-    return render(request, 'home/home.html')
+    # return render(request, 'home/home.html')  # 기존 home 화면 주석 처리
+    return main(request)  # 바로 main으로 이동
 def main(request):
     language = get_language()
     user = request.user

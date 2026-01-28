@@ -98,26 +98,22 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <!-- AI Showcase -->
-            <div class="ai-showcase">
-                {% if llm.llm_image %}
-                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
-                {% endif %}
-                
-                <div class="chat-header">
-                    <div class="ai-avatar">🤖</div>
-                    <h1 class="chat-title">{{ llm.name }}</h1>
-                </div>
-                <p class="chat-subtitle">{% trans '하고 싶은 말을 입력하세요' %}</p>
-            </div>
-
+        <main class="main-content kakao-style">
             <!-- Chat Messages -->
-            <div class="chat-messages" id="message-area">
+            <div class="chat-messages kakao-chat" id="message-area" >
                 <div class="message ai">
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content">
-                        {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
+                    <div class="message-avatar">
+                        {% if llm.llm_image %}
+                            <img src="{{ llm.llm_image.url }}" alt="{{ llm.name }}" />
+                        {% else %}
+                            🤖
+                        {% endif %}
+                    </div>
+                    <div class="message-wrapper">
+                        <!-- <span class="message-name">{{ llm.name }}</span> -->
+                        <div class="message-content">
+                            {% trans '안녕하세요! 무엇을 도와드릴까요?' %}
+                        </div>
                     </div>
                 </div>
             </div>

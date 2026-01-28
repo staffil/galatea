@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 {% load i18n %}
 
 <!DOCTYPE html>
@@ -11,11 +11,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans '비전 모드' %}</title>
-    <link rel="stylesheet" href="{% static 'css/customer_ai/vision.css' %}">
+    <link rel="stylesheet" href="{% static 'css/customer_ai/custom.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
+<style>
+/* typing-bubbles 스타일 */
+.typing-bubbles {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 20px;
+}
 
+.typing-bubbles span {
+  width: 6px;
+  height: 6px;
+  background: #555;
+  border-radius: 50%;
+  display: block;
+  animation: bounce 1s infinite ease-in-out;
+}
+
+.typing-bubbles span:nth-child(2) { animation-delay: 0.2s; }
+.typing-bubbles span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+</style>
 
 <body>
     <!-- Header -->
@@ -25,9 +50,8 @@
     {% else %}
         {% include "common/loginHeader.html" %}
     {% endif %}
-
-
 </header>
+
     <div class="hamburger" style="margin-top: 50px;" onclick="toggleSidebar()">
         <span></span>
         <span></span>
@@ -39,12 +63,12 @@
         <aside class="sidebar" id="sidebar">
             <h3>🎯 {% trans '모드 선택' %}</h3>
             <div class="mode-options">
-                <div class="mode-option ">
-                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';" >
+                <div class="mode-option">
+                    <input type="radio" name="mode" onclick="location.href='/customer_ai/chat/{{llm_id}}';">
                     <label><i class="fas fa-comment"></i> TEXT MODE</label>
                 </div>
 
-                <div class="mode-option ">
+                <div class="mode-option active">
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/vision/{{llm_id}}';" checked>
                     <label><i class="fas fa-eye"></i> VISION MODE</label>
                 </div>
@@ -53,50 +77,52 @@
                     <input type="radio" name="mode" onclick="location.href='/customer_ai/novel/{{llm_id}}';">
                     <label><i class="fas fa-book"></i> NOVEL MODE</label>
                 </div>
-
             </div>
 
-    <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
-        {% trans '공유하기' %}
-    </button>
+            <button class="share-btn" data-link="{{ request.build_absolute_uri }}">
+                {% trans '공유하기' %}
+            </button>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header Section -->
-            <div class="chat-header">
-                <div class="ai-avatar">👁️</div>
-                <h1 class="chat-title">{{ llm.name }} {% trans '비전 대화하기' %}</h1>
-            </div>
-            <p class="chat-subtitle">{% trans '카메라로 실시간 대화해보세요' %}</p>
+        <main class="main-content kakao-style">
+            <!-- 숨겨진 웹캠 (백그라운드 캡처용) -->
+            <video id="webcam" autoplay playsinline style="display:none;"></video>
 
-            <!-- Video Container -->
-            <div class="video-container">
-                <!-- AI Image Section -->
-                <div class="video-section">
-                    <div class="section-title">
-                        <i class="fas fa-robot"></i>
-                        {% trans 'AI 캐릭터' %}
+            <!-- Chat Messages -->
+            <div class="chat-messages kakao-chat" id="message-area">
+                <div class="message ai">
+                    <div class="message-avatar">
+                        {% if llm.llm_image %}
+                            <img src="{{ llm.llm_image.url }}" alt="{{ llm.name }}" />
+                        {% else %}
+                            👁️
+                        {% endif %}
                     </div>
-                    {% if llm.llm_image %}
-                        <img src="{{ llm.llm_image.url }}" alt="{% trans 'AI 이미지' %}" class="ai-image" />
-                    {% else %}
-                        <div class="no-image">{% trans '생성된 이미지가 없습니다' %}</div>
-                    {% endif %}
-                </div>
-
-                <!-- Webcam Section -->
-                <div class="video-section">
-                    <div class="section-title">
-                        <i class="fas fa-video"></i>
-                        {% trans '실시간 카메라' %}
+                    <div class="message-wrapper">
+                        <!-- <span class="message-name">{{ llm.name }}</span> -->
+                        <div class="message-content">
+                            {% trans '비전 모드입니다. 카메라 버튼을 눌러 시작하세요.' %}
+                        </div>
                     </div>
-                    <video id="webcam" autoplay playsinline></video>
                 </div>
             </div>
-            <!-- Audio Section -->
-            <div class="audio-section">
-                <div class="audio-controls">
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-row">
+                    <button class="vision-toggle-btn" id="toggle-vision-btn" title="{% trans '비전 모드 시작/중지' %}">
+                        <i class="fas fa-video" id="vision-icon"></i>
+                    </button>
+                    <input type="text" class="text-input" id="text-input"
+                           placeholder="{% trans '메시지를 입력하세요...' %}"
+                           onkeydown="if(event.key === 'Enter'){ sendTextMessage(); }">
+                    <button class="send-btn" onclick="sendTextMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+
+                <div class="controls-row">
                     <button class="record-btn" id="record-btn" onclick="toggleRecording()">
                         <i class="fas fa-microphone" id="record-icon"></i>
                     </button>
@@ -104,90 +130,74 @@
                         {% trans '녹음을 시작하려면 버튼을 누르세요' %}
                     </div>
                 </div>
-                
-                <div class="recognized-text" id="recognized-text-display"></div>
-                
+
+                <div class="recognized-text" id="recognized-text"></div>
+                <div class="vision-status" id="vision-result"></div>
+
                 <!-- Audio Player -->
                 <div class="audio-player" id="audio-container" style="display: none;">
                     <audio id="tts-audio" controls></audio>
                 </div>
             </div>
-            <!-- Control Panel -->
-            <div class="control-panel">
-                <div class="control-row">
-                    <button class="vision-toggle" id="toggle-vision-btn">
-                        <i class="fas fa-play"></i>
-                        {% trans '비전 모드 시작' %}
-                    </button>
-                    <div class="vision-status" id="vision-result">
-                        {% trans '비전 모드 준비 중...' %}
-                    </div>
-                    
-                </div>
-            </div>
-
-            <!-- Results Section -->
-            <div class="results-section">
-                <div class="result-card">
-                    <div class="result-title">
-                        <i class="fas fa-microphone"></i>
-                        {% trans '음성 인식 결과' %}
-                    </div>
-                    <div class="result-content" id="recognized-text">
-                        {% trans '음성 인식 대기 중...' %}
-                    </div>
-                </div>
-                
-                <div class="result-card">
-                    <div class="result-title">
-                        <i class="fas fa-robot"></i>
-                        {% trans 'AI 응답' %}
-                    </div>
-                    <div class="result-content" id="response">
-                        {% trans 'AI 응답 대기 중...' %}
-                    </div>
-                </div>
-            </div>
-
-
         </main>
     </div>
-    <script src="{% static 'js/customer_ai/custom.js' }"></script>
 
 <script>
-        const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
+    const LANGUAGE_CODE = "{{ LANGUAGE_CODE|default:'ko' }}";
+    const CSRF_TOKEN = "{{ csrf_token }}";
+    const LLM_ID = {{ llm_id }};
+    const LLM_IMAGE_URL = "{{ llm.llm_image.url }}";
+
+    // Django 번역 문자열
+    const messages = {
+        recordingStart: "{% trans '녹음을 시작하려면 버튼을 누르세요' %}",
+        recordingInProgress: "{% trans '녹음 중... 다시 누르면 종료됩니다' %}",
+        micPermission: "{% trans '마이크 권한을 허용해주세요.' %}",
+        recognizedText: "{% trans '인식된 텍스트: ' %}",
+        audioUploadError: "{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}",
+        errorOccurred: "{% trans '오류 발생: ' %}",
+        shareCopied: "{% trans '링크가 복사되었습니다!' %}"
+    };
+</script>
+
+<script>
+const baseUrl = window.location.pathname.replace(/\/(chat|vision)\/\d+\/?$/, '');
 
 const video = document.getElementById('webcam');
 const canvas = document.createElement('canvas');
 const toggleBtn = document.getElementById('toggle-vision-btn');
 const visionResult = document.getElementById('vision-result');
 const ttsAudio = document.getElementById('tts-audio');
-const responseDiv = document.getElementById('response');
-const recognizedText = document.getElementById('recognized-text');
-const recognizedTextDisplay = document.getElementById('recognized-text-display');
+const messageArea = document.getElementById('message-area');
 
 let streaming = false;
 let intervalId = null;
 let isVisionRunning = false;
 let latestVisionResult = '';
-
 let isProcessingVision = false;
 let isPlayingAudio = false;
 
+// 녹음 관련
+let mediaRecorder;
+let audioChunks = [];
+let isRecording = false;
+let stream;
+
+// 오디오 폴링을 위한 전역 변수
+let audioCheckIntervals = new Map();
 
 // 웹캠 시작
 async function startWebcam() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        video.srcObject = stream;
-        video.classList.add('active');
+        const streamMedia = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        video.srcObject = streamMedia;
         streaming = true;
         visionResult.textContent = "{% trans '웹캠이 시작되었습니다' %}";
-        visionResult.className = "vision-status active";
+        visionResult.style.display = 'block';
     } catch (err) {
         alert("{% trans '웹캠 접근 실패: ' %}" + err);
         visionResult.textContent = "{% trans '웹캠 접근 실패' %}";
-        visionResult.className = "vision-status";
+        visionResult.style.display = 'block';
     }
 }
 
@@ -196,7 +206,6 @@ function stopWebcam() {
     if (video.srcObject) {
         video.srcObject.getTracks().forEach(track => track.stop());
     }
-    video.classList.remove('active');
     streaming = false;
 }
 
@@ -208,7 +217,6 @@ async function sendFrameToServer() {
 
     isProcessingVision = true;
     visionResult.textContent = "{% trans '이미지 분석 중...' %}";
-    visionResult.className = "vision-status processing";
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -231,78 +239,239 @@ async function sendFrameToServer() {
             });
             if (!response.ok) throw new Error("{% trans '서버 응답 오류' %}");
             const data = await response.json();
-            visionResult.textContent = "{% trans '분석 완료: ' %}" + data.result;
-            visionResult.className = "vision-status active";
+            visionResult.textContent = "{% trans '분석 완료' %}";
             latestVisionResult = data.result;
         } catch (err) {
             console.error('Vision error:', err);
             visionResult.textContent = "{% trans '분석 오류 발생' %}";
-            visionResult.className = "vision-status";
         } finally {
             isProcessingVision = false;
         }
     }, 'image/jpeg');
 }
-async function sendText(text) {
-    if (!text) return;
-    const formData = new FormData();
-    formData.append('text', text);
-    formData.append('vision', latestVisionResult);
-    formData.append('llm_id', "{{ llm_id }}");
-    responseDiv.textContent = "{% trans 'AI가 응답을 생성 중...' %}";
-    
-    try {
-        const res = await fetch(`${baseUrl}/generate_response/`, { method: 'POST', body: formData });
-        const data = await res.json();
-        
-        responseDiv.textContent = data.ai_text || "{% trans '응답 오류' %}";
-        
-        // 🔥 오디오 폴링 시작
-        if (data.conversation_id) {
-            checkAudioStatus(data.conversation_id);
+
+// 타이핑 효과 함수
+function typewriterEffect(element, text, speed = 30) {
+    element.textContent = '';
+    let i = 0;
+
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            const currentChar = text.charAt(i - 1);
+            const delay = (currentChar === '.' || currentChar === '!' || currentChar === '?') ? speed * 3 : speed;
+            setTimeout(type, delay);
         }
-    } catch (err) {
-        responseDiv.textContent = "{% trans '응답 중 오류 발생' %}";
     }
+    type();
 }
 
-// 🆕 오디오 상태 확인 함수
-async function checkAudioStatus(conversationId) {
-    const maxAttempts = 20; // 최대 20번 시도 (20초)
-    let attempts = 0;
-    
-    const interval = setInterval(async () => {
-        attempts++;
-        
-        try {
-            const res = await fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`);
-            const data = await res.json();
-            
-            console.log(`오디오 확인 시도 ${attempts}:`, data);
-            
-            if (data.ready && data.audio_url) {
-                clearInterval(interval);
-                
-                // 오디오 재생
-                ttsAudio.src = data.audio_url;
-                document.getElementById('audio-container').style.display = 'block';
-                ttsAudio.play().catch(e => console.warn("재생 오류:", e));
-                
-                console.log('오디오 재생 시작:', data.audio_url);
-            } else if (attempts >= maxAttempts) {
-                clearInterval(interval);
-                console.warn('오디오 생성 타임아웃');
-            }
-        } catch (err) {
-            console.error('오디오 상태 확인 오류:', err);
+// 텍스트 전송 함수 (채팅 스타일)
+function sendTextMessage() {
+    const textInput = document.getElementById('text-input');
+    const userText = textInput.value.trim();
+    if (!userText) return;
+
+    // 사용자 메시지 추가
+    const userMessage = document.createElement("div");
+    userMessage.className = "message user";
+    userMessage.innerHTML = `
+        <div class="message-wrapper">
+            <div class="message-content">${userText}</div>
+        </div>
+    `;
+    messageArea.appendChild(userMessage);
+    textInput.value = "";
+
+    // AI 아바타 이미지 설정
+    const avatarImg = LLM_IMAGE_URL ?
+        `<img src="${LLM_IMAGE_URL}" alt="AI" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` :
+        '👁️';
+
+    // AI typing bubble 추가
+    const typingMessage = document.createElement("div");
+    typingMessage.className = "message ai typing";
+    typingMessage.innerHTML = `
+        <div class="message-avatar">${avatarImg}</div>
+        <div class="message-wrapper">
+            <div class="message-content">
+                <div class="typing-bubbles"><span></span><span></span><span></span></div>
+            </div>
+        </div>
+    `;
+    messageArea.appendChild(typingMessage);
+    messageArea.scrollTop = messageArea.scrollHeight;
+
+    // FormData 준비
+    const formData = new FormData();
+    formData.append('text', userText);
+    formData.append('vision', latestVisionResult);
+    formData.append('llm_id', LLM_ID);
+
+    // 서버로 요청 전송
+    fetch(`${baseUrl}/generate_response/`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => {
+        if (!res.ok) return res.json().then(err => { throw new Error(err.error || "Unknown error"); });
+        return res.json();
+    })
+    .then(data => {
+        // typing bubble 제거
+        typingMessage.remove();
+
+        // AI 응답 메시지 생성
+        const aiMessage = document.createElement("div");
+        aiMessage.className = "message ai";
+        const messageId = 'ai-message-' + Date.now();
+        aiMessage.innerHTML = `
+            <div class="message-avatar">${avatarImg}</div>
+            <div class="message-wrapper">
+                <div class="message-content" id="${messageId}">
+                    <div class="message-text"></div>
+                </div>
+            </div>
+        `;
+        messageArea.appendChild(aiMessage);
+        messageArea.scrollTop = messageArea.scrollHeight;
+
+        // 타이핑 효과로 AI 응답 표시
+        const responseDiv = aiMessage.querySelector('.message-text');
+        typewriterEffect(responseDiv, data.ai_text, 25);
+
+        // 오디오 상태 확인 시작
+        if (data.conversation_id) {
+            setTimeout(() => {
+                checkAudioStatusForMessage(data.conversation_id, aiMessage);
+            }, 1000);
         }
-    }, 1000); // 1초마다 확인
+
+        // 스크롤 유지
+        const scrollInterval = setInterval(() => {
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }, 50);
+
+        setTimeout(() => {
+            clearInterval(scrollInterval);
+        }, data.ai_text.length * 25 + 500);
+    })
+    .catch(error => {
+        if (typingMessage.parentNode) {
+            typingMessage.remove();
+        }
+
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "message ai";
+        errorMessage.innerHTML = `
+            <div class="message-avatar">⚠️</div>
+            <div class="message-content" style="color: #e74c3c;">
+                ${messages.errorOccurred} ${error.message}
+            </div>
+        `;
+        messageArea.appendChild(errorMessage);
+        messageArea.scrollTop = messageArea.scrollHeight;
+
+        console.error('Error:', error);
+    });
 }
 
-// 오디오 재생 종료 시점 플래그 해제
-ttsAudio.addEventListener('ended', () => {
-    isPlayingAudio = false;
-});
+// 오디오 상태 확인 함수
+function checkAudioStatusForMessage(conversationId, messageElement) {
+    const maxAttempts = 100;
+    let attempts = 0;
+
+    let statusElement = messageElement.querySelector('.audio-status');
+    if (!statusElement) {
+        statusElement = document.createElement('div');
+        statusElement.className = 'audio-status';
+        statusElement.style.cssText = 'font-size: 0.8em; color: #666; margin-top: 5px; font-style: italic;';
+        messageElement.querySelector('.message-content').appendChild(statusElement);
+    }
+    statusElement.textContent = '🎵 음성 생성 중...';
+
+    const checkInterval = setInterval(() => {
+        attempts++;
+
+        fetch(`${baseUrl}/check_audio_status/?conversation_id=${conversationId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.ready && data.audio_url) {
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+
+                    statusElement.textContent = '🔊 음성 재생';
+                    statusElement.style.color = '#2ecc71';
+
+                    playAudio(data.audio_url, statusElement);
+
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+
+                    statusElement.textContent = '⚠️ 음성 생성 시간 초과';
+                    statusElement.style.color = '#e74c3c';
+                }
+            })
+            .catch(error => {
+                console.error('오디오 상태 확인 오류:', error);
+
+                if (attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    audioCheckIntervals.delete(conversationId);
+
+                    statusElement.textContent = '⚠️ 음성 생성 실패';
+                    statusElement.style.color = '#e74c3c';
+                }
+            });
+    }, 500);
+
+    audioCheckIntervals.set(conversationId, checkInterval);
+}
+
+// 오디오 재생 함수
+function playAudio(audioUrl, statusElement) {
+    ttsAudio.src = audioUrl;
+    document.getElementById('audio-container').style.display = 'block';
+
+    ttsAudio.onplay = () => {
+        if (statusElement) {
+            statusElement.textContent = '▶️ 재생 중...';
+            statusElement.style.color = '#3498db';
+        }
+        isPlayingAudio = true;
+    };
+
+    ttsAudio.onended = () => {
+        if (statusElement) {
+            statusElement.textContent = '✓ 재생 완료';
+            statusElement.style.color = '#95a5a6';
+            setTimeout(() => {
+                if (statusElement) {
+                    statusElement.style.display = 'none';
+                }
+            }, 3000);
+        }
+        isPlayingAudio = false;
+    };
+
+    ttsAudio.onerror = () => {
+        if (statusElement) {
+            statusElement.textContent = '⚠️ 재생 실패';
+            statusElement.style.color = '#e74c3c';
+        }
+        isPlayingAudio = false;
+    };
+
+    ttsAudio.play().catch(error => {
+        console.error('오디오 재생 실패:', error);
+        if (statusElement) {
+            statusElement.textContent = '⚠️ 재생 실패';
+            statusElement.style.color = '#e74c3c';
+        }
+    });
+}
 
 // 비전 모드 토글
 toggleBtn.addEventListener('click', () => {
@@ -316,15 +485,15 @@ toggleBtn.addEventListener('click', () => {
 // 비전 모드 시작
 async function startVisionMode() {
     if (!streaming) await startWebcam();
-    
+
     isVisionRunning = true;
     intervalId = setInterval(sendFrameToServer, 1500);
-    
-    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> {% trans "비전 모드 중지" %}';
+
+    document.getElementById('vision-icon').className = 'fas fa-stop';
     toggleBtn.classList.add('active');
-    
+
     visionResult.textContent = "{% trans '비전 모드 실행 중...' %}";
-    visionResult.className = "vision-status processing";
+    visionResult.style.display = 'block';
 }
 
 // 비전 모드 중지
@@ -332,95 +501,79 @@ function stopVisionMode() {
     clearInterval(intervalId);
     stopWebcam();
     isVisionRunning = false;
-    
-    toggleBtn.innerHTML = '<i class="fas fa-play"></i> {% trans "비전 모드 시작" %}';
+
+    document.getElementById('vision-icon').className = 'fas fa-video';
     toggleBtn.classList.remove('active');
-    
+
     visionResult.textContent = "{% trans '비전 모드 중지됨' %}";
-    visionResult.className = "vision-status";
 }
 
-// 녹음 관련
-let mediaRecorder;
-let audioChunks = [];
-let isRecording = false;
-let stream;
-
+// 녹음 토글
 function toggleRecording() {
     const recordBtn = document.getElementById("record-btn");
     const recordIcon = document.getElementById("record-icon");
     const recordStatus = document.getElementById("record-status");
 
     if (!isRecording) {
-        navigator.mediaDevices
-            .getUserMedia({ audio: true })
-            .then((s) => {
-                stream = s;
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                mediaRecorder.start();
-                isRecording = true;
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((s) => {
+            stream = s;
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.start();
+            isRecording = true;
 
-                recordIcon.className = "fas fa-stop";
-                recordBtn.classList.add("recording");
-                recordStatus.textContent = "{% trans '녹음 중... 다시 누르면 종료됩니다' %}";
+            recordIcon.className = "fas fa-stop";
+            recordBtn.classList.add("recording");
+            recordStatus.textContent = messages.recordingInProgress;
 
-                mediaRecorder.addEventListener("dataavailable", (event) => {
-                    audioChunks.push(event.data);
-                });
-
-                mediaRecorder.addEventListener("stop", () => {
-                    const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-                    const formData = new FormData();
-                    formData.append("audio", audioBlob, "recorded.wav");
-
-                    fetch(`${baseUrl}/upload_audio/`, {
-                        method: "POST",
-                        body: formData,
-                    })
-                    .then((res) => res.json())
-                    .then((data) => {
-                        recognizedText.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
-                        recognizedTextDisplay.textContent = "{% trans '인식된 텍스트: ' %}" + data.text;
-                        recognizedTextDisplay.style.display = "block";
-                        
-                        setTimeout(() => {
-                            recognizedTextDisplay.style.display = "none";
-                        }, 3000);
-                        
-                        sendText(data.text);
-                    })
-                    .catch((error) => {
-                        alert("{% trans '오디오 업로드 중 오류가 발생했습니다: ' %}" + error.message);
-                    });
-                });
-            })
-            .catch((err) => {
-                alert("{% trans '마이크 권한을 허용해주세요.' %}");
-                console.error(err);
+            mediaRecorder.addEventListener("dataavailable", (event) => {
+                audioChunks.push(event.data);
             });
+
+            mediaRecorder.addEventListener("stop", () => {
+                const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+                const formData = new FormData();
+                formData.append("audio", audioBlob, "recorded.wav");
+
+                fetch(`${baseUrl}/upload_audio/`, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    const recognizedTextEl = document.getElementById("recognized-text");
+                    recognizedTextEl.textContent = messages.recognizedText + data.text;
+                    recognizedTextEl.style.display = "block";
+                    setTimeout(() => { recognizedTextEl.style.display = "none"; }, 3000);
+
+                    // 인식된 텍스트를 입력창에 넣고 전송
+                    document.getElementById('text-input').value = data.text;
+                    sendTextMessage();
+                })
+                .catch((error) => {
+                    alert(messages.audioUploadError + error.message);
+                });
+            });
+        })
+        .catch((err) => {
+            alert(messages.micPermission);
+            console.error(err);
+        });
     } else {
         mediaRecorder.stop();
         isRecording = false;
         recordIcon.className = "fas fa-microphone";
         recordBtn.classList.remove("recording");
-        recordStatus.textContent = "{% trans '녹음을 시작하려면 버튼을 누르세요' %}";
-        
+        recordStatus.textContent = messages.recordingStart;
+
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
         }
     }
 }
 
-// 페이지 로드 시 초기화
-document.addEventListener('DOMContentLoaded', () => {
-    // 초기 상태 설정
-    visionResult.textContent = "{% trans '비전 모드 준비 중...' %}";
-    recognizedText.textContent = "{% trans '음성 인식 대기 중...' %}";
-    responseDiv.textContent = "{% trans 'AI 응답 대기 중...' %}";
-});
-
-// Sidebar toggle function
+// 사이드바 토글
 window.toggleSidebar = function() {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
@@ -428,7 +581,7 @@ window.toggleSidebar = function() {
     hamburger.classList.toggle('active');
 };
 
-// Sidebar outside click close
+// 사이드바 외부 클릭 시 닫기
 document.addEventListener('click', (e) => {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
@@ -441,7 +594,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Resize event to reset sidebar
+// 화면 크기 변경 시 사이드바 상태 리셋
 window.addEventListener('resize', () => {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
@@ -452,6 +605,33 @@ window.addEventListener('resize', () => {
     }
 });
 
+// 링크 복사 기능
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("share-btn")) {
+        const link = e.target.getAttribute("data-link");
+        navigator.clipboard.writeText(link).then(() => {
+            alert(messages.shareCopied);
+        });
+    }
+});
+
+// 페이지 언로드 시 모든 오디오 확인 인터벌 정리
+window.addEventListener('beforeunload', () => {
+    audioCheckIntervals.forEach((interval, conversationId) => {
+        clearInterval(interval);
+    });
+    audioCheckIntervals.clear();
+});
+
+// 페이지 로드 완료 후 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    const textInput = document.getElementById('text-input');
+    if (textInput) {
+        textInput.focus();
+    }
+
+    console.log('Vision Mode UI initialized');
+});
 </script>
 </body>
 </html>

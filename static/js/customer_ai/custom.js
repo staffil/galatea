@@ -207,21 +207,13 @@ window.sendText = function(text) {
 
     const messageArea = document.getElementById("message-area");
 
-    // 사용자 메시지 추가
+    // 사용자 메시지 추가 (카카오톡 스타일)
     const userMessage = document.createElement("div");
     userMessage.className = "message user";
     userMessage.innerHTML = `
-        <div class="message-avatar">👤</div>
-        <div class="message-content" style="            max-width: 75%;
-            padding: 12px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">${userText}</div>
+        <div class="message-wrapper">
+            <div class="message-content">${userText}</div>
+        </div>
     `;
     messageArea.appendChild(userMessage);
 
@@ -233,13 +225,15 @@ window.sendText = function(text) {
         `<img src="${LLM_IMAGE_URL}" alt="AI" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` :
         '🤖';
 
-    // AI typing bubble 추가
+    // AI typing bubble 추가 (카카오톡 스타일)
     const typingMessage = document.createElement("div");
     typingMessage.className = "message ai typing";
     typingMessage.innerHTML = `
         <div class="message-avatar">${avatarImg}</div>
-        <div class="message-content">
-            <div class="typing-bubbles"><span></span><span></span><span></span></div>
+        <div class="message-wrapper">
+            <div class="message-content">
+                <div class="typing-bubbles"><span></span><span></span><span></span></div>
+            </div>
         </div>
     `;
     messageArea.appendChild(typingMessage);
@@ -263,18 +257,16 @@ window.sendText = function(text) {
         // typing bubble 제거
         typingMessage.remove();
 
-        // AI 응답 메시지 생성 (빈 content로 시작)
+        // AI 응답 메시지 생성 (카카오톡 스타일)
         const aiMessage = document.createElement("div");
         aiMessage.className = "message ai";
         const messageId = 'ai-message-' + Date.now();
         aiMessage.innerHTML = `
             <div class="message-avatar">${avatarImg}</div>
-            <div class="message-content" id="${messageId}">
-                <div class="message-text" style="
-            padding: 12px 16px;
-            font-size: 0.95rem;
-        
-            "></div>
+            <div class="message-wrapper">
+                <div class="message-content" id="${messageId}">
+                    <div class="message-text"></div>
+                </div>
             </div>
         `;
         messageArea.appendChild(aiMessage);

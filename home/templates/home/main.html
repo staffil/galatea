@@ -70,16 +70,16 @@
 <style>
 /* 인기 유저 섹션 */
 .popular-users-section {
-    padding: 40px 20px;
+    padding: 15px 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .section-title {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: white;
-    margin-bottom: 30px;
+    margin-bottom: 12px;
     text-align: left;
 }
 
@@ -87,15 +87,15 @@
 .users-list {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 200px; /* 카드 최소 너비 */
-    grid-template-rows: repeat(2, 1fr); /* 3행 배치 */
-    gap: 20px;
+    grid-auto-columns: 160px;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.5) transparent;
-    opacity: 1; /* 기본 표시 */
+    opacity: 1;
     transition: opacity 0.3s ease;
 }
 
@@ -116,14 +116,14 @@
 
 /* 개별 유저 카드 */
 .user-card {
-    width: 200px; /* 고정 너비 */
+    width: 160px;
     background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-    border-radius: 18px;
-    padding: 15px;
+    border-radius: 14px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     transition: all 0.3s ease;
     border: 1px solid rgba(255,255,255,0.15);
     cursor: pointer;
@@ -131,18 +131,18 @@
 }
 
 .user-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(139,92,246,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(139,92,246,0.4);
     border-color: #8b5cf6;
 }
 
 /* 유저 아바타 */
 .user-avatar img {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.2);
     transition: all 0.3s ease;
 }
 
@@ -157,21 +157,17 @@
 
 .username {
     color: white;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .follower-count {
-    color: #cbd5e1;
-    font-size: 0.9rem;
-}
-.follower-count {
     color: #94a3b8;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
 }
 
 /* 팔로우 버튼 */
@@ -179,10 +175,10 @@
     background: #667eea;
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
+    border-radius: 6px;
+    padding: 6px 12px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
     flex-shrink: 0;
@@ -196,9 +192,9 @@
 /* 빈 메시지 */
 .empty-message {
     text-align: center;
-    padding: 40px 20px;
+    padding: 20px 15px;
     color: #94a3b8;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
 }
 
 /* 전체보기 버튼 */
@@ -207,10 +203,11 @@
     background: transparent;
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    padding: 12px 24px;
+    border-radius: 6px;
+    padding: 8px 16px;
     text-decoration: none;
     font-weight: 600;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
 }
 
@@ -413,7 +410,7 @@
         </div>
     </div>
 
-    <main style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin-top: -40px; padding-bottom: 40px;">
+    <main style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); margin-top: -40px; padding-bottom: 15px;">
 
                     {% for news in news_list %}
 
@@ -436,7 +433,7 @@
 <div class="news-section">
     
     <!-- 메인 뉴스 슬라이더 -->
-    <div class="news-container"  style="margin-top: 20px;">
+    <div class="news-container" style="margin-top: 5px;">
         <div class="news-slider" id="newsSlider">
             {% for news in news_list %}
                 <div class="news-slide">
@@ -707,7 +704,7 @@
 
         <!-- 장르 섹션 -->
         <div class="main-content">
-            <div class="genre-container" style="padding: 20px;">
+            <div class="genre-container" style="padding: 10px;">
                 <h2 class="section-title">{% trans "장르" %}</h2>
                 <div class="genre-tags-container">
                     {% for genre in genre_list|slice:":8" %}
@@ -730,7 +727,7 @@
 
 
    <!-- ✅ 광고 위치 -->
-    <div class="ad-section" style="margin: 40px auto; text-align:center;">
+    <div class="ad-section" style="margin: 15px auto; text-align:center;">
 
 
         <!-- 구글 애드센스 광고 코드 -->

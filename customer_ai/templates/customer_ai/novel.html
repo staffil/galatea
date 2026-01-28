@@ -98,33 +98,23 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <!-- AI Showcase -->
-            <div class="ai-showcase">
-                {% if llm.llm_image %}
-                    <img src="{{ llm.llm_image.url }}" alt="AI 이미지" class="ai-image" />
-                {% endif %}
-                
-                <div class="chat-header">
-                    <div class="ai-avatar">📖</div>
-                    <h1 class="chat-title">{{ llm.name }} {% trans '소설 모드' %}</h1>
-                </div>
-                <p class="chat-subtitle">{% trans '함께 이야기를 만들어보세요' %}</p>
-            </div>
-
+        <main class="main-content kakao-style">
             <!-- Novel Output -->
-            <div class="chat-messages" id="message-area">
-                <div class="novel-helper">
-                    <p>
-                        <strong>{% trans "사용 방법:" %}</strong> 
-                        {% trans "대화나 행동을 입력해보세요. 예: '안녕하세요.' 또는 '.문을 열었다.'" %}
-                    </p>
-                </div>
-
-                <div class="novel-output" id="novel-container">
-                    <p class="gray-text">{% trans 'AI가 소설체로 답변할 예정입니다...' %}</p>
-                        <div id="page-number">1</div>
-
+            <div class="chat-messages kakao-chat" id="message-area">
+                <div class="message ai">
+                    <div class="message-avatar">
+                        {% if llm.llm_image %}
+                            <img src="{{ llm.llm_image.url }}" alt="{{ llm.name }}" />
+                        {% else %}
+                            📖
+                        {% endif %}
+                    </div>
+                    <div class="message-wrapper">
+                        <!-- <span class="message-name">{{ llm.name }}</span> -->
+                        <div class="message-content">
+                            {% trans '이야기를 시작해보세요...' %}
+                        </div>
+                    </div>
                 </div>
             </div>
 
