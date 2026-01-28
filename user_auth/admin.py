@@ -80,38 +80,6 @@ class LLMConversationInline(admin.TabularInline):
     fields = ('created_at', 'user', 'user_message', 'llm_response',)
     readonly_fields = ('created_at', 'user', 'user_message', 'llm_response',)
 
-@admin.register(LLM)
-class LLMAdmin(admin.ModelAdmin):
-    # list_display에는 정의한 @admin.display 메서드들의 이름이 들어가야 합니다.
-    # 만약 커스텀 메서드를 사용한다면 그 메서드 이름을 여기에 넣어주세요.
-    # 예를 들어, 메서드 이름을 'get_id_display' 등으로 명확히 하는 것이 좋습니다.
-    list_display= ('get_id_display', 'get_name_display', 'get_created_at_display', 'get_update_at_display', 'get_is_public',) # <-- 수정된 부분
-
-    search_fields = ('name', 'prompt',) # LLM 모델의 필드이므로 'name', 'prompt'로 접근하는 것이 맞습니다.
-
-    # === 아래 @admin.display 메서드들을 수정합니다. ===
-    @admin.display(description="LLM 번호")
-    def get_id_display(self, obj): # 메서드 이름 변경 권장: 'id'는 필드 이름과 겹쳐 혼동 가능
-        return obj.id # obj는 LLM 인스턴스이므로 obj.id로 직접 접근
-
-    @admin.display(description="LLM 이름")
-    def get_name_display(self, obj): # 메서드 이름 변경 권장
-        return obj.name # obj는 LLM 인스턴스이므로 obj.name으로 직접 접근
-
-    @admin.display(description="생성날짜")
-    def get_created_at_display(self, obj): # 메서드 이름 변경 권장
-        return obj.created_at # obj는 LLM 인스턴스이므로 obj.created_at으로 직접 접근
-
-    @admin.display(description="수정날짜")
-    def get_update_at_display(self, obj): # 메서드 이름 변경 권장
-        return obj.update_at
-    @admin.display(description="공유")
-    def get_is_public(self, obj): # 메서드 이름 변경 권장
-        return obj.is_public
-    # =================================================
-
-    inlines = [LLMConversationInline]
-
 
 @admin.register(VoiceList)
 class VoiceListAdmin(admin.ModelAdmin): 
@@ -167,42 +135,7 @@ class CreatedAtDayFilter(admin.SimpleListFilter):
         return queryset
 
 
-@admin.register(Conversation)
-class ConversationAdmin(admin.ModelAdmin):
-    list_display = ('get_id_display', 'get_llm_display', 'get_user_display', 'get_created_at_display', 'get_user_message_display')
-    list_filter = (
-        ('created_at', DateFieldListFilter),
-        'user',
-        'llm',
-    )
-    search_fields = ('user__username', 'llm__name', 'user_message', 'llm_response')
-    
-    @admin.display(description="id")
-    def get_id_display(self, obj):
-        return obj.id
-    
-    @admin.display(description="LLM 이름")
-    def get_llm_display(self, obj):
-        return obj.llm.name
-    
-    @admin.display(description="사용자 이름")
-    def get_user_display(self, obj):
-        return obj.user.username
-    
-    @admin.display(description="생성날짜")
-    def get_created_at_display(self, obj):
-        return obj.created_at
-    
-    @admin.display(description="사용자 메시지")
-    def get_user_message_display(self, obj):
-        return obj.user_message
-    
-    readonly_fields = ('created_at',)
-    fieldsets = (
-        (None, {
-            'fields': ('user', 'llm', 'created_at', 'user_message', 'llm_response')
-        }),
-    )
+# Conversation 모델은 customer_ai/admin.py에서 이미 등록되어 있으므로 여기서는 제거됨
 
 
 

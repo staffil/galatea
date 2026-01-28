@@ -89,7 +89,26 @@ class LLM(models.Model):
 
 
 
-# 프롬프트 테이블 
+# LLM 서브 이미지 테이블 (여러 장의 추가 프로필 이미지)
+class LLMSubImage(models.Model):
+    llm = models.ForeignKey('customer_ai.LLM', on_delete=models.CASCADE, related_name='sub_images', null=True, blank=True)
+    image = models.ImageField(upload_to='uploads/llm_sub_images/', max_length=500, null=True, blank=True)
+    title = models.CharField(max_length=100, null=True, blank=True, verbose_name='이미지 제목')
+    description = models.TextField(null=True, blank=True, verbose_name='이미지 설명')
+    order = models.IntegerField(default=0, null=True, blank=True, verbose_name='정렬 순서')
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    class Meta:
+        db_table = 'llm_sub_image'
+        verbose_name = 'LLM 서브 이미지'
+        verbose_name_plural = 'LLM 서브 이미지들'
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"{self.llm.name} - 서브이미지 {self.id}"
+
+
+# 프롬프트 테이블
 class Prompt(models.Model):
     PROMPT_TYPE_CHOICES = [
         ('text', '일반 프롬프트'),

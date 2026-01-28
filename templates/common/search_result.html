@@ -7,6 +7,11 @@
 <!-- Favicon 설정 -->
 <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
 <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_section.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -367,42 +372,31 @@ ul {
         {% endif %}
     </header>
 {% if results %}
+<div class="main-content">
+        <div class="llm-row">
+            <div class="llm-cards-horizontal">
+                                        {% for item in results %}
 
+                <div class="llm-card" onclick="openModal({{ item.id }})">
+                    <div class="llm-view-count">{{ item.invest_count }}명</div>
+<div class="llm-card-body"
+     style="--bg-image: url('{% if item.llm_image %}{{ item.llm_image.url }}{% endif %}');">
 
-    <ul>
-        <!-- LLM 추천 섹션 -->
-        <div class="main-content">
-            <div class="llm-container">
-                <h2 class="section-title">추천</h2>
-                <div class="llm-cards-container">
-                        {% for item in results %}
-
-                    <div class="llm-card" onclick="openModal({{ item.id }})">
-                        <div class="llm-card-body">
-                            <div class="llm-image-container">
-                                {% if item.llm_image %}
-                                    <img src="{{ item.llm_image.url }}" alt="{{ item.name }}">
-                                {% else %}
-                                    <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지">
-                                {% endif %}
-                            </div>
+                        <div class="llm-text-overlay">
                             <div class="llm-name">{{ item.title }}</div>
+                            <div class="llm-description">{{ item.description|default:"" }}</div>
                             <div class="genre-tags">
                                 {% for genre in item.genres.all %}
-                                    <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-                                {% empty %}
-                                    <div class="genre-tag" style="background-color: #999;">장르 없음</div>
+                                    <span class="genre-tag">{{ genre.name }}</span>
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
-                        {% endfor %}
-
                 </div>
+                {% endfor %}
             </div>
         </div>
-
-    </ul>
+</div>
 {% else %}
 
 

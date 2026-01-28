@@ -13,6 +13,12 @@
     <title>{% trans "GALATEA" %}</title>
     <link rel="stylesheet" href="{% static 'css/home/llm_section2.css'%}">
         <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+            <link rel="stylesheet" href="{% static 'css/distribute/distribute.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home/main.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/main2.css'%}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_section.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home/llm_intro.css' %}">
+
             <!-- Open Graph (SNS 공유용) -->
     <meta property="og:title" content="GALATEA AI - 음성 대화형 챗봇" />
     <meta property="og:description" content="자연스러운 음성 대화형 AI 챗봇. 고객과 사람처럼 대화하며 상담과 안내를 제공합니다." />
@@ -61,29 +67,27 @@
 <div class="main-content">
     <div class="llm-container2">
         <h2 class="section-title">{{ genres.name }}</h2>
-        <div class="llm-cards-container">
-            {% for item in llm_list %}
-            <div class="llm-card" onclick="openModal({{ item.id }})">
-                <div class="llm-card-body">
-                    <div class="llm-image-container">
-                        {% if item.llm_image %}
-                            <img src="{{ item.llm_image.url }}" alt="{{ item.name }}" loading="lazy">
-                        {% else %}
-                            <img src="https://via.placeholder.com/220x120/F359DE/FFFFFF?text=No+Image" alt="기본 이미지" loading="lazy">
-                        {% endif %}
-                    </div>
-                    <div class="llm-name">{{ item.title }}</div>
-                    <div class="genre-tags">
-                        {% for genre in item.genres.all %}
-                            <div class="genre-tag" style="background-color: {{ genre.color }};">{{ genre.name }}</div>
-                        {% empty %}
-                            <div class="genre-tag" style="background-color: #999;">장르 없음</div>
-                        {% endfor %}
+            <div class="llm-cards-horizontal">
+                                        {% for item in llm_list %}
+
+                <div class="llm-card" onclick="openModal({{ item.id }})">
+                    <div class="llm-view-count">{{ item.invest_count }}명</div>
+<div class="llm-card-body"
+     style="--bg-image: url('{% if item.llm_image %}{{ item.llm_image.url }}{% endif %}');">
+
+                        <div class="llm-text-overlay">
+                            <div class="llm-name">{{ item.title }}</div>
+                            <div class="llm-description">{{ item.description|default:"" }}</div>
+                            <div class="genre-tags">
+                                {% for genre in item.genres.all %}
+                                    <span class="genre-tag">{{ genre.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
 
     </div>
 </div>
