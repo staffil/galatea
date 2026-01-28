@@ -428,7 +428,6 @@ The word inside [] must be in English, and you may place emotion words in [] mul
     5. Include visual input naturally if provided. **Answer this in 4-5 short sentences only.**
 
 
-    Respond in {custom_language}.
     {custom_prompt}
     """.strip()
 
@@ -443,7 +442,6 @@ The word inside [] must be in English, and you may place emotion words in [] mul
     [VISUAL INPUT DESCRIPTION]
     "{vision_result}"
 
-    Respond in {custom_language}.
     {custom_prompt}
     """.strip()
 
